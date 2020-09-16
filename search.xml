@@ -84,9 +84,10 @@
 <li>备案</li>
 <li>图床替换成自己的域名</li>
 <li>完善和链接一下领英</li>
+<li>研究一下博客如何分享链接到微信</li>
 </ul>
 <h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
-<li>在ipad上的safari显示的时候没有font awesome图标显示</li>
+<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
 </ul>
 <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
 <li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
