@@ -105,4 +105,569 @@
         <tag>自我提升</tag>
       </tags>
   </entry>
+  <entry>
+    <title>pytorch第一周学习笔记</title>
+    <url>/2020/09/20/pytorch-week1/</url>
+    <content><![CDATA[<h1 id="1-PyTorch简介与安装"><a href="#1-PyTorch简介与安装" class="headerlink" title="1.PyTorch简介与安装"></a>1.PyTorch简介与安装</h1><p>Q:如何安装Pytorch?</p>
+<ul>
+<li>安装anaconda：<code>conda install pytorch torchvision</code></li>
+<li>测试是否安装成功：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> torch</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>torch.cuda.is_available()</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>torch.__version__</span><br><span class="line"><span class="string">&#x27;1.3.1&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="2-张量简介与创建"><a href="#2-张量简介与创建" class="headerlink" title="2.张量简介与创建"></a>2.张量简介与创建</h1><p>Q:张量是什么？</p>
+<ul>
+<li>一个多维数组，它是标量、向量、矩阵的高维拓展</li>
+<li><img src="http://anki190912.xuexihaike.com/20200918142143.png?imageView2/2/h/150"></li>
+</ul>
+<p>Q:Pytorch中的Variable是什么？与Tensor的关系是什么？</p>
+<ul>
+<li>Variable是torch.autograd中的数据类型主要用于封装Tensor，进行自动求导</li>
+<li>data:被包装的Tensor</li>
+<li>grad:data的梯度</li>
+<li>grad_fn:创建Tensor的Function，是自动求导的关键</li>
+<li>requires_grad:指示是否需要梯度</li>
+<li>is_leaf:指示是否是叶子结点（张量）</li>
+<li><img src="http://anki190912.xuexihaike.com/20200918143346.png?imageView2/2/w/200"></li>
+</ul>
+<p>Q:Pytorch中的Tensor是什么？</p>
+<ul>
+<li>PyTorch 0.4.0开始，Variable并入Tensor</li>
+<li>dtype: 张量的数据类型，如torch.FloatTensor, torch.cuda.FloatTensor</li>
+<li>shape: 张量的形状，如（64，3， 224， 224）</li>
+<li>device: 张量所在设备，GPU/CPU，是加速的关键</li>
+<li><img src="http://anki190912.xuexihaike.com/20200918143722.png?imageView2/2/h/100"></li>
+</ul>
+<p>Q:Tensor的函数原型是怎样？</p>
+<ul>
+<li><code>torch.tensor(data, dtype=None, device=None, requires_grad=False, pin_memory=False)</code></li>
+<li>功能：从data创建tensor</li>
+<li>data: 数据，可以是list，numpy</li>
+<li>dtype: 数据类型，默认与data一致</li>
+<li>device: 所在设备，cuda/cpu</li>
+<li>requires_grad: 是否需要梯度</li>
+<li>pin_memory:是否存于锁页内存</li>
+</ul>
+<p>Q:通过torch.tensor创建Tensor的代码是什么？</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">arr = np.ones((<span class="number">3</span>, <span class="number">3</span>))</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&#x27;ndarray的数据类型:&#x27;</span>, arr.dtype)</span><br><span class="line"></span><br><span class="line">t = torch.tensor(arr)</span><br><span class="line">print(t)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 放到gpu上</span></span><br><span class="line">t = torch.tensor(arr, device=<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">print(t)</span><br></pre></td></tr></table></figure>
+
+<pre><code>[[1. 1. 1.]
+ [1. 1. 1.]
+ [1. 1. 1.]]
+ndarray的数据类型: float64
+tensor([[1., 1., 1.],
+        [1., 1., 1.],
+        [1., 1., 1.]], dtype=torch.float64)
+tensor([[1., 1., 1.],
+        [1., 1., 1.],
+        [1., 1., 1.]], device=&#39;cuda:0&#39;, dtype=torch.float64)</code></pre>
+<p>Q:如何通过torch.from_numpy创建张量？</p>
+<ul>
+<li>函数原型：<code>torch.from_numpy(ndarray)</code></li>
+<li>功能：从numpy创建tensor</li>
+<li>注意事项：从torch.from_numpy创建的tensor于原ndarray共享内存，当修改其中一个的数据，另外一个也将会被改动</li>
+<li><img src="http://anki190912.xuexihaike.com/20200918151039.png?imageView2/2/h/150"></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">arr = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]])</span><br><span class="line">t = torch.from_numpy(arr)</span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;修改arr:&quot;</span>)</span><br><span class="line">arr[<span class="number">0</span>, <span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;修改tensor:&quot;</span>)</span><br><span class="line">arr[<span class="number">1</span>, <span class="number">1</span>] = <span class="number">-10</span></span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br></pre></td></tr></table></figure>
+
+<pre><code>numpy array:
+[[1 2 3]
+ [4 5 6]]
+tensor:
+tensor([[1, 2, 3],
+        [4, 5, 6]])
+修改arr:
+numpy array:
+[[0 2 3]
+ [4 5 6]]
+tensor:
+tensor([[0, 2, 3],
+        [4, 5, 6]])
+修改tensor:
+numpy array:
+[[  0   2   3]
+ [  4 -10   6]]
+tensor:
+tensor([[  0,   2,   3],
+        [  4, -10,   6]])</code></pre>
+<p>Q:如何通过torch.zeros或torch.ones创建张量？</p>
+<ul>
+<li>函数原型：<code>torch.zeros(*size, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False)</code></li>
+<li>函数原型：<code>torch.ones(*size, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False)</code></li>
+<li>功能：依size创建全0张量和全1</li>
+<li>size:张量的形状</li>
+<li>out:输出的张量，貌似其原始类型必须为tensor，通过out得到的和返回值得到的是完全一样的，相当于赋值</li>
+<li>layout:内存中布局形式，有strided,sparse_coo等</li>
+<li>device:所在设备,gpu/cpu</li>
+<li>requires_grad: 是否需要梯度</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">out_t = torch.tensor([<span class="number">1</span>])</span><br><span class="line">t = torch.zeros((<span class="number">3</span>,<span class="number">3</span>), out=out_t)</span><br><span class="line">print(t)</span><br><span class="line">print(out_t)</span><br><span class="line">print(id(t), id(out_t), id(t) == id(out_t))</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]])
+tensor([[0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]])
+140556294938560 140556294938560 True</code></pre>
+<p>Q:如何通过torch.zeros_like或torch.ones_like创建张量？</p>
+<ul>
+<li>函数原型：<code>torch.zeros_like(input, dtype=None, layout=None, device=None, requires_grad=False)</code></li>
+<li>函数原型：<code>torch.ones_like(input, dtype=None, layout=None, device=None, requires_grad=False)</code></li>
+<li>功能：依input形状创建全0张量或全1，input是一个tensor类型</li>
+<li>input:创建与input同形状的全0张量</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.empty(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">print(torch.zeros_like(t))</span><br><span class="line">print(torch.ones_like(t))</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[0., 0., 0.],
+        [0., 0., 0.]])
+tensor([[1., 1., 1.],
+        [1., 1., 1.]])</code></pre>
+<p>Q:如何通过torch.full创建张量？</p>
+<ul>
+<li><code>torch.full(size, fill_value, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False)</code></li>
+<li><code>torch.full_like(input, fill_value, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False, memory_format=torch.preserve_format)</code></li>
+<li>功能：创建全等张量</li>
+<li>size: 张量的形状，如（3,3）</li>
+<li>fill_value: 张量的值</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.full((<span class="number">3</span>,<span class="number">3</span>), <span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+
+
+<pre><code>tensor([[8., 8., 8.],
+        [8., 8., 8.],
+        [8., 8., 8.]])</code></pre>
+<p>Q:如何通过torch.arange创建等差数列的1维张量？</p>
+<ul>
+<li>函数原型：<code>torch.arange(start=0, end, step=1, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False)</code></li>
+<li>功能：创建等差为1的张量</li>
+<li>注意事项：数值区间为[start, end)</li>
+<li>start: 数列起始值</li>
+<li>end: 数列“结束值”</li>
+<li>step: 数列公差，默认为1</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.arange(<span class="number">2</span>,<span class="number">10</span>,<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>tensor([2, 4, 6, 8])</code></pre>
+<p>Q:如何通过torch.linspace创建均分数列张量</p>
+<ul>
+<li>函数原型：<code>torch.linspace(start=0, end, steps=100, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False)</code></li>
+<li>功能：创建均分的1维张量</li>
+<li>注意事项：数值区间为[start, end]</li>
+<li>start: 数列起始值</li>
+<li>end: 数列结束值</li>
+<li>steps: 数列长度</li>
+<li>步长为：(end-start)/(steps-1)</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.linspace(<span class="number">2</span>, <span class="number">10</span>, <span class="number">7</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>tensor([ 2.0000,  3.3333,  4.6667,  6.0000,  7.3333,  8.6667, 10.0000])</code></pre>
+<p>Q:如何通过torch.logspace创建对数均分的1维张量？</p>
+<ul>
+<li>函数原型：<code>torch.logspace(start, end, steps=100, base=10.0, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False)</code></li>
+<li>功能：创建对数均分的1维张量</li>
+<li>注意事项：长度为steps，底为base</li>
+<li>base: 对数函数的低，默认为10</li>
+</ul>
+<p>Q:如何通过torch.eye创建单位对角矩阵？</p>
+<ul>
+<li>函数原型：<code>torch.eye(n, m=None, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False)</code></li>
+<li>功能：创建单位对角矩阵（2维张量）</li>
+<li>注意事项：默认为方阵</li>
+<li>n: 矩阵行数</li>
+<li>m: 矩阵列数</li>
+</ul>
+<p>Q:如何通过torch.normal生成正态分布的张量？</p>
+<ul>
+<li>函数原型：<code>torch.normal(mean, std, *, generator=None, out=None)</code></li>
+<li>功能：生成正态分布（高斯分布）</li>
+<li>mean: 均值</li>
+<li>std: 标准差</li>
+<li>因mean和std可以分别为标量和张量，有4种不同的组合</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># mean：张量 std: 张量</span></span><br><span class="line"><span class="comment"># 其中t[i]是从mean[i],std[i]的标准正态分布中采样得来</span></span><br><span class="line">mean = torch.arange(<span class="number">1</span>, <span class="number">5</span>, dtype=torch.float)</span><br><span class="line">std = torch.arange(<span class="number">1</span>, <span class="number">5</span>, dtype=torch.float)</span><br><span class="line">t = torch.normal(mean, std)</span><br><span class="line">print(<span class="string">&quot;mean:&#123;&#125;\nstd:&#123;&#125;&quot;</span>.format(mean, std))</span><br><span class="line">print(t)</span><br><span class="line">print()</span><br><span class="line"></span><br><span class="line"><span class="comment"># mean：标量 std: 标量，此时要指定size大小</span></span><br><span class="line">t_normal = torch.normal(<span class="number">0.</span>, <span class="number">1.</span>, size=(<span class="number">4</span>,))</span><br><span class="line">print(t_normal)</span><br><span class="line">print()</span><br><span class="line"></span><br><span class="line"><span class="comment"># mean：张量 std: 标量</span></span><br><span class="line">mean = torch.arange(<span class="number">1</span>, <span class="number">5</span>, dtype=torch.float)</span><br><span class="line">std = <span class="number">1</span></span><br><span class="line">t_normal = torch.normal(mean, std)</span><br><span class="line">print(<span class="string">&quot;mean:&#123;&#125;\nstd:&#123;&#125;&quot;</span>.format(mean, std))</span><br><span class="line">print(t_normal)</span><br></pre></td></tr></table></figure>
+
+<pre><code>mean:tensor([1., 2., 3., 4.])
+std:tensor([1., 2., 3., 4.])
+tensor([ 0.6063,  2.9914,  4.0138, -0.5877])
+
+tensor([ 1.1977, -0.1746,  1.5572, -1.1905])
+
+mean:tensor([1., 2., 3., 4.])
+std:1
+tensor([0.7165, 1.5649, 3.2308, 3.2504])</code></pre>
+<p>Q:如何创建标准正态分布的张量？</p>
+<ul>
+<li><code>torch.randn(*size, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False) → Tensor</code></li>
+<li><code>torch.randn_like(input, dtype=None, layout=None, device=None, requires_grad=False, memory_format=torch.preserve_format) → Tensor</code></li>
+<li>size:张量的形状</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(torch.randn(<span class="number">4</span>))</span><br><span class="line">print(torch.randn(<span class="number">2</span>,<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([-0.2387, -0.3638,  0.3597,  0.1225])
+tensor([[ 0.4709,  0.8593, -0.5970],
+        [-0.1133,  0.3273,  0.0106]])</code></pre>
+<p>Q:如何生成均匀分布和整数均匀分布的张量？</p>
+<ul>
+<li>在[0,1)区间上，生成均匀分布</li>
+<li><code>torch.rand(*size, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False) → Tensor</code></li>
+<li><code>torch.rand_like(input, dtype=None, layout=None, device=None, requires_grad=False, memory_format=torch.preserve_format) → Tensor</code></li>
+<li>在[low, high)区间生成整数均匀分布</li>
+<li><code>torch.randint(low=0, high, size, *, generator=None, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False) → Tensor</code></li>
+<li><code>torch.randint_like(input, low=0, high, dtype=None, layout=torch.strided, device=None, requires_grad=False, memory_format=torch.preserve_format) → Tensor</code></li>
+<li>其中size是张量形状</li>
+</ul>
+<p>Q:如何生成从0到n-1的随机排列？</p>
+<ul>
+<li><code>torch.randperm(n, out=None, dtype=torch.int64, layout=torch.strided, device=None, requires_grad=False) → LongTensor</code></li>
+<li>n是张量的长度</li>
+<li>经常用于生成乱序索引</li>
+</ul>
+<p>Q:如何生成一个伯努利分布的张量？</p>
+<ul>
+<li><code>torch.bernoulli(input, *, generator=None, out=None) → Tensor</code></li>
+<li>以input为概率，生成伯努利分布（0-1分布，两点分布）</li>
+</ul>
+<h1 id="3-张量操作与线性回归"><a href="#3-张量操作与线性回归" class="headerlink" title="3.张量操作与线性回归"></a>3.张量操作与线性回归</h1><h2 id="张量的操作：拼接、切分、索引和变换"><a href="#张量的操作：拼接、切分、索引和变换" class="headerlink" title="张量的操作：拼接、切分、索引和变换"></a>张量的操作：拼接、切分、索引和变换</h2><p>Q:如何用torch.cat对张量进行拼接？</p>
+<ul>
+<li><code>torch.cat(tensors, dim=0, out=None) → Tensor</code></li>
+<li>功能：将张量按维度dim进行拼接</li>
+<li>tensors: 张量序列</li>
+<li>dim：要拼接的维度</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.randn(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">print(t)</span><br><span class="line">t1 = torch.cat([t,t], dim=<span class="number">0</span>)</span><br><span class="line">print(t1)</span><br><span class="line">print(<span class="string">&quot;shape:&quot;</span>, t1.shape)</span><br><span class="line">t2 = torch.cat([t,t], dim=<span class="number">1</span>)</span><br><span class="line">print(t2)</span><br><span class="line">print(<span class="string">&quot;shape:&quot;</span>, t2.shape)</span><br><span class="line"><span class="comment"># dim是指在哪个方向上进行叠加</span></span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[-0.6851,  0.0099, -1.4586],
+        [ 0.2965,  0.4991, -0.4938]])
+tensor([[-0.6851,  0.0099, -1.4586],
+        [ 0.2965,  0.4991, -0.4938],
+        [-0.6851,  0.0099, -1.4586],
+        [ 0.2965,  0.4991, -0.4938]])
+shape: torch.Size([4, 3])
+tensor([[-0.6851,  0.0099, -1.4586, -0.6851,  0.0099, -1.4586],
+        [ 0.2965,  0.4991, -0.4938,  0.2965,  0.4991, -0.4938]])
+shape: torch.Size([2, 6])</code></pre>
+<p>Q:如何用torch.stack对张量进行拼接？</p>
+<ul>
+<li><code>torch.stack(tensors, dim=0, out=None) → Tensor</code></li>
+<li>功能：在新创建的维度dim上进行拼接</li>
+<li>tensors:张量序列</li>
+<li>dim：要拼接的维度</li>
+<li>注意：cat不会扩张张量的维度，stack会扩张，相当于insert</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.randn(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">print(t)</span><br><span class="line">t1 = torch.stack([t,t], dim=<span class="number">0</span>)</span><br><span class="line">print(t1)</span><br><span class="line">print(<span class="string">&quot;shape:&quot;</span>, t1.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[ 0.6266,  0.8918,  0.6165],
+        [ 1.1646, -1.8152, -0.7309]])
+tensor([[[ 0.6266,  0.8918,  0.6165],
+         [ 1.1646, -1.8152, -0.7309]],
+
+        [[ 0.6266,  0.8918,  0.6165],
+         [ 1.1646, -1.8152, -0.7309]]])
+shape: torch.Size([2, 2, 3])</code></pre>
+<p>Q:如何用torch.chunk对切分张量？</p>
+<ul>
+<li><code>torch.chunk(input, chunks, dim=0) → List of Tensors</code></li>
+<li>功能：将张量按维度dim进行平均切分</li>
+<li>返回值：张量列表</li>
+<li>注意事项：若不能整除，最后一份张量小于其它张量</li>
+<li>input：要切分的张量</li>
+<li>chunks：要切分的份数</li>
+<li>dim：要切分的维度</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = torch.ones((<span class="number">2</span>,<span class="number">7</span>))</span><br><span class="line">print(a)</span><br><span class="line">list_of_tensors = torch.chunk(a, dim=<span class="number">1</span>, chunks=<span class="number">3</span>)</span><br><span class="line"><span class="keyword">for</span> i, t <span class="keyword">in</span> enumerate(list_of_tensors):</span><br><span class="line">    print(<span class="string">f&quot;第<span class="subst">&#123;i&#125;</span>个张量：&quot;</span>)</span><br><span class="line">    print(t)</span><br><span class="line"><span class="comment"># 切分后的长度的计算方式为：7/3向上取整为3</span></span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1.]])
+第0个张量：
+tensor([[1., 1., 1.],
+        [1., 1., 1.]])
+第1个张量：
+tensor([[1., 1., 1.],
+        [1., 1., 1.]])
+第2个张量：
+tensor([[1.],
+        [1.]])</code></pre>
+<p>Q:如何用torch.split对张量进行切分？</p>
+<ul>
+<li><code>torch.split(tensor, split_size_or_sections, dim=0)</code></li>
+<li>功能：将张量按维度dim进行平均切分</li>
+<li>返回值：张量列表</li>
+<li>tensor：要切分的张量</li>
+<li>split_size_or_sections：为int时，表示每一份的长度；为list时，按list元素切分，list元素和必须为该维度的长度</li>
+<li>dim：要切分的维度</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = torch.ones((<span class="number">2</span>,<span class="number">7</span>))</span><br><span class="line">print(a)</span><br><span class="line">list_of_tensors = torch.split(a, [<span class="number">2</span>,<span class="number">4</span>,<span class="number">1</span>], dim=<span class="number">1</span>)</span><br><span class="line"><span class="keyword">for</span> i, t <span class="keyword">in</span> enumerate(list_of_tensors):</span><br><span class="line">    print(<span class="string">f&quot;第<span class="subst">&#123;i&#125;</span>个张量：&quot;</span>)</span><br><span class="line">    print(t)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[1., 1., 1., 1., 1., 1., 1.],
+        [1., 1., 1., 1., 1., 1., 1.]])
+第0个张量：
+tensor([[1., 1.],
+        [1., 1.]])
+第1个张量：
+tensor([[1., 1., 1., 1.],
+        [1., 1., 1., 1.]])
+第2个张量：
+tensor([[1.],
+        [1.]])</code></pre>
+<p>Q:如何在dim维度上，按index索引数据？</p>
+<ul>
+<li><code>torch.index_select(input, dim, index, out=None) → Tensor</code></li>
+<li>返回值：按index索引数据拼接的张量</li>
+<li>input：要索引的张量</li>
+<li>dim：要索引的维度</li>
+<li>index：要索引数据的序号</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.randint(<span class="number">0</span>,<span class="number">9</span>, size=(<span class="number">3</span>,<span class="number">3</span>))</span><br><span class="line">idx = torch.tensor([<span class="number">0</span>,<span class="number">2</span>], dtype=torch.long)</span><br><span class="line">t_select = torch.index_select(t, dim=<span class="number">0</span>, index=idx)</span><br><span class="line">print(t)</span><br><span class="line">print(idx)</span><br><span class="line">print(t_select)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[1, 2, 8],
+        [2, 3, 0],
+        [0, 2, 0]])
+tensor([0, 2])
+tensor([[1, 2, 8],
+        [0, 2, 0]])</code></pre>
+<p>Q:如何对张量按mask中的True进行索引？</p>
+<ul>
+<li><code>torch.masked_select(input, mask, out=None) → Tensor</code></li>
+<li>返回值：一维张量</li>
+<li>input：要索引的张量</li>
+<li>mask：与input同形状的布尔类型张量</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.randint(<span class="number">0</span>, <span class="number">9</span>, size=(<span class="number">3</span>, <span class="number">3</span>))</span><br><span class="line">print(t)</span><br><span class="line">mask = t.le(<span class="number">5</span>) <span class="comment"># le是小于等于，还有lt,gt,ge</span></span><br><span class="line">print(mask)</span><br><span class="line">t_select = torch.masked_select(t, mask)</span><br><span class="line">print(t_select)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[2, 5, 0],
+        [5, 8, 5],
+        [2, 8, 5]])
+tensor([[ True,  True,  True],
+        [ True, False,  True],
+        [ True, False,  True]])
+tensor([2, 5, 0, 5, 5, 2, 5])</code></pre>
+<p>Q:如何改变张量的形状？</p>
+<ul>
+<li><code>torch.reshape(input, shape) → Tensor</code></li>
+<li>注意事项：当张量在内存中是连续时，新张量与input共享数据内存</li>
+<li>input：要变换的张量</li>
+<li>shape：新张量的形状，允许某个维度为-1，意味着这个维度根据其它的算出来的</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.randperm(<span class="number">8</span>)</span><br><span class="line">t_reshape = torch.reshape(t, (<span class="number">2</span>,<span class="number">4</span>))</span><br><span class="line">print(t)</span><br><span class="line">print(t_reshape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([2, 0, 7, 5, 6, 4, 3, 1])
+tensor([[2, 0, 7, 5],
+        [6, 4, 3, 1]])</code></pre>
+<p>Q:如何交换张量的两个维度？</p>
+<ul>
+<li><code>torch.transpose(input, dim0, dim1) → Tensor</code></li>
+<li>input：要交换的张量</li>
+<li>dim0，dim1：要交换的维度</li>
+<li>若为2维张量转置，即矩阵转置，可使用<code>torch.t(input) → Tensor</code>，等价于<code>torch.transpose(input, 0, 1)</code></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.rand((<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>))</span><br><span class="line">t_transpose = torch.transpose(t, dim0=<span class="number">1</span>,dim1=<span class="number">2</span>)</span><br><span class="line">print(t)</span><br><span class="line">print(t_transpose)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([[[0.8657, 0.5869, 0.1105, 0.4381],
+         [0.7276, 0.6606, 0.3778, 0.3643],
+         [0.6180, 0.6693, 0.9983, 0.4252]],
+
+        [[0.3526, 0.6365, 0.6643, 0.5310],
+         [0.4653, 0.5056, 0.1065, 0.7873],
+         [0.6175, 0.6650, 0.1325, 0.5837]]])
+tensor([[[0.8657, 0.7276, 0.6180],
+         [0.5869, 0.6606, 0.6693],
+         [0.1105, 0.3778, 0.9983],
+         [0.4381, 0.3643, 0.4252]],
+
+        [[0.3526, 0.4653, 0.6175],
+         [0.6365, 0.5056, 0.6650],
+         [0.6643, 0.1065, 0.1325],
+         [0.5310, 0.7873, 0.5837]]])</code></pre>
+<p>Q:如何压缩长度为1的维度（轴）？</p>
+<ul>
+<li><code>torch.squeeze(input, dim=None, out=None) → Tensor</code></li>
+<li>dim: 若为None，移除所有长度为1的轴；若指定维度，当且仅当该轴长度为1时，可以被移除</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.rand((<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>))</span><br><span class="line">t_sq = torch.squeeze(t)</span><br><span class="line">t_0 = torch.squeeze(t, dim=<span class="number">0</span>)</span><br><span class="line">t_1 = torch.squeeze(t, dim=<span class="number">1</span>)</span><br><span class="line">print(t.shape)</span><br><span class="line">print(t_sq.shape)</span><br><span class="line">print(t_0.shape)</span><br><span class="line">print(t_1.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>torch.Size([1, 2, 3, 1])
+torch.Size([2, 3])
+torch.Size([2, 3, 1])
+torch.Size([1, 2, 3, 1])</code></pre>
+<p>Q:如何根据dim扩展维度？</p>
+<ul>
+<li><code>torch.unsqueeze(input, dim) → Tensor</code></li>
+<li>dim:扩展的维度</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t = torch.tensor([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line">print(t)</span><br><span class="line">t1 = torch.unsqueeze(t, <span class="number">0</span>)</span><br><span class="line">print(t1)</span><br><span class="line">t2 = torch.unsqueeze(t, <span class="number">1</span>)</span><br><span class="line">print(t2)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([1, 2, 3, 4])
+tensor([[1, 2, 3, 4]])
+tensor([[1],
+        [2],
+        [3],
+        [4]])</code></pre>
+<h2 id="张量的数学运算"><a href="#张量的数学运算" class="headerlink" title="张量的数学运算"></a>张量的数学运算</h2><p>Q:有哪些常见的数学运算？</p>
+<ul>
+<li>一、加减乘除<ul>
+<li>torch.add()</li>
+<li>torch.addcdiv()</li>
+<li>torch.addcmul()</li>
+<li>torch.sub() </li>
+<li>torch.div()</li>
+<li>torch.mul()</li>
+</ul>
+</li>
+<li>二、对数，指数，幂函数<ul>
+<li>torch.log(input, out=None)</li>
+<li>torch.log10(input, out=None)</li>
+<li>torch.log2(input, out=None)</li>
+<li>torch.exp(input, out=None)</li>
+<li>torch.pow()</li>
+</ul>
+</li>
+<li>三、三角函数<ul>
+<li>torch.abs(input, out=None)</li>
+<li>torch.acos(input, out=None)</li>
+<li>torch.cosh(input, out=None)</li>
+<li>torch.cos(input, out=None)</li>
+<li>torch.asin(input, out=None)</li>
+<li>torch.atan(input, out=None)</li>
+<li>torch.atan2(input, other, out=None)</li>
+</ul>
+</li>
+</ul>
+<p>Q:如何逐元素计算input + alpha x other?</p>
+<ul>
+<li><code>torch.add(input, other, *, alpha=1, out=None)</code></li>
+<li>input：第一个张量</li>
+<li>alpha：乘项因子</li>
+<li>other：第二个张量</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t_0 = torch.randn((<span class="number">3</span>, <span class="number">3</span>))</span><br><span class="line">t_1 = torch.ones_like(t_0)</span><br><span class="line">t_add = torch.add(t_0, t_1, alpha=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;t_0:\n&#123;&#125;\nt_1:\n&#123;&#125;\nt_add_10:\n&#123;&#125;&quot;</span>.format(t_0, t_1, t_add))</span><br></pre></td></tr></table></figure>
+
+<pre><code>t_0:
+tensor([[ 0.5570, -0.4743,  1.0113],
+        [-1.2665,  0.1997, -0.6957],
+        [-0.0714, -0.7002, -1.4687]])
+t_1:
+tensor([[1., 1., 1.],
+        [1., 1., 1.],
+        [1., 1., 1.]])
+t_add_10:
+tensor([[10.5570,  9.5257, 11.0113],
+        [ 8.7335, 10.1997,  9.3043],
+        [ 9.9286,  9.2998,  8.5313]])</code></pre>
+<p>Q:如何计算$\text { out }<em>{i}=\text { input }</em>{i}+\text { value } \times \text { tensor } 1_{i} \times \text { tensor } 2_{i}$</p>
+<ul>
+<li><code>torch.addcmul(input, tensor1, tensor2, *, value=1, out=None) → Tensor</code></li>
+</ul>
+<p>Q:如何计算$\text { out }<em>{i}=\text { input }</em>{i}+\text { value } \times \frac{\text { tensor } 1}{\text { tensor } 2_{i}}$</p>
+<ul>
+<li><code>torch.addcdiv(input, tensor1, tensor2, *, value=1, out=None) → Tensor</code></li>
+</ul>
+<h2 id="线性回归的Pytorch实现"><a href="#线性回归的Pytorch实现" class="headerlink" title="线性回归的Pytorch实现"></a>线性回归的Pytorch实现</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">torch.manual_seed(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">lr = <span class="number">0.05</span>  <span class="comment"># 学习率</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建训练数据</span></span><br><span class="line">x = torch.rand(<span class="number">20</span>, <span class="number">1</span>) * <span class="number">10</span>  <span class="comment"># x data (tensor), shape=(20, 1)</span></span><br><span class="line">y = <span class="number">2</span>*x + (<span class="number">5</span> + torch.randn(<span class="number">20</span>, <span class="number">1</span>))  <span class="comment"># y data (tensor), shape=(20, 1)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建线性回归参数的初始值</span></span><br><span class="line">w = torch.randn((<span class="number">1</span>), requires_grad=<span class="literal">True</span>)</span><br><span class="line">b = torch.zeros((<span class="number">1</span>), requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> iteration <span class="keyword">in</span> range(<span class="number">1000</span>):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 前向传播，计算y_pred=w * x+b</span></span><br><span class="line">    wx = torch.mul(w, x)</span><br><span class="line">    y_pred = torch.add(wx, b)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算 MSE loss</span></span><br><span class="line">    loss = (<span class="number">0.5</span> * (y - y_pred) ** <span class="number">2</span>).mean()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 反向传播</span></span><br><span class="line">    loss.backward()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 更新参数</span></span><br><span class="line">    b.data.sub_(lr * b.grad)</span><br><span class="line">    w.data.sub_(lr * w.grad)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 清零张量的梯度</span></span><br><span class="line">    w.grad.zero_()</span><br><span class="line">    b.grad.zero_()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 绘图</span></span><br><span class="line">    <span class="keyword">if</span> iteration % <span class="number">20</span> == <span class="number">0</span>:</span><br><span class="line">        plt.scatter(x.data.numpy(), y.data.numpy())</span><br><span class="line">        plt.plot(x.data.numpy(), y_pred.data.numpy(), <span class="string">&#x27;r-&#x27;</span>, lw=<span class="number">5</span>)</span><br><span class="line">        plt.text(<span class="number">2</span>, <span class="number">20</span>, <span class="string">&#x27;Loss=%.4f&#x27;</span> % loss.data.numpy(), fontdict=&#123;<span class="string">&#x27;size&#x27;</span>: <span class="number">20</span>, <span class="string">&#x27;color&#x27;</span>:  <span class="string">&#x27;red&#x27;</span>&#125;)</span><br><span class="line">        plt.xlim(<span class="number">1.5</span>, <span class="number">10</span>)</span><br><span class="line">        plt.ylim(<span class="number">8</span>, <span class="number">28</span>)</span><br><span class="line">        plt.title(<span class="string">f&quot;Iteration: <span class="subst">&#123;iteration&#125;</span>\nw: <span class="subst">&#123;w.data.numpy()&#125;</span> b: <span class="subst">&#123;b.data.numpy()&#125;</span>&quot;</span>)</span><br><span class="line">        plt.pause(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> loss.data.numpy() &lt; <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://anki190912.xuexihaike.com/20200920095346.png"></p>
+<h1 id="4-计算图与动态图机制"><a href="#4-计算图与动态图机制" class="headerlink" title="4.计算图与动态图机制"></a>4.计算图与动态图机制</h1><p>Q:计算图是什么？</p>
+<ul>
+<li>用来描述运算的有向无环图</li>
+<li>有两个主要元素：结点（Node）和边（Edge）</li>
+<li>结点表示数据，如向量、矩阵、张量，边表示运算，如加减乘除卷积等</li>
+</ul>
+<p>Q:如何用计算图表示$y = (x+w)*(w+1)$?</p>
+<ul>
+<li>$a = x + w, b = w + 1, y = a * b$</li>
+<li><img src="http://anki190912.xuexihaike.com/20200919144309.png?imageView2/2/h/200"></li>
+</ul>
+<p>Q:如何用计算图进行梯度求导，如$y = (x+w)*(w+1)$</p>
+<ul>
+<li>$a = x + w, b = w + 1, y = a * b$</li>
+<li>$$\begin{aligned}<br>\frac{\partial \mathrm{y}}{\partial w} &amp;=\frac{\partial \mathrm{y}}{\partial a} \frac{\partial a}{\partial w}+\frac{\partial \mathrm{y}}{\partial b} \frac{\partial b}{\partial w} \<br>&amp;=b * 1+\mathrm{a} * 1 \<br>&amp;=\mathrm{b}+\mathrm{a} \<br>&amp;=(\mathrm{w}+1)+(\mathrm{x}+\mathrm{w}) \<br>&amp;=2 * \mathrm{w}+\mathrm{x}+1 \<br>&amp;=2 * 1+2+1=5\end{aligned}$$</li>
+<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li>y对w求导在计算图中其实就是找到y到w的所有路径上的导数，进行求和</li>
+</ul>
+<p>Q:叶子结点是什么？</p>
+<ul>
+<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li>用户创建的结点称为叶子结点，如X和W</li>
+<li>torch.Tensor中有is_leaf指示张量是否为叶子结点</li>
+<li>设置叶子结点主要是为了节省内存，因为非叶子结点的梯度在反向传播后会被释放掉</li>
+<li>若需要保留非叶子结点的梯度，可使用retain_grad()方法</li>
+</ul>
+<p>Q:torch.Tensor中的grad_fn作用是什么？</p>
+<ul>
+<li>记录创建该张量时所用的方法（函数）</li>
+<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li>y.grad_fn = &lt;MulBackward0&gt;</li>
+<li>a.grad_fn = &lt;AddBackward0&gt;</li>
+</ul>
+<p>Q:$y = (x+w)*(w+1)$计算图的代码示例，求解y对w的梯度？</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">w = torch.tensor([<span class="number">1.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line">x = torch.tensor([<span class="number">2.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">a = torch.add(w, x)</span><br><span class="line"><span class="comment"># 若需要保留非叶子结点a的梯度，否则调用a.grad时为None</span></span><br><span class="line"><span class="comment"># a.retain_grad()</span></span><br><span class="line">b = torch.add(w, <span class="number">1</span>)</span><br><span class="line">y = torch.mul(a, b)</span><br><span class="line"></span><br><span class="line">y.backward()</span><br><span class="line">print(w.grad)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看叶子结点</span></span><br><span class="line">print(<span class="string">&quot;\nis_leaf:\n&quot;</span>, w.is_leaf, x.is_leaf, a.is_leaf, b.is_leaf, y.is_leaf)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看梯度</span></span><br><span class="line">print(<span class="string">&quot;\ngradient:\n&quot;</span>, w.grad, x.grad, a.grad, b.grad, y.grad)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 grad_fn</span></span><br><span class="line">print(<span class="string">&quot;\ngrad_fn:\n&quot;</span>, w.grad_fn, x.grad_fn, a.grad_fn, b.grad_fn, y.grad_fn)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([5.])
+
+is_leaf:
+ True True False False False
+
+gradient:
+ tensor([5.]) tensor([2.]) None None None
+
+grad_fn:
+ None None &lt;AddBackward0 object at 0x7fd54938bb00&gt; &lt;AddBackward0 object at 0x7fd5285f4c50&gt; &lt;MulBackward0 object at 0x7fd5285f4be0&gt;</code></pre>
+<h1 id="5-autograd与逻辑回归"><a href="#5-autograd与逻辑回归" class="headerlink" title="5.autograd与逻辑回归"></a>5.autograd与逻辑回归</h1><p>Q:torch.autograd.backward是什么？</p>
+<ul>
+<li>torch.autograd.backward(tensors: Union[torch.Tensor, Sequence[torch.Tensor]], grad_tensors: Union[torch.Tensor, Sequence[torch.Tensor], None] = None, retain_graph: Optional[bool] = None, create_graph: bool = False, grad_variables: Union[torch.Tensor, Sequence[torch.Tensor], None] = None) → None</li>
+<li>功能：自动求取梯度</li>
+<li>tensors：用于求导的张量，如loss</li>
+<li>retain_graph：保存计算图，若不保存，则紧接着再调用一次backward()会报错</li>
+<li>create_graph：创建导数计算图，用于高阶求导</li>
+<li>grad_tensors：多梯度权重</li>
+</ul>
+<p>Q:torch.autograd.backward中的retain_graph的代码示例？</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w = torch.tensor([<span class="number">1.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line">x = torch.tensor([<span class="number">2.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">a = torch.add(w, x)</span><br><span class="line">b = torch.add(w, <span class="number">1</span>)</span><br><span class="line">y = torch.mul(a, b)</span><br><span class="line"></span><br><span class="line">y.backward(retain_graph=<span class="literal">True</span></span><br><span class="line">          )</span><br><span class="line">print(w.grad)</span><br><span class="line">y.backward()</span><br><span class="line">print(w.grad)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([5.])
+tensor([10.])</code></pre>
+<p>Q:torch.autograd.backward中的grad_tensors的代码示例？</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w = torch.tensor([<span class="number">1.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line">x = torch.tensor([<span class="number">2.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">a = torch.add(w, x)     <span class="comment"># retain_grad()</span></span><br><span class="line">b = torch.add(w, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">y0 = torch.mul(a, b)    <span class="comment"># y0 = (x+w) * (w+1)</span></span><br><span class="line">y1 = torch.add(a, b)    <span class="comment"># y1 = (x+w) + (w+1)    dy1/dw = 2</span></span><br><span class="line"></span><br><span class="line">loss = torch.cat([y0, y1], dim=<span class="number">0</span>)       <span class="comment"># [y0, y1]</span></span><br><span class="line">grad_tensors = torch.tensor([<span class="number">1.</span>, <span class="number">2.</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># gradient 传入 torch.autograd.backward()中的grad_tensors</span></span><br><span class="line">loss.backward(gradient=grad_tensors)</span><br><span class="line"><span class="comment"># 实际上相当于1*y0导数+2*y1导数</span></span><br><span class="line"></span><br><span class="line">print(w.grad)</span><br></pre></td></tr></table></figure>
+
+<pre><code>tensor([9.])</code></pre>
+<p>Q:torch.autograd.grad是什么？</p>
+<ul>
+<li>torch.autograd.grad(outputs: Union[torch.Tensor, Sequence[torch.Tensor]], inputs: Union[torch.Tensor, Sequence[torch.Tensor]], grad_outputs: Union[torch.Tensor, Sequence[torch.Tensor], None] = None, retain_graph: Optional[bool] = None, create_graph: bool = False, only_inputs: bool = True, allow_unused: bool = False) → Tuple[torch.Tensor, …]</li>
+<li>功能：求取梯度</li>
+<li>outputs：用于求导的张量，如loss</li>
+<li>inputs：需要梯度的张量</li>
+<li>create_graph：创建导数计算图，用于高阶求导</li>
+<li>retain_graph：保存计算图</li>
+<li>grad_outputs：多梯度权重</li>
+</ul>
+<p>Q:如何使用torch.autograd.grad对$y=x^2$进行一阶和二阶求导？</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">x = torch.tensor([<span class="number">3.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line">y = torch.pow(x, <span class="number">2</span>)  <span class="comment"># y = x**2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># grad_1 = dy/dx = 2x = 2 * 3 = 6</span></span><br><span class="line">grad_1 = torch.autograd.grad(y, x, create_graph=<span class="literal">True</span>)</span><br><span class="line">print(grad_1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># grad_2 = d(dy/dx)/dx = d(2x)/dx = 2</span></span><br><span class="line"><span class="comment"># grad_1的返回值是元组，所以要取出第一个</span></span><br><span class="line">grad_2 = torch.autograd.grad(grad_1[<span class="number">0</span>], x)</span><br><span class="line">print(grad_2)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(tensor([6.], grad_fn=&lt;MulBackward0&gt;),)
+(tensor([2.]),)</code></pre>
+<p>Q:autograd的3点使用小贴士是什么？</p>
+<ul>
+<li>1.梯度不自动清零，每次传播时会一直叠加上去，所以使用梯度之后要手动进行清零，即w.grad.zero_()，其中下划线表示inplace（原地）操作</li>
+<li>2.依赖于叶子结点的节点，requires_grad默认为True</li>
+<li>3.叶子结点不可执行in-place</li>
+</ul>
+<p>Q:逻辑回归的pytorch代码实现是什么？</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">torch.manual_seed(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成数据</span></span><br><span class="line">sample_nums = <span class="number">100</span></span><br><span class="line">mean_value = <span class="number">1.7</span></span><br><span class="line">bias = <span class="number">1</span></span><br><span class="line">n_data = torch.ones(sample_nums, <span class="number">2</span>)</span><br><span class="line"><span class="comment"># 类别0 数据 shape=(100, 2)</span></span><br><span class="line">x0 = torch.normal(mean_value * n_data, <span class="number">1</span>) + bias</span><br><span class="line"><span class="comment"># 类别0 标签 shape=(100)</span></span><br><span class="line">y0 = torch.zeros(sample_nums)</span><br><span class="line"><span class="comment"># 类别1 数据 shape=(100, 2)</span></span><br><span class="line">x1 = torch.normal(-mean_value * n_data, <span class="number">1</span>) + bias</span><br><span class="line"><span class="comment"># 类别1 标签 shape=(100)</span></span><br><span class="line">y1 = torch.ones(sample_nums)</span><br><span class="line">train_x = torch.cat((x0, x1), <span class="number">0</span>)</span><br><span class="line">train_y = torch.cat((y0, y1), <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LR</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(LR, self).__init__()</span><br><span class="line">        self.features = nn.Linear(<span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        self.sigmoid = nn.Sigmoid()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.features(x)</span><br><span class="line">        x = self.sigmoid(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化逻辑回归模型</span></span><br><span class="line">lr_net = LR()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择损失函数，交叉熵损失</span></span><br><span class="line">loss_fn = nn.BCELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择优化器</span></span><br><span class="line">lr = <span class="number">0.01</span> <span class="comment"># 学习率</span></span><br><span class="line">optimizer = torch.optim.SGD(lr_net.parameters(), lr=lr, momentum=<span class="number">0.9</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型训练</span></span><br><span class="line"><span class="keyword">for</span> iteration <span class="keyword">in</span> range(<span class="number">1000</span>):</span><br><span class="line">    <span class="comment"># 前向传播</span></span><br><span class="line">    y_pred = lr_net(train_x)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算loss</span></span><br><span class="line">    loss = loss_fn(y_pred.squeeze(), train_y)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 反向传播</span></span><br><span class="line">    loss.backward()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 更新参数</span></span><br><span class="line">    optimizer.step()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 清空梯度</span></span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 绘图</span></span><br><span class="line">    <span class="keyword">if</span> iteration % <span class="number">50</span> == <span class="number">0</span>:</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 以0.5为阈值进行分类</span></span><br><span class="line">        mask = y_pred.ge(<span class="number">0.5</span>).float().squeeze()</span><br><span class="line">        <span class="comment"># 计算正确预测的样本个数</span></span><br><span class="line">        correct = (mask == train_y).sum()</span><br><span class="line">        <span class="comment"># 计算分类准确率</span></span><br><span class="line">        acc = correct.item() / train_y.size(<span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        plt.scatter(x0.data.numpy()[:, <span class="number">0</span>], x0.data.numpy()[:, <span class="number">1</span>], c=<span class="string">&#x27;r&#x27;</span>, label=<span class="string">&#x27;class 0&#x27;</span>)</span><br><span class="line">        plt.scatter(x1.data.numpy()[:, <span class="number">0</span>], x1.data.numpy()[:, <span class="number">1</span>], c=<span class="string">&#x27;b&#x27;</span>, label=<span class="string">&#x27;class 1&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        w0, w1 = lr_net.features.weight[<span class="number">0</span>]</span><br><span class="line">        w0, w1 = float(w0.item()), float(w1.item())</span><br><span class="line">        plot_b = float(lr_net.features.bias[<span class="number">0</span>].item())</span><br><span class="line">        plot_x = np.arange(<span class="number">-6</span>, <span class="number">6</span>, <span class="number">0.1</span>)</span><br><span class="line">        plot_y = (-w0 * plot_x - plot_b) / w1</span><br><span class="line">        </span><br><span class="line">        plt.xlim(<span class="number">-5</span>, <span class="number">7</span>)</span><br><span class="line">        plt.ylim(<span class="number">-7</span>, <span class="number">7</span>)</span><br><span class="line">        plt.plot(plot_x, plot_y)</span><br><span class="line">        </span><br><span class="line">        plt.text(<span class="number">-5</span>, <span class="number">5</span>, <span class="string">&#x27;Loss=%.4f&#x27;</span> % loss.data.numpy(), fontdict=&#123;<span class="string">&#x27;size&#x27;</span>:<span class="number">20</span>, <span class="string">&#x27;color&#x27;</span>:<span class="string">&#x27;red&#x27;</span>&#125;)</span><br><span class="line">        plt.title(<span class="string">&quot;Iteration: &#123;&#125;\nw0:&#123;:.2f&#125; w1:&#123;:.2f&#125; b: &#123;:.2f&#125; accuracy:&#123;:.2%&#125;&quot;</span>.format(iteration, w0, w1, plot_b, acc))</span><br><span class="line">        plt.legend()</span><br><span class="line"></span><br><span class="line">        plt.show()</span><br><span class="line">        plt.pause(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> acc &gt; <span class="number">0.99</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://anki190912.xuexihaike.com/20200920100028.png"></p>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
+      </tags>
+  </entry>
 </search>
