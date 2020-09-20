@@ -108,7 +108,8 @@
   <entry>
     <title>pytorch第一周学习笔记</title>
     <url>/2020/09/20/pytorch-week1/</url>
-    <content><![CDATA[<h1 id="1-PyTorch简介与安装"><a href="#1-PyTorch简介与安装" class="headerlink" title="1.PyTorch简介与安装"></a>1.PyTorch简介与安装</h1><p>Q:如何安装Pytorch?</p>
+    <content><![CDATA[<p>Github链接：<a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb</a></p>
+<h1 id="1-PyTorch简介与安装"><a href="#1-PyTorch简介与安装" class="headerlink" title="1.PyTorch简介与安装"></a>1.PyTorch简介与安装</h1><p>Q:如何安装Pytorch?</p>
 <ul>
 <li>安装anaconda：<code>conda install pytorch torchvision</code></li>
 <li>测试是否安装成功：</li>
