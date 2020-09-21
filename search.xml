@@ -587,7 +587,7 @@ tensor([[10.5570,  9.5257, 11.0113],
 <p>Q:如何用计算图进行梯度求导，如$y = (x+w)*(w+1)$</p>
 <ul>
 <li>$a = x + w, b = w + 1, y = a * b$</li>
-<li>$$\begin{aligned}<br>\frac{\partial \mathrm{y}}{\partial w} &amp;=\frac{\partial \mathrm{y}}{\partial a} \frac{\partial a}{\partial w}+\frac{\partial \mathrm{y}}{\partial b} \frac{\partial b}{\partial w} \<br>&amp;=b * 1+\mathrm{a} * 1 \<br>&amp;=\mathrm{b}+\mathrm{a} \<br>&amp;=(\mathrm{w}+1)+(\mathrm{x}+\mathrm{w}) \<br>&amp;=2 * \mathrm{w}+\mathrm{x}+1 \<br>&amp;=2 * 1+2+1=5\end{aligned}$$</li>
+<li>$$\begin{aligned}<br>\frac{\partial \mathrm{y}}{\partial w} &amp;=\frac{\partial \mathrm{y}}{\partial a} \frac{\partial a}{\partial w}+\frac{\partial \mathrm{y}}{\partial b} \frac{\partial b}{\partial w} \\<br>&amp;=b * 1+\mathrm{a} * 1 \\<br>&amp;=\mathrm{b}+\mathrm{a} \\<br>&amp;=(\mathrm{w}+1)+(\mathrm{x}+\mathrm{w}) \\<br>&amp;=2 * \mathrm{w}+\mathrm{x}+1 \\<br>&amp;=2 * 1+2+1=5\end{aligned}$$</li>
 <li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
 <li>y对w求导在计算图中其实就是找到y到w的所有路径上的导数，进行求和</li>
 </ul>
