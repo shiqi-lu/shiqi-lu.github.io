@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>第一篇博客：为什么我要建博客和写博客</title>
-    <url>/2020/09/12/first-blog/</url>
+    <url>/first-blog/</url>
     <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
 <p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
 <h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
@@ -107,7 +107,7 @@
   </entry>
   <entry>
     <title>pytorch第一周学习笔记</title>
-    <url>/2020/09/20/pytorch-week1/</url>
+    <url>/pytorch-week1/</url>
     <content><![CDATA[<p>最原始编辑版在<a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Github链接</a></p>
 <h1 id="1-PyTorch简介与安装"><a href="#1-PyTorch简介与安装" class="headerlink" title="1.PyTorch简介与安装"></a>1.PyTorch简介与安装</h1><p>Q:如何安装Pytorch?</p>
 <ul>
