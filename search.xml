@@ -460,6 +460,10 @@
 <h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
 <figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
 
+
+<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
+<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
+<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
 <h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
 <ul>
 <li>SEO</li>
@@ -491,6 +495,88 @@
       <tags>
         <tag>感想</tag>
         <tag>自我提升</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pytorch学习笔记</title>
+    <url>/pytorch-learning/</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
+<ul>
+<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
+<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
+<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
+<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
+<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+</ul>
+<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
+<ul>
+<li>Pytorch简介及环境配置</li>
+<li>Pytorch基础数据结构——张量</li>
+<li>张量操作与线性回归</li>
+<li>计算图与动态图机制</li>
+<li>autograd与逻辑回归</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
+<ul>
+<li>数据读取机制DataLoader与Dataset</li>
+<li>数据预处理transforms模块机制</li>
+<li>二十二种transforms数据预处理方法</li>
+<li>学会自定义transforms方法</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
+<ul>
+<li>nn.Module与网络模型构建步骤</li>
+<li>模型容器与AlexNet构建</li>
+<li>网络层中的卷积层</li>
+<li>网络层中的池化层、全连接层和激活函数层</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
+<ul>
+<li>权值初始化</li>
+<li>损失函数（一）</li>
+<li>Pytorch的14种损失函数</li>
+<li>优化器optimizer的概念</li>
+<li>torch.optim.SGD</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
+<ul>
+<li>学习率调整</li>
+<li>TensorBoard简介与安装</li>
+<li>TensorBoard使用（一）</li>
+<li>TensorBoard使用（二）</li>
+<li>hook函数与CAM</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
+<ul>
+<li>weight_decay</li>
+<li>dropout</li>
+<li>Batch Normalization</li>
+<li>Layer Normalization、Instance</li>
+<li>Normalization和Group Normalization</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
+<ul>
+<li>模型保存与加载</li>
+<li>Finetune</li>
+<li>GPU的使用</li>
+<li>Pytorch中常见报错</li>
+</ul>
+<p>Week8、9 PyTorch深度体验</p>
+<ul>
+<li>图像分类一瞥</li>
+<li>图像分割一瞥</li>
+<li>目标检测一瞥（上）</li>
+<li>目标检测一瞥（下）</li>
+<li>对抗生成网络一瞥</li>
+<li>循环神经网络一瞥</li>
+</ul>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -642,88 +728,6 @@
       </categories>
       <tags>
         <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pytorch学习笔记</title>
-    <url>/pytorch-learning/</url>
-    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
-</ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
-</ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
-</ul>
-]]></content>
-      <categories>
-        <category>pytorch学习笔记</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
