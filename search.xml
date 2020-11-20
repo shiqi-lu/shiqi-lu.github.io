@@ -189,115 +189,6 @@
       </tags>
   </entry>
   <entry>
-    <title>第一篇博客：为什么我要建博客和写博客</title>
-    <url>/first-blog/</url>
-    <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
-<p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
-<h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
-<p>选择hexo是因为，能支持markdown的书写，和我现有的工具套件能配套上，可以无缝迁移过来，hexo的生态和主题都相对完善。</p>
-<h1 id="过程和踩坑"><a href="#过程和踩坑" class="headerlink" title="过程和踩坑"></a>过程和踩坑</h1><h2 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h2><p>直接上<a href="https://wanwang.aliyun.com/">万网</a>购买自己的域名，做完实名认证之后即可先放着，详细步骤具体参考<a href="https://zhuanlan.zhihu.com/p/103860494">知乎</a>。</p>
-<h2 id="安装node和hexo，并部署到github"><a href="#安装node和hexo，并部署到github" class="headerlink" title="安装node和hexo，并部署到github"></a>安装node和hexo，并部署到github</h2><p>具体参考<a href="https://zhuanlan.zhihu.com/p/105715224">知乎</a>，我是安装在macOS上，不需要搞这里面复杂的各种环境变量。</p>
-<p>踩坑：我原本以为是建完git仓库后，把仓库pull下来，在里面初始化hexo，但后面看了一下，是要在空文件夹操作，并且后续发布到github的文件是hexo进行编译后的文件。</p>
-<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>能够部署之后保证通过github.io能访问即可做域名解析，具体参考<a href="https://zhuanlan.zhihu.com/p/103813944">知乎</a></p>
-<h2 id="挑选主题"><a href="#挑选主题" class="headerlink" title="挑选主题"></a>挑选主题</h2><p>原本我想直接在<a href="https://hexo.io/themes/">官方的主题链接</a>里挑一个比较合适的，给自己定了几个标准：</p>
-<ol>
-<li>整体必须是简洁的，那种大量有图片装饰的，背景花哨的不考虑（原因是，挑图片暴露自己的垃圾审美，还要给每个博客挑配图太费心力了）</li>
-<li>必须能支持公式、代码块高亮等的解析</li>
-<li>偏好整体布局要简洁，偏好侧边栏在右边，并且偏好文章要有侧边栏</li>
-<li>主题必须有开发者长期维护和更新</li>
-<li>能有评论系统</li>
-</ol>
-<p>在上面看花了眼，都没有一个不合适的，看了大半天，猛然觉得自己挑选的思路不对，在最原始的未经过筛选的主题站里挑选，能不费劲吗？</p>
-<p>转换思路，直接搜推荐的hexo主题，然后看到next主题是几乎完全符合我的要求的，然后发现next主题经历了好几个大版本的迭代，甚至github仓库都换了几次，直接上最新的8.0版本，拉下来</p>
-<h2 id="next主题各种调整优化"><a href="#next主题各种调整优化" class="headerlink" title="next主题各种调整优化"></a>next主题各种调整优化</h2><p>next主题中可以进行自主化调整的地方还挺多的，而且8.0版本中，很多地方和以往版本中有不一样的调整方式，我尽量把我用到的写一下。所做的所有操作基本是改一下themes/next下的_config.yml，很少一部分是更改hexo下的_config.yml，偶尔会使用npm装个包</p>
-<h3 id="设置首页信息"><a href="#设置首页信息" class="headerlink" title="设置首页信息"></a>设置首页信息</h3><figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">每天净瞎搞</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;关注：AI/CS/数学/自我提升等&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;既然选择了远方，便只顾风雨兼程&#x27;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Shiqi</span> <span class="string">Lu</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://shiqi-lu.tech</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="风格选择"><a href="#风格选择" class="headerlink" title="风格选择"></a>风格选择</h3><p>我把四个风格都试了一遍，最后比较喜欢Gemini</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment"># scheme: Mist</span></span><br><span class="line"><span class="comment"># scheme: Pisces</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Gemini</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="支持暗黑模式"><a href="#支持暗黑模式" class="headerlink" title="支持暗黑模式"></a>支持暗黑模式</h3><p>这可是个意外惊喜，还会根据系统的设置自动适配</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Dark Mode</span></span><br><span class="line"><span class="attr">darkmode:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置建站时间"><a href="#设置建站时间" class="headerlink" title="设置建站时间"></a>设置建站时间</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2020</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置网站脚注的信息（图标、备案等）"><a href="#设置网站脚注的信息（图标、备案等）" class="headerlink" title="设置网站脚注的信息（图标、备案等）"></a>设置网站脚注的信息（图标、备案等）</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Icon between year and copyright info.</span></span><br><span class="line">  <span class="attr">icon:</span></span><br><span class="line">    <span class="comment"># Icon name in Font Awesome. See: https://fontawesome.com/icons</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">fa</span> <span class="string">fa-heart</span></span><br><span class="line">    <span class="comment"># If you want to animate the icon, set it to true.</span></span><br><span class="line">    <span class="attr">animated:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Change the color of icon, using Hex Code.</span></span><br><span class="line">    <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="网站图标"><a href="#网站图标" class="headerlink" title="网站图标"></a>网站图标</h3><p>先到网上找适合的图标，然后更新一下对应的文件，免费的图标素材网站：<a href="https://www.easyicon.net/1220579-maple_leaf_icon.html">Easyicon</a></p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/7-16.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/7-32.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/7-128.png</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="标签页和分类页"><a href="#标签页和分类页" class="headerlink" title="标签页和分类页"></a>标签页和分类页</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/custom-pages.html#Adding-%C2%ABTags%C2%BB-Page">next文档</a></p>
-<h3 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h3><p>我喜欢放在右边，主要是因为视觉聚焦主要是在左边的</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">sidebar:</span></span><br><span class="line">  <span class="comment"># Sidebar Position.</span></span><br><span class="line">  <span class="comment"># position: left</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">right</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="打开文章标题下方更新时间、阅读时长等信息"><a href="#打开文章标题下方更新时间、阅读时长等信息" class="headerlink" title="打开文章标题下方更新时间、阅读时长等信息"></a>打开文章标题下方更新时间、阅读时长等信息</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html#Post-Wordcount">官方文档</a><br>先按照npm包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-word-counter</span><br><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post meta display settings</span></span><br><span class="line"><span class="attr">post_meta:</span></span><br><span class="line">  <span class="attr">item_text:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">created_at:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">updated_at:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">another_day:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-word-counter</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="博客首页的摘要设置"><a href="#博客首页的摘要设置" class="headerlink" title="博客首页的摘要设置"></a>博客首页的摘要设置</h3><p>这个要配合文章中的description字段，或在文章中添加一行注释辅助，参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html?highlight=more#Preamble-Text">官方文档</a></p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Automatically excerpt description in homepage as preamble text.</span></span><br><span class="line"><span class="attr">excerpt_description:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read more button</span></span><br><span class="line"><span class="comment"># If true, the read more button will be displayed in excerpt section.</span></span><br><span class="line"><span class="attr">read_more_btn:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="置顶的百分比和顶部进度条"><a href="#置顶的百分比和顶部进度条" class="headerlink" title="置顶的百分比和顶部进度条"></a>置顶的百分比和顶部进度条</h3><p>默认给的颜色有点花哨，我改成了灰色</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="comment"># color: &quot;#37c6c0&quot;</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="头像设置"><a href="#头像设置" class="headerlink" title="头像设置"></a>头像设置</h3><p>在url里放置本地图片或者图床链接</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="代码块高亮风格选择"><a href="#代码块高亮风格选择" class="headerlink" title="代码块高亮风格选择"></a>代码块高亮风格选择</h3><p>使用了hightlight.js的高亮样式</p>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">highlight:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">auto_detect:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;    &#x27;</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">hljs:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">prismjs:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">preprocess:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># All available themes: https://theme-next.js.org/highlight/</span></span><br><span class="line">  <span class="attr">theme:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">tomorrow-night-bright</span></span><br><span class="line">  <span class="attr">prism:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">prism</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">prism-dark</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">flat</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="社交账号设置"><a href="#社交账号设置" class="headerlink" title="社交账号设置"></a>社交账号设置</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/shiqi-lu</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br><span class="line">  <span class="attr">E-Mail:</span> <span class="string">mailto:traumlou@163.com</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-envelope</span></span><br><span class="line">  <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">  <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">  <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">  <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">social_icons:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">icons_only:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">transition:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="支持本地搜索"><a href="#支持本地搜索" class="headerlink" title="支持本地搜索"></a>支持本地搜索</h3><p>参考<a href="https://theme-next.js.org/docs/third-party-services/search-services.html?highlight=search#Local-Search">官方文档</a><br>先装包：<code>$ npm install hexo-generator-searchdb </code></p>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">content:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="评论系统"><a href="#评论系统" class="headerlink" title="评论系统"></a>评论系统</h3><p>评论系统选择了<a href="https://valine.js.org/">valine</a>，请参考<a href="https://theme-next.js.org/docs/third-party-services/comments.html?highlight=comme#Valine-China">next文档</a>，其中头像需要注册一下Gravatar，参考<a href="https://valine.js.org/avatar.html">头像配置</a>，这里的邮箱提醒好像有问题，官方说明的方法不能用了。这个以后再说吧，我也不想有个评论就给我发邮件，要真有比较紧急的事情，直接发我邮箱吧</p>
-<h3 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h3><p>注意这里8.0更新之后，就不是通过安装插件改源码的方式实现，直接在文章的front-matter里面添加一个字段：sticky就可以实现了，值越高排的越前，默认为0是按照时间顺序，参考<a href="https://theme-next.js.org/docs/advanced-settings/front-matter.html?highlight=stick">官方文档</a></p>
-<h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
-
-
-<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
-<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
-<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
-<h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
-<ul>
-<li>SEO</li>
-<li>个人简介</li>
-<li>README</li>
-<li>访问速度比较慢，考虑使用除github外的托管服务</li>
-<li>考虑使用CI</li>
-<li>考虑CDN加速</li>
-<li>考虑把http转换成https</li>
-<li>备案</li>
-<li>图床替换成自己的域名</li>
-<li>完善和链接一下领英</li>
-<li>研究一下博客如何分享链接到微信</li>
-</ul>
-<h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
-<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
-</ul>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
-<li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细）</a></li>
-<li><a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a></li>
-<li><a href="https://github.com/next-theme/hexo-theme-next">Next8.0 Github</a></li>
-<li><a href="https://theme-next.js.org/">Next8.0 文档</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>自我提升</category>
-      </categories>
-      <tags>
-        <tag>感想</tag>
-        <tag>自我提升</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>特征选择方法汇总</title>
     <url>/feature-selection/</url>
     <content><![CDATA[<h1 id="什么是特征选择"><a href="#什么是特征选择" class="headerlink" title="什么是特征选择"></a>什么是特征选择</h1><ul>
@@ -495,6 +386,115 @@
       <tags>
         <tag>机器学习</tag>
         <tag>特征工程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一篇博客：为什么我要建博客和写博客</title>
+    <url>/first-blog/</url>
+    <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
+<p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
+<h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
+<p>选择hexo是因为，能支持markdown的书写，和我现有的工具套件能配套上，可以无缝迁移过来，hexo的生态和主题都相对完善。</p>
+<h1 id="过程和踩坑"><a href="#过程和踩坑" class="headerlink" title="过程和踩坑"></a>过程和踩坑</h1><h2 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h2><p>直接上<a href="https://wanwang.aliyun.com/">万网</a>购买自己的域名，做完实名认证之后即可先放着，详细步骤具体参考<a href="https://zhuanlan.zhihu.com/p/103860494">知乎</a>。</p>
+<h2 id="安装node和hexo，并部署到github"><a href="#安装node和hexo，并部署到github" class="headerlink" title="安装node和hexo，并部署到github"></a>安装node和hexo，并部署到github</h2><p>具体参考<a href="https://zhuanlan.zhihu.com/p/105715224">知乎</a>，我是安装在macOS上，不需要搞这里面复杂的各种环境变量。</p>
+<p>踩坑：我原本以为是建完git仓库后，把仓库pull下来，在里面初始化hexo，但后面看了一下，是要在空文件夹操作，并且后续发布到github的文件是hexo进行编译后的文件。</p>
+<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>能够部署之后保证通过github.io能访问即可做域名解析，具体参考<a href="https://zhuanlan.zhihu.com/p/103813944">知乎</a></p>
+<h2 id="挑选主题"><a href="#挑选主题" class="headerlink" title="挑选主题"></a>挑选主题</h2><p>原本我想直接在<a href="https://hexo.io/themes/">官方的主题链接</a>里挑一个比较合适的，给自己定了几个标准：</p>
+<ol>
+<li>整体必须是简洁的，那种大量有图片装饰的，背景花哨的不考虑（原因是，挑图片暴露自己的垃圾审美，还要给每个博客挑配图太费心力了）</li>
+<li>必须能支持公式、代码块高亮等的解析</li>
+<li>偏好整体布局要简洁，偏好侧边栏在右边，并且偏好文章要有侧边栏</li>
+<li>主题必须有开发者长期维护和更新</li>
+<li>能有评论系统</li>
+</ol>
+<p>在上面看花了眼，都没有一个不合适的，看了大半天，猛然觉得自己挑选的思路不对，在最原始的未经过筛选的主题站里挑选，能不费劲吗？</p>
+<p>转换思路，直接搜推荐的hexo主题，然后看到next主题是几乎完全符合我的要求的，然后发现next主题经历了好几个大版本的迭代，甚至github仓库都换了几次，直接上最新的8.0版本，拉下来</p>
+<h2 id="next主题各种调整优化"><a href="#next主题各种调整优化" class="headerlink" title="next主题各种调整优化"></a>next主题各种调整优化</h2><p>next主题中可以进行自主化调整的地方还挺多的，而且8.0版本中，很多地方和以往版本中有不一样的调整方式，我尽量把我用到的写一下。所做的所有操作基本是改一下themes/next下的_config.yml，很少一部分是更改hexo下的_config.yml，偶尔会使用npm装个包</p>
+<h3 id="设置首页信息"><a href="#设置首页信息" class="headerlink" title="设置首页信息"></a>设置首页信息</h3><figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">每天净瞎搞</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;关注：AI/CS/数学/自我提升等&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;既然选择了远方，便只顾风雨兼程&#x27;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Shiqi</span> <span class="string">Lu</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://shiqi-lu.tech</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="风格选择"><a href="#风格选择" class="headerlink" title="风格选择"></a>风格选择</h3><p>我把四个风格都试了一遍，最后比较喜欢Gemini</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment"># scheme: Mist</span></span><br><span class="line"><span class="comment"># scheme: Pisces</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Gemini</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持暗黑模式"><a href="#支持暗黑模式" class="headerlink" title="支持暗黑模式"></a>支持暗黑模式</h3><p>这可是个意外惊喜，还会根据系统的设置自动适配</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Dark Mode</span></span><br><span class="line"><span class="attr">darkmode:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置建站时间"><a href="#设置建站时间" class="headerlink" title="设置建站时间"></a>设置建站时间</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2020</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置网站脚注的信息（图标、备案等）"><a href="#设置网站脚注的信息（图标、备案等）" class="headerlink" title="设置网站脚注的信息（图标、备案等）"></a>设置网站脚注的信息（图标、备案等）</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Icon between year and copyright info.</span></span><br><span class="line">  <span class="attr">icon:</span></span><br><span class="line">    <span class="comment"># Icon name in Font Awesome. See: https://fontawesome.com/icons</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">fa</span> <span class="string">fa-heart</span></span><br><span class="line">    <span class="comment"># If you want to animate the icon, set it to true.</span></span><br><span class="line">    <span class="attr">animated:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Change the color of icon, using Hex Code.</span></span><br><span class="line">    <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="网站图标"><a href="#网站图标" class="headerlink" title="网站图标"></a>网站图标</h3><p>先到网上找适合的图标，然后更新一下对应的文件，免费的图标素材网站：<a href="https://www.easyicon.net/1220579-maple_leaf_icon.html">Easyicon</a></p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/7-16.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/7-32.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/7-128.png</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="标签页和分类页"><a href="#标签页和分类页" class="headerlink" title="标签页和分类页"></a>标签页和分类页</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/custom-pages.html#Adding-%C2%ABTags%C2%BB-Page">next文档</a></p>
+<h3 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h3><p>我喜欢放在右边，主要是因为视觉聚焦主要是在左边的</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">sidebar:</span></span><br><span class="line">  <span class="comment"># Sidebar Position.</span></span><br><span class="line">  <span class="comment"># position: left</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">right</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="打开文章标题下方更新时间、阅读时长等信息"><a href="#打开文章标题下方更新时间、阅读时长等信息" class="headerlink" title="打开文章标题下方更新时间、阅读时长等信息"></a>打开文章标题下方更新时间、阅读时长等信息</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html#Post-Wordcount">官方文档</a><br>先按照npm包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-word-counter</span><br><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post meta display settings</span></span><br><span class="line"><span class="attr">post_meta:</span></span><br><span class="line">  <span class="attr">item_text:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">created_at:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">updated_at:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">another_day:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-word-counter</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="博客首页的摘要设置"><a href="#博客首页的摘要设置" class="headerlink" title="博客首页的摘要设置"></a>博客首页的摘要设置</h3><p>这个要配合文章中的description字段，或在文章中添加一行注释辅助，参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html?highlight=more#Preamble-Text">官方文档</a></p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Automatically excerpt description in homepage as preamble text.</span></span><br><span class="line"><span class="attr">excerpt_description:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read more button</span></span><br><span class="line"><span class="comment"># If true, the read more button will be displayed in excerpt section.</span></span><br><span class="line"><span class="attr">read_more_btn:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="置顶的百分比和顶部进度条"><a href="#置顶的百分比和顶部进度条" class="headerlink" title="置顶的百分比和顶部进度条"></a>置顶的百分比和顶部进度条</h3><p>默认给的颜色有点花哨，我改成了灰色</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="comment"># color: &quot;#37c6c0&quot;</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="头像设置"><a href="#头像设置" class="headerlink" title="头像设置"></a>头像设置</h3><p>在url里放置本地图片或者图床链接</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="代码块高亮风格选择"><a href="#代码块高亮风格选择" class="headerlink" title="代码块高亮风格选择"></a>代码块高亮风格选择</h3><p>使用了hightlight.js的高亮样式</p>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">highlight:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">auto_detect:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;    &#x27;</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">hljs:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">prismjs:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">preprocess:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># All available themes: https://theme-next.js.org/highlight/</span></span><br><span class="line">  <span class="attr">theme:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">tomorrow-night-bright</span></span><br><span class="line">  <span class="attr">prism:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">prism</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">prism-dark</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">flat</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="社交账号设置"><a href="#社交账号设置" class="headerlink" title="社交账号设置"></a>社交账号设置</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/shiqi-lu</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br><span class="line">  <span class="attr">E-Mail:</span> <span class="string">mailto:traumlou@163.com</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-envelope</span></span><br><span class="line">  <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">  <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">  <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">  <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">social_icons:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">icons_only:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">transition:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持本地搜索"><a href="#支持本地搜索" class="headerlink" title="支持本地搜索"></a>支持本地搜索</h3><p>参考<a href="https://theme-next.js.org/docs/third-party-services/search-services.html?highlight=search#Local-Search">官方文档</a><br>先装包：<code>$ npm install hexo-generator-searchdb </code></p>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">content:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="评论系统"><a href="#评论系统" class="headerlink" title="评论系统"></a>评论系统</h3><p>评论系统选择了<a href="https://valine.js.org/">valine</a>，请参考<a href="https://theme-next.js.org/docs/third-party-services/comments.html?highlight=comme#Valine-China">next文档</a>，其中头像需要注册一下Gravatar，参考<a href="https://valine.js.org/avatar.html">头像配置</a>，这里的邮箱提醒好像有问题，官方说明的方法不能用了。这个以后再说吧，我也不想有个评论就给我发邮件，要真有比较紧急的事情，直接发我邮箱吧</p>
+<h3 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h3><p>注意这里8.0更新之后，就不是通过安装插件改源码的方式实现，直接在文章的front-matter里面添加一个字段：sticky就可以实现了，值越高排的越前，默认为0是按照时间顺序，参考<a href="https://theme-next.js.org/docs/advanced-settings/front-matter.html?highlight=stick">官方文档</a></p>
+<h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
+<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
+<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
+<h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
+<ul>
+<li>SEO</li>
+<li>个人简介</li>
+<li>README</li>
+<li>访问速度比较慢，考虑使用除github外的托管服务</li>
+<li>考虑使用CI</li>
+<li>考虑CDN加速</li>
+<li>考虑把http转换成https</li>
+<li>备案</li>
+<li>图床替换成自己的域名</li>
+<li>完善和链接一下领英</li>
+<li>研究一下博客如何分享链接到微信</li>
+</ul>
+<h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
+<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细）</a></li>
+<li><a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a></li>
+<li><a href="https://github.com/next-theme/hexo-theme-next">Next8.0 Github</a></li>
+<li><a href="https://theme-next.js.org/">Next8.0 文档</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>自我提升</category>
+      </categories>
+      <tags>
+        <tag>感想</tag>
+        <tag>自我提升</tag>
       </tags>
   </entry>
   <entry>
@@ -1689,31 +1689,19 @@ tensor([10.])</code></pre>
 </li>
 <li>造句练习<ul>
 <li>1.鸟儿快乐地唱着歌。<ul>
-<li><ol>
-<li>The birds sing happily.</li>
-</ol>
-</li>
+<li>1.The birds sing happily.</li>
 </ul>
 </li>
 <li>2.这场雨下午会停。<ul>
-<li><ol start="2">
-<li>The rain will stop in the afternoon.</li>
-</ol>
-</li>
+<li>2.The rain will stop in the afternoon.</li>
 </ul>
 </li>
 <li>3.孩子们正在公园里玩耍。<ul>
-<li><ol start="3">
-<li>The children are playing in the park.</li>
-</ol>
-</li>
+<li>3.The children are playing in the park.</li>
 </ul>
 </li>
 <li>4.我的老师昨天在医院去世了。(pass away)<ul>
-<li><ol start="4">
-<li>My teacher passed away in the hospital yesterday.</li>
-</ol>
-</li>
+<li>4.My teacher passed away in the hospital yesterday.</li>
 </ul>
 </li>
 </ul>
@@ -1735,38 +1723,23 @@ tensor([10.])</code></pre>
 </li>
 <li>造句练习<ul>
 <li>1.老师在教室的墙上贴了一些照片。<ul>
-<li><ol>
-<li>The teacher put up some pictures on the wall in the classroom.</li>
-</ol>
-</li>
+<li>1.The teacher put up some pictures on the wall in the classroom.</li>
 </ul>
 </li>
 <li>2.在公共场合你应该尊敬老人。<ul>
-<li><ol start="2">
-<li>You should respect the old in public places.</li>
-</ol>
-</li>
+<li>2.You should respect the old in public places.</li>
 </ul>
 </li>
 <li>3.他一周前开始节食。<ul>
-<li><ol start="3">
-<li>He began his diet a week ago.</li>
-</ol>
-</li>
+<li>3.He began his diet a week ago.</li>
 </ul>
 </li>
 <li>4.他于1935年9月创造了一项新的世界纪录。<ul>
-<li><ol start="4">
-<li>He set up a new world record in September 1935.</li>
-</ol>
-</li>
+<li>4.He set up a new world record in September 1935.</li>
 </ul>
 </li>
 <li>5.只有极少数人能实现他们的梦想。<ul>
-<li><ol start="5">
-<li>Only very few people can realize their dreams.</li>
-</ol>
-</li>
+<li>5.Only very few people can realize their dreams.</li>
 </ul>
 </li>
 </ul>
@@ -1837,24 +1810,15 @@ tensor([10.])</code></pre>
 </li>
 <li>造句练习<ul>
 <li>1.情人节他送给女友一束花。<ul>
-<li><ol>
-<li>He gave a bunch of flowers to his girlfriend on Valentine’s Day.</li>
-</ol>
-</li>
+<li>1.He gave a bunch of flowers to his girlfriend on Valentine’s Day.</li>
 </ul>
 </li>
 <li>2.请寄给我一张收到此款的收据。<ul>
-<li><ol start="2">
-<li>Please send me a receipt for the money.</li>
-</ol>
-</li>
+<li>2.Please send me a receipt for the money.</li>
 </ul>
 </li>
 <li>3.他告诉我几个关于英语老师的神奇故事。<ul>
-<li><ol start="3">
-<li>He told me some magical stories about our English teacher.</li>
-</ol>
-</li>
+<li>3.He told me some magical stories about our English teacher.</li>
 </ul>
 </li>
 </ul>
@@ -1879,18 +1843,9 @@ tensor([10.])</code></pre>
 <li>英语95%的定语遵循“前小后大”法则<ul>
 <li>1个单词组成的定语(限定词，形容词，名词及名词所有格)， 放在所修饰名词的前面。</li>
 <li>2个以上单词组成的定语( of属格，形容词短语，介词短语，分词短语，不定式短语等)， 放在所修饰词后面。 <ul>
-<li><ol>
-<li>They were expecting a(限定词) valuable(形容词) parcel of diamonds(of属格) from South Africa.(介词短语)他们正期待从南非来的一个装着钻石的贵重包裹。(上面四个定语,均修饰parcel)</li>
-</ol>
-</li>
-<li><ol start="2">
-<li>Mrs. Rumbold was a(限定词) large(形容词), unsmiling(形容词) lady in a tight black dress.(介词短语) 兰伯尔德夫人是一位身材高大、表情严肃的女人，穿一件紧身的黑衣服。</li>
-</ol>
-</li>
-<li><ol start="3">
-<li>First of all, he wrote out a(限定词) long(形容词) list of all the foods.(of属格)首先，他开列了一张长长列了所有食物的目录。</li>
-</ol>
-</li>
+<li>1.They were expecting a(限定词) valuable(形容词) parcel of diamonds(of属格) from South Africa.(介词短语)他们正期待从南非来的一个装着钻石的贵重包裹。(上面四个定语,均修饰parcel)</li>
+<li>2.Mrs. Rumbold was a(限定词) large(形容词), unsmiling(形容词) lady in a tight black dress.(介词短语) 兰伯尔德夫人是一位身材高大、表情严肃的女人，穿一件紧身的黑衣服。</li>
+<li>3.First of all, he wrote out a(限定词) long(形容词) list of all the foods.(of属格)首先，他开列了一张长长列了所有食物的目录。</li>
 </ul>
 </li>
 </ul>
@@ -2053,45 +2008,27 @@ tensor([10.])</code></pre>
 </li>
 <li>造句练习<ul>
 <li>1.这家便利店全天24小时营业。<ul>
-<li><ol>
-<li>This convenience store is open 24 hours a day.</li>
-</ol>
-</li>
+<li>1.This convenience store is open 24 hours a day.</li>
 </ul>
 </li>
 <li>2.我爷爷每天早上都在公园里散步。<ul>
-<li><ol start="2">
-<li>My grandfather takes a walk in the park every morning.</li>
-</ol>
-</li>
+<li>2.My grandfather takes a walk in the park every morning.</li>
 </ul>
 </li>
 <li>3.昨天我很无聊，便跟着几个朋友看电影去了。<ul>
-<li><ol start="3">
-<li>I felt bored yesterday, So I went to the movies with several friends.</li>
-</ol>
-</li>
+<li>3.I felt bored yesterday, So I went to the movies with several friends.</li>
 </ul>
 </li>
 <li>4.他明天将要去纽约。<ul>
-<li><ol start="4">
-<li>He will go to New York tomorrow.</li>
-</ol>
-</li>
+<li>4.He will go to New York tomorrow.</li>
 </ul>
 </li>
 <li>5.看！那艘船快要沉没了。(be about to)<ul>
-<li><ol start="5">
-<li>Look! The boat is about to sink.</li>
-</ol>
-</li>
+<li>5.Look! The boat is about to sink.</li>
 </ul>
 </li>
 <li>6.我们马上就要吃午餐了。<ul>
-<li><ol start="6">
-<li>We are going to have lunch soon.</li>
-</ol>
-</li>
+<li>6.We are going to have lunch soon.</li>
 </ul>
 </li>
 <li>7.太阳东升西落。<ul>
@@ -2099,24 +2036,15 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>8.我每周去两次健身房。<ul>
-<li><ol start="8">
-<li>I go to the gym twice a week.</li>
-</ol>
-</li>
+<li>8.I go to the gym twice a week.</li>
 </ul>
 </li>
 <li>9.我昨天早上在图书馆看到他。<ul>
-<li><ol start="9">
-<li>I saw him in the library yesterday morning.</li>
-</ol>
-</li>
+<li>9.I saw him in the library yesterday morning.</li>
 </ul>
 </li>
 <li>10.我准备学习计算机科学。<ul>
-<li><ol start="10">
-<li>I am going to learn the computer science.</li>
-</ol>
-</li>
+<li>10.I am going to learn the computer science.</li>
 </ul>
 </li>
 </ul>
@@ -2172,38 +2100,23 @@ tensor([10.])</code></pre>
 </li>
 <li>造句练习<ul>
 <li>1.你在桌子下面做什么? <ul>
-<li><ol>
-<li>What are you doing under the table?</li>
-</ol>
-</li>
+<li>1.What are you doing under the table?</li>
 </ul>
 </li>
 <li>2.我正梦见你时，电话铃响了。(dream about)<ul>
-<li><ol start="2">
-<li>I was dreaming about you when the telephone rang.</li>
-</ol>
-</li>
+<li>2.I was dreaming about you when the telephone rang.</li>
 </ul>
 </li>
 <li>3.明天早上这个时候，我爸爸将正在修剪草坪。(mow the lawn)<ul>
-<li><ol start="3">
-<li>My dad will be mowing the lawn at this time tomorrow morning.</li>
-</ol>
-</li>
+<li>3.My dad will be mowing the lawn at this time tomorrow morning.</li>
 </ul>
 </li>
 <li>4.我女儿正在学习，所以你最好别去烦她。<ul>
-<li><ol start="4">
-<li>My daughter is studying, so you’d better not bother her.</li>
-</ol>
-</li>
+<li>4.My daughter is studying, so you’d better not bother her.</li>
 </ul>
 </li>
 <li>5.明年这个时候我将正在美国念书。<ul>
-<li><ol start="5">
-<li>l’ll be studying in the United States at this time next year.</li>
-</ol>
-</li>
+<li>5.l’ll be studying in the United States at this time next year.</li>
 </ul>
 </li>
 </ul>
@@ -2298,73 +2211,43 @@ tensor([10.])</code></pre>
 </li>
 <li>造句练习<ul>
 <li>1.彼得去过香港很多次。<ul>
-<li><ol>
-<li>Peter has been to Hong Kong many times.</li>
-</ol>
-</li>
+<li>1.Peter has been to Hong Kong many times.</li>
 </ul>
 </li>
 <li>2.进入初中以来，我对英语很狂热。(be crazy about)<ul>
-<li><ol start="2">
-<li>I have been crazy about English since I entered junior high school.</li>
-</ol>
-</li>
+<li>2.I have been crazy about English since I entered junior high school.</li>
 </ul>
 </li>
 <li>3.到目前为止，我已经完成这项计划的三分之二。<ul>
-<li><ol start="3">
-<li>So far, I have finished two third of the project.</li>
-</ol>
-</li>
+<li>3.So far, I have finished two third of the project.</li>
 </ul>
 </li>
 <li>4.我最近很忙，恐怕要到下周一我才有空。<ul>
-<li><ol start="4">
-<li>I have been very busy recently. l’m afraid that I won’t be free until next Monday.</li>
-</ol>
-</li>
+<li>4.I have been very busy recently. l’m afraid that I won’t be free until next Monday.</li>
 </ul>
 </li>
 <li>5.过去5年来，这个好孩子都尽力照顾他生病的母亲。<ul>
-<li><ol start="5">
-<li>Over the past 5 years, the good boy has tried his best to take care of his ill mother.</li>
-</ol>
-</li>
+<li>5.Over the past 5 years, the good boy has tried his best to take care of his ill mother.</li>
 </ul>
 </li>
 <li>6.史密斯先生搬来这里之前已经在加拿大住了20年。<ul>
-<li><ol start="6">
-<li>Mr. Smith had lived in Canada for 20 years before he moved here.</li>
-</ol>
-</li>
+<li>6.Mr. Smith had lived in Canada for 20 years before he moved here.</li>
 </ul>
 </li>
 <li>7.等我到达车站时，火车已经开走了。<ul>
-<li><ol start="7">
-<li>By the time I got to the station, the train had left.</li>
-</ol>
-</li>
+<li>7.By the time I got to the station, the train had left.</li>
 </ul>
 </li>
 <li>8.玛丽昨天告诉我她很久以来一直想出国旅游。<ul>
-<li><ol start="8">
-<li>Mary told me yesterday that she had long wanted to travel abroad.</li>
-</ol>
-</li>
+<li>8.Mary told me yesterday that she had long wanted to travel abroad.</li>
 </ul>
 </li>
 <li>9.我很生气，因为我女朋友又对我爽约了。(stand sb. up)<ul>
-<li><ol start="9">
-<li>I was very angry because my girlfriend had stood me up again.</li>
-</ol>
-</li>
+<li>9.I was very angry because my girlfriend had stood me up again.</li>
 </ul>
 </li>
 <li>10.明天这个时候，约翰将已经达到芝加哥了。<ul>
-<li><ol start="10">
-<li>John will have arrived in Chicago by this time tomorrow.</li>
-</ol>
-</li>
+<li>10.John will have arrived in Chicago by this time tomorrow.</li>
 </ul>
 </li>
 </ul>
@@ -2417,24 +2300,15 @@ tensor([10.])</code></pre>
 </li>
 <li>造句练习<ul>
 <li>1.约翰自去年起就一直学日语。他希望去日本留学。<ul>
-<li><ol>
-<li>John has been learning Japanese since last year. He expects to study in Japan in the future.</li>
-</ol>
-</li>
+<li>1.John has been learning Japanese since last year. He expects to study in Japan in the future.</li>
 </ul>
 </li>
 <li>2.Lulu的车子抛锚时，她已经持续开了8个小时了。<ul>
-<li><ol start="2">
-<li>By the time her car broke down, Lulu had been driving for 8 hours.</li>
-</ol>
-</li>
+<li>2.By the time her car broke down, Lulu had been driving for 8 hours.</li>
 </ul>
 </li>
 <li>3.到今年年底，王老师教英语将有10年了。<ul>
-<li><ol start="3">
-<li>Mr. Wang will have been teaching English for 10 years by the end of this year.</li>
-</ol>
-</li>
+<li>3.Mr. Wang will have been teaching English for 10 years by the end of this year.</li>
 </ul>
 </li>
 </ul>
@@ -2452,24 +2326,15 @@ tensor([10.])</code></pre>
 </li>
 <li>造句练习<ul>
 <li>1.在信中她说她明年将到英国来。<ul>
-<li><ol>
-<li>In her letter, she said that she would come to England next year.</li>
-</ol>
-</li>
+<li>1.In her letter, she said that she would come to England next year.</li>
 </ul>
 </li>
 <li>2.他问我明天上午10点我将干什么。<ul>
-<li><ol start="2">
-<li>He asked me what I should be doing at 10 a.m. the next day</li>
-</ol>
-</li>
+<li>2.He asked me what I should be doing at 10 a.m. the next day</li>
 </ul>
 </li>
 <li>3.他告诉我们他会在8点以前干完工作。<ul>
-<li><ol start="3">
-<li>He told us he would have finished the work by 8 o’clock.</li>
-</ol>
-</li>
+<li>3.He told us he would have finished the work by 8 o’clock.</li>
 </ul>
 </li>
 </ul>
@@ -2558,73 +2423,43 @@ tensor([10.])</code></pre>
 <li>完成进行态很少用于被动语句</li>
 <li>造句练习<ul>
 <li>1.欧元在大部分欧洲国家都被使用。<ul>
-<li><ol>
-<li>The euro is used in most European countries.</li>
-</ol>
-</li>
+<li>1.The euro is used in most European countries.</li>
 </ul>
 </li>
 <li>2.这些电脑是在台湾制造的。<ul>
-<li><ol start="2">
-<li>These computers were manufactured in Taiwan.</li>
-</ol>
-</li>
+<li>2.These computers were manufactured in Taiwan.</li>
 </ul>
 </li>
 <li>3.2012年的奥运会将在伦敦举行。<ul>
-<li><ol start="3">
-<li>The 2012 Olympic Games will be held in London.</li>
-</ol>
-</li>
+<li>3.The 2012 Olympic Games will be held in London.</li>
 </ul>
 </li>
 <li>4.一名应聘者正被我们的人事经理面试着<ul>
-<li><ol start="4">
-<li>An applicant is being interviewed by our personnel manager.</li>
-</ol>
-</li>
+<li>4.An applicant is being interviewed by our personnel manager.</li>
 </ul>
 </li>
 <li>5.那栋旧大楼已被拆除。(tear down)<ul>
-<li><ol start="5">
-<li>The old building has been torn down.</li>
-</ol>
-</li>
+<li>5.The old building has been torn down.</li>
 </ul>
 </li>
 <li>6.我们办公室的房间都是每天打扫的。<ul>
-<li><ol start="6">
-<li>Our office rooms are cleaned up every day.</li>
-</ol>
-</li>
+<li>6.Our office rooms are cleaned up every day.</li>
 </ul>
 </li>
 <li>7.汤姆昨天被一只狗咬到，所幸无大碍。<ul>
-<li><ol start="7">
-<li>Tom was bitten by a dog yesterday. Fortunately, it was nothing serious.</li>
-</ol>
-</li>
+<li>7.Tom was bitten by a dog yesterday. Fortunately, it was nothing serious.</li>
 </ul>
 </li>
 <li>8.因为经济不景气(the economic recession),大约5000名员工将被裁员(lay off)。<ul>
-<li><ol start="8">
-<li>Because of the economic recession, about 5,000 employees will be laid off.</li>
-</ol>
-</li>
+<li>8.Because of the economic recession, about 5,000 employees will be laid off.</li>
 </ul>
 </li>
 <li>9.六个人被困在矿井里已有17个小时了。<ul>
-<li><ol start="9">
-<li>Six men have been trapped in a mine for seventeen hours.</li>
-</ol>
-</li>
+<li>9.Six men have been trapped in a mine for seventeen hours.</li>
 </ul>
 </li>
 <li>10.这场地震结束的时候有多少建筑被毁坏了?<ul>
-<li><ol start="10">
-<li>How many buildings had been destroyed when the earthquake ended?</li>
-</ol>
-</li>
+<li>10.How many buildings had been destroyed when the earthquake ended?</li>
 </ul>
 </li>
 </ul>
