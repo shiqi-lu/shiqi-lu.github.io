@@ -189,6 +189,115 @@
       </tags>
   </entry>
   <entry>
+    <title>第一篇博客：为什么我要建博客和写博客</title>
+    <url>/first-blog/</url>
+    <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
+<p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
+<h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
+<p>选择hexo是因为，能支持markdown的书写，和我现有的工具套件能配套上，可以无缝迁移过来，hexo的生态和主题都相对完善。</p>
+<h1 id="过程和踩坑"><a href="#过程和踩坑" class="headerlink" title="过程和踩坑"></a>过程和踩坑</h1><h2 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h2><p>直接上<a href="https://wanwang.aliyun.com/">万网</a>购买自己的域名，做完实名认证之后即可先放着，详细步骤具体参考<a href="https://zhuanlan.zhihu.com/p/103860494">知乎</a>。</p>
+<h2 id="安装node和hexo，并部署到github"><a href="#安装node和hexo，并部署到github" class="headerlink" title="安装node和hexo，并部署到github"></a>安装node和hexo，并部署到github</h2><p>具体参考<a href="https://zhuanlan.zhihu.com/p/105715224">知乎</a>，我是安装在macOS上，不需要搞这里面复杂的各种环境变量。</p>
+<p>踩坑：我原本以为是建完git仓库后，把仓库pull下来，在里面初始化hexo，但后面看了一下，是要在空文件夹操作，并且后续发布到github的文件是hexo进行编译后的文件。</p>
+<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>能够部署之后保证通过github.io能访问即可做域名解析，具体参考<a href="https://zhuanlan.zhihu.com/p/103813944">知乎</a></p>
+<h2 id="挑选主题"><a href="#挑选主题" class="headerlink" title="挑选主题"></a>挑选主题</h2><p>原本我想直接在<a href="https://hexo.io/themes/">官方的主题链接</a>里挑一个比较合适的，给自己定了几个标准：</p>
+<ol>
+<li>整体必须是简洁的，那种大量有图片装饰的，背景花哨的不考虑（原因是，挑图片暴露自己的垃圾审美，还要给每个博客挑配图太费心力了）</li>
+<li>必须能支持公式、代码块高亮等的解析</li>
+<li>偏好整体布局要简洁，偏好侧边栏在右边，并且偏好文章要有侧边栏</li>
+<li>主题必须有开发者长期维护和更新</li>
+<li>能有评论系统</li>
+</ol>
+<p>在上面看花了眼，都没有一个不合适的，看了大半天，猛然觉得自己挑选的思路不对，在最原始的未经过筛选的主题站里挑选，能不费劲吗？</p>
+<p>转换思路，直接搜推荐的hexo主题，然后看到next主题是几乎完全符合我的要求的，然后发现next主题经历了好几个大版本的迭代，甚至github仓库都换了几次，直接上最新的8.0版本，拉下来</p>
+<h2 id="next主题各种调整优化"><a href="#next主题各种调整优化" class="headerlink" title="next主题各种调整优化"></a>next主题各种调整优化</h2><p>next主题中可以进行自主化调整的地方还挺多的，而且8.0版本中，很多地方和以往版本中有不一样的调整方式，我尽量把我用到的写一下。所做的所有操作基本是改一下themes/next下的_config.yml，很少一部分是更改hexo下的_config.yml，偶尔会使用npm装个包</p>
+<h3 id="设置首页信息"><a href="#设置首页信息" class="headerlink" title="设置首页信息"></a>设置首页信息</h3><figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">每天净瞎搞</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;关注：AI/CS/数学/自我提升等&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;既然选择了远方，便只顾风雨兼程&#x27;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Shiqi</span> <span class="string">Lu</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://shiqi-lu.tech</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="风格选择"><a href="#风格选择" class="headerlink" title="风格选择"></a>风格选择</h3><p>我把四个风格都试了一遍，最后比较喜欢Gemini</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment"># scheme: Mist</span></span><br><span class="line"><span class="comment"># scheme: Pisces</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Gemini</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持暗黑模式"><a href="#支持暗黑模式" class="headerlink" title="支持暗黑模式"></a>支持暗黑模式</h3><p>这可是个意外惊喜，还会根据系统的设置自动适配</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Dark Mode</span></span><br><span class="line"><span class="attr">darkmode:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置建站时间"><a href="#设置建站时间" class="headerlink" title="设置建站时间"></a>设置建站时间</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2020</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置网站脚注的信息（图标、备案等）"><a href="#设置网站脚注的信息（图标、备案等）" class="headerlink" title="设置网站脚注的信息（图标、备案等）"></a>设置网站脚注的信息（图标、备案等）</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Icon between year and copyright info.</span></span><br><span class="line">  <span class="attr">icon:</span></span><br><span class="line">    <span class="comment"># Icon name in Font Awesome. See: https://fontawesome.com/icons</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">fa</span> <span class="string">fa-heart</span></span><br><span class="line">    <span class="comment"># If you want to animate the icon, set it to true.</span></span><br><span class="line">    <span class="attr">animated:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Change the color of icon, using Hex Code.</span></span><br><span class="line">    <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="网站图标"><a href="#网站图标" class="headerlink" title="网站图标"></a>网站图标</h3><p>先到网上找适合的图标，然后更新一下对应的文件，免费的图标素材网站：<a href="https://www.easyicon.net/1220579-maple_leaf_icon.html">Easyicon</a></p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/7-16.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/7-32.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/7-128.png</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="标签页和分类页"><a href="#标签页和分类页" class="headerlink" title="标签页和分类页"></a>标签页和分类页</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/custom-pages.html#Adding-%C2%ABTags%C2%BB-Page">next文档</a></p>
+<h3 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h3><p>我喜欢放在右边，主要是因为视觉聚焦主要是在左边的</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">sidebar:</span></span><br><span class="line">  <span class="comment"># Sidebar Position.</span></span><br><span class="line">  <span class="comment"># position: left</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">right</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="打开文章标题下方更新时间、阅读时长等信息"><a href="#打开文章标题下方更新时间、阅读时长等信息" class="headerlink" title="打开文章标题下方更新时间、阅读时长等信息"></a>打开文章标题下方更新时间、阅读时长等信息</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html#Post-Wordcount">官方文档</a><br>先按照npm包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-word-counter</span><br><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post meta display settings</span></span><br><span class="line"><span class="attr">post_meta:</span></span><br><span class="line">  <span class="attr">item_text:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">created_at:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">updated_at:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">another_day:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-word-counter</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="博客首页的摘要设置"><a href="#博客首页的摘要设置" class="headerlink" title="博客首页的摘要设置"></a>博客首页的摘要设置</h3><p>这个要配合文章中的description字段，或在文章中添加一行注释辅助，参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html?highlight=more#Preamble-Text">官方文档</a></p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Automatically excerpt description in homepage as preamble text.</span></span><br><span class="line"><span class="attr">excerpt_description:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read more button</span></span><br><span class="line"><span class="comment"># If true, the read more button will be displayed in excerpt section.</span></span><br><span class="line"><span class="attr">read_more_btn:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="置顶的百分比和顶部进度条"><a href="#置顶的百分比和顶部进度条" class="headerlink" title="置顶的百分比和顶部进度条"></a>置顶的百分比和顶部进度条</h3><p>默认给的颜色有点花哨，我改成了灰色</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="comment"># color: &quot;#37c6c0&quot;</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="头像设置"><a href="#头像设置" class="headerlink" title="头像设置"></a>头像设置</h3><p>在url里放置本地图片或者图床链接</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="代码块高亮风格选择"><a href="#代码块高亮风格选择" class="headerlink" title="代码块高亮风格选择"></a>代码块高亮风格选择</h3><p>使用了hightlight.js的高亮样式</p>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">highlight:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">auto_detect:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;    &#x27;</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">hljs:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">prismjs:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">preprocess:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># All available themes: https://theme-next.js.org/highlight/</span></span><br><span class="line">  <span class="attr">theme:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">tomorrow-night-bright</span></span><br><span class="line">  <span class="attr">prism:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">prism</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">prism-dark</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">flat</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="社交账号设置"><a href="#社交账号设置" class="headerlink" title="社交账号设置"></a>社交账号设置</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/shiqi-lu</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br><span class="line">  <span class="attr">E-Mail:</span> <span class="string">mailto:traumlou@163.com</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-envelope</span></span><br><span class="line">  <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">  <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">  <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">  <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">social_icons:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">icons_only:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">transition:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持本地搜索"><a href="#支持本地搜索" class="headerlink" title="支持本地搜索"></a>支持本地搜索</h3><p>参考<a href="https://theme-next.js.org/docs/third-party-services/search-services.html?highlight=search#Local-Search">官方文档</a><br>先装包：<code>$ npm install hexo-generator-searchdb </code></p>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">content:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="评论系统"><a href="#评论系统" class="headerlink" title="评论系统"></a>评论系统</h3><p>评论系统选择了<a href="https://valine.js.org/">valine</a>，请参考<a href="https://theme-next.js.org/docs/third-party-services/comments.html?highlight=comme#Valine-China">next文档</a>，其中头像需要注册一下Gravatar，参考<a href="https://valine.js.org/avatar.html">头像配置</a>，这里的邮箱提醒好像有问题，官方说明的方法不能用了。这个以后再说吧，我也不想有个评论就给我发邮件，要真有比较紧急的事情，直接发我邮箱吧</p>
+<h3 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h3><p>注意这里8.0更新之后，就不是通过安装插件改源码的方式实现，直接在文章的front-matter里面添加一个字段：sticky就可以实现了，值越高排的越前，默认为0是按照时间顺序，参考<a href="https://theme-next.js.org/docs/advanced-settings/front-matter.html?highlight=stick">官方文档</a></p>
+<h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
+<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
+<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
+<h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
+<ul>
+<li>SEO</li>
+<li>个人简介</li>
+<li>README</li>
+<li>访问速度比较慢，考虑使用除github外的托管服务</li>
+<li>考虑使用CI</li>
+<li>考虑CDN加速</li>
+<li>考虑把http转换成https</li>
+<li>备案</li>
+<li>图床替换成自己的域名</li>
+<li>完善和链接一下领英</li>
+<li>研究一下博客如何分享链接到微信</li>
+</ul>
+<h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
+<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细）</a></li>
+<li><a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a></li>
+<li><a href="https://github.com/next-theme/hexo-theme-next">Next8.0 Github</a></li>
+<li><a href="https://theme-next.js.org/">Next8.0 文档</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>自我提升</category>
+      </categories>
+      <tags>
+        <tag>感想</tag>
+        <tag>自我提升</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>特征选择方法汇总</title>
     <url>/feature-selection/</url>
     <content><![CDATA[<h1 id="什么是特征选择"><a href="#什么是特征选择" class="headerlink" title="什么是特征选择"></a>什么是特征选择</h1><ul>
@@ -386,115 +495,6 @@
       <tags>
         <tag>机器学习</tag>
         <tag>特征工程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>第一篇博客：为什么我要建博客和写博客</title>
-    <url>/first-blog/</url>
-    <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
-<p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
-<h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
-<p>选择hexo是因为，能支持markdown的书写，和我现有的工具套件能配套上，可以无缝迁移过来，hexo的生态和主题都相对完善。</p>
-<h1 id="过程和踩坑"><a href="#过程和踩坑" class="headerlink" title="过程和踩坑"></a>过程和踩坑</h1><h2 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h2><p>直接上<a href="https://wanwang.aliyun.com/">万网</a>购买自己的域名，做完实名认证之后即可先放着，详细步骤具体参考<a href="https://zhuanlan.zhihu.com/p/103860494">知乎</a>。</p>
-<h2 id="安装node和hexo，并部署到github"><a href="#安装node和hexo，并部署到github" class="headerlink" title="安装node和hexo，并部署到github"></a>安装node和hexo，并部署到github</h2><p>具体参考<a href="https://zhuanlan.zhihu.com/p/105715224">知乎</a>，我是安装在macOS上，不需要搞这里面复杂的各种环境变量。</p>
-<p>踩坑：我原本以为是建完git仓库后，把仓库pull下来，在里面初始化hexo，但后面看了一下，是要在空文件夹操作，并且后续发布到github的文件是hexo进行编译后的文件。</p>
-<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>能够部署之后保证通过github.io能访问即可做域名解析，具体参考<a href="https://zhuanlan.zhihu.com/p/103813944">知乎</a></p>
-<h2 id="挑选主题"><a href="#挑选主题" class="headerlink" title="挑选主题"></a>挑选主题</h2><p>原本我想直接在<a href="https://hexo.io/themes/">官方的主题链接</a>里挑一个比较合适的，给自己定了几个标准：</p>
-<ol>
-<li>整体必须是简洁的，那种大量有图片装饰的，背景花哨的不考虑（原因是，挑图片暴露自己的垃圾审美，还要给每个博客挑配图太费心力了）</li>
-<li>必须能支持公式、代码块高亮等的解析</li>
-<li>偏好整体布局要简洁，偏好侧边栏在右边，并且偏好文章要有侧边栏</li>
-<li>主题必须有开发者长期维护和更新</li>
-<li>能有评论系统</li>
-</ol>
-<p>在上面看花了眼，都没有一个不合适的，看了大半天，猛然觉得自己挑选的思路不对，在最原始的未经过筛选的主题站里挑选，能不费劲吗？</p>
-<p>转换思路，直接搜推荐的hexo主题，然后看到next主题是几乎完全符合我的要求的，然后发现next主题经历了好几个大版本的迭代，甚至github仓库都换了几次，直接上最新的8.0版本，拉下来</p>
-<h2 id="next主题各种调整优化"><a href="#next主题各种调整优化" class="headerlink" title="next主题各种调整优化"></a>next主题各种调整优化</h2><p>next主题中可以进行自主化调整的地方还挺多的，而且8.0版本中，很多地方和以往版本中有不一样的调整方式，我尽量把我用到的写一下。所做的所有操作基本是改一下themes/next下的_config.yml，很少一部分是更改hexo下的_config.yml，偶尔会使用npm装个包</p>
-<h3 id="设置首页信息"><a href="#设置首页信息" class="headerlink" title="设置首页信息"></a>设置首页信息</h3><figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">每天净瞎搞</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;关注：AI/CS/数学/自我提升等&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;既然选择了远方，便只顾风雨兼程&#x27;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Shiqi</span> <span class="string">Lu</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://shiqi-lu.tech</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="风格选择"><a href="#风格选择" class="headerlink" title="风格选择"></a>风格选择</h3><p>我把四个风格都试了一遍，最后比较喜欢Gemini</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment"># scheme: Mist</span></span><br><span class="line"><span class="comment"># scheme: Pisces</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Gemini</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="支持暗黑模式"><a href="#支持暗黑模式" class="headerlink" title="支持暗黑模式"></a>支持暗黑模式</h3><p>这可是个意外惊喜，还会根据系统的设置自动适配</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Dark Mode</span></span><br><span class="line"><span class="attr">darkmode:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置建站时间"><a href="#设置建站时间" class="headerlink" title="设置建站时间"></a>设置建站时间</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2020</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置网站脚注的信息（图标、备案等）"><a href="#设置网站脚注的信息（图标、备案等）" class="headerlink" title="设置网站脚注的信息（图标、备案等）"></a>设置网站脚注的信息（图标、备案等）</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Icon between year and copyright info.</span></span><br><span class="line">  <span class="attr">icon:</span></span><br><span class="line">    <span class="comment"># Icon name in Font Awesome. See: https://fontawesome.com/icons</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">fa</span> <span class="string">fa-heart</span></span><br><span class="line">    <span class="comment"># If you want to animate the icon, set it to true.</span></span><br><span class="line">    <span class="attr">animated:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Change the color of icon, using Hex Code.</span></span><br><span class="line">    <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="网站图标"><a href="#网站图标" class="headerlink" title="网站图标"></a>网站图标</h3><p>先到网上找适合的图标，然后更新一下对应的文件，免费的图标素材网站：<a href="https://www.easyicon.net/1220579-maple_leaf_icon.html">Easyicon</a></p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/7-16.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/7-32.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/7-128.png</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="标签页和分类页"><a href="#标签页和分类页" class="headerlink" title="标签页和分类页"></a>标签页和分类页</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/custom-pages.html#Adding-%C2%ABTags%C2%BB-Page">next文档</a></p>
-<h3 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h3><p>我喜欢放在右边，主要是因为视觉聚焦主要是在左边的</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">sidebar:</span></span><br><span class="line">  <span class="comment"># Sidebar Position.</span></span><br><span class="line">  <span class="comment"># position: left</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">right</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="打开文章标题下方更新时间、阅读时长等信息"><a href="#打开文章标题下方更新时间、阅读时长等信息" class="headerlink" title="打开文章标题下方更新时间、阅读时长等信息"></a>打开文章标题下方更新时间、阅读时长等信息</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html#Post-Wordcount">官方文档</a><br>先按照npm包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-word-counter</span><br><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post meta display settings</span></span><br><span class="line"><span class="attr">post_meta:</span></span><br><span class="line">  <span class="attr">item_text:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">created_at:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">updated_at:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">another_day:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-word-counter</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="博客首页的摘要设置"><a href="#博客首页的摘要设置" class="headerlink" title="博客首页的摘要设置"></a>博客首页的摘要设置</h3><p>这个要配合文章中的description字段，或在文章中添加一行注释辅助，参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html?highlight=more#Preamble-Text">官方文档</a></p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Automatically excerpt description in homepage as preamble text.</span></span><br><span class="line"><span class="attr">excerpt_description:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read more button</span></span><br><span class="line"><span class="comment"># If true, the read more button will be displayed in excerpt section.</span></span><br><span class="line"><span class="attr">read_more_btn:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="置顶的百分比和顶部进度条"><a href="#置顶的百分比和顶部进度条" class="headerlink" title="置顶的百分比和顶部进度条"></a>置顶的百分比和顶部进度条</h3><p>默认给的颜色有点花哨，我改成了灰色</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="comment"># color: &quot;#37c6c0&quot;</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="头像设置"><a href="#头像设置" class="headerlink" title="头像设置"></a>头像设置</h3><p>在url里放置本地图片或者图床链接</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="代码块高亮风格选择"><a href="#代码块高亮风格选择" class="headerlink" title="代码块高亮风格选择"></a>代码块高亮风格选择</h3><p>使用了hightlight.js的高亮样式</p>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">highlight:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">auto_detect:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;    &#x27;</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">hljs:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">prismjs:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">preprocess:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># All available themes: https://theme-next.js.org/highlight/</span></span><br><span class="line">  <span class="attr">theme:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">tomorrow-night-bright</span></span><br><span class="line">  <span class="attr">prism:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">prism</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">prism-dark</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">flat</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="社交账号设置"><a href="#社交账号设置" class="headerlink" title="社交账号设置"></a>社交账号设置</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/shiqi-lu</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br><span class="line">  <span class="attr">E-Mail:</span> <span class="string">mailto:traumlou@163.com</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-envelope</span></span><br><span class="line">  <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">  <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">  <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">  <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">social_icons:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">icons_only:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">transition:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="支持本地搜索"><a href="#支持本地搜索" class="headerlink" title="支持本地搜索"></a>支持本地搜索</h3><p>参考<a href="https://theme-next.js.org/docs/third-party-services/search-services.html?highlight=search#Local-Search">官方文档</a><br>先装包：<code>$ npm install hexo-generator-searchdb </code></p>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">content:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="评论系统"><a href="#评论系统" class="headerlink" title="评论系统"></a>评论系统</h3><p>评论系统选择了<a href="https://valine.js.org/">valine</a>，请参考<a href="https://theme-next.js.org/docs/third-party-services/comments.html?highlight=comme#Valine-China">next文档</a>，其中头像需要注册一下Gravatar，参考<a href="https://valine.js.org/avatar.html">头像配置</a>，这里的邮箱提醒好像有问题，官方说明的方法不能用了。这个以后再说吧，我也不想有个评论就给我发邮件，要真有比较紧急的事情，直接发我邮箱吧</p>
-<h3 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h3><p>注意这里8.0更新之后，就不是通过安装插件改源码的方式实现，直接在文章的front-matter里面添加一个字段：sticky就可以实现了，值越高排的越前，默认为0是按照时间顺序，参考<a href="https://theme-next.js.org/docs/advanced-settings/front-matter.html?highlight=stick">官方文档</a></p>
-<h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
-
-
-<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
-<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
-<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
-<h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
-<ul>
-<li>SEO</li>
-<li>个人简介</li>
-<li>README</li>
-<li>访问速度比较慢，考虑使用除github外的托管服务</li>
-<li>考虑使用CI</li>
-<li>考虑CDN加速</li>
-<li>考虑把http转换成https</li>
-<li>备案</li>
-<li>图床替换成自己的域名</li>
-<li>完善和链接一下领英</li>
-<li>研究一下博客如何分享链接到微信</li>
-</ul>
-<h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
-<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
-</ul>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
-<li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细）</a></li>
-<li><a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a></li>
-<li><a href="https://github.com/next-theme/hexo-theme-next">Next8.0 Github</a></li>
-<li><a href="https://theme-next.js.org/">Next8.0 文档</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>自我提升</category>
-      </categories>
-      <tags>
-        <tag>感想</tag>
-        <tag>自我提升</tag>
       </tags>
   </entry>
   <entry>
@@ -1546,6 +1546,1111 @@ tensor([10.])</code></pre>
       <tags>
         <tag>pytorch</tag>
         <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>恶魔奶爸语法1-3课</title>
+    <url>/gramma1-3/</url>
+    <content><![CDATA[<h1 id="1-英语简单句的造句规则和基本语法概念"><a href="#1-英语简单句的造句规则和基本语法概念" class="headerlink" title="1.英语简单句的造句规则和基本语法概念"></a>1.英语简单句的造句规则和基本语法概念</h1><h2 id="一些基本的语法概念"><a href="#一些基本的语法概念" class="headerlink" title="一些基本的语法概念"></a>一些基本的语法概念</h2><ul>
+<li>英语单词分为虚词和实词<ul>
+<li>虚词：介词，连词</li>
+<li>实词：名词，动词，形容词，副词</li>
+</ul>
+</li>
+<li>句子成分：主谓宾</li>
+</ul>
+<h2 id="英语句子的本质和灵魂：五大动词——五大句型"><a href="#英语句子的本质和灵魂：五大动词——五大句型" class="headerlink" title="英语句子的本质和灵魂：五大动词——五大句型"></a>英语句子的本质和灵魂：五大动词——五大句型</h2><h3 id="系动词-gt-主语-系动词-表语（主系表句型）"><a href="#系动词-gt-主语-系动词-表语（主系表句型）" class="headerlink" title="系动词-&gt;主语+系动词+表语（主系表句型）"></a>系动词-&gt;主语+系动词+表语（主系表句型）</h3><ul>
+<li>什么是系动词<ul>
+<li>所谓的系动词，也属于动词的一种在句子里做谓语，没有实际意思比如汉语里的”是”、”为”英语里的am、is、 are就是联系，在句子中起一个联系作用，叫做系动词。</li>
+</ul>
+</li>
+<li>什么是表语<ul>
+<li>而在联系动词之后的补充说明主语性质的部分，就叫做表语</li>
+</ul>
+</li>
+<li>如何判断主系表结构<ul>
+<li>用中文判断这个句子里的谓语，可否用“是”或者“为”来翻译</li>
+<li>I am a good person</li>
+<li>I become a good person</li>
+</ul>
+</li>
+<li>4大类系动词<ul>
+<li>1.be动词：am is are和它们对应的过去将来时态，在be动词之后，有3大类表语：名词、形容词、地点副词<ul>
+<li>名词作表语：这种句子和汉语可以完全对应，be动词翻译成汉语“是”<ul>
+<li>Tim is an engineer.蒂姆是个工程师</li>
+<li>The price is £2,000! 价格是2,000英镑!</li>
+</ul>
+</li>
+<li>形容词作表语：和汉语不一样，be动词不会被翻译，直接被省略，介词短语也相当于形容词<ul>
+<li>The play was very interesting. 戏很有意思</li>
+<li>The milk is in the refrigerator. 牛奶在冰箱里</li>
+</ul>
+</li>
+<li>地点副词作表语：只能是地点副词，别的副词不行<ul>
+<li>Your sister is here these days. 你姐姐这几天在这</li>
+<li>My bedroom is downstairs. 我的卧室在楼下</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.状态保持动词（keep, remain, stay）后只能加形容词作表语，可以和be无缝切换<ul>
+<li>You should keep quiet! 你应该保持安静!</li>
+<li>No one can remain youthful forever. 没有人能永保青春。</li>
+<li>The weather stayed fine for a week. 这个星期天气一直很好。</li>
+</ul>
+</li>
+<li>3.状态转变类动词(become, get, go, come, grow, turn)<ul>
+<li>become:万能词，表示“变成”的时候后面只能接名词，表示“变得”后面一般接形容词<ul>
+<li>He became a teacher.他成为了一名教师</li>
+<li>He became very nervous. 他变得很紧张</li>
+</ul>
+</li>
+<li>get:表示“变得怎样”，后面只能加形容词<ul>
+<li>He got very angry. 他非常生气</li>
+</ul>
+</li>
+<li>come:本意是来，通常是好的东西会来，所以come含有“变好”的意思<ul>
+<li>Thing will come right.事情会变好</li>
+</ul>
+</li>
+<li>go:意思是走，去，通常是坏的东西离你而去，所以可表达“变坏”<ul>
+<li>The meat always goes bad in summer. 肉在夏天经常会坏掉</li>
+</ul>
+</li>
+<li>grow:本意“生长”，可表达“慢慢变”<ul>
+<li>The weather grew cold in the night.晚上天气慢慢变冷</li>
+</ul>
+</li>
+<li>turn:本意转身，可表达“快速变”<ul>
+<li>His face turned pale.他脸色变得苍白</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>4.感官动词(look, sound, smell, taset, feel)：一律翻译为“。。。起来”，即看起来，听起来。。后面只能接形容词（或相当于形容词的分词）作表语<ul>
+<li>I felt very nervous when I went into his office.我走进他的办公室，感到非常紧张。</li>
+<li>He looked very angry.他看上去非常气愤。</li>
+<li>They were all hungry and the food smelled good.他们全都饿了，饭菜散发出阵阵香味。</li>
+<li>感官动词后，决不能直接加名词作表语，如要加名词，必须用：感官动词+介词like+名词，此时翻译为”像…..”<ul>
+<li>The sun looks like an orange globe.太阳看上去像只橙色的球体。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>每件事都很有序。( in good order )<ul>
+<li>Everything is in good order.</li>
+</ul>
+</li>
+<li>我的房子就在这里。<ul>
+<li>My house is here.</li>
+</ul>
+</li>
+<li>这辆轿车看起来很棒。<ul>
+<li>This car looks very good.</li>
+</ul>
+</li>
+<li>鳄鱼肉尝起来就像鸡肉。<ul>
+<li>Alligator meat tastes like chicken.</li>
+</ul>
+</li>
+<li>地震期间你应该保持冷静。<ul>
+<li>You should keep calm during an earthquake.</li>
+</ul>
+</li>
+<li>迈克去年成为一名职业篮球运动员。<ul>
+<li>Mike became a professional basketball player last year.</li>
+</ul>
+</li>
+<li>天气变得寒冷而多风( cold and windy )<ul>
+<li>The weather has turned cold and windy.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="不及物动词-gt-主谓句型"><a href="#不及物动词-gt-主谓句型" class="headerlink" title="不及物动词-&gt;主谓句型"></a>不及物动词-&gt;主谓句型</h3><ul>
+<li>不及物动词是什么<ul>
+<li>intransitive verb，简称vi. 就是本身意就很完全，没有作用对象，不需要加宾语就能构成完整的句子，例如：游泳，出生，笑，做梦.</li>
+<li>判断这类动词，有个方法很简单，把这个动词前面加上”被”字，看正常不正常。如果正常，就是及物动词，不正常，就是不及物动词。例如：被打，被处罚，被喜欢.</li>
+<li>但如果说：被跳舞，被做梦，被游泳…..，肯定自己会觉得不通顺</li>
+</ul>
+</li>
+<li>注意事项<ul>
+<li>1.这个句型，一般来说都带有状语，来进一步说明这个动作发生的时间，地点，目的….<ul>
+<li>Detectives(主语) were waiting(谓语) at the airport(地点状语) all morning(时间状语</li>
+<li>They(主语) were talking(谓语) loudly(方式状语)</li>
+</ul>
+</li>
+<li>2.很多动词，本身既可作不及物动词，也可作及物动词，得在具体语境中判断</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.鸟儿快乐地唱着歌。<ul>
+<li><ol>
+<li>The birds sing happily.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.这场雨下午会停。<ul>
+<li><ol start="2">
+<li>The rain will stop in the afternoon.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.孩子们正在公园里玩耍。<ul>
+<li><ol start="3">
+<li>The children are playing in the park.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>4.我的老师昨天在医院去世了。(pass away)<ul>
+<li><ol start="4">
+<li>My teacher passed away in the hospital yesterday.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="及物动词-gt-主谓宾"><a href="#及物动词-gt-主谓宾" class="headerlink" title="及物动词-&gt;主谓宾"></a>及物动词-&gt;主谓宾</h3><ul>
+<li>举例<ul>
+<li>Yesterday(时间状语), a pigeon(主语) carried(谓语) the first(定语) message(宾语) from Pinhurst to Silbury(地点状语). 昨天，一只鸽子把第一封信从平赫特带到锡尔伯里。</li>
+<li>The bird(主语) covered(谓语) the distance(宾语) in three minutes.(时间状语) 这只鸟只用了3分钟就飞完了全程。</li>
+<li>The bride and the groom cut the wedding cake together.新郎和新娘一起切下结婚蛋糕。</li>
+<li>I had an amusing experience last year.去年我有过一次有趣的经历。</li>
+<li>This wonderful plane can carry seven passengers.这架奇妙的飞机可以载7名乘客。</li>
+</ul>
+</li>
+<li>及物动词是什么？<ul>
+<li>transitive verb，简称vt. 就是加了宾语以后意思很完全的动词，有主动和被动两种语态</li>
+<li>有些短语相当于及物动词，称为及物动词短语</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.老师在教室的墙上贴了一些照片。<ul>
+<li><ol>
+<li>The teacher put up some pictures on the wall in the classroom.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.在公共场合你应该尊敬老人。<ul>
+<li><ol start="2">
+<li>You should respect the old in public places.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.他一周前开始节食。<ul>
+<li><ol start="3">
+<li>He began his diet a week ago.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>4.他于1935年9月创造了一项新的世界纪录。<ul>
+<li><ol start="4">
+<li>He set up a new world record in September 1935.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>5.只有极少数人能实现他们的梦想。<ul>
+<li><ol start="5">
+<li>Only very few people can realize their dreams.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="不完全及物动词-gt-主语-谓语-宾语-宾语补语"><a href="#不完全及物动词-gt-主语-谓语-宾语-宾语补语" class="headerlink" title="不完全及物动词-&gt;主语+谓语+宾语+宾语补语"></a>不完全及物动词-&gt;主语+谓语+宾语+宾语补语</h3><ul>
+<li>概述<ul>
+<li>她使我爱上生活。</li>
+<li>这个”使”就是不完全及物动词，如果只说“她使我”意思当然不完整, 得加上补语”爱上生活”，才是完整的句子</li>
+<li>他的表演让我失望。</li>
+<li>这个“让”如果说”他的表演让我”，当然也不完全得加上补语”失望”</li>
+</ul>
+</li>
+<li>不完全及物动词是什么？<ul>
+<li>incomplete transitive verb, 简称i.vt 这种动词加了宾语以后，意思仍</li>
+<li>然不完全, 需要加上补语( complement )才能使句子完整</li>
+<li>补语是补充说明宾语的特征，或者宾语的动作。</li>
+</ul>
+</li>
+<li>如何区分完全及物动词和不完全及物动词<ul>
+<li>最常见的不完全及物动词：使役动词：使…..做…. (make, have, let, get)</li>
+<li>make / have /let +宾语+动词原形(补语)</li>
+<li>get +宾语+动词不定式(补语)<ul>
+<li>I made him wash the car. 我叫他洗车。</li>
+<li>I got him to wash the car.我叫他洗车。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>综上所述，只要是宾语发出的动作，或宾语的状态，均可构成此类句型。知道了这一道理，遇到类似句子，都能做出准确判断。</li>
+<li>造句练习<ul>
+<li>炎热的天气使我感到昏昏欲睡(feel lethargic)。<ul>
+<li>The hot weather made me feel lethargic.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="授予动词-gt-主语-谓语-间接宾语-直接宾语"><a href="#授予动词-gt-主语-谓语-间接宾语-直接宾语" class="headerlink" title="授予动词-&gt;主语+谓语+间接宾语+直接宾语"></a>授予动词-&gt;主语+谓语+间接宾语+直接宾语</h3><ul>
+<li>概述<ul>
+<li>我给了他一本书”</li>
+<li>动作“给”需要两个步骤,先拿起书,再给他</li>
+<li>有两个宾语“他”和“书”，因为先拿书,再给他，所以“书”是直接宾语，“他”是间接宾语</li>
+</ul>
+</li>
+<li>授予动词是什么？<ul>
+<li>及物动词中的一种，但需要接两个宾语，第一个是间接宾语(indirect object， i.o.)，表示授予的对象，第二个宾语是直接宾语(direct object, d.o.)，表示授予的东西</li>
+<li>要注意的是，直接宾语和间接宾语，都是谓语动作的作用对象，这是与第四大句型的区别。在第四大句型中，补语是说明宾语的性质，或者是宾语发出的动作</li>
+</ul>
+</li>
+<li>最常用的授予动词：give, send, tell, teach, pay, show, offer<ul>
+<li>Richard Mattes gave the testers six different kinds of things. Richard Mattes给了这些测试者6种不同类型的东西。</li>
+<li>I send him a book in reward for his help.我送给他一本书来答谢他的帮助。</li>
+<li>The scientist told us many stories about birds.博物学家给我们讲述了许多有关鸟儿的故事。</li>
+<li>A friendly waiter taught me a few words of Italian. Then he lent me a book.一位好客的服务员教了我几句意大利语，之后还借给我一本书。</li>
+<li>Yesterday I paid him a visit.昨天我去看望 了他。</li>
+<li>Then he showed me the contents of the parcel.接着他给我看了包里的东西。</li>
+<li>He offered me a lot of money.他给了我很多钱。</li>
+</ul>
+</li>
+<li>第4大句型和第5大句型的区分<ul>
+<li>只要是谓语的动作，作用于两个不同的名词，也就是两个宾语,就是第5大句型。而在第4大类句型中，补语是宾语的动作或状态。</li>
+<li>举例:</li>
+<li>1.他让我学习。”学习”是“我”发出的动作</li>
+<li>2.他给了我一本书。 “书”和“我”都是谓语“给”的作用对象</li>
+<li>所以，第1句是第4大句型，第2句是第5大句型。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.情人节他送给女友一束花。<ul>
+<li><ol>
+<li>He gave a bunch of flowers to his girlfriend on Valentine’s Day.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.请寄给我一张收到此款的收据。<ul>
+<li><ol start="2">
+<li>Please send me a receipt for the money.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.他告诉我几个关于英语老师的神奇故事。<ul>
+<li><ol start="3">
+<li>He told me some magical stories about our English teacher.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="首相的英语学习方法"><a href="#首相的英语学习方法" class="headerlink" title="首相的英语学习方法"></a>首相的英语学习方法</h2><ul>
+<li>1.了解句子成分的具体含义识别出句子的不同成分</li>
+<li>2.学习时态、语态等基础知识</li>
+<li>3.学习从句的构句方法把一个长句子变成一个句子成分把不同句子成分组合</li>
+<li>4.用彩色笔标注不同句子成分，从句子相关成分中，积累相关用法</li>
+<li>5.把复杂句拆成若干个简单句子，设定好主语宾语，采用学习的规则，拼成长句子</li>
+<li>或，读完句子英汉互译，先翻译成中文再翻译成英文再对照原句</li>
+</ul>
+<h2 id="7大英语句子成分概述"><a href="#7大英语句子成分概述" class="headerlink" title="7大英语句子成分概述"></a>7大英语句子成分概述</h2><ul>
+<li>主语：句子的主人</li>
+<li>谓语：表达主语动作状态</li>
+<li>宾语：客体、受体</li>
+<li>表语：表达主语具体情况</li>
+<li>补语：补充说明</li>
+<li>定语：一个句子里用来界定、限定名词的部分<ul>
+<li>能作定语的语法成分：形容词以及相当于形容词性质的语法成分</li>
+<li>英语95%的定语遵循“前小后大”法则<ul>
+<li>1个单词组成的定语(限定词，形容词，名词及名词所有格)， 放在所修饰名词的前面。</li>
+<li>2个以上单词组成的定语( of属格，形容词短语，介词短语，分词短语，不定式短语等)， 放在所修饰词后面。 <ul>
+<li><ol>
+<li>They were expecting a(限定词) valuable(形容词) parcel of diamonds(of属格) from South Africa.(介词短语)他们正期待从南非来的一个装着钻石的贵重包裹。(上面四个定语,均修饰parcel)</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>Mrs. Rumbold was a(限定词) large(形容词), unsmiling(形容词) lady in a tight black dress.(介词短语) 兰伯尔德夫人是一位身材高大、表情严肃的女人，穿一件紧身的黑衣服。</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>First of all, he wrote out a(限定词) long(形容词) list of all the foods.(of属格)首先，他开列了一张长长列了所有食物的目录。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.我喜欢课桌上那本英语书。<ul>
+<li>I like the English book on the table.</li>
+</ul>
+</li>
+<li>2.他们正在研究一个关于贸易标准(trading standard)的复杂问题。<ul>
+<li>They are studying a complicated problem about trading Standard.</li>
+</ul>
+</li>
+<li>3.我将告诉你们昨天老师给我讲的那个非常有趣的关于月亮的中国古代故事<ul>
+<li>I will tell you a very interesting old Chinese story about the moon that my teacher told me yesterday</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>状语：用来描述一个动作的细节特征的成分，除了修饰动词外，状语也可以修饰除了名词之外的任何词(如形容词，介词，连词，还可以修饰副词本身!)<ul>
+<li>能作状语的语法成分：副词以及相当于副词的语法成分</li>
+<li>小状语(单独的副词)，放在其所修饰的词语之前：修饰动词时，放在动词之前。修饰其它成分(形容词、介词、连词、副词)时，放在其它成分之前。注：如有需要，小状语可以放在句中任何位置!<ul>
+<li>We are now living in a beautiful new house in the country.我们现在住在乡间的一栋漂亮的新住宅里。</li>
+<li>Letters will cost a little more, but they will certainly travel faster.这样会稍微多花点钱，但肯定是快得多了。</li>
+</ul>
+</li>
+<li>大状语(2个及以上单词构成的状语，如介词短语、不定式短语、状语从句)，放在整句的两头。放在开头时，一般要加上逗号。<ul>
+<li>On Wednesday evening, we went to the Town Hall. 星期三的晚上，我们去了市政厅。</li>
+<li>I was having dinner at a restaurant when Tony Steele came in.我正在一家饭馆吃饭，托尼斯蒂尔走进来。</li>
+</ul>
+</li>
+<li>1.句子同时出现几个时间或者地点状语时，从小到大<ul>
+<li>We landed in America at 8 o’ clock on June 15th，2012.我们2012年6月15日上午8点在美国着陆。</li>
+<li>We live at number 35, South Renmin Road, Chengdu.我们住在成都市人民南路35号。</li>
+</ul>
+</li>
+<li>2.句子后面有多种状语时，顺序是方式-地点-时间<ul>
+<li>He put his milk bottles carefully on the doorstep every morning. 他每天早上小心地把牛奶瓶放在门口台阶上。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>同位语：句子中指代同一事物的两个词、短语或从句，称为同位关系<ul>
+<li>英语里边的同位语， 不属于单独的7大句子成分，而是和英语里边的名词成分(主语，宾语，表语)是并列关系，相当于对该名词的进一步解释说明。名词或任何相当于名词的成分，均可作同位语。</li>
+<li>造句练习<ul>
+<li>1.我的英语老师Brent Peter先生是加拿大人。<ul>
+<li>My English teacher, Mr. Brent Peter, is a Canadian.</li>
+</ul>
+</li>
+<li>2.昨天我遇到了我弟弟的朋友汤姆。<ul>
+<li>Yesterday I met Tom, a friend of my brother’ s.</li>
+</ul>
+</li>
+<li>3.我们中国人民是勤劳勇敢的。<ul>
+<li>We Chinese people are brave and hardworking.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="2-如何避免犯时态错误"><a href="#2-如何避免犯时态错误" class="headerlink" title="2.如何避免犯时态错误"></a>2.如何避免犯时态错误</h1><h2 id="时态的本质"><a href="#时态的本质" class="headerlink" title="时态的本质"></a>时态的本质</h2><ul>
+<li>时态=”时间”和”状态”=tense and aspect</li>
+<li><img src="http://anki190912.xuexihaike.com/20201104130711.png?imageView2/2/h/200"></li>
+</ul>
+<h2 id="谓语动词的四种状态"><a href="#谓语动词的四种状态" class="headerlink" title="谓语动词的四种状态"></a>谓语动词的四种状态</h2><ul>
+<li>1.一般（simple）:强调动作发生的时间，而非状态<ul>
+<li>I play basketball. 我打篮球</li>
+</ul>
+</li>
+<li>2.进行（continuous）：强调动作的过程（描绘，生动性）<ul>
+<li>I am playing basketball. 我正在打篮球</li>
+</ul>
+</li>
+<li>3.完成（perfect）:强调动作的结果（逻辑推导性）<ul>
+<li>I have played basketball. 我打完篮球了</li>
+</ul>
+</li>
+<li>4.完成进行（perfect continuous）：强调动作的结果和过程<ul>
+<li>I have been playing basket ball. 我一直都有打篮球</li>
+</ul>
+</li>
+</ul>
+<h2 id="动词在不同时态下词形的变化"><a href="#动词在不同时态下词形的变化" class="headerlink" title="动词在不同时态下词形的变化"></a>动词在不同时态下词形的变化</h2><ul>
+<li>进行：be+现在分词(be按照3时及主语人称变化)</li>
+<li>完成：have+过去分词(have按照3时及主语人称变化)</li>
+<li>完成进行：have been+现在分词(have按照3时及主语人称变化)</li>
+<li>以动词do为例：<ul>
+<li>现在 进行: am/is/are doing</li>
+<li>过去 进行: was/were doing</li>
+<li>将来 进行: will be doing</li>
+<li>现在 完成: have/has done</li>
+<li>过去 完成: had done</li>
+<li>将来 完成: will have done</li>
+<li>现在 完成进行: have/has been doing</li>
+<li>过去 完成进行: had been doing</li>
+<li>将来 完成进行: will have been doing</li>
+</ul>
+</li>
+</ul>
+<h2 id="一般态：强调动作本身"><a href="#一般态：强调动作本身" class="headerlink" title="一般态：强调动作本身"></a>一般态：强调动作本身</h2><ul>
+<li>定义<ul>
+<li>只强调动作发生的时间，不强调动作的状态，就是说它只关心这个动作是发生在过去，现在，还是将来，不关心这件事情有没有做好</li>
+</ul>
+</li>
+<li>一般态和进行态的主要区别<ul>
+<li>I walk to school.我走路去学校， 这个句子只强调一般情况，不强调动作的状态是怎么样。</li>
+<li>I’m walking to school.这个强调的就是动作本身，我正在路上</li>
+</ul>
+</li>
+<li>一般现在时<ul>
+<li>1.表示事物现在的情况或状态（主系表句型）<ul>
+<li>I <code>am</code> a doctor. 我是一个医生。</li>
+<li>You <code>are</code> an unrepeatable miracle. 你是一个无法重复的奇迹。</li>
+</ul>
+</li>
+<li>2.表示经常性、习惯性动作（常有时间副词修饰）<ul>
+<li>I <strong>never</strong> <code>get up</code> early on Sundays. I sometimes <strong>stay</strong> in bed until lunch time. 星期天我是从来不早起的，有时我要直躺到吃 午饭的时候。</li>
+<li>Winners <strong>often</strong> <code>seek</code> opportunity when losers <strong>want</strong> security. 失败者寻求安全的时候，成功者寻求机遇。</li>
+<li>Do you <strong>always</strong> <code>get up</code> so late? It’s one o’clock! 你总是起得这么晚吗?现在已经1点钟了!</li>
+<li>注：一般现在时常使用表示频率的副词，如never, often, always</li>
+</ul>
+</li>
+<li>3.表示客观真理、格言<ul>
+<li>Time <code>flies</code>. 时光飞逝。</li>
+<li>The early bird <code>catches</code> the worm. 早起的鸟儿有虫吃。</li>
+<li>Failure <code>is</code> the mother of success. 失败是成功之母。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>一般过去式：表示过去的动作、习惯、事实<ul>
+<li>Last Sunday I <code>got up</code> very late. I <code>looked</code> out of the window. It <code>was</code> dark outside. 在上个星期天，我起得很晚。我望望窗外，外面一片昏暗。</li>
+<li>Last summer, I <code>went</code> to Italy. 去年夏天，我去了意大利。</li>
+<li>Colubus discovered America in 1742. 哥伦布于1492年发现了美洲。</li>
+<li>注：一般过去时常使用过去具体时间的副词，如yesterday, last week, two years ago, in 1998……</li>
+</ul>
+</li>
+<li>一般将来时<ul>
+<li>1.表示将来发生的动作或状态，或倾向(will译为“将要”)<ul>
+<li>He <code>will</code> soon <code>visit</code> Darwin. From there, he <code>will fly</code> to Perth. 他不久还将到达达尔文去，从那里，他再飞往珀斯。</li>
+<li>People <code>will</code> run into problems in their lives. 人们在生活中总会遇到问题。</li>
+<li>A small leak <code>will</code> sink a great ship. 小裂缝可以沉大船。(千里之堤，溃于蚁穴)</li>
+</ul>
+</li>
+<li>be going to+动词原形：表示将来时，但多表示“计划”，主语多为“人”。will表示“意愿”时，主语是“人”。但也可以表示“预测”，主语是“物”<ul>
+<li>Debbie Hart is going to swim across the English Channel tomorrow. 黛比.哈特准备明天横渡英吉利海峡。</li>
+<li>She is going to set out from the French coast at five o’clock in the morning. 她打算早上5点钟从法国海岸出发。</li>
+<li>Mr. Thompson is going to sell it because it is haunted. 汤普森先生之所以想卖它，是因为那里常闹鬼。</li>
+</ul>
+</li>
+<li>be about to + 动词原形：即将。。<ul>
+<li>He is about to leave for Shenyang. 他将要离开去沈阳。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.这家便利店全天24小时营业。<ul>
+<li><ol>
+<li>This convenience store is open 24 hours a day.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.我爷爷每天早上都在公园里散步。<ul>
+<li><ol start="2">
+<li>My grandfather takes a walk in the park every morning.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.昨天我很无聊，便跟着几个朋友看电影去了。<ul>
+<li><ol start="3">
+<li>I felt bored yesterday, So I went to the movies with several friends.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>4.他明天将要去纽约。<ul>
+<li><ol start="4">
+<li>He will go to New York tomorrow.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>5.看！那艘船快要沉没了。(be about to)<ul>
+<li><ol start="5">
+<li>Look! The boat is about to sink.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>6.我们马上就要吃午餐了。<ul>
+<li><ol start="6">
+<li>We are going to have lunch soon.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>7.太阳东升西落。<ul>
+<li>7.The sun rises in the east and sets in the west.</li>
+</ul>
+</li>
+<li>8.我每周去两次健身房。<ul>
+<li><ol start="8">
+<li>I go to the gym twice a week.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>9.我昨天早上在图书馆看到他。<ul>
+<li><ol start="9">
+<li>I saw him in the library yesterday morning.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>10.我准备学习计算机科学。<ul>
+<li><ol start="10">
+<li>I am going to learn the computer science.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="进行态：强调动作的过程"><a href="#进行态：强调动作的过程" class="headerlink" title="进行态：强调动作的过程"></a>进行态：强调动作的过程</h2><ul>
+<li>延续性动词和瞬间动词<ul>
+<li>在英语中，按照动作发生的时间长短，动词分成了延续性动词和瞬间动词</li>
+<li>如结婚是一个瞬间动词，交换仪式之后，就是结婚了。所以不能说They were marrying last week. 只能说They married last week. 若要表达正在举行婚礼，可以说They are having a wedding ceremony</li>
+</ul>
+</li>
+<li>现在进行时<ul>
+<li>1.表示现在正在做的动作，此时be动词译为“正在”<ul>
+<li>He <code>is playing</code> basketball. 他正在打篮球。</li>
+<li><code>It&#39;s raining</code> heavily now. 现在正在下大雨。</li>
+<li>注意：主系表句型在口语中通常用一般现在时，但如果要强调此时的状态，可以用现在进行时</li>
+<li>You are very rude! ——&gt; You are <code>being</code> very rude! 你太粗鲁了！（你现在的行为粗鲁，而不是你这个人粗鲁）</li>
+</ul>
+</li>
+<li>2.表示即将发生的动作（通常是表示“位移”短暂动词come, go, arrive, leave, start, begin, return, die, take），此时be动词译为“即将”<ul>
+<li>“A new play <code>is coming</code> to’The Globe’ soon,” I said.“Will you be seeing it?” “一出新剧要来’环球剧场’上演了，”我说，“您去看吗?”</li>
+<li>‘We <code>are going back</code> now,’ said the conductor. “我们现在要返回去，”售票员说。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>过去进行时<ul>
+<li>表示过去某时正在做的事情<ul>
+<li>A man <code>was lying</code> in the box during the flight. 那个航班上，有一个人正躺在箱子里。</li>
+<li>I <code>was having</code> dinner at a restaurant when Tony Steele came in. 我正在一家饭馆吃饭，托尼.斯蒂尔走了进来。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>将来进行时<ul>
+<li>表示将来某时将进行的动作<ul>
+<li>They <code>will be arriving</code> here tomorrow. 他们明天就要到达此地。</li>
+<li>Tomorrow evening they <code>will be singing</code> at the Workers’ Club. 明晚他们将在工人俱乐部演出。</li>
+<li>The Greenwood Boys <code>will be staying</code> for five days. “绿林少年”准备在此逗留5天。</li>
+<li>They <code>will be trying</code> to keep order. 他们将设法维持秩序。</li>
+<li>The shuttle Endeavour <code>will be taking</code> the astronauts to the Hubble. “奋进”号航天飞机将把宇航员送上哈勃。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>注意事项<ul>
+<li>进行态，其实就是一般态的生动模式。任何一个进行态的句子，都可以改成一般态。一般态却不一定能改成进行态，比如动词是延续动词才能改。<ul>
+<li>I <code>looked</code> out of the window. 可以改成 I <code>was looking</code> out of the window. (look是延续的)</li>
+<li>I never get up early on Sundays. 不能改成 I was never getting up early on Sundays. 因为get up是短暂的。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.你在桌子下面做什么? <ul>
+<li><ol>
+<li>What are you doing under the table?</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.我正梦见你时，电话铃响了。(dream about)<ul>
+<li><ol start="2">
+<li>I was dreaming about you when the telephone rang.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.明天早上这个时候，我爸爸将正在修剪草坪。(mow the lawn)<ul>
+<li><ol start="3">
+<li>My dad will be mowing the lawn at this time tomorrow morning.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>4.我女儿正在学习，所以你最好别去烦她。<ul>
+<li><ol start="4">
+<li>My daughter is studying, so you’d better not bother her.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>5.明年这个时候我将正在美国念书。<ul>
+<li><ol start="5">
+<li>l’ll be studying in the United States at this time next year.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="完成态：强调动作的结果"><a href="#完成态：强调动作的结果" class="headerlink" title="完成态：强调动作的结果"></a>完成态：强调动作的结果</h2><ul>
+<li>现在完成时<ul>
+<li>1.表示到现在为止已经完成的动作（发生时间不明）<ul>
+<li>I <code>have</code> just <code>received</code> a letter from my brother, Tim. 我刚刚收到弟弟蒂姆的来信。</li>
+<li>He <code>has</code> just <code>bought</code> an Australian car and <code>has gone</code> to Alice Springs, a small town in the centre of Australia. 他刚买了一辆澳大利亚小汽车，现在去了澳大利亚中部的小镇艾利斯斯普林斯。</li>
+<li>Since then, he <code>has developed</code> another bad habit. 从那以后，它养成了另外一种坏习惯。</li>
+<li>He <code>has gone</code> to Shanghai. 他去了上海(言外之意:他不在说话现场)</li>
+</ul>
+</li>
+<li>2.如果是延续性动词，表示持续到现在的动作（或状态）。（注意：be动词是可延续的）<ul>
+<li>She <code>has lived</code> here for 10 years. 她住在这里10年了。</li>
+<li>He <code>has been</code> there for six months. 他在那儿已经住了6个月了。</li>
+<li>I <code>have been</code> to the Great Wall. 我去过长城。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>现在完成时常用时间副词<ul>
+<li>1.自从：since+时间点<ul>
+<li>Since then, Captain Fawcett <code>has flown</code> passengers to many unusual places. 从那时开始，弗西特机长已经载送乘客到过许多不寻常的地方。</li>
+</ul>
+</li>
+<li>2.有若干时间之久：for+时间段<ul>
+<li>Mr. Hart <code>has trained</code> his daughter for years. 哈特先生训练她的女儿已经多年了。</li>
+</ul>
+</li>
+<li>3.到目前为止：so far/up to now<ul>
+<li>But so far, the public <code>has expressed</code> its gratitude to the students in letters to the Press. 但到目前为止，公众已经向新闻界写信表达他们对学生们的感激之情了。</li>
+<li>Up to now, Mr. Scott <code>has sent</code> a great many requests for spare parts and other urgent messages from one garage to the other. 到目前为止，斯科特先生从一个汽车修理部向另一个发送了大量索取备件的信件和其他紧急函件。</li>
+</ul>
+</li>
+<li>4.最近：recently/lately<ul>
+<li><code>Have</code> you <code>talked</code> to Jane lately? 你最近有没有和Jane说过话?</li>
+</ul>
+</li>
+<li>5.一次/两次/几次/多次：once/twice/a few times/many times<ul>
+<li>Jack <code>has read</code> the novel three times. (这里的read是过去分词) 这本小说杰克已经看过三遍了。</li>
+</ul>
+</li>
+<li>6.过去若干年/月/日以来：over/during/for + the last/past+数字+years/months/days<ul>
+<li>Over the last three months, oil prices <code>have reached</code> a record high. 过去三个月以来，油价创了历史新高。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>中国人最容易用错的3个短暂动词<ul>
+<li>请翻译一下:<ul>
+<li>1:他去北京3天了。</li>
+<li>2:他结婚已经3年了。</li>
+<li>3:他已经死了3年了</li>
+</ul>
+</li>
+<li>答案：<ul>
+<li>常见错误翻译</li>
+<li>1: He has go to Beijing for 3 days. (X)</li>
+<li>2: He has married for 3 years. (X)</li>
+<li>3: He has died for 3 years. (X)</li>
+<li>go, marry, die在英语中均为短暂动词，都是一瞬间完成的，后面不可以接时间副词，这里可以说:</li>
+<li>1: He has gone to Beijing. </li>
+<li>2: He has married. </li>
+<li>3: He has died. </li>
+<li>他不可能不停地做“去”这个动作3天，也不可能不停“结婚”这个动作3年，更不可能“死”3年才死透。要正确表达，必须使用对应的主系表句型，因为系动词是可以延续的，用主系表句型表示状态，才能加表示一段时间的状语。所以正确的说法是:</li>
+<li>1: He has <code>been to Beijing</code> for 3 days.</li>
+<li>2: He has <code>been married</code> for 3 years.</li>
+<li>3: He has <code>been dead</code> for 3 years.</li>
+<li>此时，句子的动词是be动词，后面的to Beijing (介词短语)，married, dead (形容词)为表语。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>过去完成时<ul>
+<li>表示截止过去某时为止所完成的动作或经验。（过去完成时不能单独存在，要与另一使用一般过去时的句子或者表示过去的副词短语连用）。(had译为“已经”或“曾经”)<ul>
+<li>My old friend, Harrison, <code>had lived</code> in the Mediterranean for many years before he returned to England. 我的老朋友哈里森在回到英国以前曾多年居住在地中海地区。</li>
+<li>A short time before, great trees <code>had covered</code> the countryside for miles around. 就在不久之前，参天大树还覆盖着方圆数英里的土地。</li>
+<li>By then, however, in many places the grass <code>had</code> already <code>taken root</code>. 然而到那时，很多地方的草已经生了根。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>将来完成时<ul>
+<li>表示到将来某时为止所完成或仍然继续的动作或经验等。（常与介词by构成的时间状语连用，表示“到…的时候”）<ul>
+<li>Workers <code>will have completed</code> the new roads by the end of this year. 工人们将在今年年底前把新路铺好。</li>
+<li>By the end of next year, they <code>will have finished</code> work on the new stadium. 到明年年底，他们将把新体育场建成。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.彼得去过香港很多次。<ul>
+<li><ol>
+<li>Peter has been to Hong Kong many times.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.进入初中以来，我对英语很狂热。(be crazy about)<ul>
+<li><ol start="2">
+<li>I have been crazy about English since I entered junior high school.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.到目前为止，我已经完成这项计划的三分之二。<ul>
+<li><ol start="3">
+<li>So far, I have finished two third of the project.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>4.我最近很忙，恐怕要到下周一我才有空。<ul>
+<li><ol start="4">
+<li>I have been very busy recently. l’m afraid that I won’t be free until next Monday.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>5.过去5年来，这个好孩子都尽力照顾他生病的母亲。<ul>
+<li><ol start="5">
+<li>Over the past 5 years, the good boy has tried his best to take care of his ill mother.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>6.史密斯先生搬来这里之前已经在加拿大住了20年。<ul>
+<li><ol start="6">
+<li>Mr. Smith had lived in Canada for 20 years before he moved here.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>7.等我到达车站时，火车已经开走了。<ul>
+<li><ol start="7">
+<li>By the time I got to the station, the train had left.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>8.玛丽昨天告诉我她很久以来一直想出国旅游。<ul>
+<li><ol start="8">
+<li>Mary told me yesterday that she had long wanted to travel abroad.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>9.我很生气，因为我女朋友又对我爽约了。(stand sb. up)<ul>
+<li><ol start="9">
+<li>I was very angry because my girlfriend had stood me up again.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>10.明天这个时候，约翰将已经达到芝加哥了。<ul>
+<li><ol start="10">
+<li>John will have arrived in Chicago by this time tomorrow.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="完成进行态：同时强调动作的结果和过程（延续性动词）"><a href="#完成进行态：同时强调动作的结果和过程（延续性动词）" class="headerlink" title="完成进行态：同时强调动作的结果和过程（延续性动词）"></a>完成进行态：同时强调动作的结果和过程（延续性动词）</h2><ul>
+<li>延续性动词<ul>
+<li>“我收到一封信”<ul>
+<li>你只能说I have received a letter.</li>
+<li>但是绝对不能说“I have been receiving a letter.”</li>
+<li>因为receive收到这个动词， 是一瞬间完成的，不能延续，你不可能一直不停收同一 封信。</li>
+</ul>
+</li>
+<li>“我住在广州3年了“<ul>
+<li>你可以说I have lived in Guangzhou for three years.</li>
+<li>也可以说I have been living in Guangzhou for three years.两句话意思完全相同。但是第二句更加生动形象。</li>
+<li>瞬间动词是不能放在完成进行形态的。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>现在完成进行时<ul>
+<li>表示一直继续到现在，且可能继续下去的动作。（通常和表示时间段的副词连用，如for, since, all morning…）<ul>
+<li>We have just moved into a new house and I <code>have been working</code> hard all morning. 我们刚刚搬进一所新房子，我辛辛苦苦地干了整整一个上午。</li>
+<li>If you haven’t discovered your dream, probably <code>you&#39;ve been missing</code> too much. 如果你还没有发现梦想，或许一直以来你失去的太多了。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>过去完成进行时<ul>
+<li>表示一直继续到过去某时，而当时仍然在继续的动作。（过去完成进行时的句中必须有表示过去的时间状语）<ul>
+<li>Firemen had been fighting the forest fire for nearly three weeks before they could get it under control. 消防队员们同那场森林大火搏斗了将近3个星期才最后把火势控制住。</li>
+<li>The planes had been planting seed for nearly a month when it began to rain. 飞机撒播近一一个月后，开始下起雨来。</li>
+<li>Bleriot had been making planes since 1905 and this was his latest model. 布莱里奥从1905年起便开始研制飞机，这架飞机是他制作的最新型号。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>将来完成进行时<ul>
+<li>一直继续到将来某时，且可能继续下去的动作<ul>
+<li>The day before his retirement, Mr. Page will have been teaching for a total of forty years. 佩奇先生退休的前一天正好是他执教满40年的日子。</li>
+<li>By the time you come back tonight, I will have been sleeping for five hours. 等你今晚回来时，我已经持续睡了5个小时了。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>总结<ul>
+<li>任何完成进行态，都能改成完成态。但是完成态不一定能改成完成进行态，必须是延续动词，才能改</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.约翰自去年起就一直学日语。他希望去日本留学。<ul>
+<li><ol>
+<li>John has been learning Japanese since last year. He expects to study in Japan in the future.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.Lulu的车子抛锚时，她已经持续开了8个小时了。<ul>
+<li><ol start="2">
+<li>By the time her car broke down, Lulu had been driving for 8 hours.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.到今年年底，王老师教英语将有10年了。<ul>
+<li><ol start="3">
+<li>Mr. Wang will have been teaching English for 10 years by the end of this year.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="过去将来时"><a href="#过去将来时" class="headerlink" title="过去将来时"></a>过去将来时</h2><ul>
+<li>通常多用于叙述性故事中，或间接引语中<ul>
+<li>A few hours earlier, someone had told the police that thieves <code>would try</code> to steal the diamonds. 数小时之前，有人向警方报告，说有人企图偷走这些钻石。(一般态)</li>
+<li>Then he smiled and told me I <code>would receive</code> an extra thousand pounds a year! 然后他微笑了一下告诉我说，我每年将得到1000英镑的额外收入。(一般态)</li>
+<li>He said that it <code>would be</code> possible to build a platform in the centre of the Channel. 他说，可以在隧道中央建造一座平台。(一般态)</li>
+<li>She said she <code>would be setting off</code> on the 10 o’clock train. 她说她将乘10点钟的火车走。(进行态)</li>
+<li>I guessed that Helen <code>would have told</code> her something. 我猜海伦会告诉她一些情况的。(完成态)</li>
+<li>He told me that by the end of the year he <code>would have been living</code> there for thirty years. 他告诉我到今年末他已经住在那儿30年了。(完成进行态)</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.在信中她说她明年将到英国来。<ul>
+<li><ol>
+<li>In her letter, she said that she would come to England next year.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.他问我明天上午10点我将干什么。<ul>
+<li><ol start="2">
+<li>He asked me what I should be doing at 10 a.m. the next day</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.他告诉我们他会在8点以前干完工作。<ul>
+<li><ol start="3">
+<li>He told us he would have finished the work by 8 o’clock.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="3-英文造句的被动语态"><a href="#3-英文造句的被动语态" class="headerlink" title="3.英文造句的被动语态"></a>3.英文造句的被动语态</h1><h2 id="及物动词和不及物动词"><a href="#及物动词和不及物动词" class="headerlink" title="及物动词和不及物动词"></a>及物动词和不及物动词</h2><ul>
+<li>只有及物动词才有被动语态，不及物动词没有被动语态</li>
+<li>及物动词后面可以加宾语<ul>
+<li>主动语态: I eat meat.我吃肉</li>
+<li>被动语态: the meat is eaten by me.</li>
+</ul>
+</li>
+<li>不及物动词后面不可以加宾语，没有被动语态<ul>
+<li>主动语态: I appear.我出现了</li>
+</ul>
+</li>
+</ul>
+<h2 id="主动语态变成被动语态的方式"><a href="#主动语态变成被动语态的方式" class="headerlink" title="主动语态变成被动语态的方式"></a>主动语态变成被动语态的方式</h2><ul>
+<li>1.be动词（根据16中时态变化，与原句时态一致）+过去分词，原句的宾语作主句，而原句的主语，在被动语态中省略，或者前面加上介词by作状语</li>
+<li>2.所谓被动语态，其实是一种特殊的主系表句型：过去分词作表语</li>
+<li>举例<ul>
+<li>I was beaten, 我被打了。(主语+be动词+动词的过去分词)</li>
+<li>主动语态: Somebody beat me. 主谓宾结构</li>
+<li>被动语态: I was beaten by somebody. 这里的by somebody可以省略。</li>
+</ul>
+</li>
+</ul>
+<h2 id="被动语态的时态变化"><a href="#被动语态的时态变化" class="headerlink" title="被动语态的时态变化"></a>被动语态的时态变化</h2><ul>
+<li>一般态<ul>
+<li>一般现在时<ul>
+<li>Our clavichord is kept in the living-room.我们的这架古钢琴存放在起居室里。(这句话里边，可以认为clavichord是主语，is是系动词，kept是表语)</li>
+</ul>
+</li>
+<li>一般过去时<ul>
+<li>The instrument was bought by my grandfather many years ago.这件乐器是我祖父在很多年以前买的。(这句话里边，可以认为instrument是主语，was是系动词，bought是表语)</li>
+</ul>
+</li>
+<li>一般将来时<ul>
+<li>The Olympic Games will be held in our country in four years’ time. 4年以后，奥林匹克运动会将在我们国家举行。(这句话里边，可以认为Games是主语)</li>
+</ul>
+</li>
+<li>被动语态句中出现情态动词时，用法同will<ul>
+<li>The work must be finished in one way or another. 这件事必须设法做好。in one way or another是无论如何的意思</li>
+<li>This passage may be given several interpretations.这段文字可以有不同的解释。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>进行态: be动词+being+过去分词，be动词时态和原句保持一致<ul>
+<li>现在进行时<ul>
+<li>It is being repaired by a friend of my father’s.父亲的一个朋友正在修理它。(这句话里边，可以认为It是主语，is being是系动词，repaired是表语)</li>
+<li>主动语态: A friend of my father’s is repairing it.</li>
+<li>I am a doctor (常规状态).</li>
+<li>I am being a doctor. (过去和未来不确定，仅表示现在)</li>
+</ul>
+</li>
+<li>过去进行时<ul>
+<li>I was being tested for a driving licence for the third time.(过去进行时)我第3次接受驾驶执照考试。(这句话里边，可以认为I是主语，was being是系动词，tested是表语)</li>
+<li>主动语态: Somebody was testing me for a driving licence for the third time.</li>
+</ul>
+</li>
+<li>将来进行时<ul>
+<li>He will be being examined when we get there.当我们到那儿时他将正被检查。(这句话里边，可以认为He是主语，will be being是系动词，examined是表语)</li>
+<li>主动语态: Somebody will be examming him when we get there</li>
+</ul>
+</li>
+<li>完成态: have/has/had been +动词过去分词<ul>
+<li>现在完成时<ul>
+<li>The fantastic modern buildings have been designed by Kurt Gunter.这些巨大的现代化建筑是由库尔特.冈特设计的。(这句话里边，可以认为buildings是主语，have been是系动词，designed是表语)</li>
+<li>主动语态: Kurt Gunter has designed the fantastic modern buildings</li>
+</ul>
+</li>
+<li>过去完成时<ul>
+<li>I had been asked to drive in heavy traffic and had done so successfully.按照要求在车辆拥挤的路上驾驶，我圆满地完成了。(这句话里边，可以认为I是主语，had been是系动词，asked是 表语)</li>
+<li>主动语态: Somebody had asked me to drive in heavy traffic</li>
+<li>Bluebird, the car he was driving, had been specially built for him.他驾驶的“蓝鸟”牌汽车是专门为他制造的。</li>
+<li>主动语态: Somebody had specially built Bluebird, the car he was driving for him</li>
+</ul>
+</li>
+<li>将来完成时<ul>
+<li>Your character will have been completed by the time your life comes to an end.当生命走到尽头的时候，你的人格才变得完全。(这句话里边，可以认为character是主语， will have been是系动词，completed是表语)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>完成进行态很少用于被动语句</li>
+<li>造句练习<ul>
+<li>1.欧元在大部分欧洲国家都被使用。<ul>
+<li><ol>
+<li>The euro is used in most European countries.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>2.这些电脑是在台湾制造的。<ul>
+<li><ol start="2">
+<li>These computers were manufactured in Taiwan.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>3.2012年的奥运会将在伦敦举行。<ul>
+<li><ol start="3">
+<li>The 2012 Olympic Games will be held in London.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>4.一名应聘者正被我们的人事经理面试着<ul>
+<li><ol start="4">
+<li>An applicant is being interviewed by our personnel manager.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>5.那栋旧大楼已被拆除。(tear down)<ul>
+<li><ol start="5">
+<li>The old building has been torn down.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>6.我们办公室的房间都是每天打扫的。<ul>
+<li><ol start="6">
+<li>Our office rooms are cleaned up every day.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>7.汤姆昨天被一只狗咬到，所幸无大碍。<ul>
+<li><ol start="7">
+<li>Tom was bitten by a dog yesterday. Fortunately, it was nothing serious.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>8.因为经济不景气(the economic recession),大约5000名员工将被裁员(lay off)。<ul>
+<li><ol start="8">
+<li>Because of the economic recession, about 5,000 employees will be laid off.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>9.六个人被困在矿井里已有17个小时了。<ul>
+<li><ol start="9">
+<li>Six men have been trapped in a mine for seventeen hours.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>10.这场地震结束的时候有多少建筑被毁坏了?<ul>
+<li><ol start="10">
+<li>How many buildings had been destroyed when the earthquake ended?</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用被动语态的情况"><a href="#使用被动语态的情况" class="headerlink" title="使用被动语态的情况"></a>使用被动语态的情况</h2><ul>
+<li>1.为了突出受动者（主动语态中的宾语）<ul>
+<li>A hero is distinguished in difficult circumstances.困境之中显英雄。</li>
+<li>A liar is not believed when he tells the truth.撒谎的人讲真理也没人相信。</li>
+</ul>
+</li>
+<li>2.施动者（主动语态的主语）不明确或不必指明时<ul>
+<li>Then in 1989, twenty-six years after the crash, the plane was accidentally rediscovered in an aerial survey of the island. (没有提到到底是谁发现的) 于是，到了1989年，飞机失事26年后， 在对小岛的一次航空勘查中那架飞机被意外地发现了。</li>
+<li>Once a year, a race is held for old cars.旧式汽车的比赛每年举行一次。(没有提到举办者是谁)</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>英语</category>
+      </categories>
+      <tags>
+        <tag>英语</tag>
+        <tag>语法</tag>
       </tags>
   </entry>
 </search>
