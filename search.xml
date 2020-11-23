@@ -189,115 +189,6 @@
       </tags>
   </entry>
   <entry>
-    <title>第一篇博客：为什么我要建博客和写博客</title>
-    <url>/first-blog/</url>
-    <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
-<p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
-<h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
-<p>选择hexo是因为，能支持markdown的书写，和我现有的工具套件能配套上，可以无缝迁移过来，hexo的生态和主题都相对完善。</p>
-<h1 id="过程和踩坑"><a href="#过程和踩坑" class="headerlink" title="过程和踩坑"></a>过程和踩坑</h1><h2 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h2><p>直接上<a href="https://wanwang.aliyun.com/">万网</a>购买自己的域名，做完实名认证之后即可先放着，详细步骤具体参考<a href="https://zhuanlan.zhihu.com/p/103860494">知乎</a>。</p>
-<h2 id="安装node和hexo，并部署到github"><a href="#安装node和hexo，并部署到github" class="headerlink" title="安装node和hexo，并部署到github"></a>安装node和hexo，并部署到github</h2><p>具体参考<a href="https://zhuanlan.zhihu.com/p/105715224">知乎</a>，我是安装在macOS上，不需要搞这里面复杂的各种环境变量。</p>
-<p>踩坑：我原本以为是建完git仓库后，把仓库pull下来，在里面初始化hexo，但后面看了一下，是要在空文件夹操作，并且后续发布到github的文件是hexo进行编译后的文件。</p>
-<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>能够部署之后保证通过github.io能访问即可做域名解析，具体参考<a href="https://zhuanlan.zhihu.com/p/103813944">知乎</a></p>
-<h2 id="挑选主题"><a href="#挑选主题" class="headerlink" title="挑选主题"></a>挑选主题</h2><p>原本我想直接在<a href="https://hexo.io/themes/">官方的主题链接</a>里挑一个比较合适的，给自己定了几个标准：</p>
-<ol>
-<li>整体必须是简洁的，那种大量有图片装饰的，背景花哨的不考虑（原因是，挑图片暴露自己的垃圾审美，还要给每个博客挑配图太费心力了）</li>
-<li>必须能支持公式、代码块高亮等的解析</li>
-<li>偏好整体布局要简洁，偏好侧边栏在右边，并且偏好文章要有侧边栏</li>
-<li>主题必须有开发者长期维护和更新</li>
-<li>能有评论系统</li>
-</ol>
-<p>在上面看花了眼，都没有一个不合适的，看了大半天，猛然觉得自己挑选的思路不对，在最原始的未经过筛选的主题站里挑选，能不费劲吗？</p>
-<p>转换思路，直接搜推荐的hexo主题，然后看到next主题是几乎完全符合我的要求的，然后发现next主题经历了好几个大版本的迭代，甚至github仓库都换了几次，直接上最新的8.0版本，拉下来</p>
-<h2 id="next主题各种调整优化"><a href="#next主题各种调整优化" class="headerlink" title="next主题各种调整优化"></a>next主题各种调整优化</h2><p>next主题中可以进行自主化调整的地方还挺多的，而且8.0版本中，很多地方和以往版本中有不一样的调整方式，我尽量把我用到的写一下。所做的所有操作基本是改一下themes/next下的_config.yml，很少一部分是更改hexo下的_config.yml，偶尔会使用npm装个包</p>
-<h3 id="设置首页信息"><a href="#设置首页信息" class="headerlink" title="设置首页信息"></a>设置首页信息</h3><figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">每天净瞎搞</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;关注：AI/CS/数学/自我提升等&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;既然选择了远方，便只顾风雨兼程&#x27;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Shiqi</span> <span class="string">Lu</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://shiqi-lu.tech</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="风格选择"><a href="#风格选择" class="headerlink" title="风格选择"></a>风格选择</h3><p>我把四个风格都试了一遍，最后比较喜欢Gemini</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment"># scheme: Mist</span></span><br><span class="line"><span class="comment"># scheme: Pisces</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Gemini</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="支持暗黑模式"><a href="#支持暗黑模式" class="headerlink" title="支持暗黑模式"></a>支持暗黑模式</h3><p>这可是个意外惊喜，还会根据系统的设置自动适配</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Dark Mode</span></span><br><span class="line"><span class="attr">darkmode:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置建站时间"><a href="#设置建站时间" class="headerlink" title="设置建站时间"></a>设置建站时间</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2020</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置网站脚注的信息（图标、备案等）"><a href="#设置网站脚注的信息（图标、备案等）" class="headerlink" title="设置网站脚注的信息（图标、备案等）"></a>设置网站脚注的信息（图标、备案等）</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Icon between year and copyright info.</span></span><br><span class="line">  <span class="attr">icon:</span></span><br><span class="line">    <span class="comment"># Icon name in Font Awesome. See: https://fontawesome.com/icons</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">fa</span> <span class="string">fa-heart</span></span><br><span class="line">    <span class="comment"># If you want to animate the icon, set it to true.</span></span><br><span class="line">    <span class="attr">animated:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Change the color of icon, using Hex Code.</span></span><br><span class="line">    <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="网站图标"><a href="#网站图标" class="headerlink" title="网站图标"></a>网站图标</h3><p>先到网上找适合的图标，然后更新一下对应的文件，免费的图标素材网站：<a href="https://www.easyicon.net/1220579-maple_leaf_icon.html">Easyicon</a></p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/7-16.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/7-32.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/7-128.png</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="标签页和分类页"><a href="#标签页和分类页" class="headerlink" title="标签页和分类页"></a>标签页和分类页</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/custom-pages.html#Adding-%C2%ABTags%C2%BB-Page">next文档</a></p>
-<h3 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h3><p>我喜欢放在右边，主要是因为视觉聚焦主要是在左边的</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">sidebar:</span></span><br><span class="line">  <span class="comment"># Sidebar Position.</span></span><br><span class="line">  <span class="comment"># position: left</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">right</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="打开文章标题下方更新时间、阅读时长等信息"><a href="#打开文章标题下方更新时间、阅读时长等信息" class="headerlink" title="打开文章标题下方更新时间、阅读时长等信息"></a>打开文章标题下方更新时间、阅读时长等信息</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html#Post-Wordcount">官方文档</a><br>先按照npm包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-word-counter</span><br><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post meta display settings</span></span><br><span class="line"><span class="attr">post_meta:</span></span><br><span class="line">  <span class="attr">item_text:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">created_at:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">updated_at:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">another_day:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-word-counter</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="博客首页的摘要设置"><a href="#博客首页的摘要设置" class="headerlink" title="博客首页的摘要设置"></a>博客首页的摘要设置</h3><p>这个要配合文章中的description字段，或在文章中添加一行注释辅助，参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html?highlight=more#Preamble-Text">官方文档</a></p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Automatically excerpt description in homepage as preamble text.</span></span><br><span class="line"><span class="attr">excerpt_description:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read more button</span></span><br><span class="line"><span class="comment"># If true, the read more button will be displayed in excerpt section.</span></span><br><span class="line"><span class="attr">read_more_btn:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="置顶的百分比和顶部进度条"><a href="#置顶的百分比和顶部进度条" class="headerlink" title="置顶的百分比和顶部进度条"></a>置顶的百分比和顶部进度条</h3><p>默认给的颜色有点花哨，我改成了灰色</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="comment"># color: &quot;#37c6c0&quot;</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="头像设置"><a href="#头像设置" class="headerlink" title="头像设置"></a>头像设置</h3><p>在url里放置本地图片或者图床链接</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="代码块高亮风格选择"><a href="#代码块高亮风格选择" class="headerlink" title="代码块高亮风格选择"></a>代码块高亮风格选择</h3><p>使用了hightlight.js的高亮样式</p>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">highlight:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">auto_detect:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;    &#x27;</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">hljs:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">prismjs:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">preprocess:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># All available themes: https://theme-next.js.org/highlight/</span></span><br><span class="line">  <span class="attr">theme:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">tomorrow-night-bright</span></span><br><span class="line">  <span class="attr">prism:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">prism</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">prism-dark</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">flat</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="社交账号设置"><a href="#社交账号设置" class="headerlink" title="社交账号设置"></a>社交账号设置</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/shiqi-lu</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br><span class="line">  <span class="attr">E-Mail:</span> <span class="string">mailto:traumlou@163.com</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-envelope</span></span><br><span class="line">  <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">  <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">  <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">  <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">social_icons:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">icons_only:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">transition:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="支持本地搜索"><a href="#支持本地搜索" class="headerlink" title="支持本地搜索"></a>支持本地搜索</h3><p>参考<a href="https://theme-next.js.org/docs/third-party-services/search-services.html?highlight=search#Local-Search">官方文档</a><br>先装包：<code>$ npm install hexo-generator-searchdb </code></p>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">content:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="评论系统"><a href="#评论系统" class="headerlink" title="评论系统"></a>评论系统</h3><p>评论系统选择了<a href="https://valine.js.org/">valine</a>，请参考<a href="https://theme-next.js.org/docs/third-party-services/comments.html?highlight=comme#Valine-China">next文档</a>，其中头像需要注册一下Gravatar，参考<a href="https://valine.js.org/avatar.html">头像配置</a>，这里的邮箱提醒好像有问题，官方说明的方法不能用了。这个以后再说吧，我也不想有个评论就给我发邮件，要真有比较紧急的事情，直接发我邮箱吧</p>
-<h3 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h3><p>注意这里8.0更新之后，就不是通过安装插件改源码的方式实现，直接在文章的front-matter里面添加一个字段：sticky就可以实现了，值越高排的越前，默认为0是按照时间顺序，参考<a href="https://theme-next.js.org/docs/advanced-settings/front-matter.html?highlight=stick">官方文档</a></p>
-<h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
-
-
-<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
-<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
-<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
-<h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
-<ul>
-<li>SEO</li>
-<li>个人简介</li>
-<li>README</li>
-<li>访问速度比较慢，考虑使用除github外的托管服务</li>
-<li>考虑使用CI</li>
-<li>考虑CDN加速</li>
-<li>考虑把http转换成https</li>
-<li>备案</li>
-<li>图床替换成自己的域名</li>
-<li>完善和链接一下领英</li>
-<li>研究一下博客如何分享链接到微信</li>
-</ul>
-<h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
-<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
-</ul>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
-<li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细）</a></li>
-<li><a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a></li>
-<li><a href="https://github.com/next-theme/hexo-theme-next">Next8.0 Github</a></li>
-<li><a href="https://theme-next.js.org/">Next8.0 文档</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>自我提升</category>
-      </categories>
-      <tags>
-        <tag>感想</tag>
-        <tag>自我提升</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>特征选择方法汇总</title>
     <url>/feature-selection/</url>
     <content><![CDATA[<h1 id="什么是特征选择"><a href="#什么是特征选择" class="headerlink" title="什么是特征选择"></a>什么是特征选择</h1><ul>
@@ -495,6 +386,115 @@
       <tags>
         <tag>机器学习</tag>
         <tag>特征工程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一篇博客：为什么我要建博客和写博客</title>
+    <url>/first-blog/</url>
+    <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
+<p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
+<h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
+<p>选择hexo是因为，能支持markdown的书写，和我现有的工具套件能配套上，可以无缝迁移过来，hexo的生态和主题都相对完善。</p>
+<h1 id="过程和踩坑"><a href="#过程和踩坑" class="headerlink" title="过程和踩坑"></a>过程和踩坑</h1><h2 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h2><p>直接上<a href="https://wanwang.aliyun.com/">万网</a>购买自己的域名，做完实名认证之后即可先放着，详细步骤具体参考<a href="https://zhuanlan.zhihu.com/p/103860494">知乎</a>。</p>
+<h2 id="安装node和hexo，并部署到github"><a href="#安装node和hexo，并部署到github" class="headerlink" title="安装node和hexo，并部署到github"></a>安装node和hexo，并部署到github</h2><p>具体参考<a href="https://zhuanlan.zhihu.com/p/105715224">知乎</a>，我是安装在macOS上，不需要搞这里面复杂的各种环境变量。</p>
+<p>踩坑：我原本以为是建完git仓库后，把仓库pull下来，在里面初始化hexo，但后面看了一下，是要在空文件夹操作，并且后续发布到github的文件是hexo进行编译后的文件。</p>
+<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>能够部署之后保证通过github.io能访问即可做域名解析，具体参考<a href="https://zhuanlan.zhihu.com/p/103813944">知乎</a></p>
+<h2 id="挑选主题"><a href="#挑选主题" class="headerlink" title="挑选主题"></a>挑选主题</h2><p>原本我想直接在<a href="https://hexo.io/themes/">官方的主题链接</a>里挑一个比较合适的，给自己定了几个标准：</p>
+<ol>
+<li>整体必须是简洁的，那种大量有图片装饰的，背景花哨的不考虑（原因是，挑图片暴露自己的垃圾审美，还要给每个博客挑配图太费心力了）</li>
+<li>必须能支持公式、代码块高亮等的解析</li>
+<li>偏好整体布局要简洁，偏好侧边栏在右边，并且偏好文章要有侧边栏</li>
+<li>主题必须有开发者长期维护和更新</li>
+<li>能有评论系统</li>
+</ol>
+<p>在上面看花了眼，都没有一个不合适的，看了大半天，猛然觉得自己挑选的思路不对，在最原始的未经过筛选的主题站里挑选，能不费劲吗？</p>
+<p>转换思路，直接搜推荐的hexo主题，然后看到next主题是几乎完全符合我的要求的，然后发现next主题经历了好几个大版本的迭代，甚至github仓库都换了几次，直接上最新的8.0版本，拉下来</p>
+<h2 id="next主题各种调整优化"><a href="#next主题各种调整优化" class="headerlink" title="next主题各种调整优化"></a>next主题各种调整优化</h2><p>next主题中可以进行自主化调整的地方还挺多的，而且8.0版本中，很多地方和以往版本中有不一样的调整方式，我尽量把我用到的写一下。所做的所有操作基本是改一下themes/next下的_config.yml，很少一部分是更改hexo下的_config.yml，偶尔会使用npm装个包</p>
+<h3 id="设置首页信息"><a href="#设置首页信息" class="headerlink" title="设置首页信息"></a>设置首页信息</h3><figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">每天净瞎搞</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;关注：AI/CS/数学/自我提升等&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;既然选择了远方，便只顾风雨兼程&#x27;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Shiqi</span> <span class="string">Lu</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://shiqi-lu.tech</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="风格选择"><a href="#风格选择" class="headerlink" title="风格选择"></a>风格选择</h3><p>我把四个风格都试了一遍，最后比较喜欢Gemini</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment"># scheme: Mist</span></span><br><span class="line"><span class="comment"># scheme: Pisces</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Gemini</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持暗黑模式"><a href="#支持暗黑模式" class="headerlink" title="支持暗黑模式"></a>支持暗黑模式</h3><p>这可是个意外惊喜，还会根据系统的设置自动适配</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Dark Mode</span></span><br><span class="line"><span class="attr">darkmode:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置建站时间"><a href="#设置建站时间" class="headerlink" title="设置建站时间"></a>设置建站时间</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2020</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置网站脚注的信息（图标、备案等）"><a href="#设置网站脚注的信息（图标、备案等）" class="headerlink" title="设置网站脚注的信息（图标、备案等）"></a>设置网站脚注的信息（图标、备案等）</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Icon between year and copyright info.</span></span><br><span class="line">  <span class="attr">icon:</span></span><br><span class="line">    <span class="comment"># Icon name in Font Awesome. See: https://fontawesome.com/icons</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">fa</span> <span class="string">fa-heart</span></span><br><span class="line">    <span class="comment"># If you want to animate the icon, set it to true.</span></span><br><span class="line">    <span class="attr">animated:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Change the color of icon, using Hex Code.</span></span><br><span class="line">    <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="网站图标"><a href="#网站图标" class="headerlink" title="网站图标"></a>网站图标</h3><p>先到网上找适合的图标，然后更新一下对应的文件，免费的图标素材网站：<a href="https://www.easyicon.net/1220579-maple_leaf_icon.html">Easyicon</a></p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/7-16.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/7-32.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/7-128.png</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="标签页和分类页"><a href="#标签页和分类页" class="headerlink" title="标签页和分类页"></a>标签页和分类页</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/custom-pages.html#Adding-%C2%ABTags%C2%BB-Page">next文档</a></p>
+<h3 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h3><p>我喜欢放在右边，主要是因为视觉聚焦主要是在左边的</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">sidebar:</span></span><br><span class="line">  <span class="comment"># Sidebar Position.</span></span><br><span class="line">  <span class="comment"># position: left</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">right</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="打开文章标题下方更新时间、阅读时长等信息"><a href="#打开文章标题下方更新时间、阅读时长等信息" class="headerlink" title="打开文章标题下方更新时间、阅读时长等信息"></a>打开文章标题下方更新时间、阅读时长等信息</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html#Post-Wordcount">官方文档</a><br>先按照npm包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-word-counter</span><br><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post meta display settings</span></span><br><span class="line"><span class="attr">post_meta:</span></span><br><span class="line">  <span class="attr">item_text:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">created_at:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">updated_at:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">another_day:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-word-counter</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="博客首页的摘要设置"><a href="#博客首页的摘要设置" class="headerlink" title="博客首页的摘要设置"></a>博客首页的摘要设置</h3><p>这个要配合文章中的description字段，或在文章中添加一行注释辅助，参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html?highlight=more#Preamble-Text">官方文档</a></p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Automatically excerpt description in homepage as preamble text.</span></span><br><span class="line"><span class="attr">excerpt_description:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read more button</span></span><br><span class="line"><span class="comment"># If true, the read more button will be displayed in excerpt section.</span></span><br><span class="line"><span class="attr">read_more_btn:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="置顶的百分比和顶部进度条"><a href="#置顶的百分比和顶部进度条" class="headerlink" title="置顶的百分比和顶部进度条"></a>置顶的百分比和顶部进度条</h3><p>默认给的颜色有点花哨，我改成了灰色</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="comment"># color: &quot;#37c6c0&quot;</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="头像设置"><a href="#头像设置" class="headerlink" title="头像设置"></a>头像设置</h3><p>在url里放置本地图片或者图床链接</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="代码块高亮风格选择"><a href="#代码块高亮风格选择" class="headerlink" title="代码块高亮风格选择"></a>代码块高亮风格选择</h3><p>使用了hightlight.js的高亮样式</p>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">highlight:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">auto_detect:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;    &#x27;</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">hljs:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">prismjs:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">preprocess:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># All available themes: https://theme-next.js.org/highlight/</span></span><br><span class="line">  <span class="attr">theme:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">tomorrow-night-bright</span></span><br><span class="line">  <span class="attr">prism:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">prism</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">prism-dark</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">flat</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="社交账号设置"><a href="#社交账号设置" class="headerlink" title="社交账号设置"></a>社交账号设置</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/shiqi-lu</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br><span class="line">  <span class="attr">E-Mail:</span> <span class="string">mailto:traumlou@163.com</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-envelope</span></span><br><span class="line">  <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">  <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">  <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">  <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">social_icons:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">icons_only:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">transition:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持本地搜索"><a href="#支持本地搜索" class="headerlink" title="支持本地搜索"></a>支持本地搜索</h3><p>参考<a href="https://theme-next.js.org/docs/third-party-services/search-services.html?highlight=search#Local-Search">官方文档</a><br>先装包：<code>$ npm install hexo-generator-searchdb </code></p>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">content:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="评论系统"><a href="#评论系统" class="headerlink" title="评论系统"></a>评论系统</h3><p>评论系统选择了<a href="https://valine.js.org/">valine</a>，请参考<a href="https://theme-next.js.org/docs/third-party-services/comments.html?highlight=comme#Valine-China">next文档</a>，其中头像需要注册一下Gravatar，参考<a href="https://valine.js.org/avatar.html">头像配置</a>，这里的邮箱提醒好像有问题，官方说明的方法不能用了。这个以后再说吧，我也不想有个评论就给我发邮件，要真有比较紧急的事情，直接发我邮箱吧</p>
+<h3 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h3><p>注意这里8.0更新之后，就不是通过安装插件改源码的方式实现，直接在文章的front-matter里面添加一个字段：sticky就可以实现了，值越高排的越前，默认为0是按照时间顺序，参考<a href="https://theme-next.js.org/docs/advanced-settings/front-matter.html?highlight=stick">官方文档</a></p>
+<h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
+<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
+<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
+<h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
+<ul>
+<li>SEO</li>
+<li>个人简介</li>
+<li>README</li>
+<li>访问速度比较慢，考虑使用除github外的托管服务</li>
+<li>考虑使用CI</li>
+<li>考虑CDN加速</li>
+<li>考虑把http转换成https</li>
+<li>备案</li>
+<li>图床替换成自己的域名</li>
+<li>完善和链接一下领英</li>
+<li>研究一下博客如何分享链接到微信</li>
+</ul>
+<h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
+<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细）</a></li>
+<li><a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a></li>
+<li><a href="https://github.com/next-theme/hexo-theme-next">Next8.0 Github</a></li>
+<li><a href="https://theme-next.js.org/">Next8.0 文档</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>自我提升</category>
+      </categories>
+      <tags>
+        <tag>感想</tag>
+        <tag>自我提升</tag>
       </tags>
   </entry>
   <entry>
@@ -2979,6 +2979,937 @@ tensor([10.])</code></pre>
 <li>2.施动者（主动语态的主语）不明确或不必指明时<ul>
 <li>Then in 1989, twenty-six years after the crash, the plane was accidentally rediscovered in an aerial survey of the island. (没有提到到底是谁发现的) 于是，到了1989年，飞机失事26年后， 在对小岛的一次航空勘查中那架飞机被意外地发现了。</li>
 <li>Once a year, a race is held for old cars.旧式汽车的比赛每年举行一次。(没有提到举办者是谁)</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>英语</category>
+      </categories>
+      <tags>
+        <tag>英语</tag>
+        <tag>语法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>恶魔奶爸语法10-12课</title>
+    <url>/gramma10-12/</url>
+    <content><![CDATA[<h1 id="10-如何构建长难句的主语和宾语"><a href="#10-如何构建长难句的主语和宾语" class="headerlink" title="10.如何构建长难句的主语和宾语"></a>10.如何构建长难句的主语和宾语</h1><h2 id="动名词短语是什么"><a href="#动名词短语是什么" class="headerlink" title="动名词短语是什么"></a>动名词短语是什么</h2><ul>
+<li>动名词短语相当于名称从句里边的that从句的化简。任何一个that从句，都可以用动名词短语代替。动名词具有名词的性质。所以，名词能作什么，动名词就能作什么</li>
+<li>Many people pretend that they understand modern art. = Many people pretend understanding modern art.</li>
+</ul>
+<h2 id="动名词作主语"><a href="#动名词作主语" class="headerlink" title="动名词作主语"></a>动名词作主语</h2><ul>
+<li>举例<ul>
+<li>Working 12 hours a day exhausts me completely. 每天工作12小时让我筋疲力尽。(动名词具有名词的特征，在没有特指是谁发出这个动作的情况下，可以不考虑其逻辑主语，因为在语境中一眼就能看出是谁发出的动作，比如本句话，主语working 12 hours a day当然是句中的“我”发出的动作)。本句如果改成主语从句，那就是: That I work 12 hours a day exhausts me completely. 但是这里用主语从句，远远不如用动名词短语作主语简洁明了。</li>
+<li>Playing football is my favorite sport.踢足球是我最喜欢的运动。</li>
+</ul>
+</li>
+<li>动名词作主语时，和名词从句一样，也可用形式主语It取代，然后将动名词放在句子主干之后（尤其是动名词比较长时）<ul>
+<li>It was no use pretending that I had not seen him, so I waved to him. 若再装作没看见他已是没有用了，我只好向他招手。</li>
+</ul>
+</li>
+<li>注:动名词短语作主语时，一律视为第三人称单数！但and连接的两个动名词短语作主语时，视为复数。<ul>
+<li>Singing with you guys is a lot of fun. 和你们一伙人唱歌很有趣。</li>
+<li>Learning English and listening to music are my hobbies. 学英语和唱歌时我的爱好。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.慢跑是保持健康的好方法。<ul>
+<li>1.Jogging is a good way to stay health/fit.</li>
+</ul>
+</li>
+<li>2.与你共事一直以来都是愉快的经历。(用完成进行态)<ul>
+<li>2.Working with you has been a pleasant experience. / It has been a pleasant experience to work with you.</li>
+</ul>
+</li>
+<li>3.说是一回事，做又是另一回事。<ul>
+<li>3.Saying is one thing; doing is another.</li>
+</ul>
+</li>
+<li>4.出国旅游有助于增长你的见识。<ul>
+<li>4.Travelling abroad helps broaden your horizons. / lt helps to broaden your horizons to travelling abroad.</li>
+</ul>
+</li>
+<li>5.做家务和照顾我们的小孩是我老婆每天要做的事。<ul>
+<li>5.Doing the housework and taking care of our children are what my wife does every day.</li>
+</ul>
+</li>
+<li>6.学而不思则罔，思而不学则殆。<ul>
+<li>6.Learning without thinking is useless; thinking without learning is dangerous.</li>
+</ul>
+</li>
+<li>7.相信自己是成功的秘诀!<ul>
+<li>7.Believing in yourself is the secret of success.</li>
+</ul>
+</li>
+<li>8.拥有知己本身就是一种幸福。<ul>
+<li>8.Having intimate friends is happiness in itself.</li>
+</ul>
+</li>
+<li>9.取胜并不重要，但努力去赢得胜利却是重要的。<ul>
+<li>9.Winning is not everything, but trying to win is everything.</li>
+</ul>
+</li>
+<li>10.拥有目标是一种幸福的状态。<ul>
+<li>10.Having a goal is a state of happiness.</li>
+</ul>
+</li>
+<li>11.牛奶已撒，哭也没用。<ul>
+<li>11.It is no use crying over spilt milk.</li>
+</ul>
+</li>
+<li>12.光学习不实践是没用的。<ul>
+<li>12.lt is no use learning without practice.</li>
+</ul>
+</li>
+<li>13.从事自己喜欢的事情没用，你必须喜欢自己从事的事情。<ul>
+<li>13.lt is no use doing what you like; you have got to like what you do.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="动名词作宾语"><a href="#动名词作宾语" class="headerlink" title="动名词作宾语"></a>动名词作宾语</h2><ul>
+<li>作及物动词的宾语<ul>
+<li>I love traveling in the country, but I don’t like losing my way. 我喜欢在乡间旅行，但却不愿意迷路。翻译成宾语从句是I love that I travel in the country….</li>
+<li>Losers avoid becoming self-responsible. 失败者逃避为自己负责。</li>
+</ul>
+</li>
+<li>作介词的宾语<ul>
+<li>My friends kept on offering me cigarettes and cigars. 我的朋友们不断地向我递香烟和雪茄。(on和后面的动名词短语一起，作kept的宾语)</li>
+<li>Some children can cover the whole length of the pool without coming up for breath even once. 有些孩子能够跑完游泳池的全长而不用露出水面换气。</li>
+</ul>
+</li>
+<li>有些动词只能跟动名词而不能跟不定式作宾语<ul>
+<li>懂得欣赏，克制想象：understand, appreciate(也可作”感激“之意), deny(也可作否认，拒绝), imagine</li>
+<li>喜欢实践，逃避抵抗：enjoy, practice, avoid, escape</li>
+<li>介意打扰，讨厌原谅：mind, excuse, dislike/hate, pardon</li>
+<li>支持建议，推迟考虑：favor(也可作赞成，宠爱), suggest, delay/postpone, consider</li>
+<li>错过盼望，完成冒险：miss, look forward to, finish, risk</li>
+</ul>
+</li>
+<li>含有介词to的介词短语，也是动名词作宾语<ul>
+<li>look forward to: 期待</li>
+<li>object to: 反对</li>
+<li>be/get used to: 习惯于，注意和used to不一样，I used to love movie.我曾经很喜欢电影。跟I am used to playing basketball.我习惯了打篮球。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.大多数小朋友喜欢看卡通。<ul>
+<li>1.Most children enjoy watching cartoons.</li>
+</ul>
+</li>
+<li>2.很多大学毕业生正考虑在寻找工作前先去度个假。<ul>
+<li>2.A lot of college graduates are considering taking a vacation before their job hunting.</li>
+</ul>
+</li>
+<li>3.我每晚睡前都练习弹钢琴一个小时 。<ul>
+<li>3.I practice playing the piano for an hour before I go to bed every night.</li>
+</ul>
+</li>
+<li>4.你能想象被困在交通阻塞中超过3小时吗?<ul>
+<li>4.Can you imagine being caught in traffic jam for over three hours?</li>
+</ul>
+</li>
+<li>5.我盼望不久再见到您。再见。<ul>
+<li>5.I look forward to seeing you again soon. Goodbye.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="动名词做表语"><a href="#动名词做表语" class="headerlink" title="动名词做表语"></a>动名词做表语</h2><ul>
+<li>The subject of life is making choices. 人生的课题就是做选择。</li>
+<li>Courage is doing what you’ re afraid to do. 勇气就是去做自己害怕做的事情。</li>
+</ul>
+<h2 id="动名词做同位语（较少见）"><a href="#动名词做同位语（较少见）" class="headerlink" title="动名词做同位语（较少见）"></a>动名词做同位语（较少见）</h2><ul>
+<li>Many people admire his special ability, learning three languages at the same time.很多人都美慕他的特殊能力:同时学习3种语言。</li>
+<li>My hobby swimming dates from my childhood.我的业余爱好游泳源于我的童年。</li>
+</ul>
+<h2 id="动名词短语的逻辑主语——所有格-动名词"><a href="#动名词短语的逻辑主语——所有格-动名词" class="headerlink" title="动名词短语的逻辑主语——所有格+动名词"></a>动名词短语的逻辑主语——所有格+动名词</h2><ul>
+<li>概述<ul>
+<li>I remember <code>that he promised to help these poor students.</code></li>
+<li>本句如果改成: I remember <code>promising to help these poor students.</code> 那就是一个错句子。因为promising这个动名词，在这样的语境中，会被默认为是主语“我”发出的动作。但是显然和句意不符合。</li>
+<li>这时候，我们就要给动名词加上逻辑主语，原则上，如果主语是代词，通常用所有格，但是如果主语是名词，则用所有格和普通格都正确。</li>
+</ul>
+</li>
+<li>注：美国英语中，可以使用主格（动名词作主语），或宾格（动名词作宾语）代替所有格<ul>
+<li><code>His not finishing</code> the work disappointed me. 他未能准时完成工作让我失望</li>
+<li>Would you mind <code>my coming</code> with you? 我跟你一道去行吗?</li>
+<li>Excuse <code>my interrupting you</code>. 请原谅我打断了您。</li>
+<li>上述3个例句可改为:</li>
+<li>He not finishing the work disappointed me.</li>
+<li>Would you mind me coming with you?</li>
+<li>Excuse me interrupting you.</li>
+</ul>
+</li>
+<li>下列情况即使在正式文体中，动名词的逻辑主语也习惯使用普通格：<ul>
+<li>1.逻辑主语为名词指物<ul>
+<li>The children are looking forward to spring coming.</li>
+</ul>
+</li>
+<li>2.逻辑主语为多个名词<ul>
+<li>Do you remember Mary and her mother coming to see us last June?</li>
+</ul>
+</li>
+<li>3.逻辑主语为以”s”结尾的名词<ul>
+<li>It’s a disaster the bosses shutting all those factories.</li>
+</ul>
+</li>
+<li>4.逻辑主语与动名词分离<ul>
+<li>I remember mother once telling us a story about the fox.</li>
+</ul>
+</li>
+<li>5.逻辑主语为不定代词，如:someone, everything, something;<ul>
+<li>They complained about everything going wrong.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>注意特殊句型<ul>
+<li>Would/Do you mind + V-ing？你介意…吗？<ul>
+<li>Would you mind <code>my opening</code> the window? It’ s very hot in here. 你介意我打开窗户吗?这里太热了!</li>
+<li>Do you mind <code>handing</code> me that book? 介意把那本书给我吗?</li>
+</ul>
+</li>
+<li>Would/Do you mind + if + 句子？ <ul>
+<li>Do you mind if… （真实语气：一般现在时）<ul>
+<li>Do you mind if I <code>smoke</code> here?</li>
+</ul>
+</li>
+<li>Would you mind if… (虚拟语气：一般过去时)<ul>
+<li>Would you mind if I <code>smoked</code> here?</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.我记得他曾经承诺，一旦我们遇到麻烦(get into trouble)他就会来帮助我们。<ul>
+<li>1.I remember his/him once promising to help us if we got into trouble.</li>
+</ul>
+</li>
+<li>2.你介意我提一个建议吗?<ul>
+<li>2.Would you mind my/me making a suggestion.</li>
+</ul>
+</li>
+<li>3.老师拒绝接受我的建议让我很恼火。<ul>
+<li>3.My teacher’s refusing to accept my suggestion upset me.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="动名词短语的时态和语态变化"><a href="#动名词短语的时态和语态变化" class="headerlink" title="动名词短语的时态和语态变化"></a>动名词短语的时态和语态变化</h2><ul>
+<li>动名词短语和分词短语完全一样，没有“时”的变化，只有“态”的变化，而且同样只有<code>一般态</code>和<code>完成态</code>。同样，和分词短语一样，动名词的两种态，均有<code>主动语态</code>和<code>被动语态</code>两种语态</li>
+<li>当动名词的动作和主句主语同时发生，用一般态。如果是表示被动的含义，要用被动语态。注意：动名词短语如果是being，任何时候都不能省略<ul>
+<li>No one can avoid <code>being influenced</code> by advertisements.没有人能避免受广告的影响。(一般态，被动语态)</li>
+<li>Everyone appreciates <code>being appreciated.</code>每个人都喜欢得到赞赏。(一 般态，被动语态)</li>
+<li>There is only one thing in the world worse than <code>being talked about</code>, and that is not being talked about. 世界上比被人议论更糟糕的一件事，就是根本没人去议论。(王尔德名言 )</li>
+<li><code>Being</code> deeply <code>loved</code> by someone gives you strength, while <code>loving</code> someone deeply gives you courage. 人爱者有力，爱人者勇。(老子)</li>
+</ul>
+</li>
+<li>当动名词的动作，发生在主句动作之前时，要用完成态。（但动名词短语具有名词性质，时态要求没有分词那么严格，此时用一般态也不算错误）<ul>
+<li>No good thing can be enjoyed by us, without <code>having cost</code> labor. 不付出辛劳，我们就不能享受任何美好的事物。(完成态，主动语态)。本句如果用No good thing can be enjoyed by us, without <code>costing</code> labor.也不算错误，但是用完成态更好，因为是先劳动，再享受。</li>
+<li>I appreciate <code>having been given</code> the opportunity to study abroad two years ago.我很感激两年前得到一次出国留学的机会。(完成态，被动语态)</li>
+</ul>
+</li>
+<li>两个短语为固定搭配，虽说是主动的形式，但表达被动的含义<ul>
+<li>sth. need doing: 某事需要被做<ul>
+<li>The classroom is so dirty that it <code>needs cleaning</code> thoroughly. 教室很脏，需要彻底清洁。</li>
+</ul>
+</li>
+<li>sth. be worth doing: 某事值得被做<ul>
+<li>By this time, a Lancaster bomber in reasonable condition <code>was worth rescuing.</code> 这个时候，一架状态良好的lancaster轰炸机是值得拯救的。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.这台电视机开关的声音在大街上都能被听到。<ul>
+<li>1.The noise of the television being opened and closed can be heard in the street.</li>
+</ul>
+</li>
+<li>2.我一直后悔上学时没有更加努力的学习。<ul>
+<li>2.I have always regretted not having studied harder at school.</li>
+</ul>
+</li>
+<li>3.墙角处的那个人承认对这家公司的经理撒了谎(tell a lie)。<ul>
+<li>3.The man in the corner confessed to having told a lie to the manager of company.</li>
+</ul>
+</li>
+<li>4.马克每次违反交通规则(break traffic regulation)以后都常常试图逃避被罚款。<ul>
+<li>4.Mark often attempts to escape being fined whenever he breaks traffic regulations.</li>
+</ul>
+</li>
+<li>5.我们的现代文明绝不能被认为(be thought of as)是短期内建立的。<ul>
+<li>5.Our modern civilization must not be thought as having been created in a short period of time.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="11-如何正确使用不定式短语"><a href="#11-如何正确使用不定式短语" class="headerlink" title="11.如何正确使用不定式短语"></a>11.如何正确使用不定式短语</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li>不定时同时具有和动名词与分词类似的功能。要特别注意，不定时有“逻辑将要”的含义，故其动作发生在前面的动词之后，而且多表达意愿、目的、企图等</li>
+</ul>
+<h2 id="不定式短语的构成和功能"><a href="#不定式短语的构成和功能" class="headerlink" title="不定式短语的构成和功能"></a>不定式短语的构成和功能</h2><ul>
+<li>1.名词从句的化简：作主语，及物动词的宾语，表语，宾语补语</li>
+<li>2.状语从句的化简：作状语</li>
+<li>3.定语从句的化简：作定语</li>
+</ul>
+<h2 id="名词从句的化简"><a href="#名词从句的化简" class="headerlink" title="名词从句的化简"></a>名词从句的化简</h2><ul>
+<li>作主语<ul>
+<li>概述<ul>
+<li>To make large sums of money is my dream. 挣大钱是我的梦想。(相当于That I wilI make large sums of money is my dream)</li>
+<li>注意:如果本句用Making large sums of money is my dream. 也对，但是用不定式暗示“我要去挣钱”，但目前还没有挣到钱。现代英语中，不定式和动名词作主语一般可通用。</li>
+</ul>
+</li>
+<li>不定式作主语时，可用形式主语It取代，然后将不定式放在句子主干之后<ul>
+<li>It was his job to repair bicycles and at that time he used to work fourteen hours a day.他那时的工作是修理自行车，并且通常是一天工作14个小时。(相当于It was his job that he repaired bicycles…)</li>
+<li>So, it comes as a surprise to learn that giant fish are terrifying the divers on North Sea oil rigs. 因此，听说北海石油钻井平台上的潜水员受到巨型鱼类的恐吓，确实很让人吃惊。(相当于it comes as a surprise that we learn giant fish ….)</li>
+</ul>
+</li>
+<li>和动名词短语一样，不定式短语作主语时，一律视为第三人称单数！但and连接的两个不定式短语作主语时，视为复数<ul>
+<li><code>To become a great scientist</code> is his ultimate goaI. 成为伟大的科学家是他的终极目标。</li>
+<li><code>To study</code> and <code>to play</code> are equally important. 学习和玩耍同样重要。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.成为职业篮球选手是我的抱负之一。<ul>
+<li>To become a professional basketball player is one of my ambitions. /It is one of my ambitions to become a professional basketball player.</li>
+</ul>
+</li>
+<li>2.精通一门外语需要不断的努力。<ul>
+<li>To master a foreign language takes constant effort. /It takes constant effort to master a foreign language.</li>
+</ul>
+</li>
+<li>3.提高我们的生产力是我们今年的主要目标。<ul>
+<li>To increase our productivity is our main goal this year. /It is our main goal this year to increase our productivity.</li>
+</ul>
+</li>
+<li>4.对于某些人而言，活着就是受苦。<ul>
+<li>For some people, to live is to suffer.</li>
+</ul>
+</li>
+<li>5.一天大笑三次有益健康。<ul>
+<li>It is good for your health to laugh three times a day.</li>
+</ul>
+</li>
+<li>6.犯错是人之常情，宽恕则超凡入圣。<ul>
+<li>To err is human; to forgive is divine.</li>
+</ul>
+</li>
+<li>7.知道做什么是智慧，知道怎么做是技能。<ul>
+<li>To know what to do is wisdom. To know how to do it is skilI.</li>
+</ul>
+</li>
+<li>8.让自己的孩子诚实是教育的开端。<ul>
+<li>To make your children capable of honesty is the beginning of education.</li>
+</ul>
+</li>
+<li>9.爱是世界上最美的动词。<ul>
+<li>To love is the most beautiful verb in the worId.</li>
+</ul>
+</li>
+<li>10.人生得一知己足矣。<ul>
+<li>It is enough to have one close friend in one’ s life.</li>
+</ul>
+</li>
+<li>11.诅咒黑暗不如点亮一支蜡烛。 (临渊羡鱼，不如退而结网)<ul>
+<li>It is better to light a candle than to curse the darkness.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>作及物动词的宾语：（绝对不能作介词的宾语）<ul>
+<li>attempt企图，choose选择，decide决定，expect期望，hope希望，intend打算，manage设法，offer/volunteer主动提议，plan计划，want要，wish希望，endeavor努力</li>
+<li>大部分及物动词，其后即可用不定式，也可用动名词，比如begin doing = begin to do</li>
+<li>但是表示“企图”或者“意愿”的及物动词，其宾语是“将要发生的事情”，所以通常只能用不定式作宾语<ul>
+<li>Debbie is only eleven years old and she hopes <code>to set up a new world record.</code> 黛比只有11岁，她希望创一项新的世界纪录。(相当于…that she can set up a new world record. )</li>
+<li>Last Christmas, the circus owner, Jimmy Gates, decided <code>to take some presents to a children&#39;s hospital.</code> 去年圣诞节，马戏团老板吉米.盖茨决定送些礼物给儿童医院。</li>
+<li>It has four Rolls-Royce Merlin engines, but the group will need <code>to have only three of them rebuilt.</code> 该飞机装装配有4台罗尔斯-罗伊斯的默林发动机，但是他们只需要修复其中的3台。(相当于…that they will have only three of them rebuilt. )</li>
+<li>The pilot managed <code>to circle the balloon</code> for some time. 飞行员设法绕着气球飞了一阵。</li>
+</ul>
+</li>
+<li>在第四大句型中，不定式作不完全及物动词的宾语时，必须用形式宾语it取代，加上宾语补语之后，再加不定式<ul>
+<li>在前面的名词从句部分，学过形式宾语句型：某人 认为 做某事 是怎么样的</li>
+<li>比如：我认为每天多喝水很有必要</li>
+<li>I think <code>it</code> necessary that I should drink a lot of water.</li>
+<li>同样，本句型中，如果宾语是不定式，也要用形式宾语</li>
+<li>think, believe, find, deem, consider + it + (to be) + 名词或形容词（补语）+ 不定式（宾语）</li>
+<li>其中to be可省略</li>
+<li>所以：I think <code>it</code> necessary <code>to drink a lot of water.</code><ul>
+<li>I <strong>consider</strong> <code>it</code> a great <code>honor</code> to be invited to dinner. 我认为能被邀请参加晚宴是很大的荣幸。</li>
+<li>I <strong>deem</strong> <code>it</code> a great <code>honor</code> to serve you. 我认为为您服务是一项光荣。</li>
+<li>A Frenchman, for instance, might <strong>find</strong> <code>it hard</code> to laugh at a Russian joke. 例如，法国人听完一则俄国笑话可能很难发笑。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>和名词从句不同，不定式短语还可以和动词make构成宾补句型，用于表示“使某种事情变得怎么样”：make + it + (to be) + 名词或形容词（补语）+ 不定式（宾语）<ul>
+<li>The invention of computers has <code>made</code> it <code>possible</code> to free man from the complex labor. 计算机的发明使得人们有可能从繁杂劳动中解放出来。</li>
+<li>I <code>made</code> it <code>my  business</code> to know all about them. 我把了解他们作为我的业务。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.我主动提议帮玛丽忙，但她拒绝了(turn sb. down)。<ul>
+<li>I offered to give Mary a hand, but she turned me down.</li>
+</ul>
+</li>
+<li>2.我们企图说服约翰戒烟，但没有效果。<ul>
+<li>We attempted to persuade John to quit smoking, but in vain.</li>
+</ul>
+</li>
+<li>3.我不觉得理解V0A的慢速英语节目有难度。<ul>
+<li>I don’t think it difficult to understand the VOA Special English.</li>
+</ul>
+</li>
+<li>4.虽然声音被听得很清楚，但费了我很长时间才作出反应。<ul>
+<li>Though the sound could be heard clearly, it took me a long time to react.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>有些及物动词，既可以用动名词也可以用不定式作宾语，但是意义不同。要区分很简单：动名词表示已经做过的事情，不定式表示正打算做的事情<ul>
+<li>stop doing:停止做某事</li>
+<li>stop to do:停下来去做某事</li>
+<li>remember doing:记得做过某事</li>
+<li>remember to do:记得去做某事</li>
+<li>forget doing:忘记做过某事</li>
+<li>forget to do:忘记去做某事</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>作表语（名词性）<ul>
+<li>概述<ul>
+<li>The only way to do this was <code>to operate.</code> 搞清的唯一办法就是手术。</li>
+<li>My hope is <code>to become a scientist</code> like Einstein. 我的希望就是做一个像爱因斯坦那样的科学家。</li>
+</ul>
+</li>
+<li>主语是人的时候，不定式作表语表示一定会发生的情况（计划，命令，肯定推测等）<ul>
+<li>I <code>am to</code> realize the goal of life. 我一定要实现人生的目标。(肯定推测)</li>
+<li>You <code>are to</code> be back by 10 o’ clock. 你必须十点以前回来。(命令)</li>
+<li>You <code>are not to</code> smoke in the reading-room. 你不能在阅读室吸烟。(用于否定句表示“禁止”)</li>
+</ul>
+</li>
+<li>特征动词的表语，通常用不定式（to be可省略）：seem似乎是，appear看起来是，prove被证明是，turn out结果是<ul>
+<li>The majority of people <strong>seem</strong> <code>to prefer TV to radio.</code> 多数人喜欢电视胜过广播。</li>
+<li>These birds <strong>seem</strong> <code>unaffected</code> by climate.这些鸟似乎不受气候的影响。</li>
+<li>He <strong>appears</strong> <code>a perfectly normaI person.</code> 他看上去是一个完全正常的人。</li>
+<li>The search <strong>proved</strong> <code>difficult.</code> 这次搜索被证明是很困难的。</li>
+<li>He <strong>turned out</strong>  <code>to be right.</code> 结果他是对的。</li>
+<li>Babies of two months old do not <strong>appear</strong> <code>to be reluctant</code> to enter the water. 两个月的婴儿并未显得不愿意入水。</li>
+<li>By this time, a Lancaster bomber in reasonable condition <strong>was worth rescuing.</strong> 这个时候，一架状态良好的lancaster轰炸机是值得拯救的。</li>
+<li>The operation, which lasted for over four hours, <strong>proved</strong> <code>to be very difficult</code> because of the hard resin which covered the skin. 手术持续了4个多小时，非常难做，因为皮肤上覆盖着一层硬硬的树脂。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>作宾语补语 或 被动语态的主语补语：此时不定式如果是to be，可以省略<ul>
+<li>She wanted him <code>to repair their son&#39;s bicycle!</code> 她叫他去修理孙子的自行车。</li>
+<li>When it was eventually brought to shore, it was found <code>to be over thirteen feet long.</code> 当终于把它弄上岸后，人们发现它身长超过了13英尺。(本句中to be可省略)</li>
+</ul>
+</li>
+<li>作同位语<ul>
+<li>My plan <code>to visit the town</code> was refused. 我的参观小镇这个计划被拒绝了。</li>
+<li>(相当于同位语从句My plan <code>that I will visit the town</code> was refused. )</li>
+</ul>
+</li>
+<li>疑问词+不定式：构成名词短语，用法和名词相同<ul>
+<li>I was just wondering <code>how to spend the morning.</code> 我正不知道怎么消磨这一上午呢。</li>
+<li>(相当于宾语从句I was just wondering ^how I would spend the morning.` )</li>
+</ul>
+</li>
+</ul>
+<h2 id="状语从句的简化（目的，结果）"><a href="#状语从句的简化（目的，结果）" class="headerlink" title="状语从句的简化（目的，结果）"></a>状语从句的简化（目的，结果）</h2><ul>
+<li>概述<ul>
+<li>分词短语作状语，可以表示伴随，时间，原因，结果，目的，方式，让步，条件。但是不定式状语只能表目的和结果</li>
+</ul>
+</li>
+<li>作目的状语<ul>
+<li>Fifteen policemen had to push very hard <code>to get him off the main street.</code> 15个警察不得不用很大的力气把它推离主要街道。(相当于目的状语从句… that they could get him off…)</li>
+<li>When the bull got close to him, he clumsily stepped aside <code>to let it pass.</code> 当公牛逼近他时，他踉跄地住旁边一闪，牛扑空了。(相当于目的状语从句….so that he could let it pass. 由于let是不完全及物动词，故此不定式短语类似第四大句型，it是不定式to let的宾语，pass是宾语补语. )</li>
+<li>It was not long before a helicopter arrived on the scene <code>to rescue the survivors of the plane crash.</code> 不久，一架直升飞机飞抵飞机失事现场，来搭救这几个幸存者。(相当于目的状语从句…so that it could rescue…)</li>
+<li>Specially-made lanterns are hung outside each house <code>to help the dead to find their way.</code> 特制的灯笼挂在各家的门外，为的是帮助亡灵看清道路。(相当于 目的状语从句…. that they could help the dead..由于heIp是不完全及物动词，故此不定式短语类似第四大句型)</li>
+</ul>
+</li>
+<li>有时候为了强调目的状语，可以将不定式放在句首<ul>
+<li><code>To acquire knowledge,</code> one must study; but <code>to acquire wisdom,</code> one must observe. 要想获得知识，就必须学习，但是要想获得智慧，就必须学会观察。</li>
+<li><code>To be really happy and really safe,</code> one ought to have at least two or three hobbies, and they must alI be real. 要想真正幸福和平安，一个人至少应该有两三种业余爱好，而且必须是真正的爱好。</li>
+</ul>
+</li>
+<li>作结果状语（不定式表示意料之外的结果，而分词短语表示意料之中的结果）<ul>
+<li>Farm laborers said that they always woke up <code>to find the work had been done</code> overnight. 农场工们说，常常一早起来却发现有人在夜里把活干了。(意料之外)</li>
+<li>The small company has beaten other big companies, <code>to win the title</code> of best business-class service. 这个小航空公司击败了其他大公司从而赢得了最佳商务舱服务奖。(意料之外)</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.憎恨别人，犹如为了除掉一只老鼠而烧掉自己的房子。<ul>
+<li>Hating people is like burning down your own house to get rid of a rat.</li>
+</ul>
+</li>
+<li>2.为了赢得这个奖，你应该很努力地奋斗。<ul>
+<li>To win the award, you should work very hard.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="定语从句的化简"><a href="#定语从句的化简" class="headerlink" title="定语从句的化简"></a>定语从句的化简</h2><ul>
+<li>关系代词作主语引导的定语从句化简（修饰的名词被绝对性形容词修饰的时候）<ul>
+<li>I have <code>no</code> friend <code>to advise me.</code> 我没有可以给我忠告的朋友。(相当于I have no friend <code>who can advise me.</code> ) (因为本句中有绝对性形容词no，所以用不定式作定语，而不用分词)</li>
+<li>He was the <code>first</code> person <code>to greet me</code> when I arrived there.当我到那儿的时候，他是第一个来迎接我的人。(因为本句中有绝对性形容词first,所以用不定式作定语，而不用分词)</li>
+</ul>
+</li>
+<li>关系代词作宾语引导的定语从句化简。(通常表示“有某事要做”)<ul>
+<li>I will write a letter. 我要写一封信。</li>
+<li>I have a letter to write. 我有一封信要写。</li>
+<li>这两句话中文意思其实是一样的，英文意思也是一样的。此时，不定式to write作定语，修饰名词letter, 但是一定要注意，这里的不定式动词write是及物动词!!! 其修饰的名词letter就是不定式的逻辑宾语! !</li>
+<li>He never has anything to do.他从来都是无事可做。(相当于He never has anything <code>that he can do.</code> )</li>
+<li>注意:此时的不定式必须是及物动词或者及物动词短语。</li>
+<li>请看这个句子: He is a nice man <code>to work.</code> (X)</li>
+<li>这个句子中，work是不及物动词，自然不能接宾语man, 所以，必须改为: He is a nice man <code>to work with.</code> 他人不错，可以与他共事。</li>
+</ul>
+</li>
+<li>关系副词引导的定语从句化简：此时不定式短语必须是<code>不及物动词</code>，或者<code>及物动词+宾语</code><ul>
+<li>The time <code>to go</code> is July. (不及物动词go) 应该在7月份去。(相当于The time <code>when we should go</code> is July. )</li>
+<li>It is time <code>to draw a conclusion.</code> (及物动词draw+宾语conclusion) 到下结论的时间了。</li>
+<li>A good place <code>to eat food</code> is the Sichuan restaurant around the corner. 一个吃饭的好地方就是拐角的那家川菜馆。(相当于A good place where we can eat …)</li>
+<li>The only way <code>to do this</code> was to operate. 搞清的唯一办法就是手术。(相当于The only way <code>in which they can do this</code>…)</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.我有一封信要写。<ul>
+<li>I have a letter to write.</li>
+</ul>
+</li>
+<li>2.他是做最后决定的最佳人选。<ul>
+<li>He is the best man to make the final choice.</li>
+</ul>
+</li>
+<li>3.在天黑前，我们还有很长的路要走。<ul>
+<li>We had a long journey to make before nightfall.</li>
+</ul>
+</li>
+<li>4.她有四个孩子要照顾。<ul>
+<li>She has four children to take care of.</li>
+</ul>
+</li>
+<li>5.下一列到达的火车是从纽约开过来的。<ul>
+<li>The next train to arrive is from New York.</li>
+</ul>
+</li>
+<li>6.克林顿是这次空难中唯一的幸存者。<ul>
+<li>Clinton is the only person to survive the air crash.</li>
+</ul>
+</li>
+<li>7.角色扮演(role playing)是一种有效而且自得其乐的英语学习方法。<ul>
+<li>Role playing is an effective and enjoyable way to learn English. </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="不定式的逻辑主语"><a href="#不定式的逻辑主语" class="headerlink" title="不定式的逻辑主语"></a>不定式的逻辑主语</h2><ul>
+<li>当不定式的逻辑主语和句子的主语不一致的时候，通常用下面的结构：for + 名词 + 不定式<ul>
+<li>He expects <code>for his sister to meet you.</code> 他期望他妹妹认识你。(相当于He expects <code>that his sister can meet you.</code> )</li>
+<li>There is no need <code>for you to go. </code> 你没有必要去。</li>
+<li>Dentists always ask questions when it is impossible <code>for you to answer.</code> 牙科医生们总是在你无法作出回答的时候向你提出问题。</li>
+<li>Chinese parents wanted their children to be successful, while American parents expressed a desire <code>for their children to be happy.</code> 中国的父母希望孩子成功，而美国的父母表达了他们的愿望，那就是希望他们孩子幸福。</li>
+</ul>
+</li>
+<li>表达“对于…来说做某事是怎样的”，通常都可以采用这种不定式带上逻辑主语的结构：It is + 形容词 + for sb. to do sth.<ul>
+<li>It is necessary <code>for him to study English every day.</code> 对于他来说，每天学习英语是很有必要的。</li>
+</ul>
+</li>
+<li>代词作不定式的逻辑主语时，用宾格。<ul>
+<li>My sister told me that she would love for me to babysit for her. 姐姐告诉我她很想要我帮她照顾小孩</li>
+</ul>
+</li>
+<li>在It is + 形容词 + for sb. to do sth.句型中，表示人物性格的形容词（聪明，善良，粗心，愚蠢。。等）和不定式连用时，要用of代替for<ul>
+<li>It’s wise <code>of you</code> not to argue with your boss. 明智的做法是不和你的老板争吵。</li>
+<li>It was very careless <code>of him</code> to make such silly mistakes. 他太粗心了，居然犯了如此愚蠢的错误。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.此刻，我很难表达我的心情。<ul>
+<li>It’s very difficult for me to express my feelings at this moment.</li>
+</ul>
+</li>
+<li>2.你有必要亲自去那里一趟。<ul>
+<li>It’s necessary for you to go there in person.</li>
+</ul>
+</li>
+<li>3.他很慷慨，把它的车借给了我。<ul>
+<li>It’s generous of him to lend me his car.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="不定式短语的时态和语态变化"><a href="#不定式短语的时态和语态变化" class="headerlink" title="不定式短语的时态和语态变化"></a>不定式短语的时态和语态变化</h2><ul>
+<li>不定式短语没有“时”的变化，只有“态”的变化<ul>
+<li>不定式的4态构成非常简单，就是to+4态</li>
+<li>而不定式的被动语态，就是to+4态的被动语态(但进行态和完成进行态很少用于被动语态)。</li>
+<li>以动词do为例:</li>
+<li><img src="http://anki190912.xuexihaike.com/20201117145336.png"></li>
+<li>He wanted some photographs <code>to be taken</code> when he visited Taiwan. 他在台湾参观的时候想找人拍几张照片。(一般态，被动语态)</li>
+</ul>
+</li>
+<li>不定式的完成态，表示不定式的动作发生在谓语动作之前<ul>
+<li>Fisherman and sailors sometimes claim <code>to have seen</code> monsters in the sea. 渔夫和水手们有时声称自己看到过海里的妖怪。(完成态，主动语态)</li>
+<li>This building was said <code>to have been built</code> from their own designs.这据说是他们自行设计建造的。(完成态， 被动语态)</li>
+</ul>
+</li>
+<li>常见固定搭配<ul>
+<li>claim to do: 宣称</li>
+<li>be said to do: 据说</li>
+<li>be supposed/thought/expected to do: 应该<ul>
+<li>Everyone went to the funeral, for the ‘ghost’ was none other than Eric Cox, a third brother who <code>was supposed to have died</code> as a young man. 大家都去参加了葬礼，因为那“鬼”不是别人，正是农场主的兄弟埃里克.考科斯。人们以为埃里克年轻时就死了。</li>
+<li>When I was a boy, my grandfather told me how a German taxi driver, Franz Bussman, found a brother who was thought <code>to have been killed</code> twenty years before. 当我是个孩子的时候，我祖父给我讲了一位德国出租汽车司机弗朗兹.巴斯曼如何找到了据信已在20年前死去的兄弟的事。</li>
+</ul>
+</li>
+<li>seem/appear: 似乎</li>
+</ul>
+</li>
+<li>不定式的进行态，表示不定式的动作与谓语动作同时发生。（不定式进行态不常用，通常只用于seem/appear, happen等动词之后），表达“似乎正在做某事”，“碰巧正在做某事”等等<ul>
+<li>A pilot noticed a balloon which seemed <code>to be making for</code> a Royal Air Force Station nearby. 一个飞行员发现了一只气球，它像是正飞往附近的一个皇家空军基地。</li>
+</ul>
+</li>
+<li>不定式的完成进行态，是完成态的延续动词用法（少见）<ul>
+<li>The are said to have been collecting stamps.</li>
+<li>The are said to have collected stamps.</li>
+<li>据说他们一直在收集邮票。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.他想要找人立刻把这些信打印出来。<ul>
+<li>He wanted the letters to be typed at once.</li>
+</ul>
+</li>
+<li>2.我很抱歉在这个时候还用这么多问题来打扰你。<ul>
+<li>I’m sorry to have bothered you with so many questions on such an occasion.</li>
+</ul>
+</li>
+<li>3.她妈妈走进来的时候，他假装正在睡觉。<ul>
+<li>He pretended to be sleeping when his mother came in. </li>
+</ul>
+</li>
+<li>4.那个小女孩今晚好像一直在看电视。<ul>
+<li>The little girl seems to have been watching TV all this evening.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="12-条件状语从句和虚拟语气"><a href="#12-条件状语从句和虚拟语气" class="headerlink" title="12.条件状语从句和虚拟语气"></a>12.条件状语从句和虚拟语气</h1><h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><ul>
+<li>条件状语从句分为两大类：真实条件状语从句和虚拟语气</li>
+<li>请看两句话:</li>
+<li>1.如果我明天发了工资,我就请你吃饭。</li>
+<li>2.如果明天我彩票中了500万, 我就请你吃饭。</li>
+</ul>
+<h2 id="真实条件状语从句"><a href="#真实条件状语从句" class="headerlink" title="真实条件状语从句"></a>真实条件状语从句</h2><ul>
+<li>if(如果…)：后面可加then，如果then省略了，也隐含在句子的意思里<ul>
+<li>表示客观事实，主句用一般现在时或现在进行时，从句用一般现在时(可记忆为”主现从现”)<ul>
+<li>If I eat too much, I feel uncomfortable. 如果我吃太多，就会觉得不舒服。(真实的情况，而且主句用的是一般现在时，表示这是客观事实。)</li>
+<li>If you can’t beat them, join them. 如果你不能打败他们，就加入他们。(谚语 )</li>
+<li>If you drink and drive, you are breaking the law. 如果你酒驾，那你就是在违法了。(真实的情况，而且主句用的现在进行时，加强语气，给人一种生动的感觉)</li>
+</ul>
+</li>
+<li>表示将来可能发生的情况，主句用一般将来时，从句要用一般现在时，此时主句的will表示肯定或很可能发生的事情。（真实的情况，而且主句用的一般将来时，表示这是推测）(可记忆为”主将从现”)<ul>
+<li><code>If you park your car in the wrong place,</code> a traffic policeman will soon find it. 一旦你把汽车停错了地方，交通警很快就会发现。</li>
+<li>You will be very lucky <code>if he lets you go</code> without a ticket. 如果他没给你罚单就放你走了，算你走运。</li>
+<li><code>If she comes,</code> she will get a surprise. 如果她来了，她会感到非常惊奇了。</li>
+<li>注:如果主句的肯定程度不是很高，就可以用别的情态助动词代替will。<ul>
+<li>Are you successful in language learning? <code>If it is less successful</code>, you should do well to try the above ways. 你在语言学习方面成功吗?如果你不那么成功，你应该好好尝试以上的方法。</li>
+<li>If they are not brought to the surface soon they may lose their lives. 如果不把他们尽快救到地面上来，他们就有可能丧生。</li>
+<li><code>If the students are interested</code> in sports, they can join different sports clubs. 如果学生对运动感兴趣，他们可以加入不同的运动俱乐部。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如果在条件状语从句中出现了will，不是表示将来时，而是表示意愿<ul>
+<li>If I <code>will</code> prepare, my chance will come someday. 如果我愿意准备，总有一天机会将来临。</li>
+<li>If a man <code>will</code> not seek knowledge, it will not seek him. 如果一个人不去找知识，知识也不会去找他。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>unless(除非。。)：unless引导的条件状语从句，其主句否定句比肯定句更常用<ul>
+<li>All dreams are of no value <code>unless they are followed by action.</code> 如果不付诸行动，一切梦想都毫无价值。</li>
+<li>I won’t call you, <code>unless something unexpected happens.</code> 除非有意外事情发生，我将不会给你打电话。</li>
+</ul>
+</li>
+<li>其它常用的连接副词<ul>
+<li>suppose/supposing (that)<ul>
+<li><code>Suppose you make some mistakes</code>, it’s not the end of the world. 假如你犯了一些错误，这并不是世界的末日。</li>
+</ul>
+</li>
+<li>on condition that</li>
+<li>so long as/as long as<ul>
+<li><code>So long as there&#39;s something to identify,</code> we will give people their money back. 只要有东西可以识别，我们会把钱还给人家的。</li>
+<li>My parents don’t mind what job I <code>do as long as I am happy.</code> 我父母不介意我做什么工作，只要我快乐就行。</li>
+</ul>
+</li>
+<li>providing/provided (that)<ul>
+<li>We can do whatever we wish to do <code>provided (that)</code> our wish is strong. 如果我们的愿望很强，我们就能做任何我们想做的事情。</li>
+</ul>
+</li>
+<li>assuming<ul>
+<li><code>Assuming you are willing to work hard,</code> I see a great future waiting for you. 如果你愿意努力学习，我看到光明的未来在等着你。</li>
+</ul>
+</li>
+<li>once<ul>
+<li>You’ll like her <code>once you get to know her.</code> 你一旦了解她，就喜欢她了。</li>
+</ul>
+</li>
+<li>in case<ul>
+<li><code>In case you fail</code>, don’t be discouraged. Keep trying. 假如你失败了，不要气馁， 要继续努力。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>only if (只有…才)和if only(只要…就)<ul>
+<li>He can continue to support himself and his family <code>only if he produces a surplus.</code> 只有生产有了盈余，他才能继续养活自己和家人。</li>
+<li><code>Only if</code> I get a job will I have enough money to go to school. 我只有找到了工作才有足够的钱上学。(only if放句首，主句要倒装)</li>
+<li>The Almighty has given men arms long enough to reach the stars <code>if only they would put them out.</code> 万能的造物主赋予人类足以够到星辰的手臂，只要人类愿意伸出。</li>
+<li>注: only if前可以加上but</li>
+<li>I’ll do that, <code>but only if</code> we set a few rules. 我可以干，但我们得定几条规矩。</li>
+</ul>
+</li>
+<li>造句练习 <ul>
+<li>1.如果我熬夜(stay up)过半夜，第二天早上起来看起来就很糟。<ul>
+<li>1.If I stay up over midnight, I looked awful the tomorrow morning.</li>
+</ul>
+</li>
+<li>2.你如果接受这份昂贵的礼物，就是在受贿了(take a bribe)。<ul>
+<li>2.If you accept this expensive gift, you are taking a bribe.</li>
+</ul>
+</li>
+<li>3.如果明天下雨，我们将取消这个活动。<ul>
+<li>3.If it rains tomorrow, we will cancel this activity.</li>
+</ul>
+</li>
+<li>4.你们大伙如果形成团队(team up),可能有助 于形成个双赢的(win-win)局 面。<ul>
+<li>4.If you guys team up, it may help create a win-win situation.</li>
+</ul>
+</li>
+<li>5.除非你加紧用功，否则你就不能通过考试。<ul>
+<li>5.Unless you work harder, you will not pass the examination.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="虚拟语气的常规用法"><a href="#虚拟语气的常规用法" class="headerlink" title="虚拟语气的常规用法"></a>虚拟语气的常规用法</h2><ul>
+<li>概述<ul>
+<li>虚拟语气，就是不可能发生的情况的假设，汉语里边的虚拟语气是通过语境实现的，在英语的虚拟语气则是通过谓语动词的变化实现的</li>
+<li>1.就算把整个太平洋的水倒出，也浇不灭我对你爱情的火焰! (暗示:整个太平洋的水能全部倒出来吗?不能!)</li>
+<li>2.如果上天再给我一次重来的机会， 我会对那个女孩说3个字我爱你! (暗示:能有重来的机会吗?没有! )</li>
+</ul>
+</li>
+<li>虚拟语气的常规构成<ul>
+<li><img src="http://anki190912.xuexihaike.com/mweb/16055960586548-2020-11-17.jpg"></li>
+</ul>
+</li>
+<li>现在虚拟<ul>
+<li>‘Young man,’ she answered, ‘if you <code>ate</code> more and <code>talked</code> less, we <code>would</code> both enjoy our dinner!’ “年轻人，”她回答说，“如果你多吃点，少说点，我们两个都会吃得好的!”</li>
+<li>The tunnel <code>would be</code> well-ventilated if tall chimneys <code>were</code> built above sea-level. 如果再建些伸出海面的高大的烟囱状通风管，隧道就具备了良好的通风条件。</li>
+<li>This would solve the problem of ventilation, for if a train <code>entered</code> this tunnel, it <code>would draw</code> in fresh air behind it. 因为如果有列火车开进隧道，它就把新鲜空气随之抽进了隧道。</li>
+<li>if they <code>knew</code> how difficult it was to drill through the hard rock, they <code>would lose heart.</code> 如果他们知道了钻透那坚硬的岩石有多么困难，他们会丧失信心的。</li>
+</ul>
+</li>
+<li>注：现在虚拟be动词的过去式用were<ul>
+<li>If I were you, I would take the subway. 如果我是你，我会坐地铁。</li>
+<li>现在虚拟中的“现在”，不一定是发生在现在的事情，也可能是“常态”，也就是对客观事实的虚拟。比如“如果太阳从西边出来，中国队就能打败巴西队”</li>
+</ul>
+</li>
+<li>将来虚拟：比较少见，只是表达一种可能性<ul>
+<li>If Peter should come again, I would throw him out. 如果彼得再来的话，我会把他轰出去。</li>
+</ul>
+</li>
+<li>过去虚拟<ul>
+<li>If, at the time, the British <code>had not feared</code> invasion, the tunnel <code>would have been completed.</code> 如果不是因为那时英国人害怕入侵，隧道早已建成了。</li>
+<li>If the Houses of Parliament <code>had not been burned down</code> in 1834, the great clock <code>would never have been erected.</code> 如果不是国会大厦在1834年被焚毁的话，这座大钟永远也不会建造。</li>
+<li>If there <code>had not been</code> a hard layer of rock beneath the soil, they <code>would have completed</code> the job in a few hours. 如果不是因为土壤下面有一层坚硬的岩石，他们的营救工作仅用几个小时就可以完成了。</li>
+</ul>
+</li>
+<li>补充：if从句中的were, should, had可以放在主语前，同时省略if<ul>
+<li>If he were here, I would tell him the truth. = <code>Were</code> he here, I <code>would tell</code> him the truth.</li>
+<li>If it should rain, our plan would be spoiled. = <code>Should</code> it rain, our plan <code>would be spoiled.</code></li>
+<li>If you had helped me, I could have finished the work on time. = <code>Had</code> you helped me, I <code>could have finished</code> the work on time.</li>
+<li>“<code>Should</code> humanity leave Earth to travel across the universe,” she said, concluding her impassioned explanation, “it <code>would be no different from</code> an infant leaving its mother in the middle of a desert!” “人类在宇宙间离开了地球，”她充满激情地说，“就像婴儿在沙漠中离开了母亲!” ——《The wandering earth》Liu Cixin (刘慈欣《流浪地球》)</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.如果当时你帮助我的话，我就可以完成任务了。(当时你没有帮助我)<ul>
+<li>1.If you had helped me then, I would have accomplished the mission.</li>
+</ul>
+</li>
+<li>2.要是我是你，我会坐地铁去那儿。(可惜我不是你)<ul>
+<li>2.If I were you, I would go there by subway.</li>
+</ul>
+</li>
+<li>3.如果我有100万美元，我就会买一套豪华别墅。(可惜我是穷光蛋)<ul>
+<li>3.IfI had a million dollars, I would buy a luxury villa.</li>
+</ul>
+</li>
+<li>4.万一火山爆发了，有可能造成一场可怕的灾难。<ul>
+<li>4.If the volcano should erupt, it would cause a terrible disaster.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="条件状语从句转化为分词短语"><a href="#条件状语从句转化为分词短语" class="headerlink" title="条件状语从句转化为分词短语"></a>条件状语从句转化为分词短语</h2><ul>
+<li>分词短语表条件，单从分词短语本身，是看不出真实和虚拟的，只有从主句的时态才能看出来<ul>
+<li><code>Cooked</code> in wine, snails are a great luxury in various parts of the world. 蜗牛加酒烧煮后，便成了世界上许多地方的一道珍奇的名菜。 (因为主句是一般现在时，所以本句的分词短语是真实条件，相当于真实条件状语从句If snails cooked in wine, …)</li>
+<li>Weather <code>permitting,</code> we’ll go fishing. 如果天气允许，我们就去钓鱼。(因为主句是一般将来时，所以本句的分词独立主格结构是真实条件，相当于真实条件状语从句If weather permits, we’ll go fishing. )</li>
+<li><code>Added to steel</code>, chromium increases the metal’s hardness. 把铬加进钢里，能增加钢的硬度。(相当于真实条件状语从句If chromium is added to steel, it increases the metal’s hardness.)</li>
+<li><code>Given more time</code>, I would be able to complete it. 如果多给我一些时间，我就能把它做完。(相当于虚拟条件状语从句If I were given more time, I would be able to complete it.)</li>
+<li><code>Given the right kind of training,</code> these teenage soccer players may one day grew the international stars. 如果给予适当形式的训练，这些十几岁的足球运动员有一天会成为国际明星。</li>
+</ul>
+</li>
+</ul>
+<h2 id="虚拟语气的特殊用法"><a href="#虚拟语气的特殊用法" class="headerlink" title="虚拟语气的特殊用法"></a>虚拟语气的特殊用法</h2><ul>
+<li>与客观真理相反的强烈虚拟语气，从句用were to + 动词原形，主句用过去将来时(would可改为should, might, could)<ul>
+<li>If I were to live my life over again, I would have you as my wife. 如果有来生，我一定娶你为妻。</li>
+<li>If the sun were to rise in the west, I would marry you. 要想我嫁给你?除非太阳从西边出来。</li>
+</ul>
+</li>
+<li>主观意志动词“建议”，“要求”，“命令”3大类之后的宾语从句，要使用助动词should(可省略)<ul>
+<li>建议：suggest, advise, propose<ul>
+<li>He <code>suggested</code> that a double railway tunnel <code>(should) be built.</code> 他提议建一条双轨隧道， 这样就解决了通风问题。</li>
+</ul>
+</li>
+<li>要求：demand, require, request, insist<ul>
+<li>In life, your goals may <code>require</code> that you <code>(should) try</code> different approaches and persevere. 生活中，你的目标或许要求你尝试不同的方法，然后持之以恒。</li>
+</ul>
+</li>
+<li>命令：order, command</li>
+</ul>
+</li>
+<li>should (ought to) have + 过去分词，表示与过去事实相反的推测，译为“早应，本应该…”<ul>
+<li>He <code>should have known</code> that the police would never allow this sort of thing. 他本该知道警察绝不会允许这类事情发生。</li>
+<li>Those who failed to get in need not have felt disappointed as many of the artistes who <code>should have appeared</code> did not come. 那些没能进到场内的人没有必要感到失望，因为很多应该出场的专业演员都没有来。</li>
+<li>A policeman approached Jimmy and told him he <code>ought to have</code> gone along a side-street as Jumbo was holding up the traffic. 一个警察走过来告诉吉米，他应该走一条小路，因为江波阻碍了交通。</li>
+</ul>
+</li>
+<li>whether引导的让步状语从句，可用虚拟语气，注：这种句型也可倒装：去掉whether，把be放在从句句首<ul>
+<li>Whether it <code>be</code> bird, fish or beast, the porpoise is intrigued with anything that is alive. 海豚对凡是活的东西都感兴趣，不管是鸟、是鱼，还是野兽。也可变成<code>Be</code> bird, fish or beast, the porpoise is intrigued with anything that is alive.</li>
+<li>After all, all living creatures live by feeding on something else, whether it <code>be</code> plant or animal, dead or alive. 因为一切生物都靠吃别的东西来活命，不管这种东西是植物还是动物，死的还是活的。</li>
+<li><code>Be</code> it a rock or a grain of sand, they sink as the same in water. 无论是岩石还是沙粒，在水中都会沉没。</li>
+<li>All students of English, <code>be</code> they native speakers or those who are studying English as a second language, will profit from this book. 所有学习英语的学生都将从本书中受益，不管是把英语作为母语还是第二语言的学生。</li>
+</ul>
+</li>
+<li>wish后面的宾语从句，必须使用虚拟语气<ul>
+<li>现在虚拟，用<code>一般过去时</code>。<ul>
+<li>I wish he <code>were</code> here. 我真希望他在这儿。</li>
+</ul>
+</li>
+<li>过去虚拟，用<code>过去完成时</code>。<ul>
+<li>I wish I <code>had kept</code> faithful to my childhood dreams. 我希望当初信守儿时的梦想。</li>
+</ul>
+</li>
+<li>将来虚拟，用<code>过去将来时</code>。(would 可改为should, might, could)<ul>
+<li>I wish you <code>would keep</code> on trying to improve your English. 我希望你继续坚持提高英语水平。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>if only用于虚拟，表示“要是…该多好啊”（时态变化同wish）<ul>
+<li>If only he <code>were</code> here. 要是他在这儿该多好啊!</li>
+<li>If only I <code>had known</code> it earlier. 要是我早点知道这件事该多好啊。</li>
+<li>If only I <code>would make</code> a lot of money. 要是我发财该多好啊。</li>
+</ul>
+</li>
+<li>as if/ as though用于虚拟，表示“就像…一样”（时态变化同wish）<ul>
+<li>He acted as if he <code>had</code> never <code>lived</code> in England before. 他的举动就好像他从未在英国生活过一样。</li>
+<li>I do not turn for protection to dreary cliches about respect of elders – as if mere age <code>were</code> a reason for respect. 我不会用应当尊重长者这一套陈词滥调来为我自己辨护，似乎年长就是受人尊敬的理由。</li>
+<li>I felt as if <code>I had stumbled into</code> a nightmare country, as you sometimes do in dreams. 我感到自己就像平时作梦那样迷迷糊糊地闯进了恶梦境地。就像在恶梦里一样。</li>
+<li>It looks as if there <code>would be</code> an exciting race across the Channel. 看来会有一场激烈的飞越英吉利海峡的竞争。</li>
+</ul>
+</li>
+<li>would rather / would sooner用于虚拟，表示“宁可….”<ul>
+<li>现在和将来虚拟，均用一般过去时<ul>
+<li>I would rather you <code>had</code> more health than wealth. 我宁愿你有更多的健康而不是财富。(现在虚拟)</li>
+<li>I would rather my father <code>kept</code> his mind and body active after he retires in three years. 我宁愿三年后父亲退休以后能保持身心活跃。(将来虚拟)</li>
+</ul>
+</li>
+<li>过去虚拟，用过去完成时<ul>
+<li>I would rather my son <code>had become</code> a doctor, but he became a teacher after graduating. 我宁愿我儿子做一名医生，但是他毕业后当了教师。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>lest/in case/for fear的虚拟，表示“以防…”，谓语均要使用should(可省略) + 动词原形<ul>
+<li>Weigh well your words <code>lest</code> they <code>(should) be</code> swords. 要斟酌自己的言辞，以防他们伤人。</li>
+<li>Take time when time comes, <code>in case</code> it <code>(should) steal</code> away. 时机来临的时候要抓住，以防它偷偷溜走。</li>
+<li>We must not promise what we should not, <code>for fear that</code> we (should) be called on to perform what we cannot. 不要许诺不该做的事，以防别人要求我们做我们做不了的事。</li>
+</ul>
+</li>
+<li>what if…? 如果…会怎么样呢？<ul>
+<li>What if he doesn’t agree? 如果他不同意该怎么办呢?</li>
+<li>But what if your data do not support your hypothesis? Perhaps different experiments are needed. 但是如果你的数据不支持你的假设该怎么办呢?或许需要做不同的实验。( 加州小学3年级科学课本)</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.你若中了一亿美元，你可能会做什么?<ul>
+<li>1.If you were to win 100 million dollars, what might you do?</li>
+</ul>
+</li>
+<li>2.如果我五年前遇到她，今天她可能就是我的妻子了。<ul>
+<li>2.If I had met her five years ago, she might be my wife today.</li>
+</ul>
+</li>
+<li>3.我建议你把这篇作文撕掉，再从头开始写。<ul>
+<li>3.I suggest that you (should) tear up the composition and start over again.</li>
+</ul>
+</li>
+<li>4.我们几个月前就该预见到这一困难。<ul>
+<li>4.We should have foreseen the trouble months ago.</li>
+</ul>
+</li>
+<li>5.既然已完成了工作，你本就应该好好休息一下。<ul>
+<li>5.You ought to have a good rest now that you’ve finished the work.</li>
+</ul>
+</li>
+<li>6.所有物质，不论是气体、液体、或固体，都是由原子构成的。<ul>
+<li>6.All matter, whether it be gas, liquid or solid, is made up of atoms.</li>
+</ul>
+</li>
+<li>7.我希望我能改掉吸烟的习惯。<ul>
+<li>7.I wish I could get out of the habit of smoking.</li>
+</ul>
+</li>
+<li>8.我倒希望你当初别把这一切都告诉我。<ul>
+<li>8.I wish you hadn’t told me all this.</li>
+</ul>
+</li>
+<li>9.我多么希望你妹妹能在这儿。<ul>
+<li>9.I wish your sister were here.</li>
+</ul>
+</li>
+<li>10.太疲倦了。 如果明天能不上班多好。<ul>
+<li>10.I am so tired. If only I would take the day off tomorrow.</li>
+</ul>
+</li>
+<li>11.玛丽对着我微笑，仿佛他已经了解我想要什么。<ul>
+<li>11.Mary is smiling at me as if she had understood what I want.</li>
+</ul>
+</li>
+<li>12.我们小声说话以免吵醒婴儿。<ul>
+<li>12.We talked in a low voice lest we should wake the baby up.</li>
+</ul>
+</li>
+<li>13.我要是没有买这栋房子又会怎么样呢?<ul>
+<li>13.What if I have not bought this house?</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
