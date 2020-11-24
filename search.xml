@@ -498,68 +498,6 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s培训第4课 资源清单</title>
-    <url>/k8s-4/</url>
-    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
-<ul>
-<li>Q:集群资源有哪些分类？<ul>
-<li>名称空间级别<ul>
-<li>工作负载型资源(workload): Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
-<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress</li>
-<li>配置与存储型资源：Volume(存储卷)、CSI(容器存储接口，可扩展各种第三方存储卷)</li>
-<li>特殊类型的存储卷：ConfigMap(当配置中心来使用的资源类型)、Secret(保存敏感数据)、DownwardAPI(把外部环境中的信息输出给容器)</li>
-</ul>
-</li>
-<li>集群级别：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
-<li>元数据级别：HPA、PodTemplate、LimitRange</li>
-</ul>
-</li>
-<li>Q:容器报错后如何处理？<ul>
-<li><code>kubectl describe pod myapp-pod</code></li>
-<li>若有多个容器需要用-c指定，查看日志</li>
-<li><code>kubectl log myapp-pod -c test</code></li>
-</ul>
-</li>
-<li>Q:initContainer模板是什么？<ul>
-<li>initContainers里面会按照顺序依次往下执行</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup mydb; do echo waiting for mydb; sleep 2; done;&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-就绪检测模板？readinessProbe-httpget</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-exec</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;touch /tmp/live ; sleep 60; rm -rf /tmp/live; sleep 3600&quot;</span>]</span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;test&quot;</span>,<span class="string">&quot;-e&quot;</span>,<span class="string">&quot;/tmp/live&quot;</span>]</span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-httpget</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-tcp</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:启动、退出动作pod模板</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">postStart:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the postStart handler &gt; /usr/share/message&quot;</span>]</span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the poststop handler &gt; /usr/share/message&quot;</span>]</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>k8s培训第5课 资源管理器</title>
     <url>/k8s-5/</url>
     <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
@@ -741,6 +679,68 @@
 </ul>
 </li>
 </ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s培训第4课 资源清单</title>
+    <url>/k8s-4/</url>
+    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
+<ul>
+<li>Q:集群资源有哪些分类？<ul>
+<li>名称空间级别<ul>
+<li>工作负载型资源(workload): Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
+<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress</li>
+<li>配置与存储型资源：Volume(存储卷)、CSI(容器存储接口，可扩展各种第三方存储卷)</li>
+<li>特殊类型的存储卷：ConfigMap(当配置中心来使用的资源类型)、Secret(保存敏感数据)、DownwardAPI(把外部环境中的信息输出给容器)</li>
+</ul>
+</li>
+<li>集群级别：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
+<li>元数据级别：HPA、PodTemplate、LimitRange</li>
+</ul>
+</li>
+<li>Q:容器报错后如何处理？<ul>
+<li><code>kubectl describe pod myapp-pod</code></li>
+<li>若有多个容器需要用-c指定，查看日志</li>
+<li><code>kubectl log myapp-pod -c test</code></li>
+</ul>
+</li>
+<li>Q:initContainer模板是什么？<ul>
+<li>initContainers里面会按照顺序依次往下执行</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup mydb; do echo waiting for mydb; sleep 2; done;&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-就绪检测模板？readinessProbe-httpget</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-exec</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;touch /tmp/live ; sleep 60; rm -rf /tmp/live; sleep 3600&quot;</span>]</span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;test&quot;</span>,<span class="string">&quot;-e&quot;</span>,<span class="string">&quot;/tmp/live&quot;</span>]</span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-httpget</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-tcp</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:启动、退出动作pod模板</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">postStart:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the postStart handler &gt; /usr/share/message&quot;</span>]</span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the poststop handler &gt; /usr/share/message&quot;</span>]</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>k8s</category>
@@ -980,6 +980,526 @@
       <tags>
         <tag>pytorch</tag>
         <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>恶魔奶爸语法13-15课</title>
+    <url>/gramma13-15/</url>
+    <content><![CDATA[<h1 id="13-如何用好比较结构"><a href="#13-如何用好比较结构" class="headerlink" title="13.如何用好比较结构"></a>13.如何用好比较结构</h1><h2 id="比较句，其实并不是状语从句，而是一种特殊的并列句"><a href="#比较句，其实并不是状语从句，而是一种特殊的并列句" class="headerlink" title="比较句，其实并不是状语从句，而是一种特殊的并列句"></a>比较句，其实并不是状语从句，而是一种特殊的并列句</h2><ul>
+<li>Mary <code>is beautiful</code> and Lucy <code>is beautiful</code> too.</li>
+<li>这是一个并列句，两句话的系表部分都是”is beautiful”</li>
+<li>那么，如果你要表达：“Mary和Lucy一样漂亮”，就称为<code>原级比较</code>:</li>
+<li>Mary is <code>as beautiful as</code> Lucy (is beautiful).</li>
+<li>前面一个as是副词，后面一个as才是连词，括号里边的部分和前面的分句相同，故通常省略。</li>
+<li>如果你要表达:“Mary比Lucy漂亮”， 就称为<code>一般比较</code>:</li>
+<li>Mary <code>is more beautiful</code> than Lucy.</li>
+</ul>
+<h2 id="原级比较：as-副词-形容词或副词的原级…as-连词-…"><a href="#原级比较：as-副词-形容词或副词的原级…as-连词-…" class="headerlink" title="原级比较：as(副词)+形容词或副词的原级…as (连词) …"></a>原级比较：as(副词)+形容词或副词的原级…as (连词) …</h2><ul>
+<li>概述<ul>
+<li>出现在“as…as…”(和…一样)的句子中，第一个as为副词，第二个as为副词连词，引导比较状语从句</li>
+<li>此时，整个比较结构，可以作表语，定语（形容词比较），也可以作状语（副词比较）</li>
+<li>在否定句中，也可用“not so…as…”<ul>
+<li>He is handsome.</li>
+<li>John is handsome.</li>
+<li>可合并为：He is as handsome as John is handsome</li>
+<li>为了避免重复，第二个as后面相同的部分(动词及动词以后的词)均可省略。如果后面的主语是代词时，书面语用主格，但是口语可使用宾格。</li>
+<li>故这句话可改为:</li>
+<li>He is as handsome as John. 他和约翰一样帅!</li>
+</ul>
+</li>
+<li>在书面语中，尤其是主语为代词时，为了避免选择主格/宾格的麻烦，最好不要省略比较连词后面的动词（口语中可省略）</li>
+<li>He is as handsome as John <code>is</code></li>
+<li>He is as handsome as you <code>are</code></li>
+<li>He is as handsome as I <code>am</code></li>
+</ul>
+</li>
+<li>形容词原级比较<ul>
+<li>Pigs are <code>as clever as monkeys and dolphins.</code> (表语比较) 猪和猴子以及海豚一样聪明。</li>
+<li>People are <code>not so honest as they once were.</code> (表语比较) 人们不再像以前那样诚实了。</li>
+<li>注:形容词后可接名词(定语比较)<ul>
+<li>Jane is <code>as a beautiful girl as</code> Mary. 简和玛丽一样是个漂亮女孩。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>副词原级比较<ul>
+<li>David works <code>as hard as</code> Bill. 大卫和比尔一样努力。</li>
+<li>Mary reads <code>as much as</code> Tony watches television. 玛丽看书的时间和托尼看电视的时间一样多。</li>
+<li>I can’t keep a secret <code>as long as</code> he/him. 我不能像他一样保守那么久的秘密</li>
+</ul>
+</li>
+<li>尽量…：as + adj./adv. + as possible/one can<ul>
+<li>You should be <code>as careful as you can</code> when driving. = You should be <code>as careful as possible</code> when driving. 你开车要尽量小心。</li>
+<li>The woman kept <code>as near as she could</code> to the children and even tried to get into the case herself, but it was too small. 这位妇女尽可能地靠近孩子，甚至自己也想钻进箱子里去，只是箱子太小了。</li>
+</ul>
+</li>
+<li>极为…：be as + adj. + as can be<ul>
+<li>That girl is <code>as beautiful as can be.</code> 那个女孩子美丽极了。</li>
+</ul>
+</li>
+<li>和往常一样…：as + adj./adv. + as ever + as one used to be<ul>
+<li>I rang the bell and was not surprised to see that Herbert was still <code>as fat as ever.</code>  我按响了门铃，当看到休仍和往常一样胖时，我并不感到惊奇。</li>
+<li>Jack is working <code>as hard as ever.</code> 杰克和往常一样努力工作。</li>
+<li>Jay Chou is <code>not so popular as he used to be.</code> 周杰伦没有以前那么红了。</li>
+</ul>
+</li>
+<li>多达…：as many as + 数字 + 复合名词<ul>
+<li><code>As many as</code> 20,000 people were killed or missing in a massive tsunami in Japan on March 11, 2011. 多达2万人在2011年3月11日的日本大海啸中丧生和失踪。</li>
+<li>注：修饰金额时，一律用as much as</li>
+<li>I have <code>as much as</code> 100 dollars with me. 我身上多达100美元。</li>
+<li>类似搭配有：as long as长达，as wide as宽达，as high as高达</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.要想把英文学好，你应该尽量多看英文文章。<ul>
+<li>1.To learn English well, you should read as many English articles as possible.</li>
+</ul>
+</li>
+<li>2.我每次见到大卫，他都像蜜蜂一样忙着工作。<ul>
+<li>2.Whenever I see David, he is as busy working as a bee.</li>
+</ul>
+</li>
+<li>3.彼得或许没有玛丽那么聪明，但是他勤奋(hardworking)极了。<ul>
+<li>3.Peter may be not so/as clever as Mary, but he is as hardworking as can be.</li>
+</ul>
+</li>
+<li>4.这名歌手不像以前那么受欢迎了。<ul>
+<li>4.The singer is not so/as popular as he used to be.</li>
+</ul>
+</li>
+<li>5.估计多达10万名考生将参加新托福考试。<ul>
+<li>5.It is estimated that as many as one hundred thousand candidates will take the IBT.</li>
+</ul>
+</li>
+<li>6.我学英文长达十年之久。<ul>
+<li>6.I’ve been learning English as long as ten years.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="比较级比较-一般-：形容词或副词的比较级…than-连词-…"><a href="#比较级比较-一般-：形容词或副词的比较级…than-连词-…" class="headerlink" title="比较级比较(一般)：形容词或副词的比较级…than (连词)…"></a>比较级比较(一般)：形容词或副词的比较级…than (连词)…</h2><ul>
+<li>概述<ul>
+<li>情况一<ul>
+<li>1.A is beautiful.</li>
+<li>2.B is beautiful.</li>
+<li>如果要表达“A比B更漂亮”，就需要将上面两个句子合并:</li>
+<li>A is more beautiful than B is beautiful.</li>
+<li>A is more beautiful than B is.</li>
+<li>A is more beautiful than B.</li>
+<li>那么问题来了，than后面的句子，动词is省略好还是不省略好呢?</li>
+<li>很简单，than后 面的句子中的动词和前面完全一致， 那就可以省略，但是如果<code>不一致</code>，比如is变成了am, are, was, were等形式，那就不能省略。如果是一般动词，应以do, does, did代替)。</li>
+<li>Mary is more beautiful than Jane.</li>
+<li>John is more handsome than I <code>am</code>.</li>
+</ul>
+</li>
+<li>情况二<ul>
+<li>1.I like her.</li>
+<li>2.You like her.</li>
+<li>如果要表达“我比你更喜欢她”，那么两句合并:</li>
+<li>I like her more than you like her.</li>
+<li>此时，如果省略动词: I like her more than you. (意思是我喜欢她胜过喜欢你)</li>
+<li>那么，就出现歧义了，到底是“我比你更喜欢她”还是“我更喜欢她而不喜欢你呢?因为“you”既可能是主格也可能是宾格。事实上，英文中所有的实义名词都是“主格”与“宾格”相同的。</li>
+<li>所以，上面的句子应该写成: I like her more than you do. (我比你更喜欢她)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>形容词一般比较<ul>
+<li>Bill Frith’s garden is <code>larger than Joe&#39;s</code>. 比尔.弗里斯的花园比乔的花园大。</li>
+<li>Wisdom is <code>more precious than wealth.</code> 智慧比财富更宝贵。</li>
+<li>Athlete need to consume <code>much more food than the average person.</code> 运动员比一般人需要消耗更多的食物。</li>
+<li>Taking a beautiful fall is <code>better than wondering aimlessly</code>. 华丽的跌倒，胜过无谓的徘徊。</li>
+<li>Indifference and neglect often do <code>much more damage than outstraight dislike</code>. 冷漠和忽视经常比直接的憎恨伤害更大。(J.K .Rowling名言)</li>
+</ul>
+</li>
+<li>副词一般比较<ul>
+<li>Bill works <code>harder than Joe</code> and grows more flowers and vegetables, but Joe’s garden is more interesting. 他比乔也更为勤奋，种植的花卉和蔬菜也更多，但乔的花园更富有情趣。</li>
+<li>Actions speak <code>louder than words.</code> 行动胜于空谈。</li>
+<li>比较级可以被副词much, even, still, far, a lot修饰，表示”…得多”，或者a bit, a little修饰，表示“…一点点”。</li>
+<li>比较级前面加上all the，表示“更加…”，是一种强调，相当于even, much<ul>
+<li>The food was <code>all the</code> more delicious because we were hungry. = The food was <code>even/much</code> more delicious because we were hungry. 因为我们饿了，食物就更加美味可口。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="准关系代词as-than-but引导的定语从句"><a href="#准关系代词as-than-but引导的定语从句" class="headerlink" title="准关系代词as, than, but引导的定语从句"></a>准关系代词as, than, but引导的定语从句</h2><ul>
+<li>概述<ul>
+<li>对比两个句子:</li>
+<li>1.我们了解到<code>他通过了考试。</code></li>
+<li>2.<code>正如我们了解到的那样</code>，他通过了考试。</li>
+<li>我们会发现，上面两句话其实是同一个意思。英语中，也有和上面完全对应的说法:</li>
+<li>1.We learned <code>that he passed the exam.</code></li>
+<li>2.<code>As we learned,</code> he passed the exam.</li>
+</ul>
+</li>
+<li>as引导的定语从句<ul>
+<li>概述<ul>
+<li>传统语法认为：as通常 用于引导非限定性定语从句，此时as代替整个主句，相当于which。这种说法显然比较牵强附会，造成很多英语学习者理解困难。其实这种句型同样属于比较状语从句，只不过as后面省略了复合关系代词what，只要知道了这点，马上就能理解了。</li>
+<li><code>As (what / the thing that) I soon learnt,</code> he was English himself! 我很快了解到，他自己就是个英国人!</li>
+<li>主动式：<code>As I soon learnt</code>, he was English himself.</li>
+<li>被动式：<code>As was soon learnt (by me),</code> he was English himself.</li>
+<li>注意，本从句的谓语动词必须是及物动词！！而且主句必须是这个及物动词<code>逻辑上的宾语</code></li>
+<li>上一句话，learn是及物动词，后面的主句he was English himself. 刚好就是learn的逻辑宾语</li>
+</ul>
+</li>
+<li>例句<ul>
+<li>But <code>as they soon discovered,</code> disguises can sometimes be too perfect. 但他们很快就发觉，化装的效果有时过分完美了。</li>
+<li>Anyway, <code>as Brian pointed out,</code> it is the easiest thing in the world to give up smoking. 不管怎么说，正如布赖恩指出的那样，戒烟是世界上最容易的事情。</li>
+<li><code>As is known to us all,</code> the whale is not fish but mammal. 就像我们都知道的一样，鲸不是鱼类而是哺乳动物。</li>
+<li>She was married again, <code>as was expected.</code>她又结婚了，正如人们预料的一样。</li>
+<li><code>As is reported,</code> it is 100 years since Tsing University was founded. 正如报道的那样，清华大学建校已经有100年历史了。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.正如她工作表现出的一样，她很细心。<ul>
+<li>1.She is very careful, as her work shows.</li>
+</ul>
+</li>
+<li>2.就像我们猜测的一样，这个调皮的学生没有通过考试。<ul>
+<li>2.As we guessed, the naughty student didn’t pass the exam.</li>
+</ul>
+</li>
+<li>3.正如常常被指出的，知识是一把双刃剑，可以同等地用于造福和作恶。<ul>
+<li>3.As is so often pointed out, knowledge is a two-edged weapon which can be used equally for good or evil.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>that引导的定语从句<ul>
+<li>概述<ul>
+<li>先看这句话:</li>
+<li>He smoked more cigarettes <code>than</code> were normally available. 他吸的香烟比他弄到的要多。</li>
+<li>如果按照传统语法把than看成关系代词，是很难理解的。但是，只要我们按照下面的方式理解，就是一目了然了:</li>
+<li>He smoked more cigarettes than (what) were normally available.</li>
+<li>这里，than后面省略 了复合关系代词what,这样理解，立刻就能符合我们的正常思维方式。</li>
+</ul>
+</li>
+<li>例句<ul>
+<li>Don’t drink more wine than is good for health. 不要过量饮酒，适量饮酒有益于健康。</li>
+<li>I have more money than he needs. 我的钱比他需要的多。</li>
+<li>He is a good student than you are. 他是个好学生，比你还好。</li>
+<li>The manufacturers had to pay more money than they had anticipated, for they bought the biscuit from the student for $24,000. 饼干公司不得不付出比他们预计多得多的钱，因为为买下那学生烘制的饼干他们支付了24,000美元。</li>
+<li>To compensate for his unpleasant experiences in hospital, the man drank a little more than was good for him. 为了补偿住院这一段不愉快的经历，那人喝得稍许多了一点。</li>
+<li>It seems that man was making a real effort to understand the seasons 20,000 years earlier than has been supposed. 看来人类早就致力于探索四季变迁了，比人们想象的要早20,000年。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.人们现在准备饭菜比以前容易多了。<ul>
+<li>1.People today can prepare their meal much easier than has ever been before.</li>
+</ul>
+</li>
+<li>2.父母最好别给孩子太多的钱，够用就行了。<ul>
+<li>2.Parents had better not give kids more money than is needed.</li>
+</ul>
+</li>
+<li>3.所以今天想在某一领域成为专业人士要比以前花费更长的时间。<ul>
+<li>3.Therefore, to be a professional in a certain field today takes much longer time than has ever been before.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>but引导的定语从句<ul>
+<li>but作为准关系代词引导定语从句，是一种少见的用法，且只引导<code>限定性定语从句</code>。而且要特别注意，but本身具有否定意义，故引导的定语从句具有<code>否定含义</code>。另外，but修饰的先行词，通常会被否定词修饰。且这个结构通常只能和there be句型搭配<ul>
+<li>There is no man but errs.人必犯错。(but作主语，相当于There is no man who doesn’t err.)</li>
+<li>There is nothing but he knows.没有他不知道的事情。(but作宾语，相当于There is nothing which he doesn’t know.)</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.在场的人没人不知道这个故事<ul>
+<li>1.There was no one present but knew the story already .</li>
+</ul>
+</li>
+<li>2.没有不爱自己孩子的母亲<ul>
+<li><ol start="2">
+<li>There is no mother but loves her children.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="14-如何写好倒装句和强调句"><a href="#14-如何写好倒装句和强调句" class="headerlink" title="14.如何写好倒装句和强调句"></a>14.如何写好倒装句和强调句</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li>所谓倒装句，就是改变句子主干的正常顺序，达到强调其中一部分内容的目的</li>
+</ul>
+<h2 id="否定倒装句"><a href="#否定倒装句" class="headerlink" title="否定倒装句"></a>否定倒装句</h2><ul>
+<li>概述<ul>
+<li>倒装的方法其实是：把否定副词后面的句子，变成一般疑问句语序</li>
+<li>句中有be动词或者助动词的时候，将其与主语倒装</li>
+<li>句中只有一般动词的时候，根据人称和时态在主语前加上do, does, did</li>
+</ul>
+</li>
+<li>否定性质的副词<ul>
+<li>never(从不)<ul>
+<li><strong>Never</strong> <code>is he</code> happy. 他从不快乐。(原句是：He is never happy)</li>
+</ul>
+</li>
+<li>hardly/scarcely(几乎不)<ul>
+<li><strong>Hardly</strong> <code>is he</code> ever quiet. 他几乎从未安静过。(原句是: He is hardly ever quiet.)</li>
+</ul>
+</li>
+<li>rarely/seldom(很少)<ul>
+<li><strong>Rarely</strong> <code>does modern sculpture surprise</code> us any more. 现代雕塑再也不使我们感到惊讶了。(原句是：Modern sculpture rarely surprise us any more.)</li>
+</ul>
+</li>
+<li>little/none(一点也不)</li>
+<li>nowhere(哪里都不)</li>
+</ul>
+</li>
+<li>否定性质的副词短语<ul>
+<li>绝不：by no means, in no way, on no account, under no circumstances, in no situation<ul>
+<li><code>By no means</code> are you the person we need. 你绝非我们需要的人。(原句: You are by no means the person we need. )</li>
+<li><code>In no way</code> am I responsible for what has happened. 我决不对发生的事情负责。(原句是: I am in no way responsible for what has happened. )</li>
+</ul>
+</li>
+<li>not until/only + 副词性质的短语或从句：直到…/就在…<ul>
+<li><code>Not until</code> John arrived <code>did I</code> leave.直到约翰到了之后我才离开。(原句: I did not leave until John arrived. )</li>
+<li><code>Only</code> in a sparsely-populated rural community <code>is it</code> possible to disregard it. 只有在人口稀少的农村，才可以忽视它。(原句: It is possible to disregard it only in a sparsely-populated rural community. )</li>
+</ul>
+</li>
+<li>并列句里面的not only…but(also/…as well)（不仅…而且…）句型，在<code>连接两个完整的句子</code>时，要使用倒装。注：第二个句子不倒装，但also要省略<ul>
+<li><strong>Not only</strong> <code>was the meal</code> well below the usual standard, but Bessie seemed unable to walk steadily.不仅饭菜远不如平时做得好，而且贝西走起路来似乎东倒西歪。(原句是：The meal was not only well below the …..)</li>
+<li><strong>Not only</strong> <code>had the poor man</code> been arrested, but he had been sent to prison as well. 那个可怜的记者不仅被捕了，而且还被送进了监狱。(原句是：The poor man had not only been arrested, ….)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>造句练习：(分别用正常语序和倒装)<ul>
+<li>1.我很少晚上11点以后看电视。<ul>
+<li>1.I seldom watch TV after 11:00 p. m.</li>
+<li>Seldom do I watch TV after 11:00 p. m.</li>
+</ul>
+</li>
+<li>2.我以前从没有想过玛丽会离开她的丈夫。<ul>
+<li>2.I would never have guessed that Mary would leave her husband.</li>
+<li>Never would I have guessed that Mary would leave her husband.</li>
+</ul>
+</li>
+<li><ol start="3">
+<li>你绝不会(by no means)找不到(have trouble finding)这座大楼的，因为它是全市最高的。<ul>
+<li>3.You should by no means have trouble finding the building because it is the tallest in the city.</li>
+<li>By no means should you have trouble finding the building because it is the tallest in the city.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>4.只有在较浅的河段你才能涉水渡河。<ul>
+<li>4.You can walk across the river only in the shallow part.</li>
+<li>Only in the shallow part can you walk across the river.</li>
+</ul>
+</li>
+<li>5.只有在他跟我说明问题时，我才了解我哪里错了。<ul>
+<li>5.I can understand what I am doing wrong only when he explains the problems to me.</li>
+<li>Only when he explains the problems to me can I understand what I am doing wrong.</li>
+</ul>
+</li>
+<li>6.直到我抵达机场，才想起把护照忘在家里了。<ul>
+<li>6.I did not remember that I had left my passport at home until I arrived at the airport.</li>
+<li>Not until I arrived at the airport did I remember that I had left my passport at home.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="so-such倒装句"><a href="#so-such倒装句" class="headerlink" title="so/such倒装句"></a>so/such倒装句</h2><ul>
+<li>形容词一般比较<ul>
+<li>He is <code>so</code> helpful that we all like him. = <code>So</code> helpful <code>is he</code> that we all like him.他那么乐于助人，因此我们都很喜欢她。</li>
+<li>He has done <code>so</code> well that he deserves our respect. = So well has he done that he deserves our respect.他做得那么好，所以值得我们尊敬。</li>
+<li>Mrs. Sterling got <code>so</code> angry <code>that</code> she ran after them. = <code>So</code> angry <code>did Mrs. Sterling get</code> that she ran after them.斯特林夫人非常气愤，向着他们追了过去。</li>
+<li>Peter is <code>such</code> an outstanding student <code>that</code> all the teachers that have taught him like him very much. = <code>Such</code> an outstanding student <code>is Peter that</code> all the teachers that have taught him like him very much.彼得是这么杰出的学生，以至于所有教过他的老师都非常喜欢她。</li>
+</ul>
+</li>
+<li>so作为副词单独使用可表示“也”的意思，前面有连词and，后面的句子倒装<ul>
+<li>I’m afraid of darkness, and my sister is, too. = I’m afraid of darkness, and so is my sister.我怕黑，我妹妹也是。</li>
+</ul>
+</li>
+<li>造句练习：(分别用正常语序和倒装)<ul>
+<li>1.彼得夫妇有这么好的女儿，使得我们都很羡慕他们。<ul>
+<li>1.Mr. and Mrs.Peter have such a good daughter that I envy them.</li>
+<li>Such a good son do Mr. and Mrs. Peter have that I envy them.</li>
+</ul>
+</li>
+<li>2.这位老太太的生活如此悲惨，以至于我们都很同情(sympathize with)她。<ul>
+<li>2.The old lady’ s life is so miserable that we all sympathize with him.</li>
+<li>So miserable is the old lady S life that we all sympathize with him.</li>
+</ul>
+</li>
+<li>3.很多年轻人喜欢周杰伦，我也是。<ul>
+<li>3.Many young people like Jay Chou, and I do, too.</li>
+<li>Many young people like Jay Chou, and so do I.</li>
+</ul>
+</li>
+<li>4.奥巴马总统明天会来看我们，他老婆也会来。<ul>
+<li>4.President Obama will be coming to see us tomorrow, and his wife will, too.</li>
+<li>President Obama will be coming to see us tomorrow, and so will his wife.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="nor-and-neither倒装句"><a href="#nor-and-neither倒装句" class="headerlink" title="nor / and neither倒装句"></a>nor / and neither倒装句</h2><ul>
+<li>nor和neither都表示“也不”，但nor是连词，而neither是副词，所以前面通常有连词and。（美语中有时也可省略）<ul>
+<li>My girlfriend doesn’t like singing, and I don’t, either.</li>
+<li>= My girlfriend doesn’t like singing, nor do I.</li>
+<li>= My girlfriend doesn’t like singing, and neither do I.</li>
+</ul>
+</li>
+<li>nor作为副词，还可以单独使用，表示“并非”<ul>
+<li>Nor is it only the ignorant and ill-educated person who was such faith in the bottle of medicine.并不只是那些无知和没受过良好教育的人才迷信药瓶子</li>
+<li>Nor is the city without its moments of beauty.城市也并非没有良辰美景</li>
+</ul>
+</li>
+<li>造句练习：(分别用正常语序和倒装)<ul>
+<li>1.我将不会出席明天的会议，我们老板也不会。<ul>
+<li>1.I will not attend the meeting tomorrow, and our boss will not, either.</li>
+<li>I wiII not attend the meet ing tomorrow, and neither will our boss .</li>
+<li>I will not attend the meeting tomorrow, nor will our boss.</li>
+</ul>
+</li>
+<li>2.这条消息也不是特别地令人吃惊。<ul>
+<li>2.The news is not particularly surprising.</li>
+<li>Nor is the news particularly surprising.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="副词倒装句"><a href="#副词倒装句" class="headerlink" title="副词倒装句"></a>副词倒装句</h2><ul>
+<li>表示地点、方向、次序的副词放在句首，主语是名词，谓语是系动词或不及物动词的时候，必须倒装（主语是代词不倒装）<ul>
+<li><strong>Up</strong> <code>came the sun</code> as we climbed to the mountain top. 太阳在我们爬到山顶时升起。(完全倒装)</li>
+<li><strong>On the desk</strong> <code>is a book.</code> 桌上有本书(完全倒装)</li>
+<li><strong>Among them</strong> <code>will be debbie&#39;s mother,</code> who swam the Channel herself when she was a girl. 他们当中还会有黛比的母亲，她本人还是个姑娘时，也曾横渡过英吉利海峡! (本句中 的mother被定语从句修饰，故倒装以后和紧邻定语从句，使句子主干更突出)</li>
+<li><strong>Next</strong> <code>came a horse.</code> 随后来了一匹马。</li>
+<li><strong>There</strong> <code>you have</code> it that’s the news for today.(不倒装)</li>
+<li><strong>On the hill</strong> <code>I saw</code> Lulu.(不倒装)</li>
+</ul>
+</li>
+<li>There be句型，其实是一种特殊的地点副词倒装句，翻译为“有…”，其本质是强调某种东西“存在”，be这时是一个不及物动词，相当于exist。而动词have的本质是强调“拥有”<ul>
+<li><code>There is</code> only one happiness in this life, to love and to be loved.生命中只有一种情况叫幸福——爱和被爱。 (法国作家 乔治桑名言)</li>
+<li><code>There will be</code> a large basketball match in our school next week.我们学校下周将有一场大型篮球比赛。</li>
+<li><code>There have been</code> bicycles stolen from the parking lot recently. 最近停车场一直有自行车遭窃。</li>
+<li>Many people wonder if <code>there might be</code> life in other galaxies.很多人想知道其它星系是否可能有生命存在。</li>
+</ul>
+</li>
+<li>某些语法书说，have的主语是人，There be的主语是物*。这种说法显然是错误的。大家一定要记住：have是从属关系，there be仅仅强调某种东西“存在”，所以there be句型的主语一定是实体名词，而不能用抽象名词比如meeting, conversation等<ul>
+<li>The house <code>has</code> many large rooms and there is a lovely garden.这栋房子里有许多房间，还有一个漂亮的花园。(本句里rooms属于house的组成部分，而garden属于house外的东西，故前面用has，后面用there is)</li>
+</ul>
+</li>
+</ul>
+<h2 id="强调"><a href="#强调" class="headerlink" title="强调"></a>强调</h2><ul>
+<li>普通强调句<ul>
+<li>为了强调句中的某个成分，可以用下面两种句型</li>
+<li>It is/was + 名词/代词 + who/whom/which引导的定语从句</li>
+<li>It is/was + 副词/介词短语/状语从句 + that引导的名词从句<ul>
+<li>Mary is visiting us tomorrow.玛丽明天来看我们。</li>
+<li>=&gt; It is Mary who is visiting us tomorrow.明天来看我们的是玛丽。</li>
+<li>I bought this watch yesterday.我昨天买了这块手表。</li>
+<li>=&gt; It is this watch which I bought yesterday.我昨天买的就是这块手表。</li>
+<li>I quit my job because I didn’t like the general manager.我辞职是因为我不喜欢总经理。</li>
+<li>=&gt; It was because I didn’t like the general manager that I quit my job.我是因为不喜欢总经理才辞职的。</li>
+<li>The tree was planted near a church fifty years ago, but it has gained an evil reputation only in recent years.该树是50年前栽在教堂附近的，但近几年得到了一个坏名声。</li>
+<li>=&gt; The tree was planted near a church fifty years ago, but it is only in recent years that it has gained an evil reputation. 该树是50年前栽在教堂附近的，但只是近几年才得到了一个坏名声。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>注：强调句中的It is /was…who/whom/which/that在句子中不作任何成分，这是与it作形式主语的句型的区别</li>
+<li>一般疑问句的强调：把is/was提到it前面</li>
+<li>特殊疑问句的强调：疑问句+一般疑问句的强调句<ul>
+<li><code>Was it</code> yesterday <code>that</code> he met president Obama?他是昨天遇到奥巴马总统的吗?</li>
+<li><code>What is it that</code> makes a person so special?使一个人与众不同的究竟是什么呢?</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.我是在公园里遇到玛丽的。<ul>
+<li>1.It was in the park that I ran into Mary.</li>
+</ul>
+</li>
+<li>2.我是为了我的健康的缘故放弃这份待遇优厚的工作的。<ul>
+<li>2.It was for the sake of my health thatI gave up this well-paying job.</li>
+</ul>
+</li>
+<li>3.是直到昨天你才完成这个工作的吗?<ul>
+<li>3.Was it until yesterday that you finished the work?</li>
+</ul>
+</li>
+<li>4.究竟是哪个国家赢得了2010年世界杯呢?<ul>
+<li>4.Which country was it that won the World Cup in 2010?</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="15-介词省略句型"><a href="#15-介词省略句型" class="headerlink" title="15.介词省略句型"></a>15.介词省略句型</h1><h2 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h2><ul>
+<li>先看几个汉语句子<ul>
+<li>1、我<code>确信</code>他无法通过考试。</li>
+<li>2、我很<code>高兴</code>你来参加我们的宴会。</li>
+<li>3、我<code>恐怕</code>他不会来了。</li>
+<li>4、我很<code>抱歉</code>这么晚打扰你。</li>
+</ul>
+</li>
+<li>在汉语中是表示人的心理活动，应该是谓语动词，后面的句子是宾语</li>
+<li>但是在英语中，并没有对应心理活动的动词，而是对应的表示心理活动的形容词: sure, glad, afraid, or….等等，我们将其称之为“主观形容词”</li>
+<li>所以，需要一个固定搭配：be+主观形容词+ about/ of</li>
+</ul>
+<h2 id="后接名词"><a href="#后接名词" class="headerlink" title="后接名词"></a>后接名词</h2><ul>
+<li>I <code>am</code> terribly <code>sorry about</code> that.听说这事我很难过。</li>
+</ul>
+<h2 id="后接动名词短语"><a href="#后接动名词短语" class="headerlink" title="后接动名词短语"></a>后接动名词短语</h2><ul>
+<li>She <code>is tired of</code> doing her homework.她对写作业感到很厌倦.</li>
+<li>John <code>has been aware of</code> having done something wrong.约翰已意识到自己做错了事</li>
+</ul>
+<h2 id="后接名词从句"><a href="#后接名词从句" class="headerlink" title="后接名词从句"></a>后接名词从句</h2><ul>
+<li>只有whether从句和疑问句从句，才能直接作介词的宾语<ul>
+<li>I am worried <strong>about</strong> <code>whether he can do it.</code> 我很担心他是否能做这件事。</li>
+<li>I’m curious <strong>about</strong> <code>how he&#39;ll cope with the problem.</code> 我很好奇他将如何应付这个问题。</li>
+</ul>
+</li>
+<li>介词后如果要用that从句，那么此时要省略介词about/of，其实这样的结构，就是去掉了介词about或of的宾语从句<ul>
+<li>I am worried about that he plays around all day. (X)这句话应该为：I am worried that he plays around all day.</li>
+<li>Sam <strong>was sure</strong> <code>that the wallet must have been found by one of the villagers</code>, but it was not returned to him. 萨姆确信那钱包一定是被某个村民捡到了，可是却不见有人来送还给他。</li>
+<li>They <strong>were</strong> also quite <strong>sure</strong> <code>that a cigarette end did not start the fire.</code> 他们还十分肯定火灾也不是由烟头引起的。</li>
+<li>My wife <strong>was delighted</strong> <code>that things had returned to normal once more.</code> 一切又都恢复了正常，为此我妻子十分高兴。</li>
+<li><strong>I’m afraid</strong> <code>that I can&#39;t help you this time.</code> 恐怕这次我不能帮你了。</li>
+</ul>
+</li>
+<li>此时还可用<code>介词+ the fact + that从句</code>，此时that从句为同位语从句。或将that从句化简为动名词短语<ul>
+<li>如表达：</li>
+<li>我确定这支队赢了这场比赛。I am sure of that the team has won the game. (X)</li>
+<li>应改为：</li>
+<li>I am sure of <strong>the fact</strong> <code>that the team has won the game.</code></li>
+<li>I am sure of <code>the team&#39;s winning the game.</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="后接不定式"><a href="#后接不定式" class="headerlink" title="后接不定式"></a>后接不定式</h2><ul>
+<li>After his attempt, Campbell <strong>was disappointed</strong> <code>to learn that his average speed had been 299 miles per hour.</code> 比赛结束后，坎贝尔非常失望地得知他的平均时速是299英里。</li>
+<li>I <strong>was excited</strong> <code>to receive a letter</code> from my girlfriend in Australia. 我很兴奋，因为我收到澳洲的女朋友给我的信。</li>
+<li>以上的例句中，不定式的逻辑主语都是句子的主语</li>
+</ul>
+<h2 id="5个特殊形容词"><a href="#5个特殊形容词" class="headerlink" title="5个特殊形容词"></a>5个特殊形容词</h2><ul>
+<li>easy/difficult/hard/possible/impossible，表示：做某事容易/很难/可能/不可能，其后的不定式，形式是主动的，但是意思是被动的<ul>
+<li>He is <code>easy</code> to please.他很容易被取悦。</li>
+<li>He is <code>difficult</code> to fool.他不容易受骗。</li>
+<li>This book is hard to understand.这本书很难被理解。(绝对不能说: This book is hard to be understood.(X)</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>英语</category>
+      </categories>
+      <tags>
+        <tag>英语</tag>
+        <tag>语法</tag>
       </tags>
   </entry>
   <entry>
