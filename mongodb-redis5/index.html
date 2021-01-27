@@ -22,22 +22,23 @@
     var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="比较快速的学完了深度之眼的pytorch的课程，使用jupyter notebook记录了一些学习笔记，还不够完善，后续逐步再补充完善">
+  <meta name="description" content="《左手MongoDB，右手Redis》第5章 Redis快速入门 学习笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pytorch学习笔记">
-<meta property="og:url" content="http://shiqi-lu.tech/pytorch-learning/index.html">
+<meta property="og:title" content="《左手MongoDB，右手Redis》第5章 Redis快速入门">
+<meta property="og:url" content="http://shiqi-lu.tech/mongodb-redis5/index.html">
 <meta property="og:site_name" content="每天净瞎搞">
-<meta property="og:description" content="比较快速的学完了深度之眼的pytorch的课程，使用jupyter notebook记录了一些学习笔记，还不够完善，后续逐步再补充完善">
+<meta property="og:description" content="《左手MongoDB，右手Redis》第5章 Redis快速入门 学习笔记">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-10T12:36:16.000Z">
-<meta property="article:modified_time" content="2020-10-10T12:36:16.000Z">
+<meta property="article:published_time" content="2021-01-19T07:37:31.000Z">
+<meta property="article:modified_time" content="2021-01-19T07:37:31.000Z">
 <meta property="article:author" content="Shiqi Lu">
-<meta property="article:tag" content="pytorch">
-<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://shiqi-lu.tech/pytorch-learning/">
+<link rel="canonical" href="http://shiqi-lu.tech/mongodb-redis5/">
 
 
 <script data-pjax class="page-configurations">
@@ -50,7 +51,7 @@
   };
 </script>
 
-  <title>pytorch学习笔记 | 每天净瞎搞</title>
+  <title>《左手MongoDB，右手Redis》第5章 Redis快速入门 | 每天净瞎搞</title>
   
 
 
@@ -194,7 +195,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -206,7 +207,6 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E7%AC%94%E8%AE%B0"><span class="nav-number">2.</span> <span class="nav-text">目录笔记</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -292,7 +292,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/pytorch-learning/">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/mongodb-redis5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="http://anki190912.xuexihaike.com/20200914142317.JPG">
@@ -308,7 +308,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          pytorch学习笔记
+          《左手MongoDB，右手Redis》第5章 Redis快速入门
         </h1>
 
         <div class="post-meta-container">
@@ -319,7 +319,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-10-10 20:36:16" itemprop="dateCreated datePublished" datetime="2020-10-10T20:36:16+08:00">2020-10-10</time>
+      <time title="创建时间：2021-01-19 15:37:31" itemprop="dateCreated datePublished" datetime="2021-01-19T15:37:31+08:00">2021-01-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -327,12 +327,12 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/pytorch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">pytorch学习笔记</span></a>
+          <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
         </span>
     </span>
 
   
-    <span id="/pytorch-learning/" class="post-meta-item leancloud_visitors" data-flag-title="pytorch学习笔记" title="阅读次数">
+    <span id="/mongodb-redis5/" class="post-meta-item leancloud_visitors" data-flag-title="《左手MongoDB，右手Redis》第5章 Redis快速入门" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -347,8 +347,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/pytorch-learning/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/pytorch-learning/" itemprop="commentCount"></span>
+    <a title="valine" href="/mongodb-redis5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mongodb-redis5/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -360,18 +360,18 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>831</span>
+      <span>2.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
-            <div class="post-description">比较快速的学完了深度之眼的pytorch的课程，使用jupyter notebook记录了一些学习笔记，还不够完善，后续逐步再补充完善</div>
+            <div class="post-description">《左手MongoDB，右手Redis》第5章 Redis快速入门 学习笔记</div>
         </div>
       </header>
 
@@ -379,75 +379,199 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+        <ul>
+<li>5.1 安装Redis<ul>
+<li>macOS安装<ul>
+<li>使用Homebrew：<code>brew install redis</code></li>
+<li>启动Redis：<code>redis-server /usr/local/etc/redis.conf</code></li>
 </ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a target="_blank" rel="noopener" href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
+</li>
+<li>在线测试环境：<a target="_blank" rel="noopener" href="http://try.redis.io/">http://try.redis.io</a></li>
 </ul>
-<p><a target="_blank" rel="noopener" href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
+</li>
+<li>5.2 字符串的创建、查询和修改<ul>
+<li>查看当前有哪些Key<ul>
+<li><code>keys *</code></li>
 </ul>
-<p><a target="_blank" rel="noopener" href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
+</li>
+<li>创建字符串<ul>
+<li>格式：<code>set key value</code></li>
 </ul>
-<p><a target="_blank" rel="noopener" href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
+</li>
+<li>读取字符串<ul>
+<li><code>get key</code></li>
 </ul>
-<p><a target="_blank" rel="noopener" href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
+</li>
+<li>修改Key值<ul>
+<li><code>set key 新值</code></li>
 </ul>
-<p><a target="_blank" rel="noopener" href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
+</li>
+<li>修改Key值，但不覆盖旧值<ul>
+<li><code>set key value NX</code></li>
 </ul>
-<p><a target="_blank" rel="noopener" href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
+</li>
+<li>给字符串末尾加上其它字符串<ul>
+<li><code>append key value</code></li>
 </ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
+</li>
+<li>注意，若有空格的话，需要使用双引号</li>
+<li>让Key的数字增加1<ul>
+<li><code>incr key</code></li>
+</ul>
+</li>
+<li>让Key的数字减少1<ul>
+<li><code>decr key</code></li>
+</ul>
+</li>
+<li>让key的数字增加n<ul>
+<li><code>incrby key n</code></li>
+</ul>
+</li>
+<li>让key的数字减少n<ul>
+<li><code>decrby key n</code></li>
+</ul>
+</li>
+<li>在python中列出所有key<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> redis</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>client = redis.Redis(host=<span class="string">&#x27;192.168.1.53&#x27;</span>, port=<span class="number">6379</span>, password=<span class="string">&#x27;123456&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(client.keys())</span><br><span class="line">[<span class="string">b&#x27;give&#x27;</span>, <span class="string">b&#x27;\xe4\xb8\xad\xe6\x96\x87&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> key <span class="keyword">in</span> client.keys():</span><br><span class="line"><span class="meta">... </span>    print(key.decode())</span><br><span class="line">...</span><br><span class="line">give</span><br><span class="line">中文</span><br></pre></td></tr></table></figure></li>
+<li>python创建字符串<ul>
+<li><code>client.set(&#39;key&#39;, &#39;value&#39;)</code></li>
+</ul>
+</li>
+<li>python获取字符串<ul>
+<li><code>client.get(&#39;key&#39;)</code></li>
+</ul>
+</li>
+<li>python修改key值，但不覆盖旧值<ul>
+<li><code>client.set(&#39;key&#39;, &#39;value&#39;, nx=True)</code></li>
+</ul>
+</li>
+<li>python对字符串增加和减小数值<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">client.incr(<span class="string">&#x27;key&#x27;</span>)</span><br><span class="line">client.incr(<span class="string">&#x27;key&#x27;</span>, n)</span><br><span class="line">client.decr(<span class="string">&#x27;key&#x27;</span>)</span><br><span class="line">client.decr(<span class="string">&#x27;key&#x27;</span>, n)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>5.3 列表的创建、查询和修改<ul>
+<li>向列表插入数据的命令：<ul>
+<li>从左侧插入：<code>lpush key value1 value2 value3</code></li>
+<li>从右侧插入：<code>rpush key value1 value2 value3</code></li>
+</ul>
+</li>
+<li>查看列表长度<ul>
+<li><code>llen key</code></li>
+</ul>
+</li>
+<li>根据索引查看数据<ul>
+<li>格式：<code>lrange 0 开始索引 结束索引</code></li>
+<li>查看索引为6的数据：<code>lrange elist 6 6</code></li>
+<li>查看索引从2到5(闭区间)的数据：<code>lrange elist 2 5</code></li>
+<li>查看所有数据：<code>lrange key 0 -1</code></li>
+<li>查看右边的5条数据：<code>lrange key -5 -1</code></li>
+</ul>
+</li>
+<li>弹出列表数据<ul>
+<li>左边弹出：<code>lpop key</code></li>
+<li>右边弹出：<code>rpop key</code></li>
+</ul>
+</li>
+<li>根据数据列表索引修改数据<ul>
+<li><code>lset key index 新值</code></li>
+</ul>
+</li>
+<li>python插入列表数据<ul>
+<li><code>client.lpush(&#39;key&#39;, &#39;value&#39;)</code></li>
+<li><code>client.rpush(&#39;key&#39;, &#39;value1&#39;, &#39;value2&#39;)</code></li>
+</ul>
+</li>
+<li>python查看列表长度<ul>
+<li><code>client.llen(key)</code></li>
+</ul>
+</li>
+<li>python获取列表索引范围内的数据<ul>
+<li><code>client.lrange(key, 开始索引, 结束索引)</code></li>
+</ul>
+</li>
+<li>python从列表左右侧弹出数据<ul>
+<li><code>client.lpop(key)</code></li>
+<li><code>client.rpop(key)</code></li>
+</ul>
+</li>
+<li>python修改列表数据<ul>
+<li><code>client.lset(key, index, value)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>5.4 集合的创建和修改<ul>
+<li>插入集合数据<ul>
+<li><code>sadd key value1 value2 value3</code></li>
+</ul>
+</li>
+<li>读取集合数据长度<ul>
+<li><code>scard key</code></li>
+</ul>
+</li>
+<li>从集合中随机获取数据，并删除改数据<ul>
+<li><code>spop key count</code></li>
+<li>若count省略，随机获取1条数据</li>
+</ul>
+</li>
+<li>获取集合所有数据<ul>
+<li><code>smembers key</code></li>
+</ul>
+</li>
+<li>判断集合中是否包含某个数据<ul>
+<li><code>sismember key value</code></li>
+<li>如果数据存在返回1，不存在返回0</li>
+</ul>
+</li>
+<li>删除集合数据<ul>
+<li><code>srem key value1 value2 value3</code></li>
+</ul>
+</li>
+<li>求集合的交集<ul>
+<li><code>sinter key1 key2 key3</code></li>
+</ul>
+</li>
+<li>求集合的并集<ul>
+<li><code>sunion key1 key2 key3</code></li>
+</ul>
+</li>
+<li>求集合的差集<ul>
+<li><code>sdiff key1 key2 key3</code></li>
+</ul>
+</li>
+<li>python插入集合数据<ul>
+<li><code>client.sadd(&#39;key&#39;, &#39;value1&#39;, &#39;value2&#39;)</code></li>
+</ul>
+</li>
+<li>python读取集合长度<ul>
+<li><code>client.scard(&#39;key&#39;)</code></li>
+</ul>
+</li>
+<li>python弹出集合数据<ul>
+<li><code>client.spop(&#39;key&#39;)</code></li>
+<li>注意这里没有count参数，一次只能获取一条数据</li>
+</ul>
+</li>
+<li>python获取集合全部数据<ul>
+<li><code>client.smembers(&#39;key&#39;)</code></li>
+</ul>
+</li>
+<li>python删除集合数据<ul>
+<li><code>client.srem(&#39;key&#39;)</code></li>
+</ul>
+</li>
+<li>python集合的交集<ul>
+<li><code>client.sinter(&#39;key1&#39;, &#39;key2&#39;)</code></li>
+</ul>
+</li>
+<li>python集合的并集<ul>
+<li><code>client.sunion(&#39;key1&#39;, &#39;key2&#39;)</code></li>
+</ul>
+</li>
+<li>python集合的差集<ul>
+<li><code>client.sdiff(&#39;key1&#39;, &#39;key2&#39;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
     </div>
@@ -484,7 +608,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://shiqi-lu.tech/pytorch-learning/" title="pytorch学习笔记">http://shiqi-lu.tech/pytorch-learning/</a>
+      <a href="http://shiqi-lu.tech/mongodb-redis5/" title="《左手MongoDB，右手Redis》第5章 Redis快速入门">http://shiqi-lu.tech/mongodb-redis5/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -493,22 +617,20 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/pytorch/" rel="tag"># pytorch</a>
-              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/pytorch-week1/" rel="prev" title="pytorch第一周学习笔记">
-                  <i class="fa fa-chevron-left"></i> pytorch第一周学习笔记
+                <a href="/mongodb-redis3/" rel="prev" title="《左手MongoDB，右手Redis》第3章 MongoDB快速入门">
+                  <i class="fa fa-chevron-left"></i> 《左手MongoDB，右手Redis》第3章 MongoDB快速入门
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/feature-selection/" rel="next" title="特征选择方法汇总">
-                  特征选择方法汇总 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -654,7 +776,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({
       el  : '#valine-comments',
-      path: "/pytorch-learning/",
+      path: "/mongodb-redis5/",
     }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
     ));
   }, window.Valine);
