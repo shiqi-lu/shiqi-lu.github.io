@@ -22,25 +22,23 @@
     var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="roam2anki用来把Roam Research的笔记转成anki进行记忆">
+  <meta name="description" content="《结构之法》中海量数据处理部分内容的学习笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自研小工具roam2anki介绍">
-<meta property="og:url" content="http://shiqi-lu.tech/roam2anki-intro/index.html">
+<meta property="og:title" content="海量数据处理">
+<meta property="og:url" content="http://shiqi-lu.tech/mass-data-processing/index.html">
 <meta property="og:site_name" content="每天净瞎搞">
-<meta property="og:description" content="roam2anki用来把Roam Research的笔记转成anki进行记忆">
+<meta property="og:description" content="《结构之法》中海量数据处理部分内容的学习笔记">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210127160319.jpeg">
-<meta property="article:published_time" content="2020-12-12T08:01:50.000Z">
-<meta property="article:modified_time" content="2020-12-12T08:01:50.000Z">
+<meta property="article:published_time" content="2021-02-18T15:10:57.000Z">
+<meta property="article:modified_time" content="2021-02-18T15:14:01.219Z">
 <meta property="article:author" content="Shiqi Lu">
-<meta property="article:tag" content="学习">
-<meta property="article:tag" content="Roam Research">
-<meta property="article:tag" content="anki">
+<meta property="article:tag" content="海量数据">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20210127160319.jpeg">
 
 
-<link rel="canonical" href="http://shiqi-lu.tech/roam2anki-intro/">
+<link rel="canonical" href="http://shiqi-lu.tech/mass-data-processing/">
 
 
 <script data-pjax class="page-configurations">
@@ -53,7 +51,7 @@
   };
 </script>
 
-  <title>自研小工具roam2anki介绍 | 每天净瞎搞</title>
+  <title>海量数据处理 | 每天净瞎搞</title>
   
 
 
@@ -197,7 +195,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -209,7 +207,6 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#roam2anki"><span class="nav-number">1.</span> <span class="nav-text">roam2anki</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Github"><span class="nav-number">2.</span> <span class="nav-text">Github</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%A8%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8"><span class="nav-number">5.</span> <span class="nav-text">功能列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%90%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">限制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E8%AF%B4%E6%98%8E"><span class="nav-number">7.</span> <span class="nav-text">其它说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">8.</span> <span class="nav-text">依赖</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -295,7 +292,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/roam2anki-intro/">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/mass-data-processing/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="http://anki190912.xuexihaike.com/20200914142317.JPG">
@@ -311,7 +308,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          自研小工具roam2anki介绍
+          海量数据处理
         </h1>
 
         <div class="post-meta-container">
@@ -321,8 +318,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-12-12 16:01:50" itemprop="dateCreated datePublished" datetime="2020-12-12T16:01:50+08:00">2020-12-12</time>
+      <time title="创建时间：2021-02-18 23:10:57 / 修改时间：23:14:01" itemprop="dateCreated datePublished" datetime="2021-02-18T23:10:57+08:00">2021-02-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -330,12 +328,12 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%AD%A6%E4%B9%A0%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">学习工具</span></a>
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
         </span>
     </span>
 
   
-    <span id="/roam2anki-intro/" class="post-meta-item leancloud_visitors" data-flag-title="自研小工具roam2anki介绍" title="阅读次数">
+    <span id="/mass-data-processing/" class="post-meta-item leancloud_visitors" data-flag-title="海量数据处理" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -350,8 +348,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/roam2anki-intro/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/roam2anki-intro/" itemprop="commentCount"></span>
+    <a title="valine" href="/mass-data-processing/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mass-data-processing/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -363,18 +361,18 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
+      <span>3.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
-            <div class="post-description">roam2anki用来把Roam Research的笔记转成anki进行记忆</div>
+            <div class="post-description">《结构之法》中海量数据处理部分内容的学习笔记</div>
         </div>
       </header>
 
@@ -382,42 +380,142 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="roam2anki"><a href="#roam2anki" class="headerlink" title="roam2anki"></a>roam2anki</h1><p>roam2anki用来把Roam Research的笔记转成anki进行记忆</p>
-<h1 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h1><p><a target="_blank" rel="noopener" href="https://github.com/shiqi-lu/roam2anki">Github</a></p>
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>已经完成所有规划的功能，已支持roam中的所有样式，包括行内、行间公式、代码块、高亮、加粗、图片、超链接等等，其中第一级会解析为问题，第二级和往后级别均解析为第一级的答案</p>
-<h1 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h1><ol>
-<li>下载roam2anki.py和roam2anki模板.apkg</li>
-<li>第一次操作先在anki中导入roam2anki模板.apkg</li>
-<li>新建一个txt文件如example.txt，把要导入的roam字段粘贴到文本中，注意第一级为问题，第二级以下都是答案</li>
-<li>运行python脚本<code>python roam2anki.py example.txt</code>，程序把转换成对应的只有两列的csv文件，问题是第一列，回答是第二列</li>
-<li>把csv导入到anki中，保持默认设置即可。即fields separated by: Tab；勾选上Allow HTML in fields；Field 1为正面；field 2为背面</li>
-</ol>
-<p><img src="http://anki190912.xuexihaike.com/20210127160319.jpeg"></p>
-<h1 id="功能列表"><a href="#功能列表" class="headerlink" title="功能列表"></a>功能列表</h1><ul>
-<li><input checked="" disabled="" type="checkbox"> 支持所有样式：加粗、斜体、高亮、删字符、行内代码、超链接</li>
-<li><input checked="" disabled="" type="checkbox"> 支持图片并居中，支持引用图片</li>
-<li><input checked="" disabled="" type="checkbox"> 支持答案里最高10级的缩进</li>
-<li><input checked="" disabled="" type="checkbox"> 问题和答案支持块内多行</li>
-<li><input checked="" disabled="" type="checkbox"> 删除alias和双中括号</li>
-<li><input checked="" disabled="" type="checkbox"> 把同级问题合并成anki同一个问题</li>
-<li><input checked="" disabled="" type="checkbox"> 支持问题和答案的行内公式、引用的行内公式</li>
-<li><input checked="" disabled="" type="checkbox"> 支持多行行间公式，引用的多行行间公式，同时支持块内的新起的多行行间公式，但要注意新起一行，不能续着写</li>
-<li><input checked="" disabled="" type="checkbox"> 支持代码块导入和语法高亮，支持引用代码块，若有必要并可强制选择代码块高亮语言</li>
-<li><input checked="" disabled="" type="checkbox"> 支持标题字号h1到h3</li>
-<li><input checked="" disabled="" type="checkbox"> 涉及到html的&lt;、&gt;、&amp;、”等字符放到anki前进行转义，保证所有字符都能显示</li>
+        <ul>
+<li><p>散列分治</p>
+<ul>
+<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
+<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
+<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
+<li>3.堆/快排：排序得到频率最高的IP</li>
 </ul>
-<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><ul>
-<li>答案和问题的代码块必须要新起一个块或块内新起一行，且这一行必须以3个反引号开始，即不支持代码块放在一行中间，原因是难以解析，且代码块展示就是会新起一行，就人工新起一行吧，结尾也要新起一行</li>
-<li>只支持无序列表(Bulleted List)，不支持有序列表(Numbered List)和文档(Document)，原因是有序列表难以判断和解析，支持文档模式会和现有的块内多行的判断有歧义</li>
+</li>
+<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
+<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
+<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
+<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
+<li>也可用trie树</li>
 </ul>
-<h1 id="其它说明"><a href="#其它说明" class="headerlink" title="其它说明"></a>其它说明</h1><ul>
-<li>roam2anki.py提供了批量转换的方法，第二个选项<code>python roam2anki.py example ...</code>，若example为一个文件夹，会寻找example下的所有以.txt结尾的文件进行转换，后续可接多个文件或文件夹</li>
-<li>roam2anki只支持语法正确时的解析，即保证在roam中能正确解析的，导出anki后也正确解析，不正确的语法，或故意为难解析器的，，我也没办法哇</li>
-<li>roam2anki目前是作者写给自用，若使用过程中发现有解析出来的bug，请提一个issue</li>
+</li>
+<li>堆排找topK过程<ul>
+<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
 </ul>
-<h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><ul>
-<li>python &gt;= 3.7</li>
-<li>pandas &gt;= 1.0.1</li>
+</li>
+<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
+<li>如果同一个数据元素只出现在某一台机器中<ul>
+<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
+<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
+</ul>
+</li>
+<li>如果同一个数据元素出现在不同机器中<ul>
+<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
+<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
+<li>解法一<ul>
+<li>1.散列映射</li>
+<li>2.hash_map统计</li>
+<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
+</ul>
+</li>
+<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
+</ul>
+</li>
+<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
+<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
+<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
+<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>多层划分</p>
+<ul>
+<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
+<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
+<li>2.不同的区域再利用位图进行统计</li>
+</ul>
+</li>
+<li>寻找中位数：找出5亿个int型数的中位数<ul>
+<li>1.将这5亿个int型数划分为2^{16}个区域</li>
+<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
+<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>外排序</p>
+<ul>
+<li>外排序介绍<ul>
+<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
+</ul>
+</li>
+<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
+<li>1.位图<ul>
+<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
+<li>能采用位图方案的原因<ul>
+<li>输入数据限制在相对较小的范围内</li>
+<li>数据没有重复</li>
+<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.多路归并<ul>
+<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>位图</p>
+<ul>
+<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
+<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
+</ul>
+</li>
+<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
+<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
+<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
+<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
+</ul>
+</li>
+<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
+<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
+<li>读入40亿个数，设置相应的位</li>
+<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>布隆过滤器(Bloom filter)</p>
+<ul>
+<li>原理<ul>
+<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
+<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
+<li>但会有误判的可能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>simhash算法</p>
+<ul>
+<li>设计一个比较两篇文档相似度的算法<ul>
+<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
+<li>simhash算法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>参考</p>
+<ul>
+<li>结构之法</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/v_JULY_v/article/details/6543438">https://blog.csdn.net/v_JULY_v/article/details/6543438</a></li>
+</ul>
+</li>
 </ul>
 
     </div>
@@ -454,7 +552,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://shiqi-lu.tech/roam2anki-intro/" title="自研小工具roam2anki介绍">http://shiqi-lu.tech/roam2anki-intro/</a>
+      <a href="http://shiqi-lu.tech/mass-data-processing/" title="海量数据处理">http://shiqi-lu.tech/mass-data-processing/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -463,23 +561,20 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag"># 学习</a>
-              <a href="/tags/Roam-Research/" rel="tag"># Roam Research</a>
-              <a href="/tags/anki/" rel="tag"># anki</a>
+              <a href="/tags/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE/" rel="tag"># 海量数据</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/gramma13-15/" rel="prev" title="恶魔奶爸语法13-15课">
-                  <i class="fa fa-chevron-left"></i> 恶魔奶爸语法13-15课
+                <a href="/mongodb-redis5/" rel="prev" title="《左手MongoDB，右手Redis》第5章 Redis快速入门">
+                  <i class="fa fa-chevron-left"></i> 《左手MongoDB，右手Redis》第5章 Redis快速入门
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/off-time/" rel="next" title="《OFF学》读书笔记">
-                  《OFF学》读书笔记 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -625,7 +720,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({
       el  : '#valine-comments',
-      path: "/roam2anki-intro/",
+      path: "/mass-data-processing/",
     }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
     ));
   }, window.Valine);

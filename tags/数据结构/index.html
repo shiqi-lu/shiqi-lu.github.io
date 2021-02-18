@@ -22,25 +22,18 @@
     var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="roam2anki用来把Roam Research的笔记转成anki进行记忆">
-<meta property="og:type" content="article">
-<meta property="og:title" content="自研小工具roam2anki介绍">
-<meta property="og:url" content="http://shiqi-lu.tech/roam2anki-intro/index.html">
+  <meta name="description" content="既然选择了远方，便只顾风雨兼程">
+<meta property="og:type" content="website">
+<meta property="og:title" content="每天净瞎搞">
+<meta property="og:url" content="http://shiqi-lu.tech/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
 <meta property="og:site_name" content="每天净瞎搞">
-<meta property="og:description" content="roam2anki用来把Roam Research的笔记转成anki进行记忆">
+<meta property="og:description" content="既然选择了远方，便只顾风雨兼程">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210127160319.jpeg">
-<meta property="article:published_time" content="2020-12-12T08:01:50.000Z">
-<meta property="article:modified_time" content="2020-12-12T08:01:50.000Z">
 <meta property="article:author" content="Shiqi Lu">
-<meta property="article:tag" content="学习">
-<meta property="article:tag" content="Roam Research">
-<meta property="article:tag" content="anki">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20210127160319.jpeg">
 
 
-<link rel="canonical" href="http://shiqi-lu.tech/roam2anki-intro/">
+<link rel="canonical" href="http://shiqi-lu.tech/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
 
 <script data-pjax class="page-configurations">
@@ -48,12 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : true,
+    isPost : false,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>自研小工具roam2anki介绍 | 每天净瞎搞</title>
+  <title>标签: 数据结构 | 每天净瞎搞</title>
   
 
 
@@ -197,7 +190,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -209,7 +202,6 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#roam2anki"><span class="nav-number">1.</span> <span class="nav-text">roam2anki</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Github"><span class="nav-number">2.</span> <span class="nav-text">Github</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%A8%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8"><span class="nav-number">5.</span> <span class="nav-text">功能列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%90%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">限制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E8%AF%B4%E6%98%8E"><span class="nav-number">7.</span> <span class="nav-text">其它说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">8.</span> <span class="nav-text">依赖</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -286,212 +278,58 @@
 </noscript>
 
 
-    <div class="main-inner post posts-expand">
+    <div class="main-inner tag posts-collapse">
       
 
       
 
-    
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/roam2anki-intro/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="http://anki190912.xuexihaike.com/20200914142317.JPG">
-      <meta itemprop="name" content="Shiqi Lu">
-      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="每天净瞎搞">
-    </span>
-
-    
-    
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          自研小工具roam2anki介绍
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-12-12 16:01:50" itemprop="dateCreated datePublished" datetime="2020-12-12T16:01:50+08:00">2020-12-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%AD%A6%E4%B9%A0%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">学习工具</span></a>
-        </span>
-    </span>
-
   
-    <span id="/roam2anki-intro/" class="post-meta-item leancloud_visitors" data-flag-title="自研小工具roam2anki介绍" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/roam2anki-intro/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/roam2anki-intro/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
+  <div class="post-block">
+    <div class="post-content">
+      <div class="collection-title">
+        <h2 class="collection-header">数据结构
+          <small>标签</small>
+        </h2>
       </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
 
-            <div class="post-description">roam2anki用来把Roam Research的笔记转成anki进行记忆</div>
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="roam2anki"><a href="#roam2anki" class="headerlink" title="roam2anki"></a>roam2anki</h1><p>roam2anki用来把Roam Research的笔记转成anki进行记忆</p>
-<h1 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h1><p><a target="_blank" rel="noopener" href="https://github.com/shiqi-lu/roam2anki">Github</a></p>
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>已经完成所有规划的功能，已支持roam中的所有样式，包括行内、行间公式、代码块、高亮、加粗、图片、超链接等等，其中第一级会解析为问题，第二级和往后级别均解析为第一级的答案</p>
-<h1 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h1><ol>
-<li>下载roam2anki.py和roam2anki模板.apkg</li>
-<li>第一次操作先在anki中导入roam2anki模板.apkg</li>
-<li>新建一个txt文件如example.txt，把要导入的roam字段粘贴到文本中，注意第一级为问题，第二级以下都是答案</li>
-<li>运行python脚本<code>python roam2anki.py example.txt</code>，程序把转换成对应的只有两列的csv文件，问题是第一列，回答是第二列</li>
-<li>把csv导入到anki中，保持默认设置即可。即fields separated by: Tab；勾选上Allow HTML in fields；Field 1为正面；field 2为背面</li>
-</ol>
-<p><img src="http://anki190912.xuexihaike.com/20210127160319.jpeg"></p>
-<h1 id="功能列表"><a href="#功能列表" class="headerlink" title="功能列表"></a>功能列表</h1><ul>
-<li><input checked="" disabled="" type="checkbox"> 支持所有样式：加粗、斜体、高亮、删字符、行内代码、超链接</li>
-<li><input checked="" disabled="" type="checkbox"> 支持图片并居中，支持引用图片</li>
-<li><input checked="" disabled="" type="checkbox"> 支持答案里最高10级的缩进</li>
-<li><input checked="" disabled="" type="checkbox"> 问题和答案支持块内多行</li>
-<li><input checked="" disabled="" type="checkbox"> 删除alias和双中括号</li>
-<li><input checked="" disabled="" type="checkbox"> 把同级问题合并成anki同一个问题</li>
-<li><input checked="" disabled="" type="checkbox"> 支持问题和答案的行内公式、引用的行内公式</li>
-<li><input checked="" disabled="" type="checkbox"> 支持多行行间公式，引用的多行行间公式，同时支持块内的新起的多行行间公式，但要注意新起一行，不能续着写</li>
-<li><input checked="" disabled="" type="checkbox"> 支持代码块导入和语法高亮，支持引用代码块，若有必要并可强制选择代码块高亮语言</li>
-<li><input checked="" disabled="" type="checkbox"> 支持标题字号h1到h3</li>
-<li><input checked="" disabled="" type="checkbox"> 涉及到html的&lt;、&gt;、&amp;、”等字符放到anki前进行转义，保证所有字符都能显示</li>
-</ul>
-<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><ul>
-<li>答案和问题的代码块必须要新起一个块或块内新起一行，且这一行必须以3个反引号开始，即不支持代码块放在一行中间，原因是难以解析，且代码块展示就是会新起一行，就人工新起一行吧，结尾也要新起一行</li>
-<li>只支持无序列表(Bulleted List)，不支持有序列表(Numbered List)和文档(Document)，原因是有序列表难以判断和解析，支持文档模式会和现有的块内多行的判断有歧义</li>
-</ul>
-<h1 id="其它说明"><a href="#其它说明" class="headerlink" title="其它说明"></a>其它说明</h1><ul>
-<li>roam2anki.py提供了批量转换的方法，第二个选项<code>python roam2anki.py example ...</code>，若example为一个文件夹，会寻找example下的所有以.txt结尾的文件进行转换，后续可接多个文件或文件夹</li>
-<li>roam2anki只支持语法正确时的解析，即保证在roam中能正确解析的，导出anki后也正确解析，不正确的语法，或故意为难解析器的，，我也没办法哇</li>
-<li>roam2anki目前是作者写给自用，若使用过程中发现有解析出来的bug，请提一个issue</li>
-</ul>
-<h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><ul>
-<li>python &gt;= 3.7</li>
-<li>pandas &gt;= 1.0.1</li>
-</ul>
-
+      
+    <div class="collection-year">
+      <span class="collection-header">2021</span>
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-          <div class="reward-container">
-  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
-  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
-    赞赏
-  </button>
-  <div class="post-reward">
-      <div>
-        <img src="http://anki190912.xuexihaike.com/20200915130605.JPG" alt="Shiqi Lu 微信">
-        <span>微信</span>
-      </div>
-      <div>
-        <img src="http://anki190912.xuexihaike.com/20200915130621.JPG" alt="Shiqi Lu 支付宝">
-        <span>支付宝</span>
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2021-02-18T23:10:57+08:00"
+              content="2021-02-18">
+          02-18
+        </time>
       </div>
 
-  </div>
-</div>
+      <div class="post-title">
+          <a class="post-title-link" href="/mass-data-processing/" itemprop="url">
+            <span itemprop="name">海量数据处理</span>
+          </a>
+      </div>
 
-          
-
-<div class="post-copyright">
-<ul>
-  <li class="post-copyright-author">
-      <strong>本文作者： </strong>Shiqi Lu
-  </li>
-  <li class="post-copyright-link">
-      <strong>本文链接：</strong>
-      <a href="http://shiqi-lu.tech/roam2anki-intro/" title="自研小工具roam2anki介绍">http://shiqi-lu.tech/roam2anki-intro/</a>
-  </li>
-  <li class="post-copyright-license">
-    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-</div>
-
-          <div class="post-tags">
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag"># 学习</a>
-              <a href="/tags/Roam-Research/" rel="tag"># Roam Research</a>
-              <a href="/tags/anki/" rel="tag"># anki</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/gramma13-15/" rel="prev" title="恶魔奶爸语法13-15课">
-                  <i class="fa fa-chevron-left"></i> 恶魔奶爸语法13-15课
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/off-time/" rel="next" title="《OFF学》读书笔记">
-                  《OFF学》读书笔记 <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
+      
+    </header>
   </article>
+
+    </div>
+  </div>
   
   
+  
+
   
 
 
 
       
-    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -625,7 +463,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({
       el  : '#valine-comments',
-      path: "/roam2anki-intro/",
+      path: "/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/",
     }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
     ));
   }, window.Valine);

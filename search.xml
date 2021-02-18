@@ -1066,6 +1066,156 @@
       </tags>
   </entry>
   <entry>
+    <title>海量数据处理</title>
+    <url>/mass-data-processing/</url>
+    <content><![CDATA[<ul>
+<li><p>散列分治</p>
+<ul>
+<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
+<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
+<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
+<li>3.堆/快排：排序得到频率最高的IP</li>
+</ul>
+</li>
+<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
+<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
+<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
+<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
+<li>也可用trie树</li>
+</ul>
+</li>
+<li>堆排找topK过程<ul>
+<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
+</ul>
+</li>
+<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
+<li>如果同一个数据元素只出现在某一台机器中<ul>
+<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
+<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
+</ul>
+</li>
+<li>如果同一个数据元素出现在不同机器中<ul>
+<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
+<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
+<li>解法一<ul>
+<li>1.散列映射</li>
+<li>2.hash_map统计</li>
+<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
+</ul>
+</li>
+<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
+</ul>
+</li>
+<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
+<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
+<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
+<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>多层划分</p>
+<ul>
+<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
+<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
+<li>2.不同的区域再利用位图进行统计</li>
+</ul>
+</li>
+<li>寻找中位数：找出5亿个int型数的中位数<ul>
+<li>1.将这5亿个int型数划分为2^{16}个区域</li>
+<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
+<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>外排序</p>
+<ul>
+<li>外排序介绍<ul>
+<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
+</ul>
+</li>
+<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
+<li>1.位图<ul>
+<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
+<li>能采用位图方案的原因<ul>
+<li>输入数据限制在相对较小的范围内</li>
+<li>数据没有重复</li>
+<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.多路归并<ul>
+<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>位图</p>
+<ul>
+<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
+<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
+</ul>
+</li>
+<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
+<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
+<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
+<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
+</ul>
+</li>
+<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
+<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
+<li>读入40亿个数，设置相应的位</li>
+<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>布隆过滤器(Bloom filter)</p>
+<ul>
+<li>原理<ul>
+<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
+<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
+<li>但会有误判的可能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>simhash算法</p>
+<ul>
+<li>设计一个比较两篇文档相似度的算法<ul>
+<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
+<li>simhash算法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>参考</p>
+<ul>
+<li>结构之法</li>
+<li><a href="https://blog.csdn.net/v_JULY_v/article/details/6543438">https://blog.csdn.net/v_JULY_v/article/details/6543438</a></li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>海量数据</tag>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>机器学习项目清单</title>
     <url>/ml-checklist/</url>
     <content><![CDATA[<h1 id="1-框出问题并看整体"><a href="#1-框出问题并看整体" class="headerlink" title="1.框出问题并看整体"></a>1.框出问题并看整体</h1><ul>
@@ -1566,6 +1716,88 @@
       </tags>
   </entry>
   <entry>
+    <title>pytorch学习笔记</title>
+    <url>/pytorch-learning/</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
+<ul>
+<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
+<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
+<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
+<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
+<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+</ul>
+<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
+<ul>
+<li>Pytorch简介及环境配置</li>
+<li>Pytorch基础数据结构——张量</li>
+<li>张量操作与线性回归</li>
+<li>计算图与动态图机制</li>
+<li>autograd与逻辑回归</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
+<ul>
+<li>数据读取机制DataLoader与Dataset</li>
+<li>数据预处理transforms模块机制</li>
+<li>二十二种transforms数据预处理方法</li>
+<li>学会自定义transforms方法</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
+<ul>
+<li>nn.Module与网络模型构建步骤</li>
+<li>模型容器与AlexNet构建</li>
+<li>网络层中的卷积层</li>
+<li>网络层中的池化层、全连接层和激活函数层</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
+<ul>
+<li>权值初始化</li>
+<li>损失函数（一）</li>
+<li>Pytorch的14种损失函数</li>
+<li>优化器optimizer的概念</li>
+<li>torch.optim.SGD</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
+<ul>
+<li>学习率调整</li>
+<li>TensorBoard简介与安装</li>
+<li>TensorBoard使用（一）</li>
+<li>TensorBoard使用（二）</li>
+<li>hook函数与CAM</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
+<ul>
+<li>weight_decay</li>
+<li>dropout</li>
+<li>Batch Normalization</li>
+<li>Layer Normalization、Instance</li>
+<li>Normalization和Group Normalization</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
+<ul>
+<li>模型保存与加载</li>
+<li>Finetune</li>
+<li>GPU的使用</li>
+<li>Pytorch中常见报错</li>
+</ul>
+<p>Week8、9 PyTorch深度体验</p>
+<ul>
+<li>图像分类一瞥</li>
+<li>图像分割一瞥</li>
+<li>目标检测一瞥（上）</li>
+<li>目标检测一瞥（下）</li>
+<li>对抗生成网络一瞥</li>
+<li>循环神经网络一瞥</li>
+</ul>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《OFF学》读书笔记</title>
     <url>/off-time/</url>
     <content><![CDATA[<ul>
@@ -1814,88 +2046,6 @@
       </categories>
       <tags>
         <tag>休闲</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pytorch学习笔记</title>
-    <url>/pytorch-learning/</url>
-    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
-</ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
-</ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
-</ul>
-]]></content>
-      <categories>
-        <category>pytorch学习笔记</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
