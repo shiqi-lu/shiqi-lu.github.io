@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="《MySQL必知必会》学习笔记1-10章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《MySQL必知必会》学习笔记1-10章">
+<meta property="og:url" content="http://shiqi-lu.tech/mysql-crash-course-1-10/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="《MySQL必知必会》学习笔记1-10章">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209151932.png">
+<meta property="article:published_time" content="2021-02-19T02:18:22.000Z">
+<meta property="article:modified_time" content="2021-02-19T02:36:56.940Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20210209151932.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/mysql-crash-course-1-10/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《MySQL必知必会》学习笔记1-10章 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">21</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">11</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC1%E7%AB%A0-%E4%BA%86%E8%A7%A3SQL"><span class="nav-text">第1章 了解SQL</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC2%E7%AB%A0-MySQL%E7%AE%80%E4%BB%8B"><span class="nav-text">第2章 MySQL简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC3%E7%AB%A0-%E4%BD%BF%E7%94%A8MySQL"><span class="nav-text">第3章 使用MySQL</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC4%E7%AB%A0-%E6%A3%80%E7%B4%A2%E6%95%B0%E6%8D%AE"><span class="nav-text">第4章 检索数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%EF%BC%95%E7%AB%A0-%E6%8E%92%E5%BA%8F%E6%A3%80%E7%B4%A2%E6%95%B0%E6%8D%AE"><span class="nav-text">第５章 排序检索数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%EF%BC%96%E7%AB%A0-%E8%BF%87%E6%BB%A4%E6%95%B0%E6%8D%AE"><span class="nav-text">第６章 过滤数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC7%E7%AB%A0-%E6%95%B0%E6%8D%AE%E8%BF%87%E6%BB%A4"><span class="nav-text">第7章 数据过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC8%E7%AB%A0-%E7%94%A8%E9%80%9A%E9%85%8D%E7%AC%A6%E8%BF%9B%E8%A1%8C%E8%BF%87%E6%BB%A4"><span class="nav-text">第8章 用通配符进行过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC9%E7%AB%A0-%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BF%9B%E8%A1%8C%E6%90%9C%E7%B4%A2"><span class="nav-text">第9章 用正则表达式进行搜索</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC10%E7%AB%A0-%E5%88%9B%E5%BB%BA%E8%AE%A1%E7%AE%97%E5%AD%97%E6%AE%B5"><span class="nav-text">第10章 创建计算字段</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="http://anki190912.xuexihaike.com/20200914142317.JPG">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://anki190912.xuexihaike.com/20200916151528.JPG" title="WeChat → http:&#x2F;&#x2F;anki190912.xuexihaike.com&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://anki190912.xuexihaike.com/20200916143240.jpg" title="WeChatOA → http:&#x2F;&#x2F;anki190912.xuexihaike.com&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/mysql-crash-course-1-10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://anki190912.xuexihaike.com/20200914142317.JPG">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《MySQL必知必会》学习笔记1-10章
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-02-19 10:18:22 / 修改时间：10:36:56" itemprop="dateCreated datePublished" datetime="2021-02-19T10:18:22+08:00">2021-02-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/mysql-crash-course-1-10/" class="post-meta-item leancloud_visitors" data-flag-title="《MySQL必知必会》学习笔记1-10章" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql-crash-course-1-10/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql-crash-course-1-10/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">《MySQL必知必会》学习笔记1-10章</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="第1章-了解SQL"><a href="#第1章-了解SQL" class="headerlink" title="第1章 了解SQL"></a>第1章 了解SQL</h1><h1 id="第2章-MySQL简介"><a href="#第2章-MySQL简介" class="headerlink" title="第2章 MySQL简介"></a>第2章 MySQL简介</h1><h1 id="第3章-使用MySQL"><a href="#第3章-使用MySQL" class="headerlink" title="第3章 使用MySQL"></a>第3章 使用MySQL</h1><ul>
+<li><p>Q:显示数据库列表</p>
+<ul>
+<li><code>show databases;</code></li>
+</ul>
+</li>
+<li><p>Q:连接数据库</p>
+<ul>
+<li><code>use crashcourse</code></li>
+</ul>
+</li>
+<li><p>Q:获得数据库内的表的列表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show tables;</span><br><span class="line">+<span class="comment">-----------------------+</span></span><br><span class="line">| Tables_in_crashcourse |</span><br><span class="line">+<span class="comment">-----------------------+</span></span><br><span class="line">| customers             |</span><br><span class="line">| orderitems            |</span><br><span class="line">| orders                |</span><br><span class="line">| productnotes          |</span><br><span class="line">| products              |</span><br><span class="line">| vendors               |</span><br><span class="line">+<span class="comment">-----------------------+</span></span><br><span class="line">6 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li><p>Q:显示表列</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW COLUMNS FROM customers;</span><br><span class="line">+<span class="comment">--------------+-----------+------+-----+---------+----------------+</span></span><br><span class="line">| Field        | Type      | Null | Key | Default | Extra          |</span><br><span class="line">+<span class="comment">--------------+-----------+------+-----+---------+----------------+</span></span><br><span class="line">| cust_id      | int(11)   | NO   | PRI | NULL    | auto_increment |</span><br><span class="line">| cust_name    | char(50)  | NO   |     | NULL    |                |</span><br><span class="line">| cust_address | char(50)  | YES  |     | NULL    |                |</span><br><span class="line">| cust_city    | char(50)  | YES  |     | NULL    |                |</span><br><span class="line">| cust_state   | char(5)   | YES  |     | NULL    |                |</span><br><span class="line">| cust_zip     | char(10)  | YES  |     | NULL    |                |</span><br><span class="line">| cust_country | char(50)  | YES  |     | NULL    |                |</span><br><span class="line">| cust_contact | char(50)  | YES  |     | NULL    |                |</span><br><span class="line">| cust_email   | char(255) | YES  |     | NULL    |                |</span><br><span class="line">+<span class="comment">--------------+-----------+------+-----+---------+----------------+</span></span><br><span class="line">9 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>和使用<code>DESCRIBE customers;</code>一个效果</li>
+</ul>
+</li>
+</ul>
+<h1 id="第4章-检索数据"><a href="#第4章-检索数据" class="headerlink" title="第4章 检索数据"></a>第4章 检索数据</h1><ul>
+<li>Q:检索单个列<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select prod_name from products;</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">| prod_name      |</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">| .5 ton anvil   |</span><br><span class="line">| 1 ton anvil    |</span><br><span class="line">| 2 ton anvil    |</span><br><span class="line">| Detonator      |</span><br><span class="line">| Bird seed      |</span><br><span class="line">| Carrots        |</span><br><span class="line">| Fuses          |</span><br><span class="line">| JetPack 1000   |</span><br><span class="line">| JetPack 2000   |</span><br><span class="line">| Oil can        |</span><br><span class="line">| Safe           |</span><br><span class="line">| Sling          |</span><br><span class="line">| TNT (1 stick)  |</span><br><span class="line">| TNT (5 sticks) |</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">14 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检索多个列<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id, prod_name, prod_price FROM products;</span><br><span class="line">+<span class="comment">---------+----------------+------------+</span></span><br><span class="line">| prod_id | prod_name      | prod_price |</span><br><span class="line">+<span class="comment">---------+----------------+------------+</span></span><br><span class="line">| ANV01   | .5 ton anvil   |       5.99 |</span><br><span class="line">| ANV02   | 1 ton anvil    |       9.99 |</span><br><span class="line">| ANV03   | 2 ton anvil    |      14.99 |</span><br><span class="line">| DTNTR   | Detonator      |      13.00 |</span><br><span class="line">| FB      | Bird seed      |      10.00 |</span><br><span class="line">| FC      | Carrots        |       2.50 |</span><br><span class="line">| FU1     | Fuses          |       3.42 |</span><br><span class="line">| JP1000  | JetPack 1000   |      35.00 |</span><br><span class="line">| JP2000  | JetPack 2000   |      55.00 |</span><br><span class="line">| OL1     | Oil can        |       8.99 |</span><br><span class="line">| SAFE    | Safe           |      50.00 |</span><br><span class="line">| SLING   | Sling          |       4.49 |</span><br><span class="line">| TNT1    | TNT (1 stick)  |       2.50 |</span><br><span class="line">| TNT2    | TNT (5 sticks) |      10.00 |</span><br><span class="line">+<span class="comment">---------+----------------+------------+</span></span><br><span class="line">14 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检索所有列<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM products;</span><br><span class="line">+<span class="comment">---------+---------+----------------+------------+----------------------------------------------------------------+</span></span><br><span class="line">| prod_id | vend_id | prod_name      | prod_price | prod_desc                                                      |</span><br><span class="line">+<span class="comment">---------+---------+----------------+------------+----------------------------------------------------------------+</span></span><br><span class="line">| ANV01   |    1001 | .5 ton anvil   |       5.99 | .5 ton anvil, black, complete <span class="keyword">with</span> handy hook                  |</span><br><span class="line">| ANV02   |    <span class="number">1001</span> | <span class="number">1</span> ton anvil    |       <span class="number">9.99</span> | <span class="number">1</span> ton anvil, black, <span class="keyword">complete</span> <span class="keyword">with</span> handy hook <span class="keyword">and</span> carrying <span class="keyword">case</span> |</span><br><span class="line">| ANV03   |    <span class="number">1001</span> | <span class="number">2</span> ton anvil    |      <span class="number">14.99</span> | <span class="number">2</span> ton anvil, black, <span class="keyword">complete</span> <span class="keyword">with</span> handy hook <span class="keyword">and</span> carrying <span class="keyword">case</span> |</span><br><span class="line">| DTNTR   |    <span class="number">1003</span> | Detonator      |      <span class="number">13.00</span> | Detonator (plunger powered), fuses <span class="keyword">not</span> included                |</span><br><span class="line">| FB      |    <span class="number">1003</span> | Bird <span class="keyword">seed</span>      |      <span class="number">10.00</span> | <span class="keyword">Large</span> bag (suitable <span class="keyword">for</span> road runners)                          |</span><br><span class="line">| FC      |    <span class="number">1003</span> | Carrots        |       <span class="number">2.50</span> | Carrots (rabbit hunting season <span class="keyword">only</span>)                           |</span><br><span class="line">| FU1     |    <span class="number">1002</span> | Fuses          |       <span class="number">3.42</span> | <span class="number">1</span> dozen, extra <span class="keyword">long</span>                                            |</span><br><span class="line">| JP1000  |    <span class="number">1005</span> | JetPack <span class="number">1000</span>   |      <span class="number">35.00</span> | JetPack <span class="number">1000</span>, intended <span class="keyword">for</span> single <span class="keyword">use</span>                          |</span><br><span class="line">| JP2000  |    <span class="number">1005</span> | JetPack <span class="number">2000</span>   |      <span class="number">55.00</span> | JetPack <span class="number">2000</span>, multi-<span class="keyword">use</span>                                        |</span><br><span class="line">| OL1     |    <span class="number">1002</span> | Oil can        |       <span class="number">8.99</span> | Oil can, red                                                   |</span><br><span class="line">| <span class="keyword">SAFE</span>    |    <span class="number">1003</span> | <span class="keyword">Safe</span>           |      <span class="number">50.00</span> | <span class="keyword">Safe</span> <span class="keyword">with</span> combination <span class="keyword">lock</span>                                     |</span><br><span class="line">| SLING   |    <span class="number">1003</span> | Sling          |       <span class="number">4.49</span> | Sling, one <span class="keyword">size</span> fits <span class="keyword">all</span>                                       |</span><br><span class="line">| TNT1    |    <span class="number">1003</span> | TNT (<span class="number">1</span> stick)  |       <span class="number">2.50</span> | TNT, red, single stick                                         |</span><br><span class="line">| TNT2    |    <span class="number">1003</span> | TNT (<span class="number">5</span> sticks) |      <span class="number">10.00</span> | TNT, red, pack <span class="keyword">of</span> <span class="number">10</span> sticks                                    |</span><br><span class="line">+<span class="comment">---------+---------+----------------+------------+----------------------------------------------------------------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检索并去重<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT DISTINCT vend_id FROM products;</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">| vend_id |</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">|    1001 |</span><br><span class="line">|    1002 |</span><br><span class="line">|    1003 |</span><br><span class="line">|    1005 |</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:只返回不多于5行<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name FROM products LIMIT 5;</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| prod_name    |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| .5 ton anvil |</span><br><span class="line">| 1 ton anvil  |</span><br><span class="line">| 2 ton anvil  |</span><br><span class="line">| Detonator    |</span><br><span class="line">| Bird seed    |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">5 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检索返回从第5行开始的5行<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name FROM products LIMIT 5,5;</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| prod_name    |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| Carrots      |</span><br><span class="line">| Fuses        |</span><br><span class="line">| JetPack 1000 |</span><br><span class="line">| JetPack 2000 |</span><br><span class="line">| Oil can      |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">5 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>其中第一个数表示开始的位置，从0开始，第二个数为要检索的行数</li>
+<li>支持另一种语法<code>LIMIT 5 OFFSET 3</code>：从第3行开始取5行</li>
+</ul>
+</li>
+<li>Q:使用完全限定的表名查询<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT products.prod_name FROM crashcourse.products;</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">| prod_name      |</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">| .5 ton anvil   |</span><br><span class="line">| 1 ton anvil    |</span><br><span class="line">| 2 ton anvil    |</span><br><span class="line">| Detonator      |</span><br><span class="line">| Bird seed      |</span><br><span class="line">| Carrots        |</span><br><span class="line">| Fuses          |</span><br><span class="line">| JetPack 1000   |</span><br><span class="line">| JetPack 2000   |</span><br><span class="line">| Oil can        |</span><br><span class="line">| Safe           |</span><br><span class="line">| Sling          |</span><br><span class="line">| TNT (1 stick)  |</span><br><span class="line">| TNT (5 sticks) |</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">14 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第５章-排序检索数据"><a href="#第５章-排序检索数据" class="headerlink" title="第５章 排序检索数据"></a>第５章 排序检索数据</h1><ul>
+<li>Q:检索数据并按字母顺序排列<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name FROM products ORDER BY prod_name;</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">| prod_name      |</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">| .5 ton anvil   |</span><br><span class="line">| 1 ton anvil    |</span><br><span class="line">| 2 ton anvil    |</span><br><span class="line">| Bird seed      |</span><br><span class="line">| Carrots        |</span><br><span class="line">| Detonator      |</span><br><span class="line">| Fuses          |</span><br><span class="line">| JetPack 1000   |</span><br><span class="line">| JetPack 2000   |</span><br><span class="line">| Oil can        |</span><br><span class="line">| Safe           |</span><br><span class="line">| Sling          |</span><br><span class="line">| TNT (1 stick)  |</span><br><span class="line">| TNT (5 sticks) |</span><br><span class="line">+<span class="comment">----------------+</span></span><br><span class="line">14 rows in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检索时按照多个条件进行排序<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id, prod_price, prod_name </span><br><span class="line">    -&gt; FROM products ORDER BY prod_price, prod_name;</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">| prod_id | prod_price | prod_name      |</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">| FC      |       2.50 | Carrots        |</span><br><span class="line">| TNT1    |       2.50 | TNT (1 stick)  |</span><br><span class="line">| FU1     |       3.42 | Fuses          |</span><br><span class="line">| SLING   |       4.49 | Sling          |</span><br><span class="line">| ANV01   |       5.99 | .5 ton anvil   |</span><br><span class="line">| OL1     |       8.99 | Oil can        |</span><br><span class="line">| ANV02   |       9.99 | 1 ton anvil    |</span><br><span class="line">| FB      |      10.00 | Bird seed      |</span><br><span class="line">| TNT2    |      10.00 | TNT (5 sticks) |</span><br><span class="line">| DTNTR   |      13.00 | Detonator      |</span><br><span class="line">| ANV03   |      14.99 | 2 ton anvil    |</span><br><span class="line">| JP1000  |      35.00 | JetPack 1000   |</span><br><span class="line">| SAFE    |      50.00 | Safe           |</span><br><span class="line">| JP2000  |      55.00 | JetPack 2000   |</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">14 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检索并降序排列<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id, prod_price, prod_name </span><br><span class="line">    -&gt; FROM products ORDER BY prod_price DESC, prod_name;</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">| prod_id | prod_price | prod_name      |</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">| JP2000  |      55.00 | JetPack 2000   |</span><br><span class="line">| SAFE    |      50.00 | Safe           |</span><br><span class="line">| JP1000  |      35.00 | JetPack 1000   |</span><br><span class="line">| ANV03   |      14.99 | 2 ton anvil    |</span><br><span class="line">| DTNTR   |      13.00 | Detonator      |</span><br><span class="line">| FB      |      10.00 | Bird seed      |</span><br><span class="line">| TNT2    |      10.00 | TNT (5 sticks) |</span><br><span class="line">| ANV02   |       9.99 | 1 ton anvil    |</span><br><span class="line">| OL1     |       8.99 | Oil can        |</span><br><span class="line">| ANV01   |       5.99 | .5 ton anvil   |</span><br><span class="line">| SLING   |       4.49 | Sling          |</span><br><span class="line">| FU1     |       3.42 | Fuses          |</span><br><span class="line">| FC      |       2.50 | Carrots        |</span><br><span class="line">| TNT1    |       2.50 | TNT (1 stick)  |</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">14 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第６章-过滤数据"><a href="#第６章-过滤数据" class="headerlink" title="第６章 过滤数据"></a>第６章 过滤数据</h1><ul>
+<li>Q:根据指定的搜索条件进行过滤<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_price = 2.50;</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">| prod_name     | prod_price |</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">| Carrots       |       2.50 |</span><br><span class="line">| TNT (1 stick) |       2.50 |</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:WHERE子句操作符的条件<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210209151932.png"></li>
+</ul>
+</li>
+<li>Q:使用不同WHERE条件的例子<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_price &lt; 10;</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">| prod_name     | prod_price |</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">| .5 ton anvil  |       5.99 |</span><br><span class="line">| 1 ton anvil   |       9.99 |</span><br><span class="line">| Carrots       |       2.50 |</span><br><span class="line">| Fuses         |       3.42 |</span><br><span class="line">| Oil can       |       8.99 |</span><br><span class="line">| Sling         |       4.49 |</span><br><span class="line">| TNT (1 stick) |       2.50 |</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">7 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_price BETWEEN 5 AND 10;</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">| prod_name      | prod_price |</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">| .5 ton anvil   |       5.99 |</span><br><span class="line">| 1 ton anvil    |       9.99 |</span><br><span class="line">| Bird seed      |      10.00 |</span><br><span class="line">| Oil can        |       8.99 |</span><br><span class="line">| TNT (5 sticks) |      10.00 |</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">5 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检查具有空值<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_price IS NULL;</span><br><span class="line">Empty <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT cust_id</span><br><span class="line">    -&gt; FROM customers</span><br><span class="line">    -&gt; WHERE cust_email IS NULL;</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">| cust_id |</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">|   10002 |</span><br><span class="line">|   10005 |</span><br><span class="line">+<span class="comment">---------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第7章-数据过滤"><a href="#第7章-数据过滤" class="headerlink" title="第7章 数据过滤"></a>第7章 数据过滤</h1><ul>
+<li>Q:使用AND操作符组合WHERE子句<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id, prod_price, prod_name</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE vend_id = 1003 AND prod_price &lt;= 10;</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">| prod_id | prod_price | prod_name      |</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">| FB      |      10.00 | Bird seed      |</span><br><span class="line">| FC      |       2.50 | Carrots        |</span><br><span class="line">| SLING   |       4.49 | Sling          |</span><br><span class="line">| TNT1    |       2.50 | TNT (1 stick)  |</span><br><span class="line">| TNT2    |      10.00 | TNT (5 sticks) |</span><br><span class="line">+<span class="comment">---------+------------+----------------+</span></span><br><span class="line">5 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:使用OR操作符<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE vend_id = 1002 OR vend_id = 1003;</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">| prod_name      | prod_price |</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">| Detonator      |      13.00 |</span><br><span class="line">| Bird seed      |      10.00 |</span><br><span class="line">| Carrots        |       2.50 |</span><br><span class="line">| Fuses          |       3.42 |</span><br><span class="line">| Oil can        |       8.99 |</span><br><span class="line">| Safe           |      50.00 |</span><br><span class="line">| Sling          |       4.49 |</span><br><span class="line">| TNT (1 stick)  |       2.50 |</span><br><span class="line">| TNT (5 sticks) |      10.00 |</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">9 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:多条件组合<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE (vend_id = 1002 OR vend_id = 1003) AND prod_price &gt;= 10;</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">| prod_name      | prod_price |</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">| Detonator      |      13.00 |</span><br><span class="line">| Bird seed      |      10.00 |</span><br><span class="line">| Safe           |      50.00 |</span><br><span class="line">| TNT (5 sticks) |      10.00 |</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:IN操作符<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE vend_id IN (1002, 1003)</span><br><span class="line">    -&gt; ORDER BY prod_name;</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">| prod_name      | prod_price |</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">| Bird seed      |      10.00 |</span><br><span class="line">| Carrots        |       2.50 |</span><br><span class="line">| Detonator      |      13.00 |</span><br><span class="line">| Fuses          |       3.42 |</span><br><span class="line">| Oil can        |       8.99 |</span><br><span class="line">| Safe           |      50.00 |</span><br><span class="line">| Sling          |       4.49 |</span><br><span class="line">| TNT (1 stick)  |       2.50 |</span><br><span class="line">| TNT (5 sticks) |      10.00 |</span><br><span class="line">+<span class="comment">----------------+------------+</span></span><br><span class="line">9 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:NOT操作符示例<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE vend_id NOT IN (1002,1003)</span><br><span class="line">    -&gt; ORDER BY prod_name;</span><br><span class="line">+<span class="comment">--------------+------------+</span></span><br><span class="line">| prod_name    | prod_price |</span><br><span class="line">+<span class="comment">--------------+------------+</span></span><br><span class="line">| .5 ton anvil |       5.99 |</span><br><span class="line">| 1 ton anvil  |       9.99 |</span><br><span class="line">| 2 ton anvil  |      14.99 |</span><br><span class="line">| JetPack 1000 |      35.00 |</span><br><span class="line">| JetPack 2000 |      55.00 |</span><br><span class="line">+<span class="comment">--------------+------------+</span></span><br><span class="line">5 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第8章-用通配符进行过滤"><a href="#第8章-用通配符进行过滤" class="headerlink" title="第8章 用通配符进行过滤"></a>第8章 用通配符进行过滤</h1><ul>
+<li>Q:百分号%通配符示例<ul>
+<li>可匹配0、1或多个字符<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id, prod_name</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_name LIKE &#x27;jet%&#x27;;</span><br><span class="line">+<span class="comment">---------+--------------+</span></span><br><span class="line">| prod_id | prod_name    |</span><br><span class="line">+<span class="comment">---------+--------------+</span></span><br><span class="line">| JP1000  | JetPack 1000 |</span><br><span class="line">| JP2000  | JetPack 2000 |</span><br><span class="line">+<span class="comment">---------+--------------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:下划线_通配符示例<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id, prod_name</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_name LIKE &#x27;_ ton anvil&#x27;;</span><br><span class="line">+<span class="comment">---------+-------------+</span></span><br><span class="line">| prod_id | prod_name   |</span><br><span class="line">+<span class="comment">---------+-------------+</span></span><br><span class="line">| ANV02   | 1 ton anvil |</span><br><span class="line">| ANV03   | 2 ton anvil |</span><br><span class="line">+<span class="comment">---------+-------------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第9章-用正则表达式进行搜索"><a href="#第9章-用正则表达式进行搜索" class="headerlink" title="第9章 用正则表达式进行搜索"></a>第9章 用正则表达式进行搜索</h1><ul>
+<li>Q:基本字符匹配<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_name REGEXP &#x27;1000&#x27;</span><br><span class="line">    -&gt; ORDER BY prod_name;</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| prod_name    |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| JetPack 1000 |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:匹配范围<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_name REGEXP &#x27;[1-5] Ton&#x27;;</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| prod_name    |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| .5 ton anvil |</span><br><span class="line">| 1 ton anvil  |</span><br><span class="line">| 2 ton anvil  |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:匹配特殊字符<ul>
+<li><code>\\-</code>为查找<code>-</code>，<code>\\.</code>为查找<code>.</code>，<code>\\\</code>查找<code>\</code><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name </span><br><span class="line">    -&gt; FROM products </span><br><span class="line">    -&gt; WHERE prod_name REGEXP &#x27;\\.&#x27;;</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| prod_name    |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| .5 ton anvil |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>基本和Linux的正则没区别了，不展开</li>
+</ul>
+<h1 id="第10章-创建计算字段"><a href="#第10章-创建计算字段" class="headerlink" title="第10章 创建计算字段"></a>第10章 创建计算字段</h1><ul>
+<li>Q:拼接字段的使用<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT Concat(vend_name, &#x27;  (&#x27;, vend_country, &#x27;)&#x27;)</span><br><span class="line">    -&gt; FROM vendors</span><br><span class="line">    -&gt; ORDER BY vend_name;</span><br><span class="line">+<span class="comment">---------------------------------------------+</span></span><br><span class="line">| Concat(vend_name, &#x27;  (&#x27;, vend_country, &#x27;)&#x27;) |</span><br><span class="line">+<span class="comment">---------------------------------------------+</span></span><br><span class="line">| ACME  (USA)                                 |</span><br><span class="line">| Anvils R Us  (USA)                          |</span><br><span class="line">| Furball Inc.  (USA)                         |</span><br><span class="line">| Jet <span class="keyword">Set</span>  (England)                          |</span><br><span class="line">| Jouets Et Ours  (France)                    |</span><br><span class="line">| LT Supplies  (USA)                          |</span><br><span class="line">+<span class="comment">---------------------------------------------+</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:使用列别名<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT Concat(vend_name, &#x27;  (&#x27;, vend_country, &#x27;)&#x27;) AS vend_title</span><br><span class="line">    -&gt; FROM vendors</span><br><span class="line">    -&gt; ORDER BY vend_name;</span><br><span class="line">+<span class="comment">--------------------------+</span></span><br><span class="line">| vend_title               |</span><br><span class="line">+<span class="comment">--------------------------+</span></span><br><span class="line">| ACME  (USA)              |</span><br><span class="line">| Anvils R Us  (USA)       |</span><br><span class="line">| Furball Inc.  (USA)      |</span><br><span class="line">| Jet <span class="keyword">Set</span>  (England)       |</span><br><span class="line">| Jouets Et Ours  (France) |</span><br><span class="line">| LT Supplies  (USA)       |</span><br><span class="line">+<span class="comment">--------------------------+</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:进行计算<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id,</span><br><span class="line">    -&gt;        quantity,</span><br><span class="line">    -&gt;        item_price,</span><br><span class="line">    -&gt;        quantity*item_price AS expanded_price</span><br><span class="line">    -&gt; FROM orderitems</span><br><span class="line">    -&gt; WHERE order_num = 20005;</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">| prod_id | quantity | item_price | expanded_price |</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">| ANV01   |       10 |       5.99 |          59.90 |</span><br><span class="line">| ANV02   |        3 |       9.99 |          29.97 |</span><br><span class="line">| TNT2    |        5 |      10.00 |          50.00 |</span><br><span class="line">| FB      |        1 |      10.00 |          10.00 |</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="http://anki190912.xuexihaike.com/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="http://anki190912.xuexihaike.com/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/mysql-crash-course-1-10/" title="《MySQL必知必会》学习笔记1-10章">http://shiqi-lu.tech/mysql-crash-course-1-10/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/mass-data-processing/" rel="prev" title="海量数据处理">
+                  <i class="fa fa-chevron-left"></i> 海量数据处理
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/mysql-crash-course-1-10/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
