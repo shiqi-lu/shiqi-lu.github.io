@@ -463,6 +463,253 @@
       </tags>
   </entry>
   <entry>
+    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
+    <url>/distrib-principal-algo-1/</url>
+    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
+<li>Q：分布式技术涉及内容<ul>
+<li><img src="http://anki190912.xuexihaike.com/20200905201734.png"></li>
+<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
+<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
+<li>Q:分布式的三个演进模式是什么？<ul>
+<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
+<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
+<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
+</ul>
+</li>
+<li>Q:分布式是什么？<ul>
+<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
+</ul>
+</li>
+<li>Q:判断采取数据并行还是任务并行的方式：<ul>
+<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
+<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
+</ul>
+</li>
+</ul>
+<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
+<li>Q:分布式系统的目的是什么？<ul>
+<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
+</ul>
+</li>
+<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
+<li>一个系统处理各种任务的能力</li>
+</ul>
+</li>
+<li>Q:分布式的3个性能指标是什么？<ul>
+<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
+</ul>
+</li>
+<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
+<li>系统在一定时间内可以处理的任务数</li>
+<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
+</ul>
+</li>
+<li>Q:QPS是什么？<ul>
+<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
+</ul>
+</li>
+<li>Q:TPS是什么？<ul>
+<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
+</ul>
+</li>
+<li>Q:BPS是什么？<ul>
+<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
+</ul>
+</li>
+<li>Q:响应时间是什么？<ul>
+<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
+</ul>
+</li>
+<li>Q:完成时间是什么？<ul>
+<li>系统真正完成一个请求或处理需要花费的时间</li>
+</ul>
+</li>
+<li>Q:资源占用是什么？<ul>
+<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
+</ul>
+</li>
+<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
+<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
+<li>满载资源占用：一个系统满额负载时的资源占用</li>
+</ul>
+</li>
+<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
+<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
+<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
+</ul>
+</li>
+<li>Q:系统可用性的两个指标是什么？<ul>
+<li>1.系统停止服务的时间与总的时间之比</li>
+<li>2.某功能的失败次数与总的请求次数之比</li>
+</ul>
+</li>
+<li>Q:可扩展性(Scalability)是什么?<ul>
+<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
+</ul>
+</li>
+<li>Q:有哪两种扩展系统的方法？<ul>
+<li>垂直/纵向扩展：增加单机的硬件能力</li>
+<li>水平/横向扩展：增加计算机数量</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《分布式协议与算法实战》理论篇 学习笔记</title>
+    <url>/distrib-protocal-algo-1/</url>
+    <content><![CDATA[<h1 id="01-拜占庭将军问题：有叛徒的情况下，如何才能达成共识？"><a href="#01-拜占庭将军问题：有叛徒的情况下，如何才能达成共识？" class="headerlink" title="01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？"></a>01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？</h1><ul>
+<li>Q:二忠一叛难题<ul>
+<li>假设3个国家齐、楚、燕要攻打秦国，以只有半数以上的将军参与进攻，才能击败敌人，在这个期间，将军们彼此之间需要通过信使传递消息，然后协商一致之后，并让信使传递信息，按照“少数服从多数”的原则投票表决，然后在同一时间点发动进攻</li>
+<li>但若有人暗通秦国出现作战计划不一致的情况。比如齐向楚、 燕分别发送了“撤退”的消息，燕向齐和楚发送了“进攻”的消息。撤退：进攻 =1:1，无 论楚投进攻还是撤退，都会成为 2:1，这个时候还是会形成一个一致性的作战方案</li>
+<li>但是，楚这个叛徒在暗中配合秦国，让信使向齐发送了“撤退”，向燕发送了“进攻”，那么：</li>
+<li>燕看到的是，撤退：进攻 =1:2</li>
+<li>齐看到的是，撤退：进攻 =2:1。</li>
+<li>按照“少数服从多数”的原则，就会出现燕单独进攻秦军，当然，最后肯定是因为寡不敌众，被秦军给灭了</li>
+<li><img src="http://anki190912.xuexihaike.com/20210223143644.png"></li>
+</ul>
+</li>
+<li>Q:口信消息型拜占庭问题之解<ul>
+<li>增加讨论中忠诚将军的数量，由3位将军变为4位将军。并约定如果没有收到命令，就执行预设的默认命令如“撤退”。以及进行两轮作战信息协商</li>
+<li>第一轮<ul>
+<li>先发送作战信息的将军作为指挥官，其他的将军作为副官</li>
+<li>指挥官将他的作战信息发送给每位副官</li>
+<li>每位副官，将从指挥官处收到的作战信息，作为他的作战指令；如果没有收到作战信 息，将把默认的“撤退”作为作战指令</li>
+</ul>
+</li>
+<li>第二轮<ul>
+<li>除了第一轮的指挥官外，剩余的 3 位将军将分别作为指挥官，向另外 2 位将军发送作战信息；</li>
+<li>然后，这 3 位将军按照“少数服从多数”，执行收到的作战指令</li>
+</ul>
+</li>
+<li>这个解决办法实现了作战计划的一致性</li>
+<li>如果叛将人数为 m，将军人数不能少于 3m + 1 ，那么拜占庭将军问题就能解决了</li>
+<li>这个算法的前提是，叛将人数m是已知的，这个算法中，叛将数m决定递归循环的次数，即m+1轮</li>
+</ul>
+</li>
+<li>Q:签名消息型拜占庭问题之解<ul>
+<li>通过签名的方式，可在不增加将军人数的情况下，解决二忠一叛的难题</li>
+<li>签名的特性：<ul>
+<li>忠诚将军的签名无法伪造，而且对他签名消息的内容进行任何更改都会被发现</li>
+<li>任何人都能验证将军签名的真伪</li>
+</ul>
+</li>
+<li><img src="http://anki190912.xuexihaike.com/20210223145130.png"></li>
+<li><img src="http://anki190912.xuexihaike.com/20210223145141.png"></li>
+</ul>
+</li>
+<li>Q:拜占庭容错算法和非拜占庭容错算法<ul>
+<li>拜占庭将军问题描述的是最困难的，也是最复杂的一种分布式故障场景，除了存在故障行为，还存在恶意行为的一个场景。必须使用拜占庭容错算法（Byzantine Fault Tolerance，BFT）。还有：PBFT 算法，PoW 算法</li>
+<li>在计算机分布式系统中，最常用的是非拜占庭容错算法，即故障容错算法（Crash Fault Tolerance，CFT）。CFT 解决的是分布式的系统中存在故障，但不存在恶意节点的场景下的共识问题。这个场景可能会丢失消息，或者有消息重复，但不存在错误消息，或者伪造消息的情况。常见的算法有 Paxos 算法、Raft 算法、ZAB 协议</li>
+</ul>
+</li>
+</ul>
+<h1 id="02-CAP理论：分布式系统的PH试纸，用它来测酸碱度"><a href="#02-CAP理论：分布式系统的PH试纸，用它来测酸碱度" class="headerlink" title="02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度"></a>02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度</h1><ul>
+<li>Q:CAP的三个指标<ul>
+<li>一致性Consistency：客户端的每次读操作，不管访问哪个节点，要么读到的都是同一份最新的数据，要么读取失败，强调的是各节点间的数据一致</li>
+<li>可用性Availability：任何来自客户端的请求，不管访问哪个节点，都能得到相应数据，但不保证是同一份最新数据，强调的是服务可用，但不保证数据的一致</li>
+<li>分区容错性Partition Tolerance：当节点间出现任意数量的消息丢失或高延迟时，系统仍然可以继续提供服务，强调的是集群对分区故障的容错能力</li>
+</ul>
+</li>
+<li>Q:CAP不可能三角<ul>
+<li>是对于一个分布式系统而言，一致性（Consistency）、可用性（Availability）、分区容错性（Partition Tolerance）3 个指标不可兼得，只能在 3 个指标中选择 2 个</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224102536.png"></li>
+<li>在不存在网络分区的情况下，即分布式系统正常运行时（这也是系统在绝大部分时候所处的状态），就是说在不需要 P 时，C 和 A 能够同时保证。只有当发生分区故障的时候，也就是说需要 P 时，才会在 C 和 A 之间做出选择。而且如果各节点数据不一致，影响到了系统运行或业务运行（也就是说会有负面的影响），推荐选择 C，否则选 A</li>
+</ul>
+</li>
+<li>Q:CAP的三个模型<ul>
+<li>CA 模型，在分布式系统中不存在。因为舍弃 P，意味着舍弃分布式系统，就比如单机版关系型数据库 MySQL，如果 MySQL 要考虑主备或集群部署时，它必须考虑 P</li>
+<li>CP 模型，采用 CP 模型的分布式系统，一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性。因为为了防止数据不一致，集群将拒绝新数据的写入，典型的应用是 ZooKeeper，Etcd 和 HBase</li>
+<li>AP 模型，采用 AP 模型的分布式系统，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误，但当出现分区故障时，相同的读操作，访问不同的节点，得到响应数据可能不一样。典型应用就比如 Cassandra 和 DynamoDB</li>
+</ul>
+</li>
+</ul>
+<h1 id="03-ACID理论：CAP的酸，追求一致性"><a href="#03-ACID理论：CAP的酸，追求一致性" class="headerlink" title="03 | ACID理论：CAP的酸，追求一致性"></a>03 | ACID理论：CAP的酸，追求一致性</h1><ul>
+<li>Q:二阶段提交协议<ul>
+<li>提交请求阶段（又称投票阶段）<ul>
+<li>协调者(Coordinator)向所有节点发起请求，各节点评估事务中需要操作的对象和对象状态，是否准备好，能否提交新操作。如果能，预留时间并锁定，不再安排其它事务</li>
+<li>这个阶段每个参与者投票表决事务是放弃还是提交。一旦参与者投票要求提交事务，那么就不允许放弃事务。在一个参与者投票要求提交事务之前，它必须保证能够执行提交协议中它自己那一部分，即使参与者出现故障或者中途被替换掉。这个特性，是需要在代码实现时保障的</li>
+</ul>
+</li>
+<li>提交执行阶段（又称完成阶段）<ul>
+<li>事务的每个参与者执行最终统一的决定，提交事务或者放弃事务，这个是为了实现ACID中的原子性</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:原始的二阶段提交协议和 XA 协议存在的问题是<ul>
+<li>在提交请求阶段，需要预留资源，在资源预留期间，其他人不能操作（比如，XA 在第一阶段会将相关资源锁定）</li>
+<li>数据库是独立的系统</li>
+<li>因此无法根据业务特点弹性地调整锁的粒度，这些都会影响数据库的并发性能</li>
+</ul>
+</li>
+<li>Q:TCC(Try预留-Confirm确认-Cancel取消)<ul>
+<li>预留阶段<ul>
+<li>协调者注册确认操作和撤销操作，各个节点预留资源，并返回消息答复</li>
+</ul>
+</li>
+<li>确认阶段<ul>
+<li>协调者执行确认操作，各节点收到确认操作的响应，完成分布式事务</li>
+</ul>
+</li>
+<li>撤销阶段<ul>
+<li>如果预留阶段出错，则进入撤销阶段</li>
+<li>协调者执行撤销操作，通知各个节点取消事务执行，并返回撤销操作的响应</li>
+</ul>
+</li>
+<li>TCC 本质上是补偿事务，核心思想是针对每个操作都要注册一个与其对应的确认操作和补偿操作（也就是撤销操作）</li>
+<li>TCC 不依赖于数据库的事务，而是在业务中实现了分布式事务，这样能减轻数据库的压力，但对业务代码的入侵性也更强，实现的复杂度也更高</li>
+<li>荐在需要分布式事务能力时，优先考虑现成的事务型数据库（比如 MySQL XA），当现有的事务型数据库不能满足业务的需求时，再考虑基于 TCC 实现分布式事务</li>
+</ul>
+</li>
+</ul>
+<h1 id="04-BASE理论：CAP的碱，追求可用性"><a href="#04-BASE理论：CAP的碱，追求可用性" class="headerlink" title="04 | BASE理论：CAP的碱，追求可用性"></a>04 | BASE理论：CAP的碱，追求可用性</h1><ul>
+<li>Q:BASE理论<ul>
+<li>基本可用(Basically Available)</li>
+<li>最终一致性(Eventually consistent)</li>
+<li>软状态(Soft state)：实现服务可用性的时候系统数据的一种过渡状态，即不同节点间，数据副本存在短暂的不一致</li>
+</ul>
+</li>
+<li>Q:实现基本可用的 4 板斧<ul>
+<li>流量削峰：将访问请求错开，削弱请求峰值</li>
+<li>延迟响应：把请求放在队列中排队等待，一段时间后，系统开始处理，并响应处理结果</li>
+<li>体验降级：通过降低图片清晰度和大小，提升系统的处理能力</li>
+<li>过载保护：把接收到的请求放在指定的队列中排队处理，如果请求等待时间超时了，直接拒绝超时请求；队列满了之后，清楚队列中一定数量的排队请求，保护系统不过载</li>
+</ul>
+</li>
+<li>Q:实际工程实践中何实现最终一致性以什么为准<ul>
+<li>以最新写入的数据为准，比如 AP 模型的 KV 存储采用的就是这种方式</li>
+<li>以第一次写入的数据为准，如果你不希望存储的数据被更改，可以以它为准</li>
+</ul>
+</li>
+<li>Q:实现最终一致性的具体方式<ul>
+<li>读时修复：在读取数据时，检测数据的不一致，进行修复。如 Cassandra 的 Read Repair 实现，即在向Cassandra系统查询数据时，如果检测到不同节点的副本数据不一致，系统就自动修复数据</li>
+<li>写时修复：在写入数据时，检测数据的不一致，进行修复。如 Cassandra 的 Hinted Handoff 实现。即Cannandra集群的节点之间远程写数据的时候，如果写失败就将数据缓存下来，然后定时重传，修复数据的不一致性</li>
+<li>异步修复：最常用的方式，通过定时对账检测副本数据的一致性，并修复</li>
+<li>写时修复不需要做数据一致性对比，性能消耗比较低，对系统运行影响也不大，推荐你在实现最终一致性时优先实现这种方式。而读时修复和异步修复因为需要做数据的一致性对比，性能消耗比较多，在开发实际系统时，要尽量优化一致性对比的算法，降低性能消耗，避免对系统运行造成影响</li>
+<li>实现最终一致性的时候，推荐同时实现自定义写一致性级别（All、Quorum、One、Any）， 让用户可以自主选择相应的一致性级别，比如可以通过设置一致性级别为 All，来实现强一致性</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>特征选择方法汇总</title>
     <url>/feature-selection/</url>
     <content><![CDATA[<h1 id="什么是特征选择"><a href="#什么是特征选择" class="headerlink" title="什么是特征选择"></a>什么是特征选择</h1><ul>
@@ -1122,90 +1369,6 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s培训第8课 集群调度</title>
-    <url>/k8s-8/</url>
-    <content><![CDATA[<ul>
-<li>Q:Scheduler是什么？<ul>
-<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
-<li>公平：如何保证每个节点都能被分配资源</li>
-<li>资源高效利用：集群所有资源最大化被使用</li>
-<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
-<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
-</ul>
-</li>
-<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
-</ul>
-</li>
-<li>Q: k8s的调度过程是怎样<ul>
-<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
-<li>Predicate 有一系列的算法可以使用：<ul>
-<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
-<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
-<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
-<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
-<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
-</ul>
-</li>
-<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
-<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
-<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
-<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
-<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
-</ul>
-</li>
-<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
-</ul>
-</li>
-<li>Q:结点亲和性<ul>
-<li>pod.spec.nodeAﬃnity<ul>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
-</ul>
-</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>键值运算关系<ul>
-<li>In：label 的值在某个列表中</li>
-<li>NotIn：label 的值不在某个列表中</li>
-<li>Gt：label 的值大于某个值</li>
-<li>Lt：label 的值小于某个值</li>
-<li>Exists：某个 label 存在</li>
-<li>DoesNotExist：某个 label 不存在</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:Pod亲和性<ul>
-<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:亲和性/反亲和性调度策略比较<ul>
-<li><img src="http://anki190912.xuexihaike.com/20201104154834.png"></li>
-</ul>
-</li>
-<li>Q:给节点打标签<ul>
-<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
-</ul>
-</li>
-<li>Q:k8s指定调度节点<ul>
-<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
-<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>k8s培训第7课 存储</title>
     <url>/k8s-7/</url>
     <content><![CDATA[<ul>
@@ -1329,6 +1492,90 @@
 <li>Q:如何安装nfs服务器<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nfs-common nfs-utils rpcbind</span><br><span class="line">mkdir /nfsdata</span><br><span class="line">chmod 666 /nfsdata</span><br><span class="line">chown nfsnobody /nfsdata</span><br><span class="line">cat /etc/exports</span><br><span class="line">      /nfsdata *(rw,no_root_squash,no_all_squash,sync)</span><br><span class="line">systemctl start rpcbind</span><br><span class="line">systemctl start nfs</span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载</span></span><br><span class="line">showmount -e xxx.xxx.xxx.xxx</span><br><span class="line">mount -t nfs xxx.xxx.xxx.xxx:/nfs /test</span><br><span class="line">umount /test</span><br></pre></td></tr></table></figure></li>
 <li>Q:部署PV<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfspv1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfs</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">10.66</span><span class="number">.66</span><span class="number">.10</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl create -f pv.yaml</span><br><span class="line">kubectl get pv```</span><br><span class="line">- Q:创建服务并使用pvc</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    name: web</span><br><span class="line">  clusterIP: None</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: web</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  serviceName: &quot;nginx&quot;</span><br><span class="line">  replicas: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: wangyanglinux/myapp:v2</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: web</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: www</span><br><span class="line">          mountPath: /usr/share/nginx/html</span><br><span class="line">  volumeClaimTemplates:</span><br><span class="line">  - metadata:</span><br><span class="line">      name: www</span><br><span class="line">    spec:</span><br><span class="line">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span><br><span class="line">      storageClassName: &quot;nfs&quot;</span><br><span class="line">      resources:</span><br><span class="line">        requests:</span><br><span class="line">          storage: 1Gi</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s培训第8课 集群调度</title>
+    <url>/k8s-8/</url>
+    <content><![CDATA[<ul>
+<li>Q:Scheduler是什么？<ul>
+<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
+<li>公平：如何保证每个节点都能被分配资源</li>
+<li>资源高效利用：集群所有资源最大化被使用</li>
+<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
+<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
+</ul>
+</li>
+<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
+</ul>
+</li>
+<li>Q: k8s的调度过程是怎样<ul>
+<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
+<li>Predicate 有一系列的算法可以使用：<ul>
+<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
+<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
+<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
+<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
+<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
+</ul>
+</li>
+<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
+<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
+<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
+<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
+<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
+</ul>
+</li>
+<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
+</ul>
+</li>
+<li>Q:结点亲和性<ul>
+<li>pod.spec.nodeAﬃnity<ul>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
+</ul>
+</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>键值运算关系<ul>
+<li>In：label 的值在某个列表中</li>
+<li>NotIn：label 的值不在某个列表中</li>
+<li>Gt：label 的值大于某个值</li>
+<li>Lt：label 的值小于某个值</li>
+<li>Exists：某个 label 存在</li>
+<li>DoesNotExist：某个 label 不存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Pod亲和性<ul>
+<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:亲和性/反亲和性调度策略比较<ul>
+<li><img src="http://anki190912.xuexihaike.com/20201104154834.png"></li>
+</ul>
+</li>
+<li>Q:给节点打标签<ul>
+<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
+</ul>
+</li>
+<li>Q:k8s指定调度节点<ul>
+<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
+<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 </li>
 </ul>
 ]]></content>
@@ -2352,6 +2599,294 @@
         <tag>学习</tag>
         <tag>Roam Research</tag>
         <tag>anki</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《分布式协议与算法实战》协议和算法篇上 学习笔记</title>
+    <url>/distrib-protocal-algo-2/</url>
+    <content><![CDATA[<h1 id="05-Paxos算法（一）：如何在多个节点间确定某变量的值？"><a href="#05-Paxos算法（一）：如何在多个节点间确定某变量的值？" class="headerlink" title="05 | Paxos算法（一）：如何在多个节点间确定某变量的值？"></a>05 | Paxos算法（一）：如何在多个节点间确定某变量的值？</h1><ul>
+<li>Q:Basic Paxos的三种角色<ul>
+<li>提议者(Proposer)：提议一个值用于投票表决，可把客户端当成提议者。但在绝大多数场景中，集群中收到客户端请求的节点，才是提议者。好处是对业务代码没有入侵性，即不需要再业务代码中实现算法逻辑，可像使用数据库一样访问后端数据。代表的是接入和协调功能，收到客户端请求后，发起二阶段提交，进行共识协商</li>
+<li>接受者(Acceptor)：对每个提议的值进行投票，并存储接受的值。一般集群中的所有节点都在扮演接受者的角色，参与共识协商，并接受和存储数据。代表投票协商和存储数据，对提议的值进行投票，并接受达成共识的值，存储保存</li>
+<li>学习者(Learner)：被告知投票的结果，接受达成共识的值，存储保存，不参与投票的过程。通常学习者是数据备份节点，如「Master-Slaev」模型中的Slave，被动地接受数据，容灾备份。代表存储数据，不参与共识协商，值接受达成共识的值，存储保存</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224113354.png"></li>
+</ul>
+</li>
+<li>Q:Basic Paxos如何达成共识<ul>
+<li>假设客户端 1 的提案编号为 1，客户端 2 的提案编号为 5，并假设节点 A、B 先收到来自客户端 1 的准备请求，节点 C 先收到来自客户端 2 的准备请求</li>
+<li>准备(Prepare)阶段<ul>
+<li>客户端1、2作为提议者，分别向所有接受者发送包含提案编号的准备请求</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224130253.png"></li>
+<li>在准备请求中是不需要指定提议的值的，只需要携带提案编号即可</li>
+<li>当节点A、B收到提案编号为1的准备请求，节点C收到提案编号为5的准备请求后，将这样处理：</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224131137.png"></li>
+<li>由于之前没有通过任何提案，所以结点A、B将返回一个「尚无提案」的相应，并以后不再响应提案编号小于等于1的准备请求，不会通过编号小于1的提案</li>
+<li>结点C则返回「尚无提案」的响应并以后不再响应提案编号小于等于5的准备请求，不会通过编号小于5的提案</li>
+<li>另外，当节点 A、B 收到提案编号为 5 的准备请求，和节点 C 收到提案编号为 1 的准备请求的时候，将这样处理：</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224131639.png"></li>
+<li>当节点A、B收到提案编号为5的准备请求的时候，因为提案编号5大于它们之前响应的准备请求的提案编号1，而且两个节点都没有通过诺任何提案，所以它将返回一个「尚无提案」的响应，并承诺以后不再响应提案编号小于等于5的准备请求，不会通过编号小于5的提案</li>
+<li>当节点C收到提案编号为1的准备请求的时候，由于提案编号1小于它之前响应的准备请求的提案编号5，所以丢弃该准备请求，不做响应</li>
+</ul>
+</li>
+<li>接受(Accept)阶段<ul>
+<li>首先客户端1、2在收到大多数节点的准备响应之后，会分别发送接受请求：</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224132014.png"></li>
+<li>当客户端1收到大多数的接受者(节点A、B)的准备响应后，根据响应中提案编号最大的提案的值，设置接受请求中的值。因为该值在来自节点A、B的准备响应中都为空，所以就把自己的提议值3作为提案的值，发送接受请求[1, 3]</li>
+<li>当客户端2收到大多数的接受者的准备响应后(节点A、B和节点C)，根据响应中提案编号最大的提案的值，来设置接受请求中的值。因为该值来自节点A、B、C的准备响应中都为空，所以就把自己的提议值7作为提案的值，发送请求[5, 7]</li>
+<li>当三个节点收到2 个客户端的接受请求时，会这样处理：</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224142538.png"></li>
+<li>当节点A、B、C收到接受请求[1, 3]时，由于提案的提案编号1小于三个节点承诺能通过的提案的最小提案编号5，所以提案[1, 3]将被拒绝</li>
+<li>当节点A、B、C收到接受请求[5, 7]的时候，由于提案的提案编号 5 不小于三个节点承诺能通过的提案的最小提案编号 5，所以就通过提案[5, 7]，也就是接受了值 7，三个节点就 X 值为 7 达成了共识</li>
+</ul>
+</li>
+<li>如果集群中有学习者，当接受者通过了一个提案时，就通知给所有的学习者。当学习者发现大多数的接受者都通过了某个提案，那么它也通过该提案，接受该提案的值</li>
+<li>Basic Paxos的容错能力，源自「大多数」的约定，即当少于一半的节点出现故障的时候，共识协商仍然在正常工作</li>
+<li>本质上而言，提案编号的大小代表着优先级，根据提案编号的大小， 接受者保证三个承诺<ul>
+<li>如果准备请求的提案编号，小于等于接受者已经响应的准备请求的提案编号，那么接受者将承诺不响应这个准备请求</li>
+<li>如果接受请求中的提案的提案编号，小于接受者已经响应的准备请求的提案编号，那么接受者将承诺不通过这个提案</li>
+<li>如果接受者之前有通过提案，那么接受者将承诺，会在准备请求的响应中，包含已经通过的最大编号的提案信息</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="07-Raft算法（一）：如何选举领导者？"><a href="#07-Raft算法（一）：如何选举领导者？" class="headerlink" title="07 | Raft算法（一）：如何选举领导者？"></a>07 | Raft算法（一）：如何选举领导者？</h1><ul>
+<li>Q:Raft算法的成员身份(服务器节点状态)<ul>
+<li>领导者(Leader)：主要工作有处理写请求、管理日志复制和不断地发送心跳信息</li>
+<li>跟随者(Follower)：默默接收和处理来自领导者的消息，当等待领导者心跳信息超时的时候，主动站出来，推荐自己当候选人</li>
+<li>候选人(Candidate)：候选人将向其它节点发送请求投票(RequestVote) RPC消息，通知其它节点来投票，如果赢得了大多数选票，就晋升当领导者</li>
+<li>Raft算法是强领导者模型，集群中只能有一个领导者</li>
+</ul>
+</li>
+<li>Q:Raft算法选举领导者的过程<ul>
+<li>在初始状态下，集群中所有的节点都是跟随者的状态</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224152326.png"></li>
+<li>Raft算法实现了随机超时时间的特性，即每个节点等待领导者节点心跳信息的超时时间间隔是随机的。如上图，集群中没有领导者，而节点A的等待超时时间最小(150ms)，它会最先因为没有等到领导者的心跳信息，发生超时</li>
+<li>这时，节点A就增加自己的任期编号，推举自己为候选人，先给自己投上一张选票，然后向其他节点发送请求投票 RPC 消息，请它们选举自己为领导者</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224152603.png"></li>
+<li>如果其它节点接收到候选人A的请求投票RPC消息，在编号为1的这届任期内，也还没有进行过投票，那么它将把选票投给节点A，并增加自己的任期编号</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224152812.png"></li>
+<li>如果候选人在选举超时时间内赢得了大多数的选票，那么它就会成为本届任期内的新领导者</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224152920.png"></li>
+<li>节点A当选领导者后，将周期性地发送心跳消息，通知其他服务器我是领导者，阻止跟随者发起新的选举，篡权</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224153011.png"></li>
+</ul>
+</li>
+<li>Q:节点间如何通讯？<ul>
+<li>在Raft算法中，服务器节点间的沟通联络采用的是远程过程调用(RPC)，在领导者选举中，需要用到两类RPC：<ul>
+<li>1.请求投票(RequestVote) RPC，由候选人在选举期间发起，通知各节点进行投票</li>
+<li>2.日志复制(AppendEntries) RPC，由领导者发起，用来复制日志和提供心跳信息</li>
+</ul>
+</li>
+<li>注意：日志复制 RPC 只能由领导者发起，这是实现强领导者模型的关键之一</li>
+</ul>
+</li>
+<li>Q:什么是任期？<ul>
+<li>Raft算法中的领导者也是有任期的，每个任期由单调递增的数字(任期编号)标识，如节点A的任期编号是1。任期编号是随着选举的举行而变化的<ul>
+<li>1.跟随者在等待领导者心跳信息超时后，推举自己为候选人时，会增加自己的任期号，如节点A的当前任期编号为0，那么在推举自己为候选人时，会将自己的任期编号加1</li>
+<li>2.如果一个服务器节点，发现自己的任期编号比其它节点小，那么它会更新自己的编号到较大的编号值。如节点B的任期编号是0，当收到来自节点A的请求投票RPC消息时，因为信息中包含了结点A的任期编号，且编号为1，那么节点B将把自己的任期编号更新为1</li>
+</ul>
+</li>
+<li>Raft 算法中的任期不只是时间段，而且任期编号的大小，会影响领导者选举和请求的处理<ul>
+<li>1.在Raft算法中约定，如果一个候选人或领导者，发现自己的任期编号比其它节点小，那么它会立即恢复成跟随者状态。比如分区错误恢复后，任期编号为3的领导者节点B，收到来自新领导者的，包含任期编号为4的心跳信息，那么节点B将立即恢复成跟随者状态</li>
+<li>2.还约定如果一个节点接收到一个包含较小的任期编号值的请求，那么它会直接拒绝这个请求。如节点C的任期编号为4，收到包含任期编号为3的请求投票RPC消息，那么它将拒绝这个消息</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:选举有哪些规则？<ul>
+<li>1.领导者周期性地向所有跟随者发送心跳信息(即不包含日志项的日志复制RPC消息)，通知大家我是领导者，阻止跟随者发起新的选举</li>
+<li>2.如果在指定时间内，跟随者没有接收到来自领导者的消息，那么它就认为当前没有领导者，推举自己为候选人，发起领导者选举</li>
+<li>3.在一次选举中，赢得大多数选票的候选人，将晋升为领导者</li>
+<li>4.在一个任期内，领导者一直都会是领导者，直到它自身出现问题(如宕机)，或者因为网络延迟，其它节点发起一轮新的选举</li>
+<li>5.在一次选举中，每一个服务器节点最多会对一个任期编号投出一章选票，并且按照「先来先服务」的原则进行投票。如节点C的任期编号为3，先收到了1个包含任期编号为4的投票请求(来自节点A)，然后又收到了1个包含任期编号为4的投票请求(来自节点B)。那么节点C将会把唯一一张选票投给节点A，当再收到节点B的投票请求RPC 消息时，对于编号为 4 的任期，已没有选票可投了</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224160810.png"></li>
+<li>6.当任期编号相同时，日志完整性高的跟随者(即最后一条日志项对应的任期编号值更大，索引号更大)，拒绝投票给日志完整性低的候选人。比如节点B、C的任期编号都是3，节点B的最后一条日志项对应的任期编号为3，而节点C为2，那么当节点C请求节点B投票给自己时，节点B将拒绝投票</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224161027.png"></li>
+<li>注意：选举时跟随者发起的，推举自己为候选人；大多数选票是指集群成员半数以上的选票；大多数选票规则的目标，是为了保证在一个给定的任期内最多只有一个领导者</li>
+<li>除了选举规则外，还需要避免一些会导致选举失败的情况，如同一任期内，多个候选人同时发起选举，导致选票被瓜分，选举失败。在Raft使用随机超时时间来避免这个问题</li>
+</ul>
+</li>
+<li>Q:如何理解随机超时时间?<ul>
+<li>Raft 算法巧妙地使用随机选举超时时间的方法，把超时时间都分散开来，在大多数情况下只有一个服务器节点先发起选举，而不是同时发起选举，这样就能减少因选票瓜分导致选举失败的情况</li>
+<li>Raft算法的随机超时时间的 2 种含义<ul>
+<li>1.跟随者等待领导者心跳信息超时的时间间隔，是随机的</li>
+<li>2.当没有候选人赢得过半票数，选举无效了，这时需要等待一个随机时间间隔，即等待选举超时的时间间隔，是随机的</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="08-Raft算法（二）：如何复制日志？"><a href="#08-Raft算法（二）：如何复制日志？" class="headerlink" title="08 | Raft算法（二）：如何复制日志？"></a>08 | Raft算法（二）：如何复制日志？</h1><ul>
+<li>Q:Raft算法中的日志是什么？<ul>
+<li>在Raft算法中，副本数据以日志的形式存在，日志是由日志项组成，日志项是一种数据格式，主要包含用户指定的数据，即指令(Command)，和一些附加信息，如索引值(Log index)、任期编号(Term)</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224162319.png"></li>
+<li>指令：一条由客户端请求指定的、状态机需要执行的指令。可理解成客户端指定的数据</li>
+<li>索引值：日志项对应的整数索引值，用来标识日志项，是一个连续的、单调递增的整数号码</li>
+<li>任期编号：创建这条日志项的领导者的任期编号</li>
+<li>注意：一届领导者任期，往往有多条日志项。而且日志项的索引值是连续的</li>
+</ul>
+</li>
+<li>Q:如何复制日志？<ul>
+<li>可把Raft 的日志复制理解成一个优化后的二阶段提交（将二阶段优化成了一阶段），减少了一半的往返消息，也就是降低了一半的消息延迟</li>
+<li>1.领导者进入第一阶段，通过日志复制(AppendEntries) RPC消息，将日志项复制到其它节点上</li>
+<li>2.如果领导者接收到大多数的「复制成功」响应后，它将日志项提交到它的状态机，并返回成功给客户端。如果领导者没有接收到大多数的“复制成功”响应，那么就返回错误给客户端</li>
+</ul>
+</li>
+<li>Q:领导者将日志项提交到它的状态机，为什么没通知跟随者提交日志项？<ul>
+<li>这是 Raft 中的一个优化，领导者不直接发送消息通知其它节点提交指定日志项。因为领导者的日志复制RPC消息或心跳消息，包含了当前最大的，将会被提交的日志项索引值。所以通过日志复制RPC消息或心跳消息，跟随者就可以知道领导者的日志提交位置信息</li>
+<li>因此，当其它节点接受领导者的心跳信息，或者新的日志复制RPC消息后，就会将这条日志项提交到它的状态机。这个优化，降低了处理客户端请求的延迟，将二阶段提交优化为一阶段提交，降低了一半的消息延迟</li>
+</ul>
+</li>
+<li>Q:日志复制过程？<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210224164552.png"></li>
+<li>1.接收到客户端请求后，领导者基于客户端请求中的指令，创建一个新日志项，并附加到本地日志中</li>
+<li>2.领导者通过日志复制RPC，将新的日志项复制到其它的服务器</li>
+<li>3.当领导者将日志项，成功复制到大多数服务器上的时候，领导者会将这条日志项提交到它的状态机中</li>
+<li>4.领导者将执行的结果返回给客户端</li>
+<li>5.当跟随者接收到心跳信息，或者新的日志复制RPC消息后，如果跟随者发现领导者已经提交了某条日志项，而它还没提交，那么跟随者就将这条日志项提交到本地的状态机中</li>
+</ul>
+</li>
+<li>Q:如何实现日志的一致？<ul>
+<li>在Raft算法中，，领导者通过强制跟随者直接复制自己的日志项，处理不一致日志。即Raft是通过以领导者的日志为准，来实现各节点日志的一致的</li>
+<li>1.领导者通过日志复制RPC的一致性检查，找到跟随者节点上，与自己想通日志项的最大索引值。即在这个索引值之前的日志，领导者和跟随者是一致的，之后的日志是不一致的了</li>
+<li>2.领导者强制跟随者更新覆盖不一致的日志项，实现日志的一致</li>
+</ul>
+</li>
+<li>Q:Raft实现日志的一致的详细过程<ul>
+<li>引入2个新变量<ul>
+<li>PrevLogEntry：表示当前要复制的日志项，前面一条日志项的索引值。如在图中，如果领导者将索引值为8的日志项发送给跟随者，那么此时 PrevLogEntry 值为7</li>
+<li>PrevLogTerm：表示当前要复制的日志项，前面一条日志项的任期编号，如在图中，如果领导者将索引值为8的日志项发送给跟随者，那么此时PrevLogTerm值为4</li>
+</ul>
+</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224170941.png"></li>
+<li>1.领导者通过日志复制RPC消息，发送当前最新日志项到跟随者，这个消息的PrevLogEnetry值为7，PrevLogTerm值为4</li>
+<li>2.如果跟随者在它的日志中，找不到与PrevLogEntry值为7、PrevLogTerm值为4的日志项，即它的日志和领导者的不一致了，那么跟随者者就会拒绝接收新的日志项， 并返回失败信息给领导者</li>
+<li>3.这时，领导者会递减要复制的日志项的索引值，并发送新的日志项到跟随者，这个消息的 PrevLogEntry 值为 6，PrevLogTerm 值为 3</li>
+<li>4.如果跟随者在它的日志中，找到了 PrevLogEntry 值为 6、PrevLogTerm 值为 3 的日志项，那么日志复制 RPC 返回成功，这样一来，领导者就知道在 PrevLogEntry 值为 6、PrevLogTerm 值为 3 的位置，跟随者的日志项与自己相同</li>
+<li>5.领导者通过日志复制RPC，复制并更新覆盖索引值后的日志项(即不一致的日志项)，最终实现了集群各节点日志的一致</li>
+<li>从上面步骤中可以看到，领导者通过日志复制 RPC 一致性检查，找到跟随者节点上与自己相同日志项的最大索引值，然后复制并更新覆盖该索引值之后的日志项，实现了各节点日志的一致。注意，跟随者中的不一致日志项会被领导者的日志覆盖，而且领导者从来不会覆盖或者删除自己的日志</li>
+</ul>
+</li>
+</ul>
+<h1 id="10-一致哈希算法：如何分群，突破集群的“领导者”限制？"><a href="#10-一致哈希算法：如何分群，突破集群的“领导者”限制？" class="headerlink" title="10 | 一致哈希算法：如何分群，突破集群的“领导者”限制？"></a>10 | 一致哈希算法：如何分群，突破集群的“领导者”限制？</h1><ul>
+<li>Q:使用哈希算法实现哈希寻址时，有什么问题？<ul>
+<li>通过哈希算法，每个 key 都可以寻址到对应的服务器，比如，查询 key 是 key-01，计算公式为 hash(key-01) % 3 ，经过计算寻址到了编号为 1 的服务器节点 A</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224172621.png"></li>
+<li>但如果服务器数量发生变化，基于新的服务器数量来执行哈希算法的时候，就会出现路由寻址失败的情况，Proxy 无法找到之前寻址到的那个服务器节点</li>
+<li>假如 3 个节点不能满足业务需要了，这时我们增加了一个节点，节点的数量从 3 变化为 4，那么之前的 hash(key-01) % 3 = 1，就变成了 hash(key-01) % 4 = X，因为 取模运算发生了变化，所以这个 X 大概率不是 1（可能 X 为 2），这时你再查询，就会找 不到数据了，因为 key-01 对应的数据，存储在节点 A 上，而不是节点 B</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224172749.png"></li>
+<li>同样的道理，如果我们需要下线 1 个服务器节点（也就是缩容），也会存在类似的可能查询不到数据的问题</li>
+<li>而解决这个问题的办法，在于我们要迁移数据，基于新的计算公式 hash(key-01) % 4 ，来重新对数据和节点做映射。需要你注意的是，数据的迁移成本是非常高的</li>
+<li>对于 1000 万 key 的 3 节点 KV 存储，如果我们增加 1 个 节点，变为 4 节点集群，则需要迁移 75% 的数据</li>
+</ul>
+</li>
+<li>Q:如何使用一致哈希实现哈希寻址<ul>
+<li>一致哈希算法是对 2^32 进行取模运算，将整个 哈希值空间组织成一个虚拟的圆环，即哈希环</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224173010.png"></li>
+<li>哈希环的空间是按顺时针方向组织的，圆环的正上方的点代表0，0点右侧的第一个点代表1，以此类推，2、3、4、5、6……直到 2^32-1，即 0 点左 侧的第一个点代表 2^32-1</li>
+<li>在一致哈希中，通过执行哈希算法将节点映射到哈希环上，比如选择节点的主机名作为参数执行 c-hash()，那么每个节点就能确定其在哈希环上的位置了</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224173309.png"></li>
+</ul>
+</li>
+<li>Q:对指定 key 的值进行读写的时候，通过哪 2 步进行寻址？<ul>
+<li>1.将key作为参数执行 c-hash() 计算哈希值，并确定此 key 在环上的位置</li>
+<li>2.从这个位置沿着哈希环顺时针“行走”，遇到的第一节点就是 key 对应的节点</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224175429.png"></li>
+</ul>
+</li>
+<li>Q:有一个节点故障了(如节点C)，一致哈希是怎么处理的<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210224175616.png"></li>
+<li>key-01 和 key-02 不会受到影响，只有 key-03 的寻址被重定位到 A。一般来说，在一致哈希算法中，如果某个节点宕机不可用了，那么受影响的数据仅仅是，会寻址到此节点和前一节点之间的数据</li>
+<li>如当节点 C 宕机了，受影响的数据是会寻址到节点 B 和节点 C 之间的数据（例如 key-03），寻址到其他哈希环空间的数据（例如 key-01），不会受到影响</li>
+</ul>
+</li>
+<li>Q:需要扩容一个节点，一致哈希是怎么处理的<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210224175729.png"></li>
+<li>key-01、key-02 不受影响，只有 key-03 的寻址被重定位到新节点 D。一般 而言，在一致哈希算法中，如果增加一个节点，受影响的数据仅仅是，会寻址到新节点和前 一节点之间的数据，其它数据也不会受到影响</li>
+</ul>
+</li>
+<li>Q:在一致哈希中，客户端访问请求集中在少数的节点上，为什么会出现有些机器高负载，有些机器低负载的情况<ul>
+<li>在一致哈希中，如果节点太少，容易因为节点分布不均匀造成数据访问的冷热不均，即大多数访问请求都会集中少量几个节点上</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224175845.png"></li>
+</ul>
+</li>
+<li>Q:如何通过虚拟节点解决冷热不均的问题？<ul>
+<li>对每一个服务器节点计算多个哈希值，在每个计算结果位置上，都放置一个虚拟 节点，并将虚拟节点映射到实际节点。比如，可以在主机名的后面增加编号，分别计算 “Node-A-01”“Node-A-02”“Node-B-01”“Node-B-02”“Node-C01”“Node-C-02”的哈希值，于是形成 6 个虚拟节点</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224180725.png"></li>
+<li>增加了节点后，节点在哈希环上的分布就相对均匀了。这时，如果有访问请求寻址到“Node-A-01”这个虚拟节点，将被重定位到节点 A。这样我们就解决了冷热不均的问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="11-Gossip协议：流言蜚语，原来也可以实现一致性"><a href="#11-Gossip协议：流言蜚语，原来也可以实现一致性" class="headerlink" title="11 | Gossip协议：流言蜚语，原来也可以实现一致性"></a>11 | Gossip协议：流言蜚语，原来也可以实现一致性</h1><ul>
+<li>Q:Gossip的三板斧是什么？<ul>
+<li>直接邮寄(Direct Mail)</li>
+<li>反熵(Anti-entropy)</li>
+<li>谣言传播(Rumor mongering)</li>
+</ul>
+</li>
+<li>Q:直接邮寄是什么？<ul>
+<li>直接发送更新数据，当数据发送失败时，将数据缓存下来，然后重传。直接邮寄虽然实现起来比较容易，数据同步也很及时，但可能会因为缓存队列满了而丢数据。即只采用直接邮寄是无法实现最终一致性的</li>
+</ul>
+</li>
+<li>Q:反熵是什么？<ul>
+<li>集群中的节点，每隔段时间就随机选择某个其它节点，然后通过互相交换自己的所有数据来消除两者之间的差异，实现数据的最终一致性</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224182702.png"></li>
+<li>如上图，节点A通过反熵的方式，修复了节点 D 中缺失的数据</li>
+<li>注意，因为反熵熵需要节点两两交换和比对自己所有的数据，执行反熵时通讯成本会很高，不建议频繁执行，可通过引入校验和(Checksum)等机制，降低需要对比的数据量和通讯消息</li>
+<li>执行反熵时相关的节点都是已知的，而且节点数量不能太多，如果是一个动态变化或节点数比较多的分布式环境，这时反熵就不适用了，该用谣言传播</li>
+</ul>
+</li>
+<li>Q:反熵修复节点缺失数据的3种方式<ul>
+<li>以下图中，2 个数据副本的不一致为例</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224183252.png"></li>
+<li>推：将自己的所有副本数据，推给对方，修复对方副本中的熵</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224183330.png"></li>
+<li>拉：拉取对方的所有副本数据，修复自己副本中的熵</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224183401.png"></li>
+<li>推拉：同时修复自己副本和对方副本中的熵</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224183422.png"></li>
+</ul>
+</li>
+<li>Q:谣言传播是什么？<ul>
+<li>当一个节点有了新数据后，这个节点编程活跃状态，并周期性地联系其他节点向其发送新数据，直到所有的节点都存储了该新数据</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224182841.png"></li>
+<li>如图，节点 A 向节点 B、D 发送新数据，节点 B 收到新数据后，变成活跃节点，然后节点 B 向节点 C、D 发送新数据。谣言传播非常具有传染性，它适合动态变化的分布式系统</li>
+</ul>
+</li>
+</ul>
+<h1 id="12-Quorum-NWR算法：想要灵活地自定义一致性，没问题！"><a href="#12-Quorum-NWR算法：想要灵活地自定义一致性，没问题！" class="headerlink" title="12 | Quorum NWR算法：想要灵活地自定义一致性，没问题！"></a>12 | Quorum NWR算法：想要灵活地自定义一致性，没问题！</h1><ul>
+<li>Q:最终一致性和强一致性有什么区别<ul>
+<li>强一致性能保证写操作完成后，任何后续访问都能读到更新后的值</li>
+<li>最终一致性只能保证如果对某个对象没有新的写操作了，最终所有后续访问都能读到相同的最近更新的值，即写操作完成后，后续访问可能会读到旧数据</li>
+</ul>
+</li>
+<li>Q:Quorum NWR的三要素<ul>
+<li>N：副本数，又叫复制因子(Replication Factor)</li>
+<li>W：写一致性级别(Write Consistency Level)，表示成功完成W个副本更新，才完成写操作</li>
+<li>R：读一致性级别(Read Consistency Level)，表示读取一个数据对象时需要读R个副本，即，读取指定数据时，要读 R 副本，然后返回 R 个副本中最新的那份数据</li>
+<li>注意：无论客户端如何执行读操作，哪怕它访问的是写操作未强制更新副本数据的节点（比如节点 B），但因为 W(2) + R(2) &gt; N(3)，也就是说，访问节点 B，执行读操作时，因为要读 2 份数据副本，所以除了节点 B 上的 DATA-2，还会读取节点 A 或节点 C 上的 DATA-2，就像上图的样子（比如节点 C 上的 DATA-2），而节点 A 和节点 C 的 DATA-2 数据副本是强制更新成功的。这个时候，返回给客户端肯定是最新的那份数据</li>
+</ul>
+</li>
+<li>Q:N、W、R 值的不同组合，会产生哪两种不同的一致性效果？<ul>
+<li>当 W + R &gt; N 时，对于客户端来说，整个系统能保证强一致性，一定能返回更新后的那份数据</li>
+<li>当 W + R &lt; N 时，对于客户端来说，整个系统只能保证最终一致性，可能会返回旧数据</li>
+</ul>
+</li>
+<li>Q:any、one、quorum、all 这4种写一致性级别，具体的含义<ul>
+<li>any：任何一个节点写入成功后，或者接收节点已将数据写入Hinted-handoff缓存(即写其他节点失败后，本地节点上缓存写失败数据的队列) 后，就会返回成功给客户端</li>
+<li>one：任何一个节点写入成功后，立即返回成功给客户端，，不包括成功写入到 Hinted-handoff 缓存</li>
+<li>quorum：当大多数节点写入成功后，就会返回成功给客户端。此选项仅在副本数大于 2 时才有意义，否则等效于 all</li>
+<li>all：仅在所有节点都写入成功后，返回成功</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
@@ -4046,6 +4581,525 @@ tensor([10.])</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>《分布式技术原理与算法解析》分布式协调与同步 学习笔记</title>
+    <url>/distrib-principal-algo-2/</url>
+    <content><![CDATA[<h1 id="03丨分布式互斥：有你没我，有我没你"><a href="#03丨分布式互斥：有你没我，有我没你" class="headerlink" title="03丨分布式互斥：有你没我，有我没你"></a>03丨分布式互斥：有你没我，有我没你</h1><ul>
+<li>Q:分布式互斥（Distributed Mutual Exclusion）是什么？临界资源(Critical Resource)是什么？<ul>
+<li>在分布式系统里要求同一时刻只能有一个程序能够访问一个共享资源，这种排他式的资源访问方式叫分布式互斥，这种被互斥访问的共享资源叫临界资源</li>
+</ul>
+</li>
+<li>Q:有哪3种分布式互斥方法？<ul>
+<li>1.集中式方法</li>
+<li>2.分布式方法</li>
+<li>3.令牌环方法</li>
+</ul>
+</li>
+<li>Q:中央服务器算法或集中式算法是什么？<ul>
+<li>每个程序在需要访问临界资源时，先给协调者发送一个请求。如果当前没有程序使用这个资源，协调者直接授权请求程序访问；否则，按照先来后到的顺序为请求程序排一个号。如果有程序使用完资源，则通知协调者，协调者从“排号”的队列里取出排在最前面的请求，并给它发送授权信息。拿到授权消息的程序，可以直接去访问临界资源</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201509.png"></li>
+</ul>
+</li>
+<li>Q:集中式算法中每个程序完成一次临界资源访问需要进行哪3次消息交互？<ul>
+<li>1.向协调者发送请求授权</li>
+<li>2.协调者向程序发放授权信息</li>
+<li>3.程序使用完临界资源后，向协调者发送授权</li>
+</ul>
+</li>
+<li>Q:集中式算法的优缺点和适用场景是什么？<ul>
+<li>优点：直观、简单、信息交互量少、易于实现，并且所有程序只需和协调者通信，程序之间无需通信</li>
+<li>缺点：</li>
+<li>1.协调者会成为系统的性能瓶颈。即协调者处理的消息数量会随着需要访问临界资源的程序数量线性增加</li>
+<li>2.容易引发单点故障。若协调者故障会导致所有的程序均无法访问临界资源，导致整个系统不可用</li>
+<li>适用场景：</li>
+<li>在可靠性和性能有一定的保障时，如中央服务器计算能力强、性能高、故障率低，或者中央服务器进行了主备备份，主故障后背可以立马升为主，且数据可恢复的情况下可用集中式算法</li>
+</ul>
+</li>
+<li>Q:分布式算法或使用组播和逻辑时钟的算法是什么？<ul>
+<li>当一个程序要访问临界资源时，先向系统中的其它程序发送一条请求消息，在接收到所有程序返回的同意消息后，才可以访问临界资源。其中，请求消息需要包含所请求的资源、请求者ID，以及发起请求的时间</li>
+<li>即根据“先到先得”和“投票全票通过”机制，让每个程序按时间顺序公平地访问资源</li>
+<li>适合节点数目少且变动不频繁的系统，且由于每个程序均需通信交互，因此适合P2P结构的系统</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201602.png"></li>
+</ul>
+</li>
+<li>Q:分布式算法中，一个程序完成一次临界资源访问需要的消息交互：<ul>
+<li>1.向其它n-1个程序发送临界资源的请求</li>
+<li>2.需要接收到其它n-1个程序回复的同意消息</li>
+<li>总共2*(n-1)，在大型系统中使用分布式算法，消息数量会随着需要访问临界资源数量呈指数级增加</li>
+</ul>
+</li>
+<li>Q:分布式算法的可用性很低的两个原因是什么？有没有改进办法？<ul>
+<li>1.当系统内需要访问临界资源的程序增多时，容易产生“信令风暴”，即程序收到的请求完全超过了自己的处理能力，而导致自己的正常业务无法开展</li>
+<li>2.一旦某一程序发生故障，无法发送同意消息，那么其它程序均处于等待回复的状态中，使得整个系统处于停滞状态，导致整个系统不可用</li>
+<li>改进方法：检测到一个程序故障，直接忽略这个程序，无需等待它的同意消息。但缺点是每个程序需要对其它程序进行故障检测会带来更大的复杂性</li>
+</ul>
+</li>
+<li>Q:HDFS的文件修改过程是怎样的？<ul>
+<li>1.计算机1向计算机2、3发送文件修改请求</li>
+<li>2.计算机2、3发现自己不需要使用资源，因此同意计算机1的请求</li>
+<li>3.计算机1收到其它所有计算机的同意消息后，开始修改该文件</li>
+<li>4.计算机1修改完成后，向计算机2、3发送文件修改完成的消息，并发送修改后的文件数据</li>
+<li>5.计算机2和3收到计算机1的新文件数据后，更新本地的备份文件</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201526.png"></li>
+</ul>
+</li>
+<li>Q:令牌环算法或基于环的算法是怎样的？<ul>
+<li>所有程序构成一个环结构，令牌按照顺时针（或逆时针）方向在程序之间传递，收到令牌的程序有权访问临界资源，访问完成后将令牌传送到下一个程序；若该程序不需要访问临界资源，则直接把令牌传送给下一个程序</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201547.png"></li>
+</ul>
+</li>
+<li>Q:令牌环方法的优缺点和适用场景是什么？<ul>
+<li>优点：</li>
+<li>1.单个参与者通信效率较高</li>
+<li>2.可用性较高</li>
+<li>缺点：</li>
+<li>当参与者对临界资源适用频率较低时，会带来较多无用通信</li>
+<li>适用场景：系统规模较小，并且系统中每个程序使用共享资源频度较高且使用时间较短的场景</li>
+</ul>
+</li>
+</ul>
+<h1 id="04-分布式选举：国不可一日无君"><a href="#04-分布式选举：国不可一日无君" class="headerlink" title="04 | 分布式选举：国不可一日无君"></a>04 | 分布式选举：国不可一日无君</h1><ul>
+<li>Q:为什么要有分布式选举？<ul>
+<li>主节点在一个分布式集群中负责对其它节点的协调和管理，它的存在可以保证其它节点的有序运行，以及数据库集群中的写入数据在每个节点上的一致性。（一致性是指，数据在每个集群节点中都是一样的，不存在不同的情况）</li>
+</ul>
+</li>
+<li>Q:Bully算法的选举原则和假设条件是什么？<ul>
+<li>选举原则：“长者为大”，在所有活着的节点中，选取ID最大的节点作为主节点</li>
+<li>假设条件：集群中每个节点均知道其它节点的ID</li>
+</ul>
+</li>
+<li>Q:Bully算法中节点有哪两种角色？初始角色和变化过程是怎样的？<ul>
+<li>普通节点和主节点</li>
+<li>初始化时，所有节点都是平等的，都是普通节点，并且都有成为主节点的权利</li>
+<li>当选主成功后，有且仅有一个节点成为主节点，其它节点都是普通节点。当且仅当主节点故障或与其它节点失去联系后，才会重新选主</li>
+</ul>
+</li>
+<li>Q:Bully算法选举过程中用到的3种消息是哪些？<ul>
+<li>Election消息：用于发起选举</li>
+<li>Alive消息：对Election消息的应答</li>
+<li>Victory消息：竞选成功的主节点向其它节点发送的宣誓主权的消息</li>
+</ul>
+</li>
+<li>Q:Bully算法的选举过程是怎样？<ul>
+<li>1.集群中每个节点判断自己的ID是否为当前活着的节点中ID最大的，如果是，则直接向其它节点发送Victory消息，宣誓自己的主权</li>
+<li>2.如果自己不是当前活着的节点中ID最大的，则向比自己大的所有节点发送Election消息，并等待其它节点的回复</li>
+<li>3.若在给定的时间范围内，本节点没有收到其它节点回复的Alive消息，则认为自己成为主节点，并向其它节点发送Victory消息，宣誓自己成为主节点；若接收到来自比自己ID打的节点的Alive消息，则等待其它节点发送Victory消息</li>
+<li>4.若本节点收到比自己ID小的节点发送的Election消息，则回复一个Alive消息，告知其它节点，我比你大，重新选举</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201614.png"></li>
+</ul>
+</li>
+<li>Q:Bully算法的优缺点是什么？<ul>
+<li>优点：选举速度快、算法复杂度低、简单易实现</li>
+<li>缺点：</li>
+<li>1.需要每个节点有全局的节点信息，因此额外信息存储较多</li>
+<li>2.任意一个比当前主节点ID大的新节点或节点故障后恢复加入集群的时候，都可能会触发重新选举，成为新的主节点，如果该节点频繁退出、加入集群，就会导致频繁切主</li>
+</ul>
+</li>
+<li>Q:Bully算法的应用例子？<ul>
+<li>MongoDB的副本集故障转移功能：采用最后操作时间戳来表示ID，时间戳最新的节点其ID，时间戳最新的节点ID最大，即时间戳最新的、活着的节点是主节点</li>
+</ul>
+</li>
+<li>Q:Raft算法选举时，集群节点的角色有哪3种？<ul>
+<li>Leader：主节点，同一时刻只有一个Leader，负责协调和管理其它节点</li>
+<li>Candidate：候选者，每一个节点都可以成为Candidate，节点在该角色下才可以被选为新的Leader</li>
+<li>Follower：Leader的跟随者，不可以发起选举</li>
+</ul>
+</li>
+<li>Q:Raft选举的流程是怎样？<ul>
+<li>1.初始化时，所有节点均为Follower状态</li>
+<li>2.开始选主时，所有节点的状态由Follower转化为Candidate，并向其它节点发送选举请求</li>
+<li>3.其它节点根据接收到的选举请求的先后顺序，回复是否同意成为主。注意这里的每一轮选举中，一个节点只能投出一张票</li>
+<li>4.若发起选举请求的节点获得超过一半的投票，则成为主节点，其状态转化为Leader，其它节点的状态则由Candidate降为Follower。Leader节点与Follower节点之间会定期发送心跳包，以检测主节点是否活着</li>
+<li>5.当Leader节点的任期到了，即发现其它服务器开始下一轮选主周期时，Leader节点的状态由Leader降级为Follower，进入新一轮选主</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201819.png"></li>
+</ul>
+</li>
+<li>Q:Raft算法的应用例子？<ul>
+<li>Google 开源的 Kubernetes，擅长容器管理与调度，为了保证可靠性，通常会部署 3 个节点用于数据备份。这 3 个节点中，有一个会被选为主，其他节点作为备。Kubernetes 的选主采用的是开源的 etcd 组件。而，etcd 的集群管理器 etcds，是一个高可用、强一致性的服务发现存储仓库，就是采用了 Raft 算法来实现选主和一致性的</li>
+</ul>
+</li>
+<li>Q:Raft算法的优缺点是什么？<ul>
+<li>优点：<ul>
+<li>1.选举速度快、算法复杂度低、易于实现</li>
+<li>2.选举稳定性比Bully算法好，因为当有新节点加入或节点故障恢复后，会触发选主，但不一定会真正切主，除非新节点或故障后恢复的节点获得投票数过半，才会导致切主</li>
+</ul>
+</li>
+<li>缺点：要求系统内每个节点都可以相互通信，且需要获得过半的投票数才能选主成功，因此通信量大</li>
+</ul>
+</li>
+<li>Q:ZAB算法选举时，集群有哪3种角色？<ul>
+<li>Leader: 主节点</li>
+<li>Follower: 跟随者节点</li>
+<li>Observer: 观察者，无投票权</li>
+</ul>
+</li>
+<li>Q:ZAB算法选举过程中，集群中的节点拥有哪4个状态？<ul>
+<li>Looking（选举）状态：当节点处于该状态时，它会认为当前集群中没有Leader，因此自己进入选举状态</li>
+<li>Leading（领导者）状态：表示已经选出主，且当前节点为Leader</li>
+<li>Following（跟随者）状态：集群中已经选出主后，其它非主节点状态更新为Following，表示对Leader的追随</li>
+<li>Observing（观察者）状态：表示当前节点为Observer，持观望态度，没有投票权和选举权</li>
+</ul>
+</li>
+<li>Q:ZAB算法的节点的数据结构三元组(server_id, server_zxID, epoch)分别是什么意思？<ul>
+<li>server_id: 本节点的唯一ID</li>
+<li>server_zxID: 本节点存放的数据ID，数据ID越大表示数据越新，选举权重越大</li>
+<li>epoch: 当前选取轮数，一般用逻辑时钟表示</li>
+</ul>
+</li>
+<li>Q:ZAB算法的选举过程的数据结构（vote_id, vote_zxID）分别是什么意思？<ul>
+<li>vote_id: 被投票节点的ID</li>
+<li>vote_zxID: 被投票节点的服务器zxID</li>
+</ul>
+</li>
+<li>Q:ZAB算法的核心和选主原则是什么？<ul>
+<li>核心：少数服从多数，ID大的节点优先成为主</li>
+<li>选主原则：server_zxID最大者成为Leader, 若server_zxID相同，则server_id最大者成为Leader</li>
+</ul>
+</li>
+<li>Q:ZAB算法的选举过程是怎样？<ul>
+<li>1.当系统刚启动时，3个服务器当前投票均为第一轮投票，即epoch=1, 且zxID均为0。此时每个服务器都推选自己，并将选票信息&lt;epoch, vote_id, vote_zxID&gt;广播出去</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201623.png"></li>
+<li>2.根据判断规则，由于3个Server的epoch、zxID都相同，因此比较server_id，较大者即为推选对象，因此Server1和Server2将vote_id改为3，更新自己的投票箱并重新广播自己的投票</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201632.png"></li>
+<li>3.此时系统内所有服务器都推选了Server3，因此Server3当选Leader，处于Leading状态，向其它服务器发送心跳包并维护连接；Server1和2处于Following状态</li>
+<li><img src="http://anki190912.xuexihaike.com/20200905201638.png"></li>
+</ul>
+</li>
+<li>Q:ZAB算法的优缺点是什么？<ul>
+<li>优点：<ul>
+<li>1.性能高，对系统无特殊要求</li>
+<li>2.选举稳定性比较好，当有新节点加入或节点故障恢复后，会触发选主，但不一定会真正切主，除非新节点或故障后恢复的节点数据 ID 和节点 ID 最大，且获得投票数过半，才会导致切主</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>1.采用广播方式发送信息，若节点中有n个节点，每个节点同时广播，则集群中信息量为n*(n-1)个消息，容易出现广播风暴</li>
+<li>2.除了投票，还增加了对比节点ID和数据ID，这就意味着还需要知道所有节点ID和数据ID，所以选举时间相对较长</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Bully、Raft、ZAB算法对比图？<ul>
+<li><img src="http://anki190912.xuexihaike.com/20200905201805.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="05-分布式共识：存异求同"><a href="#05-分布式共识：存异求同" class="headerlink" title="05 | 分布式共识：存异求同"></a>05 | 分布式共识：存异求同</h1><ul>
+<li>Q:分布式选举问题的本质是什么？<ul>
+<li>传统的分布式共识方法，主要是基于多数投票策略实现的</li>
+</ul>
+</li>
+<li>Q:什么是分布式共识？<ul>
+<li>在多个节点均可独自操作或记录的情况下，使得所有节点针对某个状态达成一致的过程</li>
+<li>本质是“求同存异”</li>
+</ul>
+</li>
+<li>Q:分布式共识的两个关键点是什么？<ul>
+<li>1.获得记账权</li>
+<li>2.所有节点或服务器达成一致</li>
+</ul>
+</li>
+<li>Q:区块链是什么？<ul>
+<li>由包含交易信息的区块从后向前有序链接起来的数据结构</li>
+<li>其中区块是指很多交易数据的集合，每个区块包括区块头和区块体<ul>
+<li>区块体包括前一区块的哈希值、本区块的哈希值和时间戳</li>
+<li>区块体用来存储交易数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:有哪3种解决分布式在线记账一致性问题的共识技术？<ul>
+<li>PoW: Proof-of-Work, 工作量证明</li>
+<li>PoS: Proof-of-Stake, 权益证明</li>
+<li>DPoS: Delegated Proof of Stake, 委托权益证明</li>
+</ul>
+</li>
+<li>Q:PoW算法是什么？<ul>
+<li>以每个节点或服务器的计算能力来竞争记账权的机制，即使用工作量证明机制的共识算法</li>
+</ul>
+</li>
+<li>Q:假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？<ul>
+<li>利用区块的index、前一区块的哈希值、交易的时间戳、区块数据和nonce值，通过SHA256计算出一个哈希值</li>
+<li>判断前k个值是否都为0<ul>
+<li>如果不是，递增nonce值，重新按照上述方法计算</li>
+<li>如果是，本次计算的哈希值为要解决的题目的正确答案</li>
+</ul>
+</li>
+<li>谁最先计算出正确答案，谁就获得这个区块的记账权</li>
+<li>注：nonce值是用来找到一个满足哈希值的数字；k 为哈希值前导零的个数，标记了 计算的难度，0 越多计算难度越大</li>
+</ul>
+</li>
+<li>Q:达成共识的过程，其本质是？<ul>
+<li>即获得记账权的节点将该区块信息广播给其它节点，其它节点判断该结点找到的区块中的所有交易都是有效且之前未存在过的，则认为该区块有效，并接受该区块</li>
+</ul>
+</li>
+<li>Q:基于PoW的共识记账过程是怎样的？(以分散在世界各地的 5 台服务器为例，假设客户端A产生一个新的交易)<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210209112307.png"></li>
+<li>1.客户端A产生新的交易，向全网进行广播，要求对交易进行记账</li>
+<li>2.每个记账节点接收到这个请求后，将受到的交易信息放入一个区块中</li>
+<li>3.每个节点通过PoW算法，计算本节点的区块的哈希值，尝试找到一个具有足够工作量难度的工作量证明</li>
+<li>4.若节点D找到了一个工作量证明向全网广播。当且仅当包含在该区块中的交易都是有效且之前未存在过的，其它节点才会认同该区块的有效性</li>
+<li>5.其它节点接收到广播信息后，若该区块有效，接受该区块，并跟随在该区块的末尾，制造新区块延长该链条，将被接受的区块的随机哈希值视为新区块的随机哈希值</li>
+<li>核心：谁的计算能力强，获得记账权的可能性就越大。但必须保证其记 账的区块是有效的，并在之前未存在过，才能获得其他节点的认可</li>
+</ul>
+</li>
+<li>Q:PoW机制的优缺点？<ul>
+<li>优点：实现了相对的公平。PoW 的容错机制允许全网 50% 的节点出错，如果要破坏系统，则需要投入极大成本（若你有全球 51% 的算力，则可尝试攻击比特币）</li>
+<li>缺点：共识达成的周期长、效率低，资源消耗大。每次达成共识需要全网共同参与运算，增加了每个节点的计算量。如果题目过难，会导致计算时间长、资源消耗多；而如果题目过于简单，会导致大量节点同时获得记账权，冲突多。这些问题，都会增加达成共识的时间</li>
+</ul>
+</li>
+<li>Q:PoS算法的核心原理？<ul>
+<li>由系统权益代替算力来决定区块记账权，拥有的权益越大获得记账权的概率就越大</li>
+<li>权益，即每个节点占有货币的数量和时间，而货币就是节点所获得的奖励</li>
+</ul>
+</li>
+<li>Q:基于 PoS 算法获得区块记账权的方法相比基于 PoW 的方法的不同之处是？<ul>
+<li>PoS是根据结点拥有的股权或权益进行计算的</li>
+</ul>
+</li>
+<li>Q:通过 PoS 算法决定区块记账权的流程和 PoW 算法的唯一不同的是？<ul>
+<li>每个节点在计算自己记账权的时候，通过计算自己的股权或权益来评估，如果发现自己权益最大，则将自己的区块广播给其它节点，当然必须保证该区块的有效性</li>
+<li><img src="http://anki190912.xuexihaike.com/20210209114030.png"></li>
+</ul>
+</li>
+<li>Q:PoS算法的优缺点？<ul>
+<li>优点<ul>
+<li>1.将算力竞争转变成权益竞争。与 PoW 相比，PoS 不需要消耗大量的电力就能够保证区块链网络的安全性</li>
+<li>2.不需要在每个区块中创建新的货币来激励记账者参与当前网络的运行，这也就在一定程度上缩短了达成共识所需要的时间</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>PoS 算法中持币越多或持币越久，币龄就会越高，持币人就越容易挖到区块并得到激 励，而持币少的人基本没有机会</li>
+<li>整个系统的安全性实际上会被持币数量较大的一部分 人掌握，容易出现垄断现象</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:DPoS(委托权益证明法)是什么？<ul>
+<li>由被社区选举的可信账户（受托人，比如得票数排行前 101 位）来拥有记账权</li>
+<li>为了成为正式受托人，用户要去社区拉票，获得足够多的信任。用户根据自己持有的货币数量占总量的百分比来投票</li>
+<li>根据自己拥有的权益，投票选出可代表自己的受托节点，受托节点之间竞争记账权</li>
+<li><img src="http://anki190912.xuexihaike.com/20210209114943.png"></li>
+<li>通常会选出k(如101)个受托结点，它们的权利是完全相等的。受托节点之间争取记账权也是根据算力进行竞争的。只要受托节点提供的算力不稳定，计算机宕机或者利用手中的权力作恶，随时可以被握着货币的普通节点投票踢出整个系统，而后备的受托节点可以随时顶上去</li>
+</ul>
+</li>
+<li>Q:DPos的优缺点是什么？<ul>
+<li>优点<ul>
+<li>1.由投票选举出的若干信誉度更高的受托人记账，解决了所有节点均参与竞争导致消息量大、达成一致的周期长的问题。DPoS 能耗更低，具有更快的交易速度</li>
+<li>2.每隔一定周期会调整受托人，避免受托人造假和独权</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>1.由于大多数持币人通过受托人参与投票，投票的积极性并不高</li>
+<li>2.一旦出现故障节点，DPoS 无法及时做出应对，导致安全隐患</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:PoW、PoS和DPoS三种共识算法的对比图<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210209114542.png"></li>
+</ul>
+</li>
+<li>Q:一致性和共识的区别是什么？<ul>
+<li>一致性：分布式系统中的多个节点之间，给定一系列的操作，在约定协议的保障下，对外界呈现的数据或状态时一致的</li>
+<li>共识：分布式系统中多个节点之间，彼此对某个状态达成一致结果的过程</li>
+<li>一致性强调结果，共识强调达成一致的过程，共识算法是保障系统满足不同程度一致性的核心技术</li>
+</ul>
+</li>
+</ul>
+<h1 id="06-分布式事务：All-or-nothing"><a href="#06-分布式事务：All-or-nothing" class="headerlink" title="06 | 分布式事务：All or nothing"></a>06 | 分布式事务：All or nothing</h1><ul>
+<li>Q:事务和分布式事务是什么？<ul>
+<li>事务：包含一系列操作的、一个有边界的工作序列，有明确的开始和结束标志，且要么被完全执行，要么完全失败，通常指本地（或单机）事务</li>
+<li>分布式事务：在分布式系统中运行的事务，由多个本地事务组合而成</li>
+</ul>
+</li>
+<li>Q:分布式事务基本特征ACID是什么？<ul>
+<li>原子性（Atomicity）：事务的最终状态只有两种，全部执行成功和全部不执行。若处理事务的任何一项操作不成功，就会导致整个事务失败。一旦操作失败，所有操作都会被取消（回滚）</li>
+<li>一致性（Consistency）：事务操作前和操作后，数据的完整性保持一致或满足完整性约束</li>
+<li>隔离性（Isolation）：当系统内多个事务并发执行时，多个事务不会相互干扰，即一个事务内部的操作及使用的数据，对其它并发事务是隔离的</li>
+<li>持久性（Durability）：一个事务完成了，那么它对数据库所做的更新就被永久保存下来了。即使发生系统崩溃或宕机等故障，只要数据库能够被重新访问，那么一定能够将其恢复到事务完成时的状态</li>
+</ul>
+</li>
+<li>Q:刚性事务和柔性事务是什么？<ul>
+<li>刚性事务：遵循ACID原则，具有强一致性。如数据库事务</li>
+<li>柔性事务：根据不同的业务场景使用不同的方法实现最终一致性。即可根据业务的特性做部分取舍，容忍一定时间内的数据不一致，遵循BASE理论</li>
+</ul>
+</li>
+<li>Q:BASE理论是什么？<ul>
+<li>基本可用（Basically Available）：分布式系统出现故障的时候，允许损失一部分功能的可用性</li>
+<li>柔性状态（Soft State）：在柔性事务中，允许系统存在中间状态，且这个中间状态不会影响系统整体可用性。如数据库读写分离，写库（主库）同步到读库（从库）会有一个延时，就是柔性状态</li>
+<li>最终一致性（Eventual Consistency）：事务在操作过程中可能由于同步延迟导致不一致，但最终状态下，数据都是一致的</li>
+<li>BASE理论为了支持大型分布式系统，通过牺牲强一致性，保证最终一致性，来获得高可用性</li>
+</ul>
+</li>
+<li>Q:分布式事务主要解决的问题，以及实现方法有哪3种？<ul>
+<li>主要解决：在分布式环境下，组合事务的一致性问题</li>
+<li>方法：</li>
+<li>1.基于XA协议的二阶段提交协议方法（强一致性，遵从ACID）</li>
+<li>2.三阶段提交协议方法（强一致性，遵从ACID）</li>
+<li>3.基于消息的最终一致性方法（最终一致性，遵从BASE理论）</li>
+</ul>
+</li>
+<li>Q:XA组成有什么？<ul>
+<li>事务管理器（协调者）：负责各个本地资源的提交和回滚</li>
+<li>资源管理器（参与者）：通常由数据库实现</li>
+</ul>
+</li>
+<li>Q:两阶段提交协议如何保证分布在不同节点上的分布式事务的一致性呢?<ul>
+<li>引入一个协调者来管理所有的节点，并确保这些节点正确提交操作结果，若提交失败则放弃事务</li>
+</ul>
+</li>
+<li>Q:两阶段提交协议的执行过程<ul>
+<li>第一阶段：投票(voting)<ul>
+<li>协调者(Coordinator，即事务管理器)会向事务的参与者(Cohort，即本地资源管理器)发起执行操作的CanCommit请求，并等待参与者的响应。参与者接收到请求后，会执行请求中的事务操作，记录日志信息但不提交，待参与者执行成功，则向协调者发送「Yes」消息，表示同意操作；若不成功，则发送「No」消息，表示终止操作</li>
+</ul>
+</li>
+<li>第二阶段：提交(commit)<ul>
+<li>当所有的参与者都返回了操作结果（Yes 或 No 消息）后，系统进入了提交阶段。在提交阶段，协调者会根据所有参与者返回的信息向参与者发送 DoCommit 或 DoAbort 指令：<ul>
+<li>若协调者收到的都是「Yes」消息，则向参与者发送「DoCommit」消息，参与者会完成剩余的操作并释放资源，然后向协调者返回「HaveCommitted」消息</li>
+<li>如果协调者收到的消息中包含「No」消息，则向所有参与者发送「DoAbort」消息，此时发送「Yes」的参与者则会根据之前执行操作时的回滚日志对操作进行回滚，然后所有参与者会向协调者发送「HaveCommitted」消息</li>
+<li>协调者接收到「HaveCommitted」消息，就意味着整个事务结束了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:二阶段提交的算法思路概要<ul>
+<li>协调者下发请求事务操作，参与者将操作结果通知协调者，协调者根据所有参与者的反馈结果决定各参与者是要提交操作还 是撤销操作</li>
+</ul>
+</li>
+<li>Q:基于 XA 的二阶段提交算法的不足<ul>
+<li>同步阻塞问题：二阶段提交算法在执行过程中，所有参与节点都是事务阻塞型的。也就是说，当本地资源管理器占有临界资源时，其他资源管理器如果要访问同一临界资源，会处于阻塞状态</li>
+<li>单点故障问题：基于 XA 的二阶段提交算法类似于集中式算法，一旦事务管理器发生故障，整个系统都处于停滞状态。尤其是在提交阶段，一旦事务管理器发生故障，资源管理器会由于等待管理器的消息，而一直锁定事务资源，导致整个系统被阻塞</li>
+<li>数据不一致问题：在提交阶段，当协调者向参与者发送 DoCommit 请求之后，如果发生了局部网络异常，或者在发送提交请求的过程中协调者发生了故障，就会导致只有一部分参与者接收到了提交请求并执行提交操作，但其他未接到提交请求的那部分参与者则无法执行事务提交。于是整个分布式系统便出现了数据不一致的问题</li>
+</ul>
+</li>
+<li>Q:三阶段提交协议（Three-phase commit protocol，3PC）相对二阶段提交(2PC)的改进是什么<ul>
+<li>为了解决两阶段提交的同步阻塞和数据不一致问题，三阶段提交引入了超时机制和准备阶段</li>
+<li>同时在协调者和参与者中引入超时机制。如果协调者或参与者在规定的时间内没有接收到来自其他节点的响应，就会根据当前的状态选择提交或者终止整个事务</li>
+<li>在第一阶段和第二阶段中间引入了一个准备阶段，也就是在提交阶段之前，加入了一个预提交阶段。在预提交阶段排除一些不一致的情况，保证在最后提交之前各参与节点的状态是一致的</li>
+</ul>
+</li>
+<li>Q:三阶段提交协议的详细过程<ul>
+<li>1.CanCommit阶段<ul>
+<li>协调者向参与者发送请求操作（CanCommit请求），询问参与者是否可以执行事务提交操作，然后等待参与者的响应；参与者收到 CanCommit 请求之后，回复 Yes，表示可以顺利执行事务；否则回复 No</li>
+<li>CanCommit 阶段不同节点之间的事务请求成功和失败的流程，如图</li>
+<li><img src="http://anki190912.xuexihaike.com/20210225155731.png"></li>
+</ul>
+</li>
+<li>2.PreCommit阶段<ul>
+<li>协调者根据参与者的回复情况，来决定是否可以进行 PreCommit 操作<ul>
+<li>如果所有参与者回复的都是“Yes”，那么协调者就会执行事务的预执行：<ul>
+<li>发送预提交请求：协调者向参与者发送 PreCommit 请求，进入预提交阶段</li>
+<li>事务预提交：参与者接收到 PreCommit 请求后执行事务操作，并将 Undo 和 Redo 信息记录到事务日志中</li>
+<li>响应反馈：如果参与者成功执行了事务操作，则返回 ACK 响应，同时开始等待最终指令</li>
+</ul>
+</li>
+<li>假如任何一个参与者向协调者发送了“No”消息，或者等待超时之后，协调者都没有收到参与者的响应，就执行中断事务的操作： <ul>
+<li>发送中断请求：协调者向所有参与者发送“Abort”消息</li>
+<li>终断事务：参与者收到“Abort”消息之后，或超时后仍未收到协调者的消息，执行事务的终断操作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>预执行阶段，不同节点上事务执行成功和失败的流程，如图</li>
+<li><img src="http://anki190912.xuexihaike.com/20210225155951.png"></li>
+</ul>
+</li>
+<li>3.DoCommit阶段<ul>
+<li>DoCmmit 阶段进行真正的事务提交，根据 PreCommit 阶段协调者发送的消息，进入执行提交阶段或事务中断阶段</li>
+<li>执行提交阶段：<ul>
+<li>发送提交请求：协调者接收到所有参与者发送的 Ack 响应，从预提交状态进入到提交状态，并向所有参与者发送 DoCommit 消息</li>
+<li>事务提交：参与者接收到 DoCommit 消息之后，正式提交事务。完成事务提交之后，释放所有锁住的资源。</li>
+<li>响应反馈：参与者提交完事务之后，向协调者发送 Ack 响应</li>
+<li>完成事务：协调者接收到所有参与者的 Ack 响应之后，完成事务</li>
+</ul>
+</li>
+<li>事务中断阶段：<ul>
+<li>发送中断请求：协调者向所有参与者发送 Abort 请求</li>
+<li>事务回滚：参与者接收到 Abort 消息之后，利用其在 PreCommit 阶段记录的 Undo 信息执行事务的回滚操作，并释放所有锁住的资源</li>
+<li>反馈结果：参与者完成事务回滚之后，向协调者发送 Ack 消息</li>
+<li>终断事务：协调者接收到参与者反馈的 Ack 消息之后，执行事务的终断，并结束事务</li>
+</ul>
+</li>
+<li>执行阶段不同节点上事务执行成功和失败 (事务终断) 的流程，如图</li>
+<li><img src="http://anki190912.xuexihaike.com/20210225160141.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:2PC 和 3PC 这两种方法的两个共同的缺点是什么<ul>
+<li>1.都需要锁定资源，降低系统性能</li>
+<li>2.没有解决数据不一致的问题</li>
+</ul>
+</li>
+<li>Q:基于分布式消息的最终一致性方案的核心思想是什么<ul>
+<li>将需要分布式处理的事务通过消息或者日志的方式异步执行，消息或日志可以存到本地文件、数据库或消息队列中，再通过业务规则进行失败重试</li>
+<li>基于分布式消息的最终一致性方案的事务处理，引入了一个消息中间件（Message Queue，MQ），用于在多个应用之间进行消息传递</li>
+<li><img src="http://anki190912.xuexihaike.com/20210225160602.png"></li>
+</ul>
+</li>
+<li>Q:以网上购物为例，阐述分布式消息的最终一致性方案的事务处理<ul>
+<li>假设用户 A 在某电商平台下了一个订单，需要支付 50 元，发现自己的账户余额共 150 元，就使用余额支付，支付成功之后，订单状态修改为支付成功，然后通知仓库发货</li>
+<li>在该事件中，涉及到了订单系统、支付系统、仓库系统，这三个系统是相互独立的应用，通过远程服务进行调用</li>
+<li><img src="http://anki190912.xuexihaike.com/20210225161139.png"></li>
+<li>整个购物流程如下</li>
+<li><img src="http://anki190912.xuexihaike.com/20210225161206.png"></li>
+<li><ol>
+<li>订单系统把订单消息发给消息中间件，消息状态标记为“待确认”</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>消息中间件收到消息后，进行消息持久化操作，即在消息存储系统中新增一条状态为“待发送”的消息</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>消息中间件返回消息持久化结果（成功 / 失败），订单系统根据返回结果判断如何进行业务操作。失败，放弃订单，结束（必要时向上层返回失败结果）；成功，则创建订单</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>订单操作完成后，把操作结果（成功 / 失败）发送给消息中间件</li>
+</ol>
+</li>
+<li><ol start="5">
+<li>消息中间件收到业务操作结果后，根据结果进行处理：失败，删除消息存储中的消息，结束；成功，则更新消息存储中的消息状态为“待发送（可发送）”，并执行消息投递</li>
+</ol>
+</li>
+<li><ol start="6">
+<li>如果消息状态为“可发送”，则 MQ 会将消息发送给支付系统，表示已经创建好订单，需要对订单进行支付。支付系统也按照上述方式进行订单支付操作</li>
+</ol>
+</li>
+<li><ol start="7">
+<li>订单系统支付完成后，会将支付消息返回给消息中间件，中间件将消息传送给订单系统。订单系统再调用库存系统，进行出货操作</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>Q:三种分布式事务的实现方式对比图<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210225160719.png"></li>
+</ul>
+</li>
+<li>Q:刚性事务和柔性事务是什么？<ul>
+<li>刚性事务，遵循 ACID 原则，具有强一致性。比如，数据库事务</li>
+<li>柔性事务，其实就是根据不同的业务场景使用不同的方法实现最终一致性，即可根据业务的特性做部分取舍，容忍一定时间内的数据不一致</li>
+</ul>
+</li>
+<li>Q:BASE理论是什么？<ul>
+<li>基本可用（Basically Available）：分布式系统出现故障的时候，允许损失一部分功能的可用性</li>
+<li>柔性状态（Soft State）：在柔性事务中，允许系统存在中间状态，且这个中间状态不会影响系统整体可用性。比如，数据库读写分离，写库同步到读库（主库同步到从库）会有一个延时，其实就是一种柔性状态</li>
+<li>最终一致性 （Eventual Consistency）：事务在操作过程中可能会由于同步延迟等问题导致不一致，但最终状态下，数据都是一致的</li>
+<li>BASE 理论为了支持大型分布式系统，通过牺牲强一致性，保证最终一致性，来获得高可用性，是对 ACID 原则的弱化</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>恶魔奶爸语法1-3课</title>
     <url>/gramma1-3/</url>
     <content><![CDATA[<h1 id="1-英语简单句的造句规则和基本语法概念"><a href="#1-英语简单句的造句规则和基本语法概念" class="headerlink" title="1.英语简单句的造句规则和基本语法概念"></a>1.英语简单句的造句规则和基本语法概念</h1><h2 id="一些基本的语法概念"><a href="#一些基本的语法概念" class="headerlink" title="一些基本的语法概念"></a>一些基本的语法概念</h2><ul>
@@ -5561,6 +6615,289 @@ tensor([10.])</code></pre>
 </ul>
 <h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
 <li><a href="https://leetcode-cn.com/leetbook/detail/networks-interview-highlights/">计算机网络面试突击 leetbook</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>网络</category>
+      </categories>
+      <tags>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《TCP/IP网络编程》第1-5章学习笔记</title>
+    <url>/tcpip-network-programming-1/</url>
+    <content><![CDATA[<p>注：博主只关注编程实现的方面以及linux部分，部分网络原理讲解和windows实现部分跳过</p>
+<h1 id="第-1-章-理解网络编程和套接字"><a href="#第-1-章-理解网络编程和套接字" class="headerlink" title="第 1 章 理解网络编程和套接字"></a>第 1 章 理解网络编程和套接字</h1><h2 id="1-1-理解网络编程和套接字"><a href="#1-1-理解网络编程和套接字" class="headerlink" title="1.1 理解网络编程和套接字"></a>1.1 理解网络编程和套接字</h2><ul>
+<li>Q:网络编程中接受连接请求的套接字创建过程？<ul>
+<li>1.调用 socket 函数创建套接字<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回文件描述符，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>2.调用 bind 函数分配IP地址和端口号<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> sockfd, </span></span></span><br><span class="line"><span class="function"><span class="params">         struct sockaddr *myaddr, </span></span></span><br><span class="line"><span class="function"><span class="params">         <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>3.调用 listen 函数转换为可接受请求状态<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">listen</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> backlog)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>4.调用 accept 函数受理套接字请求<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> sockfd,</span></span></span><br><span class="line"><span class="function"><span class="params">           struct sockaddr *addr,</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">socklen_t</span> *addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回文件描述符，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:请求连接客户端程序的套接字的创建过程？<ul>
+<li>1.调用 socket 函数 和 connect 函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">conncet</span><span class="params">(<span class="keyword">int</span> sockfd, </span></span></span><br><span class="line"><span class="function"><span class="params">            struct sockaddr *serv_addr,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>2.与服务端共同运行以收发字符串数据</li>
+</ul>
+</li>
+<li>Q:Hello World服务端和客户端的例子<ul>
+<li>服务端hello_server.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock;</span><br><span class="line">    <span class="keyword">int</span> clnt_sock;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_addr</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">clnt_addr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> clnt_addr_size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> message[] = <span class="string">&quot;Hello World!&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 socket 函数创建套接字</span></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (serv_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_addr));</span><br><span class="line">    serv_addr.sin_family = AF_INET;</span><br><span class="line">    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_addr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 调用 bind 函数分配ip地址和端口号</span></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock, (struct sockaddr*)&amp;serv_addr, <span class="keyword">sizeof</span>(serv_addr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 listen 函数将套接字转为可接受连接状态</span></span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    clnt_addr_size = <span class="keyword">sizeof</span>(clnt_addr);</span><br><span class="line">    <span class="comment">// 调用 accept 函数受理连接请求。如果在没有连接请求的情况下调用该函数，</span></span><br><span class="line">    <span class="comment">// 则不会返回，直到有连接请求为止</span></span><br><span class="line">    clnt_sock = accept(serv_sock, (struct sockaddr*)&amp;clnt_addr, &amp;clnt_addr_size);</span><br><span class="line">    <span class="keyword">if</span> (clnt_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;accept() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// write 函数用于传输数据，若程序经过 accept 这一行执行到本行，</span></span><br><span class="line">    <span class="comment">// 则说明已经有了连接请求</span></span><br><span class="line">    write(clnt_sock, message, <span class="keyword">sizeof</span>(message));</span><br><span class="line">    close(clnt_sock);</span><br><span class="line">    close(serv_sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>客户端hello_client.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_addr</span>;</span></span><br><span class="line">    <span class="keyword">char</span> message[<span class="number">30</span>];</span><br><span class="line">    <span class="keyword">int</span> str_len;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;IP&gt; &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建套接字，此时套接字并不马上分为服务端和客户端</span></span><br><span class="line">    <span class="comment">// 如果紧接着调用 bind,listen 函数，将成为服务器套接字</span></span><br><span class="line">    <span class="comment">// 如果调用 connect 函数，将成为客户端套接字</span></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_addr));</span><br><span class="line">    serv_addr.sin_family = AF_INET;</span><br><span class="line">    serv_addr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_addr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 connect 函数向服务器发送连接请求</span></span><br><span class="line">    <span class="keyword">if</span> (connect(sock, (struct sockaddr *)&amp;serv_addr, <span class="keyword">sizeof</span>(serv_addr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;connect() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    str_len = read(sock, message, <span class="keyword">sizeof</span>(message) - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (str_len == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;read() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Message from server : %s \n&quot;</span>, message);</span><br><span class="line">    close(sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行<ul>
+<li>服务端<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc hello_server.c -o hserver</span><br><span class="line">shiqi@inspiron:~/network$ ./hserver 9190</span><br></pre></td></tr></table></figure></li>
+<li>客户端<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc hello_client.c -o hclient</span><br><span class="line">shiqi@inspiron:~/network$ ./hclient 127.0.0.1 9190</span><br><span class="line">Message from server : Hello World!</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-2-基于-Linux-的文件操作"><a href="#1-2-基于-Linux-的文件操作" class="headerlink" title="1.2 基于 Linux 的文件操作"></a>1.2 基于 Linux 的文件操作</h2><ul>
+<li>Q:分配给标准输入输出及标准错误的文件描述符<ul>
+<li>0：标准输入(Standard Input)</li>
+<li>1：标准输出(Standard Output)</li>
+<li>2：标准错误(Standard Error)</li>
+</ul>
+</li>
+<li>Q:打开文件<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> * path, <span class="keyword">int</span> flag)</span></span>;</span><br><span class="line"><span class="comment">// path：文件名的字符串地址</span></span><br><span class="line"><span class="comment">// flag：文件打开模式（文件特性信息）</span></span><br><span class="line"><span class="comment">// 成功时返回文件描述符，失败时返回-1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>文件打开模式，如需传递多个参数，可通过位或运算符组合传递</li>
+<li>O_CREAT：必要时创建文件</li>
+<li>O_TRUNC：删除全部现有数据</li>
+<li>O_APPEND：维持现有数据，保存到其后面</li>
+<li>O_RDONLY：只读打开</li>
+<li>O_WRONLY：只写打开</li>
+<li>O_RDWR：读写打开</li>
+</ul>
+</li>
+<li>Q:关闭文件<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">close</span><span class="params">(<span class="keyword">int</span> fd)</span></span>;</span><br><span class="line"><span class="comment">// fd：需要关闭的文件或套接字的文件描述符</span></span><br><span class="line"><span class="comment">// 成功时返回 0 ，失败时返回 -1</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:将数据写入文件<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span> * buf, <span class="keyword">size_t</span> nbytes)</span></span>;</span><br><span class="line"><span class="comment">// fd：显示数据传输对象的文件描述符</span></span><br><span class="line"><span class="comment">// buf：保存要传输数据的缓冲值地址</span></span><br><span class="line"><span class="comment">// nbytes：要传输数据的字节数</span></span><br><span class="line"><span class="comment">// 成功时返回写入的字节数 ，失败时返回 -1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>在此函数的定义中，size_t 是通过 typedef 声明的 unsigned int 类型。对 ssize_t 来说，ssize_t 前面多加的 s 代表 signed ，即 ssize_t 是通过 typedef 声明的 signed int 类型</li>
+</ul>
+</li>
+<li>Q:创建新文件并保存数据示例low_open.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf[] = <span class="string">&quot;Let&#x27;s go!\n&quot;</span>;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// O_CREAT | O_WRONLY | O_TRUNC 是文件打开模式，将创建新文件，并且只能写</span></span><br><span class="line">    <span class="comment">// 如存在 data.txt 文件，则清空文件中的全部数据</span></span><br><span class="line">    fd = open(<span class="string">&quot;data.txt&quot;</span>, O_CREAT|O_WRONLY|O_TRUNC);</span><br><span class="line">    <span class="keyword">if</span> (fd == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;open() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;file descriptor: %d \n&quot;</span>, fd);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 向对应 fd 中保存的文件描述符的文件传输 buf 中保存的数据</span></span><br><span class="line">    <span class="keyword">if</span> (write(fd, buf, <span class="keyword">sizeof</span>(buf)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;write() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(fd);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc low_open.c -o lopen</span><br><span class="line">shiqi@inspiron:~/network$ ./lopen</span><br><span class="line">file descriptor: 3</span><br><span class="line">shiqi@inspiron:~/network$ cat data.txt</span><br><span class="line">Let&#x27;s go!</span><br></pre></td></tr></table></figure></li>
+<li>Q:读取文件中的数据<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">read</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>;</span><br><span class="line"><span class="comment">// fd： 显示数据接收对象的文件描述符</span></span><br><span class="line"><span class="comment">// buf： 要保存接收的数据的缓冲地址值。</span></span><br><span class="line"><span class="comment">// nbytes： 要接收数据的最大字节数</span></span><br><span class="line"><span class="comment">// 成功时返回接收的字节数（但遇到文件结尾则返回 0），失败时返回 -1</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:通过read()读取data.txt中的数据示例low_read.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 100</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> fd = open(<span class="string">&quot;data.txt&quot;</span>, O_RDONLY);</span><br><span class="line">    <span class="keyword">if</span> (fd == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;open() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;file descriptor: %d \n&quot;</span>, fd);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (read(fd, buf, <span class="keyword">sizeof</span>(buf)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;read() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;file data: %s&quot;</span>, buf);</span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc low_read.c -o lread</span><br><span class="line">shiqi@inspiron:~/network$ ./lread</span><br><span class="line">file descriptor: 3</span><br><span class="line">file data: Let&#x27;s go!</span><br></pre></td></tr></table></figure></li>
+<li>Q:同时创建文件和套接字，并用整数型态比较返回的文件描述符的值，程序示例fd_seri.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd1 = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> fd2 = open(<span class="string">&quot;test.dat&quot;</span>, O_CREAT | O_WRONLY | O_TRUNC);</span><br><span class="line">    <span class="keyword">int</span> fd3 = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fd1: %d\n&quot;</span>, fd1);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fd2: %d\n&quot;</span>, fd2);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fd3: %d\n&quot;</span>, fd3);</span><br><span class="line"></span><br><span class="line">    close(fd1);</span><br><span class="line">    close(fd2);</span><br><span class="line">    close(fd3);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc fd_seri.c -o fds</span><br><span class="line">shiqi@inspiron:~/network$ ./fds</span><br><span class="line">fd1: 3</span><br><span class="line">fd2: 4</span><br><span class="line">fd3: 5</span><br></pre></td></tr></table></figure>
+<h2 id="1-3-基于-Windows-平台的实现"><a href="#1-3-基于-Windows-平台的实现" class="headerlink" title="1.3 基于 Windows 平台的实现"></a>1.3 基于 Windows 平台的实现</h2><h2 id="1-4-基于-Windows-的套接字相关函数及示例"><a href="#1-4-基于-Windows-的套接字相关函数及示例" class="headerlink" title="1.4 基于 Windows 的套接字相关函数及示例"></a>1.4 基于 Windows 的套接字相关函数及示例</h2></li>
+</ul>
+<h1 id="第-2-章-套接字类型与协议设置"><a href="#第-2-章-套接字类型与协议设置" class="headerlink" title="第 2 章 套接字类型与协议设置"></a>第 2 章 套接字类型与协议设置</h1><h2 id="2-1-套接字协议及数据传输特性"><a href="#2-1-套接字协议及数据传输特性" class="headerlink" title="2.1 套接字协议及数据传输特性"></a>2.1 套接字协议及数据传输特性</h2><ul>
+<li>Q:创建套接字的 socket 函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span>;</span><br><span class="line"><span class="comment">// domain：套接字中使用的协议族(Protocol Family)信息</span></span><br><span class="line"><span class="comment">// type：套接字数据传输类型信息</span></span><br><span class="line"><span class="comment">// protocol：计算机间通信中使用的协议信息</span></span><br><span class="line"><span class="comment">// 成功时返回文件描述符，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:头文件 sys/socket.h 中声明的协议族<ul>
+<li>通过 socket 函数的第一个参数传递套接字中使用的协议分类信息，即协议族(Protocol Family)</li>
+<li>PF_INETIPV4：互联网协议族</li>
+<li>PF_INET6IPV6：互联网协议族</li>
+<li>PF_LOCAL：本地通信 Unix 协议族</li>
+<li>PF_PACKET：底层套接字的协议族</li>
+<li>PF_IPX：IPX Novel 协议族</li>
+<li>套接字中实际采用的最终的协议信息是通过 socket 函数的第三个参数传递的。在指定的协议族范围内通过第一个参数决定第三个参数</li>
+</ul>
+</li>
+<li>Q:套接字类型1：面向连接的套接字(SOCK_STREAM)<ul>
+<li>特点<ul>
+<li>传输过程中数据不会消失</li>
+<li>按序传输数据</li>
+<li>传输的数据不存在数据边界（Boundary）</li>
+</ul>
+</li>
+<li>收发数据的套接字内部有缓冲（buffer），即字节数组。通过套接字传输的数据将保存到该数组。因此收到数据并不意味着马上调用 read 函数。只要不超过数组容量，则有可能在数据填充满缓冲后通过一次或多次 read 函数调用读取</li>
+<li>在面向连接的套接字中，read、write 函数的调用次数无太大意义，即为不存在数据边界</li>
+<li>面向连接的套接字可总结为：可靠的、按序传递的、基于字节的面向连接的数据传输方式的套接字</li>
+</ul>
+</li>
+<li>Q:套接字类型2：面向消息的套接字(SOCK_DGRAM)<ul>
+<li>特点<ul>
+<li>强调快速传输而非传输有序</li>
+<li>传输的数据可能丢失也可能损毁</li>
+<li>传输的数据有边界</li>
+<li>限制每次传输数据的大小</li>
+</ul>
+</li>
+<li>面向消息的套接字比面向连接的套接字具有更快的传输速度，但无法避免数据丢失或损毁。另外，每次传输的数据大小具有一定限制，并存在数据边界。存在数据边界意味着接收数据的次数应和传输次数相同</li>
+<li>面向消息的套接字特性总结：不可靠的、不按序传递的、以数据的高速传输为目的的套接字</li>
+</ul>
+</li>
+<li>Q:协议的最终选择<ul>
+<li>socket 函数的第三个参数决定最终采用的协议。因同一协议族中存在多个数据传输方式相同的协议，需要通过第三个参数指定具体的协议</li>
+<li>创建IPv4协议族(PF_INET)中面向连接的套接字(SOCK_STREAM)，满足这两个条件的协议为 IPPROTO_TCP，即TCP套接字</li>
+<li><code>int tcp_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)</code></li>
+<li>创建IPv4协议族(PF_INET)中面向消息的套接字(SOCK_DGRAM)，满足这两个条件的协议为 IPPROTO_UDP，即UDP套接字</li>
+<li><code>int udp_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)</code></li>
+</ul>
+</li>
+<li>Q:面向连接的套接字:TCP套接字示例<ul>
+<li>服务端tcp_server.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock;</span><br><span class="line">    <span class="keyword">int</span> clnt_sock;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_addr</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">clnt_addr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> clnt_addr_size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> message[] = <span class="string">&quot;Hello World!&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 socket 函数创建套接字</span></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (serv_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_addr));</span><br><span class="line">    serv_addr.sin_family = AF_INET;</span><br><span class="line">    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_addr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 调用 bind 函数分配ip地址和端口号</span></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock, (struct sockaddr*)&amp;serv_addr, <span class="keyword">sizeof</span>(serv_addr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 listen 函数将套接字转为可接受连接状态</span></span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    clnt_addr_size = <span class="keyword">sizeof</span>(clnt_addr);</span><br><span class="line">    <span class="comment">// 调用 accept 函数受理连接请求。如果在没有连接请求的情况下调用该函数，</span></span><br><span class="line">    <span class="comment">// 则不会返回，直到有连接请求为止</span></span><br><span class="line">    clnt_sock = accept(serv_sock, (struct sockaddr*)&amp;clnt_addr, &amp;clnt_addr_size);</span><br><span class="line">    <span class="keyword">if</span> (clnt_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;accept() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// write 函数用于传输数据，若程序经过 accept 这一行执行到本行，</span></span><br><span class="line">    <span class="comment">// 则说明已经有了连接请求</span></span><br><span class="line">    write(clnt_sock, message, <span class="keyword">sizeof</span>(message));</span><br><span class="line">    close(clnt_sock);</span><br><span class="line">    close(serv_sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>客户端tcp_client.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_addr</span>;</span></span><br><span class="line">    <span class="keyword">char</span> message[<span class="number">30</span>];</span><br><span class="line">    <span class="keyword">int</span> str_len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> idx = <span class="number">0</span>, read_len = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;IP&gt; &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建TCP套接字，此时套接字并不马上分为服务端和客户端</span></span><br><span class="line">    <span class="comment">// 如果紧接着调用 bind,listen 函数，将成为服务器套接字</span></span><br><span class="line">    <span class="comment">// 如果调用 connect 函数，将成为客户端套接字</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// 若前两个参数使用PF_INET 和 SOCK_STREAM，</span></span><br><span class="line">    <span class="comment">// 则可以省略第三个参数 IPPROTO_TCP</span></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_addr));</span><br><span class="line">    serv_addr.sin_family = AF_INET;</span><br><span class="line">    serv_addr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_addr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 connect 函数向服务器发送连接请求</span></span><br><span class="line">    <span class="keyword">if</span> (connect(sock, (struct sockaddr *)&amp;serv_addr, <span class="keyword">sizeof</span>(serv_addr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;connect() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// while循环中反复调用read函数，每次读取1个字节。</span></span><br><span class="line">    <span class="comment">// 如果read返回0，即文件末尾，则循环结束</span></span><br><span class="line">    <span class="keyword">while</span> (read_len = read(sock, &amp;message[idx++], <span class="number">1</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (str_len == <span class="number">-1</span>) &#123;</span><br><span class="line">            error_handling(<span class="string">&quot;read() error!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        str_len += read_len;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Message from server : %s \n&quot;</span>, message);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Function read call count : %d \n&quot;</span>, str_len);</span><br><span class="line">    close(sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行<ul>
+<li>服务端<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc tcp_server.c -o hserver</span><br><span class="line">shiqi@inspiron:~/network$ ./hserver 9191</span><br></pre></td></tr></table></figure></li>
+<li>客户端<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc tcp_client.c -o hclient</span><br><span class="line">shiqi@inspiron:~/network$ ./hclient 127.0.0.1 9191</span><br><span class="line">Message from server : Hello World!</span><br><span class="line">Function read call count : 13</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-3-章-地址族与数据序列"><a href="#第-3-章-地址族与数据序列" class="headerlink" title="第 3 章 地址族与数据序列"></a>第 3 章 地址族与数据序列</h1><h2 id="3-1-分配给套接字的-IP-地址与端口号"><a href="#3-1-分配给套接字的-IP-地址与端口号" class="headerlink" title="3.1 分配给套接字的 IP 地址与端口号"></a>3.1 分配给套接字的 IP 地址与端口号</h2><h2 id="3-2-地址信息的表示"><a href="#3-2-地址信息的表示" class="headerlink" title="3.2 地址信息的表示"></a>3.2 地址信息的表示</h2><ul>
+<li>Q:表示IPv4地址的结构体<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> &#123;</span></span><br><span class="line">    <span class="keyword">sa_family_t</span>    sin_family;  <span class="comment">// 地址族（Address Family）</span></span><br><span class="line">    <span class="keyword">uint16_t</span>       sin_port;    <span class="comment">// 16位TCP/UDP端口号</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">sin_addr</span>;</span>    <span class="comment">// 32位IP地址</span></span><br><span class="line">    <span class="keyword">char</span>           sin_zero[<span class="number">8</span>]; <span class="comment">// 不使用</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> &#123;</span></span><br><span class="line">    <span class="keyword">in_addr_t</span> s_addr; <span class="comment">// 32位IPv4地址</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>定义的数据类型说明<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210213152341.png"></li>
+</ul>
+</li>
+<li>sin_family：指定每种协议族适用的地址族(Address Family)<ul>
+<li>AF_INET：IPV4用的地址族</li>
+<li>AF_INET6：IPV6用的地址族</li>
+<li>AF_LOCAL：本地通信中采用的 Unix 协议的地址族</li>
+</ul>
+</li>
+<li>sin_port<ul>
+<li>保持16位端口号，以网络字节序保存</li>
+</ul>
+</li>
+<li>sin_addr<ul>
+<li>保存32位IP地址信息，且以网络字节序保存，可同时观察结构体in_addr，其中声明为uint32_t，只需当作32位整数型即可</li>
+</ul>
+</li>
+<li>sin_zero<ul>
+<li>无特殊含义。只是为使结构体sockaddr_in的大小与sockaddr结构体保持一致而插 入的成员。必需填充为0，否则无法得到想要的结果。</li>
+<li>sockaddr_in结构体变量地址值将以如下方式传递给bind函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_addr</span>;</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">if</span> (bind(serv_sock, (struct sockaddr *)&amp;serv_addr,</span><br><span class="line">         <span class="keyword">sizeof</span>(serv_addr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">    error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>此处 bind 第二个参数期望得到的是 sockaddr 结构体变量的地址值，包括地址族、端口号、IP地址等<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> &#123;</span></span><br><span class="line">    <span class="keyword">sa_family_t</span> sin_family; <span class="comment">// 地址族(Address Family)</span></span><br><span class="line">    <span class="keyword">char</span> sa_data[<span class="number">14</span>];       <span class="comment">// 地址信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>该结构体成员 sa_data 保存的地址信息中需包含IP地址和端口号，剩余部分应填充0。而这对于包含地址的信息非常麻烦，所以有sockaddr_in结构体，最后转换为sockaddr 型的结构体变量，再传递给 bind 函数</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-3-网络字节序与地址变换"><a href="#3-3-网络字节序与地址变换" class="headerlink" title="3.3 网络字节序与地址变换"></a>3.3 网络字节序与地址变换</h2><ul>
+<li>Q:CPU向内存保存数据的2种方式<ul>
+<li>大端序（Big Endian）：高位字节存放到低位地址</li>
+<li>小端序（Little Endian）：高位字节存放到高位地址</li>
+<li><img src="http://anki190912.xuexihaike.com/20210213160004.png"></li>
+<li>网络传输数据时约定统一为大端序，即网络字节序(Network Byte Order)</li>
+</ul>
+</li>
+<li>Q:字节序转换(Endian Conversions)函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="title">htons</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">short</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="title">ntohs</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">short</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="title">htonl</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="title">ntohl</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>h：主机（host）字节序</li>
+<li>n：主机（host）字节序</li>
+<li>s：2个字节short，用于端口号转换</li>
+<li>l：4个字节long，用于IP地址转换</li>
+</ul>
+</li>
+<li>Q:字节序转换示例程序endian_conv.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> host_port = <span class="number">0x1234</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> net_port = htons(host_port);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> host_addr = <span class="number">0x12345678</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> net_addr = htonl(host_addr);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Host ordered port: %#x \n&quot;</span>, host_port);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Network ordered port: %#x \n&quot;</span>, net_port);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Host ordered address: %#lx \n&quot;</span>, host_addr);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Network ordered address: %#lx \n&quot;</span>, net_addr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc endian_conv.c -o conv</span><br><span class="line">shiqi@inspiron:~/network$ ./conv</span><br><span class="line">Host ordered port: 0x1234</span><br><span class="line">Network ordered port: 0x3412</span><br><span class="line">Host ordered address: 0x12345678</span><br><span class="line">Network ordered address: 0x78563412</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="3-4-网络地址的初始化与分配"><a href="#3-4-网络地址的初始化与分配" class="headerlink" title="3.4 网络地址的初始化与分配"></a>3.4 网络地址的初始化与分配</h2><ul>
+<li>Q:将字符串形式的IP地址转换成32位整数型数据，并同时进行网络字节序转换的inet_addr<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">in_addr_t</span> <span class="title">inet_addr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> * <span class="built_in">string</span>)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回32位大端序整数型值，失败时返回INADDR_NONE</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>示例inet_addr.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> * addr1 = <span class="string">&quot;1.2.3.4&quot;</span>;</span><br><span class="line">    <span class="keyword">char</span> * addr2 = <span class="string">&quot;1.2.3.256&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> conv_addr = inet_addr(addr1);</span><br><span class="line">    <span class="keyword">if</span> (conv_addr == INADDR_NONE) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Error occured!\n&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Network ordered integer addr: %#lx \n&quot;</span>, conv_addr);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    conv_addr = inet_addr(addr2);</span><br><span class="line">    <span class="keyword">if</span> (conv_addr == INADDR_NONE) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Error occured!\n&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Network ordered integer addr: %#lx \n&quot;</span>, conv_addr);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc inet_addr.c -o addr</span><br><span class="line">shiqi@inspiron:~/network$ ./addr</span><br><span class="line">Network ordered integer addr: 0x4030201</span><br><span class="line">Error occured!</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:利用了in_addr结构体将字符串形式IP地址转换为32位网络字节序整数返回的inet_aton函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_aton</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> * <span class="built_in">string</span>, struct in_addr * addr)</span></span>;</span><br><span class="line"><span class="comment">// string：含有需转换的IP地址信息的字符串地址值</span></span><br><span class="line"><span class="comment">// addr：将保存转换结果的in_addr结构体变量的地址值</span></span><br><span class="line"><span class="comment">// 成功时返回 1 ，失败时返回 0</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>示例inet_aton.c<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;arpa/inet.h&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> error_handling(char *message)</span><br><span class="line">&#123;</span><br><span class="line">    fputs(message, stderr);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, stderr);</span><br><span class="line">    exit(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    char * addr = <span class="string">&quot;127.232.124.79&quot;</span>;</span><br><span class="line">    struct sockaddr_in addr_inet;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!inet_aton(addr, &amp;addr_inet.sin_addr)) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;Conversion error&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        printf(<span class="string">&quot;Network ordered integer addr: %#x \n&quot;</span>,</span><br><span class="line">               addr_inet.sin_addr.s_addr);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc inet_aton.c -o aton</span><br><span class="line">shiqi@inspiron:~/network$ ./aton</span><br><span class="line">Network ordered integer addr: 0x4f7ce87f</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:把网络字节序整数型IP地址转换为字符串形式的inet_ntoa函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span> * <span class="title">inet_ntoa</span><span class="params">(struct in_addr adr)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回转换的字符串地址值，失败时返回-1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>注意，返回值为char指针。返回字符串地址意味着字符串已经保存在内存空间，但是该函数未向程序员要求分配内存，而是在内部申请了内存保存了字符串</li>
+<li>即调用完该函数候要立即把字符串信息复制到其他内存空间。原因是若再次调用inet_ntoa函数可能会覆盖之前保存的字符串信息。即再次调用 inet_ntoa 函数前返回的字符串地址是有效的。长期保存则应复制到其它内存空间</li>
+<li>示例inet_ntoa.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">addr1</span>, <span class="title">addr2</span>;</span></span><br><span class="line">    <span class="keyword">char</span> * str_ptr;</span><br><span class="line">    <span class="keyword">char</span> str_arr[<span class="number">20</span>];</span><br><span class="line"></span><br><span class="line">    addr1.sin_addr.s_addr = htonl(<span class="number">0x1020304</span>);</span><br><span class="line">    addr2.sin_addr.s_addr = htonl(<span class="number">0x1010101</span>);</span><br><span class="line"></span><br><span class="line">    str_ptr = inet_ntoa(addr1.sin_addr);</span><br><span class="line">    <span class="built_in">strcpy</span>(str_arr, str_ptr);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Dotted-Decimal notation1: %s \n&quot;</span>, str_ptr);</span><br><span class="line"></span><br><span class="line">    inet_ntoa(addr2.sin_addr);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Dotted-Decimal notation2: %s \n&quot;</span>, str_ptr);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Dotted-Decimal notation3: %s \n&quot;</span>, str_arr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc inet_ntoa.c -o ntoa</span><br><span class="line">shiqi@inspiron:~/network$ ./ntoa</span><br><span class="line">Dotted-Decimal notation1: 1.2.3.4</span><br><span class="line">Dotted-Decimal notation2: 1.1.1.1</span><br><span class="line">Dotted-Decimal notation3: 1.2.3.4</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:套接字创建过程中常见的网络地址信息初始化方法<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">addr</span>;</span></span><br><span class="line"><span class="keyword">char</span> * serv_ip = <span class="string">&quot;211.217.168.13&quot;</span>; <span class="comment">// 声明IP地址字符串</span></span><br><span class="line"><span class="keyword">char</span> * serv_port = <span class="string">&quot;9190&quot;</span>;         <span class="comment">// 声明端口号字符串</span></span><br><span class="line"><span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(addr));    <span class="comment">// 结构体变量 addr 的所有成员初始化为0</span></span><br><span class="line">addr.sin_family = AF_INET;                 <span class="comment">// 指定地址族</span></span><br><span class="line">addr.sin_addr.s_addr = inet_addr(serv_ip); <span class="comment">// 基于字符串的IP地址初始化</span></span><br><span class="line">addr.sin_port = htons(atoi(serv_port));    <span class="comment">// 基于字符串的IP地址端口号初始化</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>服务器端声明sockaddr_in结构体，将其初始化为赋予服务器端IP和套接字的端口号，然后调用bind函数</li>
+<li>客户端声明sockaddr_in结构体，并初始化为要与之连接的服务器端套接字的IP和端口号，然后调用connect函数</li>
+</ul>
+</li>
+<li>Q:服务器端使用INADDR_ANY自动获取运行服务器端的计算机IP地址<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">addr</span>;</span></span><br><span class="line"><span class="keyword">char</span> * serv_port = <span class="string">&quot;9190&quot;</span>;</span><br><span class="line"><span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(addr));</span><br><span class="line">addr.sin_family = AF_INET;</span><br><span class="line">addr.sin_addr.s_addr = htonl(INADDR_ANY); <span class="comment">// 注意这里</span></span><br><span class="line">addr.sin_port = htons(atoi(serv_port));</span><br></pre></td></tr></table></figure>
+<ul>
+<li>若同一计算机已分配多个IP地址(多宿主(Multi-homed)计算机，一般路由器属于这一类)，则只要端口号一致，即可从不同IP地址接受数据。服务器优先考虑这种方式</li>
+</ul>
+</li>
+<li>Q:向套接字分配网络地址bind<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> sockfd, struct sockaddr * myaddr, <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// sockfd：要分配地址信息(IP地址和端口号)的套接字文件描述符</span></span><br><span class="line"><span class="comment">// myaddr：存有地址信息的结构体变量地址值</span></span><br><span class="line"><span class="comment">// addrlen：第二个结构体变量的长度</span></span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第-4-章-基于-TCP-的服务端-客户端（1）"><a href="#第-4-章-基于-TCP-的服务端-客户端（1）" class="headerlink" title="第 4 章 基于 TCP 的服务端/客户端（1）"></a>第 4 章 基于 TCP 的服务端/客户端（1）</h1><h2 id="4-1-理解-TCP-和-UDP"><a href="#4-1-理解-TCP-和-UDP" class="headerlink" title="4.1 理解 TCP 和 UDP"></a>4.1 理解 TCP 和 UDP</h2><h2 id="4-2-实现基于-TCP-的服务器-客户端"><a href="#4-2-实现基于-TCP-的服务器-客户端" class="headerlink" title="4.2 实现基于 TCP 的服务器/客户端"></a>4.2 实现基于 TCP 的服务器/客户端</h2><ul>
+<li>Q:TCP 服务端的默认函数的调用程序<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210213171357.png"></li>
+</ul>
+</li>
+<li>Q:进入等待连接请求状态的listen函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">listen</span><span class="params">(<span class="keyword">int</span> sock, <span class="keyword">int</span> backlog)</span></span>;</span><br><span class="line"><span class="comment">// sock：希望进入等待连接请求状态的套接字文件描述符，</span></span><br><span class="line"><span class="comment">//       传递的描述符套接字参数成为服务端套接字（监听套接字）</span></span><br><span class="line"><span class="comment">// backlog：连接请求等待队列的长度，若为5，则队列长度为5，</span></span><br><span class="line"><span class="comment">//          表示最多使5个连接请求进入队列</span></span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:受理客户端连接请求的accept函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> sock, sockaddr * addr, <span class="keyword">socklen_t</span> * addrlen)</span></span>;</span><br><span class="line"><span class="comment">// sock: 服务端套接字的文件描述符</span></span><br><span class="line"><span class="comment">// addr: 保存发起连接请求的客户端地址信息的变量地址值</span></span><br><span class="line"><span class="comment">//       调用函数后向传递来的地址变量参数填充客户端地址信息</span></span><br><span class="line"><span class="comment">// addrlen: 第二个参数addr结构体的长度，但是存放有长度的变量地址。</span></span><br><span class="line"><span class="comment">//          函数调用完成后，该变量即被填入客户端地址长度</span></span><br><span class="line"><span class="comment">// 成功时返回文件描述符，失败时返回-1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>accept 函数受理连接请求队列中待处理的客户端连接请求。函数调用成功时，accept 函数内部将产生用于数据I/O的套接字，并返回其文件描述符</li>
+<li>需要强调的是，套接字是自动创建的，并自动与发起连接请求的客户端建立连接</li>
+</ul>
+</li>
+<li>Q:TCP 客户端的默认函数调用顺序<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210213180234.png"></li>
+</ul>
+</li>
+<li>Q:客户端发起连接请求的connect函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">connect</span><span class="params">(<span class="keyword">int</span> sock, </span></span></span><br><span class="line"><span class="function"><span class="params">            struct sockaddr * servaddr, </span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// sock: 客户端套接字文件描述符</span></span><br><span class="line"><span class="comment">// servaddr: 保存目标服务器端地址信息的变量地址值</span></span><br><span class="line"><span class="comment">// addrlen: 以字节为单位传递给第二个结构体参数 servaddr 的变量地址长度</span></span><br><span class="line"><span class="comment">// 成功时返回0，失败返回-1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>客户端调用 connect 函数候，发生以下函数之一才会返回（完成函数调用）:<ul>
+<li>服务器接受连接请求</li>
+<li>发生断网等异常情况而中断连接请求</li>
+</ul>
+</li>
+<li>注意：「接受连接」并不代表服务端调用accept函数，其实是服务端把连接请求信息记录到等待队列。因此 connect 函数返回后并不立即进行数据交换</li>
+</ul>
+</li>
+<li>Q:基于 TCP 的服务端/客户端函数调用关系<ul>
+<li><img src="http://anki190912.xuexihaike.com/20210213181511.png"></li>
+<li>1.服务器端创建套接字后连续调用bind、listen函数进入等待状态</li>
+<li>2.客户端通过调用connect函数发起连接请求。(只能等到服务器端调用listen函数后才能调connect函数，同事客户端调用connect函数前，服务器端可能率先调用accept函数。当然此时服务器端在调用accept函数时进入阻塞(blocking)状态，知道客户端调connect函数为止)</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-3-实现迭代服务端-客户端：服务端将客户端传输的字符串数据原封不动的传回客户端"><a href="#4-3-实现迭代服务端-客户端：服务端将客户端传输的字符串数据原封不动的传回客户端" class="headerlink" title="4.3 实现迭代服务端/客户端：服务端将客户端传输的字符串数据原封不动的传回客户端"></a>4.3 实现迭代服务端/客户端：服务端将客户端传输的字符串数据原封不动的传回客户端</h2><ul>
+<li>Q:迭代服务器端的流程<ul>
+<li>通过插入循环语句反复调用accept函数，可实现继续处理后续客户端连接请求</li>
+<li><img src="http://anki190912.xuexihaike.com/20210213182055.png"></li>
+<li>目前该程序同一时刻只能服务于一个客户端</li>
+</ul>
+</li>
+<li>Q:迭代回升服务器端/客户端程序(不完美版本)<ul>
+<li>服务端echo_server.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="keyword">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> str_len, i;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> clnt_adr_sz;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (serv_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    clnt_adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">        clnt_sock = accept(serv_sock, (struct sockaddr *)&amp;clnt_adr, &amp;clnt_adr_sz);</span><br><span class="line">        <span class="keyword">if</span> (clnt_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">            error_handling(<span class="string">&quot;accept() error&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Connected client %d \n&quot;</span>, i+<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 客户端套接字若调用close函数，这一个循环条件变成假</span></span><br><span class="line">        <span class="keyword">while</span> ((str_len = read(clnt_sock, message, BUF_SIZE)) != <span class="number">0</span>) &#123;</span><br><span class="line">            write(clnt_sock, message, str_len);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 针对套接字调用close函数，向连接的相应套接字发送EOF</span></span><br><span class="line">        close(clnt_sock);</span><br><span class="line">    &#125;</span><br><span class="line">    close(serv_sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>客户端echo_client.c<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="keyword">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> str_len;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;IP&gt; &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (connect(sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;connect() error!&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;Connceted........&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">fputs</span>(<span class="string">&quot;Input message(Q to quit): &quot;</span>, <span class="built_in">stdout</span>);</span><br><span class="line">        fgets(message, BUF_SIZE, <span class="built_in">stdin</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(message, <span class="string">&quot;q\n&quot;</span>) || !<span class="built_in">strcmp</span>(message, <span class="string">&quot;Q\n&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        write(sock, message, <span class="built_in">strlen</span>(message));</span><br><span class="line">        str_len = read(sock, message, BUF_SIZE<span class="number">-1</span>);</span><br><span class="line">        message[str_len] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Message from server: %s&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line">    close(sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行<ul>
+<li>服务端<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc echo_server.c -o eserver</span><br><span class="line">shiqi@inspiron:~/network$ ./eserver 9190</span><br><span class="line">Connected client 1</span><br><span class="line">Connected client 2</span><br></pre></td></tr></table></figure></li>
+<li>客户端<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc echo_client.c -o eclient</span><br><span class="line">shiqi@inspiron:~/network$ ./eclient 127.0.0.1 9190</span><br><span class="line">Connceted........</span><br><span class="line">Input message(Q to quit): Hi</span><br><span class="line">Message from server: Hi</span><br><span class="line">Input message(Q to quit): cd</span><br><span class="line">Message from server: cd</span><br><span class="line">Input message(Q to quit): q</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>存在问题<ul>
+<li>在客户端的代码中<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">write(sock, message, <span class="built_in">strlen</span>(message));</span><br><span class="line">str_len = read(sock, message, BUF_SIZE<span class="number">-1</span>);</span><br><span class="line">message[str_len] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Message from server: %s&quot;</span>, message);</span><br></pre></td></tr></table></figure></li>
+<li>以上代码有个错误的假设「每次调用 read、write函数时都会以字符串为单位执行实际 I/O 操作」</li>
+<li>注意「TCP不存在数据边界」，上述客户端是基于 TCP 的，因此多次调用 write 函数传递的字符串有可能一次性传递到服务端。此时客户端有可能从服务端收到多个字符串。即需要考虑服务端「字符串太长，需要分2个数据包发送」</li>
+<li>服务端希望通过调用 1 次 write 函数传输数据，但是如果数据太大，操作系统就有可能把数据分成多个数据包发送到客户端。另外，在此过程中，客户端可能在尚未收到全部数据包时就调用 read 函数</li>
+<li>以上的问题都是源自 TCP 的传输特性</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-5-章-基于-TCP-的服务端-客户端（2）"><a href="#第-5-章-基于-TCP-的服务端-客户端（2）" class="headerlink" title="第 5 章 基于 TCP 的服务端/客户端（2）"></a>第 5 章 基于 TCP 的服务端/客户端（2）</h1><h2 id="5-1-回声客户端的完美实现"><a href="#5-1-回声客户端的完美实现" class="headerlink" title="5.1 回声客户端的完美实现"></a>5.1 回声客户端的完美实现</h2><ul>
+<li>Q:回声客户端的完美实现<ul>
+<li>因可提前确定接收数据的大小，使用循环控制即可<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="keyword">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> str_len, recv_len, recv_cnt;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;IP&gt; &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (connect(sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;connect() error!&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;Connceted........&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">fputs</span>(<span class="string">&quot;Input message(Q to quit): &quot;</span>, <span class="built_in">stdout</span>);</span><br><span class="line">        fgets(message, BUF_SIZE, <span class="built_in">stdin</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(message, <span class="string">&quot;q\n&quot;</span>) || !<span class="built_in">strcmp</span>(message, <span class="string">&quot;Q\n&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        str_len = write(sock, message, <span class="built_in">strlen</span>(message));</span><br><span class="line">        recv_len = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (recv_len &lt; str_len) &#123;</span><br><span class="line">            recv_cnt = read(sock, message, BUF_SIZE<span class="number">-1</span>);</span><br><span class="line">            <span class="keyword">if</span> (recv_cnt == <span class="number">-1</span>) &#123;</span><br><span class="line">                error_handling(<span class="string">&quot;read() error!&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            recv_len += recv_cnt;</span><br><span class="line">        &#125;</span><br><span class="line">        message[str_len] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Message from server: %s&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line">    close(sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
 </ul>
 ]]></content>
       <categories>

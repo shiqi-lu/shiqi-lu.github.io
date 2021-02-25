@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="1.拜占庭将军问题，2.CAP理论，3.ACID理论，4.BASE理论">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《分布式协议与算法实战》理论篇 学习笔记">
+<meta property="og:url" content="http://shiqi-lu.tech/distrib-protocal-algo-1/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="1.拜占庭将军问题，2.CAP理论，3.ACID理论，4.BASE理论">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://anki190912.xuexihaike.com/20210223143644.png">
+<meta property="og:image" content="http://anki190912.xuexihaike.com/20210223145130.png">
+<meta property="og:image" content="http://anki190912.xuexihaike.com/20210223145141.png">
+<meta property="og:image" content="http://anki190912.xuexihaike.com/20210224102536.png">
+<meta property="article:published_time" content="2021-02-22T08:25:49.000Z">
+<meta property="article:modified_time" content="2021-02-22T08:25:49.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20210223143644.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/distrib-protocal-algo-1/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《分布式协议与算法实战》理论篇 学习笔记 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">30</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#01-%E6%8B%9C%E5%8D%A0%E5%BA%AD%E5%B0%86%E5%86%9B%E9%97%AE%E9%A2%98%EF%BC%9A%E6%9C%89%E5%8F%9B%E5%BE%92%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%EF%BC%8C%E5%A6%82%E4%BD%95%E6%89%8D%E8%83%BD%E8%BE%BE%E6%88%90%E5%85%B1%E8%AF%86%EF%BC%9F"><span class="nav-text">01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#02-CAP%E7%90%86%E8%AE%BA%EF%BC%9A%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84PH%E8%AF%95%E7%BA%B8%EF%BC%8C%E7%94%A8%E5%AE%83%E6%9D%A5%E6%B5%8B%E9%85%B8%E7%A2%B1%E5%BA%A6"><span class="nav-text">02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#03-ACID%E7%90%86%E8%AE%BA%EF%BC%9ACAP%E7%9A%84%E9%85%B8%EF%BC%8C%E8%BF%BD%E6%B1%82%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-text">03 | ACID理论：CAP的酸，追求一致性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#04-BASE%E7%90%86%E8%AE%BA%EF%BC%9ACAP%E7%9A%84%E7%A2%B1%EF%BC%8C%E8%BF%BD%E6%B1%82%E5%8F%AF%E7%94%A8%E6%80%A7"><span class="nav-text">04 | BASE理论：CAP的碱，追求可用性</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="http://anki190912.xuexihaike.com/20200914142317.JPG">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://anki190912.xuexihaike.com/20200916151528.JPG" title="WeChat → http:&#x2F;&#x2F;anki190912.xuexihaike.com&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://anki190912.xuexihaike.com/20200916143240.jpg" title="WeChatOA → http:&#x2F;&#x2F;anki190912.xuexihaike.com&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/distrib-protocal-algo-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="http://anki190912.xuexihaike.com/20200914142317.JPG">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《分布式协议与算法实战》理论篇 学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-02-22 16:25:49" itemprop="dateCreated datePublished" datetime="2021-02-22T16:25:49+08:00">2021-02-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/distrib-protocal-algo-1/" class="post-meta-item leancloud_visitors" data-flag-title="《分布式协议与算法实战》理论篇 学习笔记" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/distrib-protocal-algo-1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/distrib-protocal-algo-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">1.拜占庭将军问题，2.CAP理论，3.ACID理论，4.BASE理论</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="01-拜占庭将军问题：有叛徒的情况下，如何才能达成共识？"><a href="#01-拜占庭将军问题：有叛徒的情况下，如何才能达成共识？" class="headerlink" title="01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？"></a>01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？</h1><ul>
+<li>Q:二忠一叛难题<ul>
+<li>假设3个国家齐、楚、燕要攻打秦国，以只有半数以上的将军参与进攻，才能击败敌人，在这个期间，将军们彼此之间需要通过信使传递消息，然后协商一致之后，并让信使传递信息，按照“少数服从多数”的原则投票表决，然后在同一时间点发动进攻</li>
+<li>但若有人暗通秦国出现作战计划不一致的情况。比如齐向楚、 燕分别发送了“撤退”的消息，燕向齐和楚发送了“进攻”的消息。撤退：进攻 =1:1，无 论楚投进攻还是撤退，都会成为 2:1，这个时候还是会形成一个一致性的作战方案</li>
+<li>但是，楚这个叛徒在暗中配合秦国，让信使向齐发送了“撤退”，向燕发送了“进攻”，那么：</li>
+<li>燕看到的是，撤退：进攻 =1:2</li>
+<li>齐看到的是，撤退：进攻 =2:1。</li>
+<li>按照“少数服从多数”的原则，就会出现燕单独进攻秦军，当然，最后肯定是因为寡不敌众，被秦军给灭了</li>
+<li><img src="http://anki190912.xuexihaike.com/20210223143644.png"></li>
+</ul>
+</li>
+<li>Q:口信消息型拜占庭问题之解<ul>
+<li>增加讨论中忠诚将军的数量，由3位将军变为4位将军。并约定如果没有收到命令，就执行预设的默认命令如“撤退”。以及进行两轮作战信息协商</li>
+<li>第一轮<ul>
+<li>先发送作战信息的将军作为指挥官，其他的将军作为副官</li>
+<li>指挥官将他的作战信息发送给每位副官</li>
+<li>每位副官，将从指挥官处收到的作战信息，作为他的作战指令；如果没有收到作战信 息，将把默认的“撤退”作为作战指令</li>
+</ul>
+</li>
+<li>第二轮<ul>
+<li>除了第一轮的指挥官外，剩余的 3 位将军将分别作为指挥官，向另外 2 位将军发送作战信息；</li>
+<li>然后，这 3 位将军按照“少数服从多数”，执行收到的作战指令</li>
+</ul>
+</li>
+<li>这个解决办法实现了作战计划的一致性</li>
+<li>如果叛将人数为 m，将军人数不能少于 3m + 1 ，那么拜占庭将军问题就能解决了</li>
+<li>这个算法的前提是，叛将人数m是已知的，这个算法中，叛将数m决定递归循环的次数，即m+1轮</li>
+</ul>
+</li>
+<li>Q:签名消息型拜占庭问题之解<ul>
+<li>通过签名的方式，可在不增加将军人数的情况下，解决二忠一叛的难题</li>
+<li>签名的特性：<ul>
+<li>忠诚将军的签名无法伪造，而且对他签名消息的内容进行任何更改都会被发现</li>
+<li>任何人都能验证将军签名的真伪</li>
+</ul>
+</li>
+<li><img src="http://anki190912.xuexihaike.com/20210223145130.png"></li>
+<li><img src="http://anki190912.xuexihaike.com/20210223145141.png"></li>
+</ul>
+</li>
+<li>Q:拜占庭容错算法和非拜占庭容错算法<ul>
+<li>拜占庭将军问题描述的是最困难的，也是最复杂的一种分布式故障场景，除了存在故障行为，还存在恶意行为的一个场景。必须使用拜占庭容错算法（Byzantine Fault Tolerance，BFT）。还有：PBFT 算法，PoW 算法</li>
+<li>在计算机分布式系统中，最常用的是非拜占庭容错算法，即故障容错算法（Crash Fault Tolerance，CFT）。CFT 解决的是分布式的系统中存在故障，但不存在恶意节点的场景下的共识问题。这个场景可能会丢失消息，或者有消息重复，但不存在错误消息，或者伪造消息的情况。常见的算法有 Paxos 算法、Raft 算法、ZAB 协议</li>
+</ul>
+</li>
+</ul>
+<h1 id="02-CAP理论：分布式系统的PH试纸，用它来测酸碱度"><a href="#02-CAP理论：分布式系统的PH试纸，用它来测酸碱度" class="headerlink" title="02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度"></a>02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度</h1><ul>
+<li>Q:CAP的三个指标<ul>
+<li>一致性Consistency：客户端的每次读操作，不管访问哪个节点，要么读到的都是同一份最新的数据，要么读取失败，强调的是各节点间的数据一致</li>
+<li>可用性Availability：任何来自客户端的请求，不管访问哪个节点，都能得到相应数据，但不保证是同一份最新数据，强调的是服务可用，但不保证数据的一致</li>
+<li>分区容错性Partition Tolerance：当节点间出现任意数量的消息丢失或高延迟时，系统仍然可以继续提供服务，强调的是集群对分区故障的容错能力</li>
+</ul>
+</li>
+<li>Q:CAP不可能三角<ul>
+<li>是对于一个分布式系统而言，一致性（Consistency）、可用性（Availability）、分区容错性（Partition Tolerance）3 个指标不可兼得，只能在 3 个指标中选择 2 个</li>
+<li><img src="http://anki190912.xuexihaike.com/20210224102536.png"></li>
+<li>在不存在网络分区的情况下，即分布式系统正常运行时（这也是系统在绝大部分时候所处的状态），就是说在不需要 P 时，C 和 A 能够同时保证。只有当发生分区故障的时候，也就是说需要 P 时，才会在 C 和 A 之间做出选择。而且如果各节点数据不一致，影响到了系统运行或业务运行（也就是说会有负面的影响），推荐选择 C，否则选 A</li>
+</ul>
+</li>
+<li>Q:CAP的三个模型<ul>
+<li>CA 模型，在分布式系统中不存在。因为舍弃 P，意味着舍弃分布式系统，就比如单机版关系型数据库 MySQL，如果 MySQL 要考虑主备或集群部署时，它必须考虑 P</li>
+<li>CP 模型，采用 CP 模型的分布式系统，一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性。因为为了防止数据不一致，集群将拒绝新数据的写入，典型的应用是 ZooKeeper，Etcd 和 HBase</li>
+<li>AP 模型，采用 AP 模型的分布式系统，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误，但当出现分区故障时，相同的读操作，访问不同的节点，得到响应数据可能不一样。典型应用就比如 Cassandra 和 DynamoDB</li>
+</ul>
+</li>
+</ul>
+<h1 id="03-ACID理论：CAP的酸，追求一致性"><a href="#03-ACID理论：CAP的酸，追求一致性" class="headerlink" title="03 | ACID理论：CAP的酸，追求一致性"></a>03 | ACID理论：CAP的酸，追求一致性</h1><ul>
+<li>Q:二阶段提交协议<ul>
+<li>提交请求阶段（又称投票阶段）<ul>
+<li>协调者(Coordinator)向所有节点发起请求，各节点评估事务中需要操作的对象和对象状态，是否准备好，能否提交新操作。如果能，预留时间并锁定，不再安排其它事务</li>
+<li>这个阶段每个参与者投票表决事务是放弃还是提交。一旦参与者投票要求提交事务，那么就不允许放弃事务。在一个参与者投票要求提交事务之前，它必须保证能够执行提交协议中它自己那一部分，即使参与者出现故障或者中途被替换掉。这个特性，是需要在代码实现时保障的</li>
+</ul>
+</li>
+<li>提交执行阶段（又称完成阶段）<ul>
+<li>事务的每个参与者执行最终统一的决定，提交事务或者放弃事务，这个是为了实现ACID中的原子性</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:原始的二阶段提交协议和 XA 协议存在的问题是<ul>
+<li>在提交请求阶段，需要预留资源，在资源预留期间，其他人不能操作（比如，XA 在第一阶段会将相关资源锁定）</li>
+<li>数据库是独立的系统</li>
+<li>因此无法根据业务特点弹性地调整锁的粒度，这些都会影响数据库的并发性能</li>
+</ul>
+</li>
+<li>Q:TCC(Try预留-Confirm确认-Cancel取消)<ul>
+<li>预留阶段<ul>
+<li>协调者注册确认操作和撤销操作，各个节点预留资源，并返回消息答复</li>
+</ul>
+</li>
+<li>确认阶段<ul>
+<li>协调者执行确认操作，各节点收到确认操作的响应，完成分布式事务</li>
+</ul>
+</li>
+<li>撤销阶段<ul>
+<li>如果预留阶段出错，则进入撤销阶段</li>
+<li>协调者执行撤销操作，通知各个节点取消事务执行，并返回撤销操作的响应</li>
+</ul>
+</li>
+<li>TCC 本质上是补偿事务，核心思想是针对每个操作都要注册一个与其对应的确认操作和补偿操作（也就是撤销操作）</li>
+<li>TCC 不依赖于数据库的事务，而是在业务中实现了分布式事务，这样能减轻数据库的压力，但对业务代码的入侵性也更强，实现的复杂度也更高</li>
+<li>荐在需要分布式事务能力时，优先考虑现成的事务型数据库（比如 MySQL XA），当现有的事务型数据库不能满足业务的需求时，再考虑基于 TCC 实现分布式事务</li>
+</ul>
+</li>
+</ul>
+<h1 id="04-BASE理论：CAP的碱，追求可用性"><a href="#04-BASE理论：CAP的碱，追求可用性" class="headerlink" title="04 | BASE理论：CAP的碱，追求可用性"></a>04 | BASE理论：CAP的碱，追求可用性</h1><ul>
+<li>Q:BASE理论<ul>
+<li>基本可用(Basically Available)</li>
+<li>最终一致性(Eventually consistent)</li>
+<li>软状态(Soft state)：实现服务可用性的时候系统数据的一种过渡状态，即不同节点间，数据副本存在短暂的不一致</li>
+</ul>
+</li>
+<li>Q:实现基本可用的 4 板斧<ul>
+<li>流量削峰：将访问请求错开，削弱请求峰值</li>
+<li>延迟响应：把请求放在队列中排队等待，一段时间后，系统开始处理，并响应处理结果</li>
+<li>体验降级：通过降低图片清晰度和大小，提升系统的处理能力</li>
+<li>过载保护：把接收到的请求放在指定的队列中排队处理，如果请求等待时间超时了，直接拒绝超时请求；队列满了之后，清楚队列中一定数量的排队请求，保护系统不过载</li>
+</ul>
+</li>
+<li>Q:实际工程实践中何实现最终一致性以什么为准<ul>
+<li>以最新写入的数据为准，比如 AP 模型的 KV 存储采用的就是这种方式</li>
+<li>以第一次写入的数据为准，如果你不希望存储的数据被更改，可以以它为准</li>
+</ul>
+</li>
+<li>Q:实现最终一致性的具体方式<ul>
+<li>读时修复：在读取数据时，检测数据的不一致，进行修复。如 Cassandra 的 Read Repair 实现，即在向Cassandra系统查询数据时，如果检测到不同节点的副本数据不一致，系统就自动修复数据</li>
+<li>写时修复：在写入数据时，检测数据的不一致，进行修复。如 Cassandra 的 Hinted Handoff 实现。即Cannandra集群的节点之间远程写数据的时候，如果写失败就将数据缓存下来，然后定时重传，修复数据的不一致性</li>
+<li>异步修复：最常用的方式，通过定时对账检测副本数据的一致性，并修复</li>
+<li>写时修复不需要做数据一致性对比，性能消耗比较低，对系统运行影响也不大，推荐你在实现最终一致性时优先实现这种方式。而读时修复和异步修复因为需要做数据的一致性对比，性能消耗比较多，在开发实际系统时，要尽量优化一致性对比的算法，降低性能消耗，避免对系统运行造成影响</li>
+<li>实现最终一致性的时候，推荐同时实现自定义写一致性级别（All、Quorum、One、Any）， 让用户可以自主选择相应的一致性级别，比如可以通过设置一致性级别为 All，来实现强一致性</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="http://anki190912.xuexihaike.com/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="http://anki190912.xuexihaike.com/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/distrib-protocal-algo-1/" title="《分布式协议与算法实战》理论篇 学习笔记">http://shiqi-lu.tech/distrib-protocal-algo-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/db-design-thing/" rel="prev" title="《数据库设计那些事》学习笔记">
+                  <i class="fa fa-chevron-left"></i> 《数据库设计那些事》学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/distrib-protocal-algo-2/" rel="next" title="《分布式协议与算法实战》协议和算法篇上 学习笔记">
+                  《分布式协议与算法实战》协议和算法篇上 学习笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/distrib-protocal-algo-1/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
