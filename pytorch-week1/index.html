@@ -29,23 +29,23 @@
 <meta property="og:site_name" content="每天净瞎搞">
 <meta property="og:description" content="pytorch第一周学习内容：张量操作与线性回归，计算图与动态图机制，autograd与逻辑回归">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200918142143.png?imageView2/2/h/150">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200918143346.png?imageView2/2/w/200">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200918143722.png?imageView2/2/h/100">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200918151039.png?imageView2/2/h/150">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200920095346.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200919144309.png?imageView2/2/h/200">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200920100028.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200918142143.png?imageView2/2/h/150">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200918143346.png?imageView2/2/w/200">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200918143722.png?imageView2/2/h/100">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200918151039.png?imageView2/2/h/150">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200920095346.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200919144309.png?imageView2/2/h/200">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200920100028.png">
 <meta property="article:published_time" content="2020-09-20T02:03:48.000Z">
-<meta property="article:modified_time" content="2020-09-21T06:06:16.916Z">
+<meta property="article:modified_time" content="2021-04-01T06:12:06.216Z">
 <meta property="article:author" content="Shiqi Lu">
 <meta property="article:tag" content="pytorch">
 <meta property="article:tag" content="深度学习">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20200918142143.png?imageView2/2/h/150">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20200918142143.png?imageView2/2/h/150">
 
 
 <link rel="canonical" href="http://shiqi-lu.tech/pytorch-week1/">
@@ -337,7 +337,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-09-21 14:06:16" itemprop="dateModified" datetime="2020-09-21T14:06:16+08:00">2020-09-21</time>
+        <time title="修改时间：2021-04-01 14:12:06" itemprop="dateModified" datetime="2021-04-01T14:12:06+08:00">2021-04-01</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -409,7 +409,7 @@
 <h1 id="2-张量简介与创建"><a href="#2-张量简介与创建" class="headerlink" title="2.张量简介与创建"></a>2.张量简介与创建</h1><p>Q:张量是什么？</p>
 <ul>
 <li>一个多维数组，它是标量、向量、矩阵的高维拓展</li>
-<li><img src="http://anki190912.xuexihaike.com/20200918142143.png?imageView2/2/h/150"></li>
+<li><img src="https://img.shiqi-lu.tech/20200918142143.png?imageView2/2/h/150"></li>
 </ul>
 <p>Q:Pytorch中的Variable是什么？与Tensor的关系是什么？</p>
 <ul>
@@ -419,7 +419,7 @@
 <li>grad_fn:创建Tensor的Function，是自动求导的关键</li>
 <li>requires_grad:指示是否需要梯度</li>
 <li>is_leaf:指示是否是叶子结点（张量）</li>
-<li><img src="http://anki190912.xuexihaike.com/20200918143346.png?imageView2/2/w/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200918143346.png?imageView2/2/w/200"></li>
 </ul>
 <p>Q:Pytorch中的Tensor是什么？</p>
 <ul>
@@ -427,7 +427,7 @@
 <li>dtype: 张量的数据类型，如torch.FloatTensor, torch.cuda.FloatTensor</li>
 <li>shape: 张量的形状，如（64，3， 224， 224）</li>
 <li>device: 张量所在设备，GPU/CPU，是加速的关键</li>
-<li><img src="http://anki190912.xuexihaike.com/20200918143722.png?imageView2/2/h/100"></li>
+<li><img src="https://img.shiqi-lu.tech/20200918143722.png?imageView2/2/h/100"></li>
 </ul>
 <p>Q:Tensor的函数原型是怎样？</p>
 <ul>
@@ -457,7 +457,7 @@ tensor([[1., 1., 1.],
 <li>函数原型：<code>torch.from_numpy(ndarray)</code></li>
 <li>功能：从numpy创建tensor</li>
 <li>注意事项：从torch.from_numpy创建的tensor于原ndarray共享内存，当修改其中一个的数据，另外一个也将会被改动</li>
-<li><img src="http://anki190912.xuexihaike.com/20200918151039.png?imageView2/2/h/150"></li>
+<li><img src="https://img.shiqi-lu.tech/20200918151039.png?imageView2/2/h/150"></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]])</span><br><span class="line">t = torch.from_numpy(arr)</span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;修改arr:&quot;</span>)</span><br><span class="line">arr[<span class="number">0</span>, <span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;修改tensor:&quot;</span>)</span><br><span class="line">arr[<span class="number">1</span>, <span class="number">1</span>] = <span class="number">-10</span></span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br></pre></td></tr></table></figure>
 
@@ -861,7 +861,7 @@ tensor([[10.5570,  9.5257, 11.0113],
 </ul>
 <h2 id="线性回归的Pytorch实现"><a href="#线性回归的Pytorch实现" class="headerlink" title="线性回归的Pytorch实现"></a>线性回归的Pytorch实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">torch.manual_seed(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">lr = <span class="number">0.05</span>  <span class="comment"># 学习率</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建训练数据</span></span><br><span class="line">x = torch.rand(<span class="number">20</span>, <span class="number">1</span>) * <span class="number">10</span>  <span class="comment"># x data (tensor), shape=(20, 1)</span></span><br><span class="line">y = <span class="number">2</span>*x + (<span class="number">5</span> + torch.randn(<span class="number">20</span>, <span class="number">1</span>))  <span class="comment"># y data (tensor), shape=(20, 1)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建线性回归参数的初始值</span></span><br><span class="line">w = torch.randn((<span class="number">1</span>), requires_grad=<span class="literal">True</span>)</span><br><span class="line">b = torch.zeros((<span class="number">1</span>), requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> iteration <span class="keyword">in</span> range(<span class="number">1000</span>):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 前向传播，计算y_pred=w * x+b</span></span><br><span class="line">    wx = torch.mul(w, x)</span><br><span class="line">    y_pred = torch.add(wx, b)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算 MSE loss</span></span><br><span class="line">    loss = (<span class="number">0.5</span> * (y - y_pred) ** <span class="number">2</span>).mean()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 反向传播</span></span><br><span class="line">    loss.backward()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 更新参数</span></span><br><span class="line">    b.data.sub_(lr * b.grad)</span><br><span class="line">    w.data.sub_(lr * w.grad)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 清零张量的梯度</span></span><br><span class="line">    w.grad.zero_()</span><br><span class="line">    b.grad.zero_()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 绘图</span></span><br><span class="line">    <span class="keyword">if</span> iteration % <span class="number">20</span> == <span class="number">0</span>:</span><br><span class="line">        plt.scatter(x.data.numpy(), y.data.numpy())</span><br><span class="line">        plt.plot(x.data.numpy(), y_pred.data.numpy(), <span class="string">&#x27;r-&#x27;</span>, lw=<span class="number">5</span>)</span><br><span class="line">        plt.text(<span class="number">2</span>, <span class="number">20</span>, <span class="string">&#x27;Loss=%.4f&#x27;</span> % loss.data.numpy(), fontdict=&#123;<span class="string">&#x27;size&#x27;</span>: <span class="number">20</span>, <span class="string">&#x27;color&#x27;</span>:  <span class="string">&#x27;red&#x27;</span>&#125;)</span><br><span class="line">        plt.xlim(<span class="number">1.5</span>, <span class="number">10</span>)</span><br><span class="line">        plt.ylim(<span class="number">8</span>, <span class="number">28</span>)</span><br><span class="line">        plt.title(<span class="string">f&quot;Iteration: <span class="subst">&#123;iteration&#125;</span>\nw: <span class="subst">&#123;w.data.numpy()&#125;</span> b: <span class="subst">&#123;b.data.numpy()&#125;</span>&quot;</span>)</span><br><span class="line">        plt.pause(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> loss.data.numpy() &lt; <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p><img src="http://anki190912.xuexihaike.com/20200920095346.png"></p>
+<p><img src="https://img.shiqi-lu.tech/20200920095346.png"></p>
 <h1 id="4-计算图与动态图机制"><a href="#4-计算图与动态图机制" class="headerlink" title="4.计算图与动态图机制"></a>4.计算图与动态图机制</h1><p>Q:计算图是什么？</p>
 <ul>
 <li>用来描述运算的有向无环图</li>
@@ -871,18 +871,18 @@ tensor([[10.5570,  9.5257, 11.0113],
 <p>Q:如何用计算图表示$y = (x+w)*(w+1)$?</p>
 <ul>
 <li>$a = x + w, b = w + 1, y = a * b$</li>
-<li><img src="http://anki190912.xuexihaike.com/20200919144309.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200919144309.png?imageView2/2/h/200"></li>
 </ul>
 <p>Q:如何用计算图进行梯度求导，如$y = (x+w)*(w+1)$</p>
 <ul>
 <li>$a = x + w, b = w + 1, y = a * b$</li>
 <li>$$\begin{aligned}<br>\frac{\partial \mathrm{y}}{\partial w} &amp;=\frac{\partial \mathrm{y}}{\partial a} \frac{\partial a}{\partial w}+\frac{\partial \mathrm{y}}{\partial b} \frac{\partial b}{\partial w} \\<br>&amp;=b * 1+\mathrm{a} * 1 \\<br>&amp;=\mathrm{b}+\mathrm{a} \\<br>&amp;=(\mathrm{w}+1)+(\mathrm{x}+\mathrm{w}) \\<br>&amp;=2 * \mathrm{w}+\mathrm{x}+1 \\<br>&amp;=2 * 1+2+1=5\end{aligned}$$</li>
-<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200"></li>
 <li>y对w求导在计算图中其实就是找到y到w的所有路径上的导数，进行求和</li>
 </ul>
 <p>Q:叶子结点是什么？</p>
 <ul>
-<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200"></li>
 <li>用户创建的结点称为叶子结点，如X和W</li>
 <li>torch.Tensor中有is_leaf指示张量是否为叶子结点</li>
 <li>设置叶子结点主要是为了节省内存，因为非叶子结点的梯度在反向传播后会被释放掉</li>
@@ -891,7 +891,7 @@ tensor([[10.5570,  9.5257, 11.0113],
 <p>Q:torch.Tensor中的grad_fn作用是什么？</p>
 <ul>
 <li>记录创建该张量时所用的方法（函数）</li>
-<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200"></li>
 <li>y.grad_fn = &lt;MulBackward0&gt;</li>
 <li>a.grad_fn = &lt;AddBackward0&gt;</li>
 </ul>
@@ -950,7 +950,7 @@ tensor([10.])</code></pre>
 <p>Q:逻辑回归的pytorch代码实现是什么？</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">torch.manual_seed(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成数据</span></span><br><span class="line">sample_nums = <span class="number">100</span></span><br><span class="line">mean_value = <span class="number">1.7</span></span><br><span class="line">bias = <span class="number">1</span></span><br><span class="line">n_data = torch.ones(sample_nums, <span class="number">2</span>)</span><br><span class="line"><span class="comment"># 类别0 数据 shape=(100, 2)</span></span><br><span class="line">x0 = torch.normal(mean_value * n_data, <span class="number">1</span>) + bias</span><br><span class="line"><span class="comment"># 类别0 标签 shape=(100)</span></span><br><span class="line">y0 = torch.zeros(sample_nums)</span><br><span class="line"><span class="comment"># 类别1 数据 shape=(100, 2)</span></span><br><span class="line">x1 = torch.normal(-mean_value * n_data, <span class="number">1</span>) + bias</span><br><span class="line"><span class="comment"># 类别1 标签 shape=(100)</span></span><br><span class="line">y1 = torch.ones(sample_nums)</span><br><span class="line">train_x = torch.cat((x0, x1), <span class="number">0</span>)</span><br><span class="line">train_y = torch.cat((y0, y1), <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LR</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(LR, self).__init__()</span><br><span class="line">        self.features = nn.Linear(<span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        self.sigmoid = nn.Sigmoid()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.features(x)</span><br><span class="line">        x = self.sigmoid(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化逻辑回归模型</span></span><br><span class="line">lr_net = LR()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择损失函数，交叉熵损失</span></span><br><span class="line">loss_fn = nn.BCELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择优化器</span></span><br><span class="line">lr = <span class="number">0.01</span> <span class="comment"># 学习率</span></span><br><span class="line">optimizer = torch.optim.SGD(lr_net.parameters(), lr=lr, momentum=<span class="number">0.9</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型训练</span></span><br><span class="line"><span class="keyword">for</span> iteration <span class="keyword">in</span> range(<span class="number">1000</span>):</span><br><span class="line">    <span class="comment"># 前向传播</span></span><br><span class="line">    y_pred = lr_net(train_x)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算loss</span></span><br><span class="line">    loss = loss_fn(y_pred.squeeze(), train_y)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 反向传播</span></span><br><span class="line">    loss.backward()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 更新参数</span></span><br><span class="line">    optimizer.step()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 清空梯度</span></span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 绘图</span></span><br><span class="line">    <span class="keyword">if</span> iteration % <span class="number">50</span> == <span class="number">0</span>:</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 以0.5为阈值进行分类</span></span><br><span class="line">        mask = y_pred.ge(<span class="number">0.5</span>).float().squeeze()</span><br><span class="line">        <span class="comment"># 计算正确预测的样本个数</span></span><br><span class="line">        correct = (mask == train_y).sum()</span><br><span class="line">        <span class="comment"># 计算分类准确率</span></span><br><span class="line">        acc = correct.item() / train_y.size(<span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        plt.scatter(x0.data.numpy()[:, <span class="number">0</span>], x0.data.numpy()[:, <span class="number">1</span>], c=<span class="string">&#x27;r&#x27;</span>, label=<span class="string">&#x27;class 0&#x27;</span>)</span><br><span class="line">        plt.scatter(x1.data.numpy()[:, <span class="number">0</span>], x1.data.numpy()[:, <span class="number">1</span>], c=<span class="string">&#x27;b&#x27;</span>, label=<span class="string">&#x27;class 1&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        w0, w1 = lr_net.features.weight[<span class="number">0</span>]</span><br><span class="line">        w0, w1 = float(w0.item()), float(w1.item())</span><br><span class="line">        plot_b = float(lr_net.features.bias[<span class="number">0</span>].item())</span><br><span class="line">        plot_x = np.arange(<span class="number">-6</span>, <span class="number">6</span>, <span class="number">0.1</span>)</span><br><span class="line">        plot_y = (-w0 * plot_x - plot_b) / w1</span><br><span class="line">        </span><br><span class="line">        plt.xlim(<span class="number">-5</span>, <span class="number">7</span>)</span><br><span class="line">        plt.ylim(<span class="number">-7</span>, <span class="number">7</span>)</span><br><span class="line">        plt.plot(plot_x, plot_y)</span><br><span class="line">        </span><br><span class="line">        plt.text(<span class="number">-5</span>, <span class="number">5</span>, <span class="string">&#x27;Loss=%.4f&#x27;</span> % loss.data.numpy(), fontdict=&#123;<span class="string">&#x27;size&#x27;</span>:<span class="number">20</span>, <span class="string">&#x27;color&#x27;</span>:<span class="string">&#x27;red&#x27;</span>&#125;)</span><br><span class="line">        plt.title(<span class="string">&quot;Iteration: &#123;&#125;\nw0:&#123;:.2f&#125; w1:&#123;:.2f&#125; b: &#123;:.2f&#125; accuracy:&#123;:.2%&#125;&quot;</span>.format(iteration, w0, w1, plot_b, acc))</span><br><span class="line">        plt.legend()</span><br><span class="line"></span><br><span class="line">        plt.show()</span><br><span class="line">        plt.pause(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> acc &gt; <span class="number">0.99</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="http://anki190912.xuexihaike.com/20200920100028.png"></p>
+<p><img src="https://img.shiqi-lu.tech/20200920100028.png"></p>
 
     </div>
 
@@ -1003,9 +1003,6 @@ tensor([10.])</code></pre>
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/first-blog/" rel="prev" title="第一篇博客：为什么我要建博客和写博客">
-                  <i class="fa fa-chevron-left"></i> 第一篇博客：为什么我要建博客和写博客
-                </a>
             </div>
             <div class="post-nav-item">
                 <a href="/pytorch-learning/" rel="next" title="pytorch学习笔记">

@@ -29,19 +29,19 @@
 <meta property="og:site_name" content="每天净瞎搞">
 <meta property="og:description" content="《MySQL必知必会》学习笔记11-20章">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209162820.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209163055.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209163709.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209163930.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209171155.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210219143512.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209162820.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209163055.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209163709.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209163930.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209171155.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210219143512.png">
 <meta property="article:published_time" content="2021-02-19T06:51:52.000Z">
-<meta property="article:modified_time" content="2021-02-25T07:22:11.607Z">
+<meta property="article:modified_time" content="2021-04-01T06:12:06.205Z">
 <meta property="article:author" content="Shiqi Lu">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20210209162820.png">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210209162820.png">
 
 
 <link rel="canonical" href="http://shiqi-lu.tech/mysql-crash-course-11-20/">
@@ -333,7 +333,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-02-25 15:22:11" itemprop="dateModified" datetime="2021-02-25T15:22:11+08:00">2021-02-25</time>
+        <time title="修改时间：2021-04-01 14:12:06" itemprop="dateModified" datetime="2021-04-01T14:12:06+08:00">2021-04-01</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -395,25 +395,25 @@
     <div class="post-body" itemprop="articleBody">
         <h1 id="第11章-使用数据处理函数"><a href="#第11章-使用数据处理函数" class="headerlink" title="第11章 使用数据处理函数"></a>第11章 使用数据处理函数</h1><ul>
 <li>Q:常用的文本处理函数<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209162820.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209162820.png"></li>
 </ul>
 </li>
 <li>Q:使用大写处理<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT vend_name, Upper(vend_name) AS vend_name_upcase</span><br><span class="line">    -&gt; FROM vendors</span><br><span class="line">    -&gt; ORDER BY vend_name;</span><br><span class="line">+<span class="comment">----------------+------------------+</span></span><br><span class="line">| vend_name      | vend_name_upcase |</span><br><span class="line">+<span class="comment">----------------+------------------+</span></span><br><span class="line">| ACME           | ACME             |</span><br><span class="line">| Anvils R Us    | ANVILS R US      |</span><br><span class="line">| Furball Inc.   | FURBALL INC.     |</span><br><span class="line">| Jet <span class="keyword">Set</span>        | JET <span class="keyword">SET</span>          |</span><br><span class="line">| Jouets Et Ours | JOUETS ET OURS   |</span><br><span class="line">| LT Supplies    | LT SUPPLIES      |</span><br><span class="line">+<span class="comment">----------------+------------------+</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:常用的时间日期处理函数<ul>
 <li>注意日期格式必须为’yyyy-mm-dd’</li>
-<li><img src="http://anki190912.xuexihaike.com/20210209163055.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209163055.png"></li>
 </ul>
 </li>
 <li>Q:根据日期查询<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT cust_id, order_num</span><br><span class="line">    -&gt; FROM orders</span><br><span class="line">    -&gt; WHERE Date(order_date) = &#x27;2005-09-01&#x27;;</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">| cust_id | order_num |</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">|   10001 |     20005 |</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:查询某个月的订单<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT cust_id, order_num</span><br><span class="line">    -&gt; FROM orders</span><br><span class="line">    -&gt; WHERE Year(order_date) = 2005 AND Month(order_date) = 9;</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">| cust_id | order_num |</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">|   10001 |     20005 |</span><br><span class="line">|   10003 |     20006 |</span><br><span class="line">|   10004 |     20007 |</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:常用的数值处理函数<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209163709.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209163709.png"></li>
 </ul>
 </li>
 </ul>
 <h1 id="第12章-汇总数据"><a href="#第12章-汇总数据" class="headerlink" title="第12章 汇总数据"></a>第12章 汇总数据</h1><ul>
 <li>Q:SQL的5个聚集函数<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209163930.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209163930.png"></li>
 </ul>
 </li>
 <li>Q:取平均的使用<ul>
@@ -436,7 +436,7 @@
 </ul>
 </li>
 <li>Q:SELECT子句的顺序<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209171155.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209171155.png"></li>
 </ul>
 </li>
 </ul>
@@ -542,7 +542,7 @@
 <li>Q:布尔文本搜索举例<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT note_text</span><br><span class="line">    -&gt; FROM productnotes</span><br><span class="line">    -&gt; WHERE Match(note_text) Against(&#x27;heavy&#x27; IN BOOLEAN MODE);</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| note_text                                                                                                                                                |</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| Item is extremely heavy. Designed for dropping, not recommended for <span class="keyword">use</span> <span class="keyword">with</span> slings, ropes, pulleys, <span class="keyword">or</span> tightropes.                                      |</span><br><span class="line">| Customer complaint:</span><br><span class="line"><span class="keyword">Not</span> heavy enough <span class="keyword">to</span> generate flying stars around <span class="keyword">head</span> <span class="keyword">of</span> victim. <span class="keyword">If</span> being purchased <span class="keyword">for</span> dropping, recommend ANV02 <span class="keyword">or</span> ANV03 instead. |</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:匹配包含heavy但不包含任意以rope开始的词的行<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT note_text</span><br><span class="line">    -&gt; FROM productnotes</span><br><span class="line">    -&gt; WHERE Match(note_text) Against(&#x27;heavy -rope*&#x27; IN BOOLEAN MODE);</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| note_text                                                                                                                                                |</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| Customer complaint:</span><br><span class="line">Not heavy enough to generate flying stars around head of victim. If being purchased for dropping, recommend ANV02 or ANV03 instead. |</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:全文本布尔操作符<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210219143512.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210219143512.png"></li>
 </ul>
 </li>
 <li>Q:匹配包含词rabbit和bait的行<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT note_text</span><br><span class="line">    -&gt; FROM productnotes</span><br><span class="line">    -&gt; WHERE Match(note_text) Against(&#x27;+rabbit +bait&#x27; IN BOOLEAN MODE);</span><br><span class="line">+<span class="comment">-----------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| note_text                                                                                                             |</span><br><span class="line">+<span class="comment">-----------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| Quantity varies, sold by the sack load.</span><br><span class="line">All guaranteed to be bright and orange, and suitable for <span class="keyword">use</span> <span class="keyword">as</span> rabbit bait. |</span><br><span class="line">+<span class="comment">-----------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>

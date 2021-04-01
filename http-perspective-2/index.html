@@ -29,22 +29,22 @@
 <meta property="og:site_name" content="每天净瞎搞">
 <meta property="og:description" content="主要包括HTTPS、TLS、加密、数字签名、证书等">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210321183737.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210321192338.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210322090801.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210322152509.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210322162027.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210322162054.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210322163414.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210322164911.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210322165457.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210321183737.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210321192338.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210322090801.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210322152509.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210322162027.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210322162054.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210322163414.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210322164911.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210322165457.png">
 <meta property="article:published_time" content="2021-03-24T00:26:41.000Z">
-<meta property="article:modified_time" content="2021-03-24T00:32:31.131Z">
+<meta property="article:modified_time" content="2021-04-01T06:12:06.182Z">
 <meta property="article:author" content="Shiqi Lu">
 <meta property="article:tag" content="HTTP">
 <meta property="article:tag" content="网络">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20210321183737.png">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210321183737.png">
 
 
 <link rel="canonical" href="http://shiqi-lu.tech/http-perspective-2/">
@@ -328,10 +328,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-03-24 08:26:41 / 修改时间：08:32:31" itemprop="dateCreated datePublished" datetime="2021-03-24T08:26:41+08:00">2021-03-24</time>
+      <time title="创建时间：2021-03-24 08:26:41" itemprop="dateCreated datePublished" datetime="2021-03-24T08:26:41+08:00">2021-03-24</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-01 14:12:06" itemprop="dateModified" datetime="2021-04-01T14:12:06+08:00">2021-04-01</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -459,7 +465,7 @@
 </li>
 <li>Q:CA 怎么证明自己呢<ul>
 <li>这是信任链的问题。小一点的 CA 可以让大 CA 签名认证，但链条的最后，也就是Root CA，就只能自己证明自己了，这个就叫“自签名证书”（Self-Signed Certificate）或者“根证书”（Root Certificate）。你必须相信，否则整个证书信任链就走不下去了</li>
-<li><img src="http://anki190912.xuexihaike.com/20210321183737.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210321183737.png"></li>
 <li>有了这个证书体系，操作系统和浏览器都内置了各大 CA 的根证书，上网的时候只要服务器发过来它的证书，就可以验证证书里的签名，顺着证书链（Certificate Chain）一层层地验证，直到找到根证书，就能够确定证书是可信的，从而里面的公钥也是可信的</li>
 </ul>
 </li>
@@ -473,9 +479,9 @@
 </ul>
 </li>
 <li>Q:TLS的握手过程<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210321192338.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210321192338.png"></li>
 <li>其中每一个“框”都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议</li>
-<li><img src="http://anki190912.xuexihaike.com/20210322090801.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322090801.png"></li>
 <li>1.在TCP建立连接后，浏览器会首先发一个「Client Hello」消息。里面有客户端的版本号、支持的密码套件，还有一个随机数(Client Random)，用于后续生成会话密钥</li>
 <li>2.服务器收到「Client Hello」后，会返回一个「Server Hello」消息。把版本号对一下，也给出一个随机数(Server Random)，然后从客户端列表里选一个作为本次通信使用的密码套件</li>
 <li>然后服务器为了证明自己的身份，就把证书也发给了客户端(Server Certificate)</li>
@@ -495,7 +501,7 @@
 <li>Q:主流的TLS握手过程和传统的RSA握手过程的区别是什么？<ul>
 <li>1.使用ECDHE实现密钥交换，而不是RSA，所以会在服务器端发出「Server Key Exchange」消息</li>
 <li>2.因为使用了ECDHE，客户端可以不用等到服务器发回「Finished」确认握手完毕，，立即就发出 HTTP 报文，省去了一个消息往返的时间浪费。这个叫「TLS False Start」，意思就是「抢跑」，和「TCP Fast Open」有点像，都是不等连接完全建立就提前发应用数据，提高传输的效率</li>
-<li><img src="http://anki190912.xuexihaike.com/20210322152509.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322152509.png"></li>
 <li>大体的流程没有变，只是「Pre-Master」不再需要用算法生成，而是客户端直接生成随机数，然后用服务器的公钥加密，通过「Client Key Exchange」消息发给服务器。服务器再用私钥解密，这样双方也实现了共享三个随机数，就可以生成主密钥</li>
 </ul>
 </li>
@@ -527,8 +533,8 @@
 </ul>
 </li>
 <li>Q:TLS1.3的握手过程<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210322162027.png"></li>
-<li><img src="http://anki190912.xuexihaike.com/20210322162054.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322162027.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322162054.png"></li>
 <li>在 TCP 建立连接之后，浏览器首先还是发一个「Client Hello」</li>
 <li>因为 1.3 的消息兼容 1.2，所以开头的版本号、支持的密码套件和随机数（Client Random）结构都是一样的（不过这时的随机数是 32 个字节）</li>
 <li>注意「Client Hello」里的扩展，「supported_versions」表示这是 TLS1.3，「supported_groups」是支持的曲线，「key_share」是曲线对应的参数</li>
@@ -542,7 +548,7 @@
 </ul>
 <h1 id="28-连接太慢该怎么办：HTTPS的优化"><a href="#28-连接太慢该怎么办：HTTPS的优化" class="headerlink" title="28 | 连接太慢该怎么办：HTTPS的优化"></a>28 | 连接太慢该怎么办：HTTPS的优化</h1><ul>
 <li>Q:TLS握手过程中影响性能的部分有哪些呢<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210322163414.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322163414.png"></li>
 </ul>
 </li>
 <li>Q:如何使用硬件优化的方式优化HTTPS<ul>
@@ -578,7 +584,7 @@
 <li>Q:如何进行会话复用（TLS session resumption）的「Session ID」<ul>
 <li>客户端和服务器首次连接后各自保存一个会话的 ID 号，内存里存储主密钥和其他相关的信息。当客户端再次连接时发一个 ID 过来，服务器就在内存里找，找到就直接用主密钥恢复会话状态，跳过证书验证和密钥交换，只用一个消息往返就可以建立安全通信</li>
 <li>服务器在“ServerHello”消息后直接发送了“Change Cipher Spec”和“Finished”消息，复用会话完成了握手</li>
-<li><img src="http://anki190912.xuexihaike.com/20210322164911.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322164911.png"></li>
 <li>「Session ID」是最早出现的会话复用技术，也是应用最广的，但它也有缺点，服务器必须保存每一个客户端的会话数据，对于拥有百万、千万级别用户的网站来说存储量就成了大问题，加重了服务器的负担</li>
 </ul>
 </li>
@@ -590,7 +596,7 @@
 </li>
 <li>Q:如何进行预共享密钥<ul>
 <li>“False Start”“Session ID”“Session Ticket”等方式只能实现 1-RTT，而 TLS1.3 更进一步实现了“0-RTT”，原理和“Session Ticket”差不多，但在发送 Ticket 的同时会带上应用数据（Early Data），免去了 1.2 里的服务器确认步骤，这种方式叫“Pre-shared Key”，简称为“PSK”</li>
-<li><img src="http://anki190912.xuexihaike.com/20210322165457.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322165457.png"></li>
 <li>但“PSK”也不是完美的，它为了追求效率而牺牲了一点安全性，容易受到“重放攻击”（Replay attack）的威胁。黑客可以截获“PSK”的数据，像复读机那样反复向服务器发送</li>
 <li>解决的办法是只允许安全的 GET/HEAD 方法，在消息里加入时间戳、“nonce”验证，或者“一次性票证”限制重放</li>
 </ul>

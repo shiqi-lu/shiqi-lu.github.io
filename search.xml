@@ -21,7 +21,7 @@
 <li>2.根据样本不平衡比例设置一个采样比例以确定采样倍率N，对于每一个少数类样本$x_i$，从其k近邻中随机选择若干个样本，假设选择的近邻为$\tilde{x}$。</li>
 <li>3.对于每一个随机选出的近邻$\tilde{x}$，分别于原样本按照如下的公式构建新的样本</li>
 <li>$$x_{n e w}=x+\operatorname{rand}(0,1) \times |\tilde{x}-x|$$</li>
-<li><img src="http://anki190912.xuexihaike.com/20201019195529.png?imageView2/2/h/250"></li>
+<li><img src="https://img.shiqi-lu.tech/20201019195529.png?imageView2/2/h/250"></li>
 </ul>
 <h3 id="SMOTE的问题"><a href="#SMOTE的问题" class="headerlink" title="SMOTE的问题"></a>SMOTE的问题</h3><ul>
 <li>随机选取少数类样本用以合成新样本，而不考虑周边样本的情况<ul>
@@ -35,7 +35,7 @@
 </ul>
 <h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
 <li>这个算法会先将所有的少数类样本分成三类，如图</li>
-<li><img src="http://anki190912.xuexihaike.com/20201019140912.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201019140912.png"></li>
 <li>“noise”：所有的k近邻个样本都属于多数类，可认为是噪声不能生成合成样本</li>
 <li>“danger”：超过一半的k近邻样本属于多数类</li>
 <li>“safe”：超过一半的k近邻样本属于少数类</li>
@@ -69,7 +69,7 @@
 </ul>
 <h2 id="Ensemble-Methods"><a href="#Ensemble-Methods" class="headerlink" title="Ensemble Methods"></a>Ensemble Methods</h2><h3 id="EasyEnsemble"><a href="#EasyEnsemble" class="headerlink" title="EasyEnsemble"></a>EasyEnsemble</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><ul>
 <li>多次随机欠采样，尽可能全面地涵盖所有信息，特点是利用boosting减少偏差(Adaboost)、bagging减少方差(集成分类器)。实际应用的时候可尝试选用不同的分类器来提高分类的效果</li>
-<li><img src="http://anki190912.xuexihaike.com/20201020145429.png?imageView2/2/h/350"></li>
+<li><img src="https://img.shiqi-lu.tech/20201020145429.png?imageView2/2/h/350"></li>
 </ul>
 <h4 id="算法流程-2"><a href="#算法流程-2" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
 <li>1.把数据划分为两部分，分别是多数类样本$S_{maj}$和少数类样本$S_{min}$</li>
@@ -114,7 +114,7 @@
 <li>如果两个样本来自Tomek Links，那么他们中的一个样本要么是噪声，要么它们都在两类的边界上</li>
 </ul>
 <h4 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h4><ul>
-<li><img src="http://anki190912.xuexihaike.com/20201021171029.png?imageView2/2/h/300"></li>
+<li><img src="https://img.shiqi-lu.tech/20201021171029.png?imageView2/2/h/300"></li>
 </ul>
 <h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><ul>
 <li>欠采样：将Tomek Links中属于是多数类的样本剔除</li>
@@ -133,7 +133,7 @@
 <h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
 <li>普通的SMOTE方法生成的少数类样本是通过线性插值得到的，在平衡类别分布的同时也扩张了少数类的样本空间，产生的问题是可能原本属于多数类样本的空间被少数类“入侵”，容易造成模型的过拟合</li>
 <li>Tomek Links对寻找的是那种噪声点或者边界点，可以很好地解决“入侵”问题，如图红色加号为SMOTE产生的少数类样本，可以看到红色样本“入侵”到原本属于多数类样本的空间，这种噪声数据问题可以通过Tomek Links很好地解决</li>
-<li><img src="http://anki190912.xuexihaike.com/20201021171629.png?imageView2/2/h/150"></li>
+<li><img src="https://img.shiqi-lu.tech/20201021171629.png?imageView2/2/h/150"></li>
 </ul>
 <h2 id="SMOTE-ENN"><a href="#SMOTE-ENN" class="headerlink" title="SMOTE+ENN"></a>SMOTE+ENN</h2><ul>
 <li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
@@ -285,7 +285,7 @@
 <li>Q:数据库的第一范式（1NF）是什么？<ul>
 <li>数据库表中的所有字段都是单一属性，不可再分的。这个单一属性是又基本的数据类型所构成的，如整数，浮点数，字符串等</li>
 <li>即第一范式要求数据库中的表都是二维表</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201841.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201841.png"></li>
 </ul>
 </li>
 <li>Q:数据库的第二范式（2NF）是什么？<ul>
@@ -293,33 +293,33 @@
 <li>部分函数依赖是指存在着组合关键字中的某一关键字决定非关键字的情况</li>
 <li>即所有单关键字段的表都符合第二范式</li>
 <li>不符合的例子：</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201849.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201849.png"></li>
 <li>由于供应商和商品之间是多对多的关系，所以只有使用商品名称和供应商名称才可以唯一标识出一件商品。也就是商品名称和供应商名称是一组组合关键字。上表中存在以下部分函数依赖关系：</li>
 <li>（商品名称）-&gt;（价格，描述，重量，商品有效期）</li>
 <li>（供应商名称）-&gt;（供应商电话）</li>
 <li>存在问题：插入异常，删除异常，更新异常，数据冗余</li>
 <li>解决办法：</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201858.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201858.png"></li>
 </ul>
 </li>
 <li>Q:数据库的第三范式（3NF）是什么？<ul>
 <li>在第二范式的基础上定义，如果数据表中不存在非关键字段对任意候选关键字段的传递函数依赖则符合第三范式</li>
 <li>不符合的例子：</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201907.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201907.png"></li>
 <li>存在以下传递依赖关系：</li>
 <li>（商品名称）-&gt;（分类）-&gt;（分类描述）</li>
 <li>也就是说存在非关键字段“分类描述”对关键字段“商品名称”的传递函数依赖</li>
 <li>存在问题：</li>
 <li>（分类，分类描述）对对于每一个商品都会进行记录，所以存在着数据冗余，同时也还存在数据的插入，更新及删除异常</li>
 <li>解决办法：</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201915.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201915.png"></li>
 </ul>
 </li>
 <li>Q:数据库的BC范式（BCNF）是什么？<ul>
 <li>在第三范式的基础上，数据库表中如果不存在任何字段对任一候选关键字段的传递函数则符合BC范式</li>
 <li>即如果是复合关键字，则复合关键字之间也不能存在函数依赖关系</li>
 <li>不符合的例子：</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201922.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201922.png"></li>
 <li>假设供应商联系人只能受雇于一家供应商，每家供应商可以供应多个商品，则存在如下决定关系：</li>
 <li>（供应商，商品ID）-&gt;（联系人，商品数量）</li>
 <li>（联系人，商品ID）-&gt;（供应商，商品数量）</li>
@@ -328,11 +328,11 @@
 <li>（供应商联系人）-&gt;（供应商）</li>
 <li>并存在数据操作异常及输入冗余</li>
 <li>解决办法：</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905200111.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905200111.png"></li>
 </ul>
 </li>
 <li>Q:MySQL常用的存储引擎有哪些？<ul>
-<li><img src="http://anki190912.xuexihaike.com/20200905201930.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201930.png"></li>
 </ul>
 </li>
 <li>Q:对象命名应该遵循什么原则？<ul>
@@ -343,7 +343,7 @@
 </li>
 <li>字段类型的选择原则<ul>
 <li>列的数据类型一方面影响数据存储空间的开销，另一方面也会影响数据查询性能。当一个列可以选择多种数据类型时，应该优先考虑数字类型，其次是日期或二进制类型，最后是字符类型。对于相同级别的数据类型，应该优先选择占用空间小的数据类型</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201936.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201936.png"></li>
 <li>主要从以下两个角度考虑：</li>
 <li>1.在对数据进行比较（查询条件、join条件及排序）操作时：同样的数据，字符处理往往比数字处理慢</li>
 <li>2.在数据库中，数据处理以页为单位，列的长度越小，利于性能提升</li>
@@ -409,9 +409,9 @@
 <li>Q:如何维护数据字典<ul>
 <li>1.使用第三方工具对数据字典进行维护</li>
 <li>2.利用数据库本身的备注字段来维护数据字典。以MySQL为例</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201947.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201947.png"></li>
 <li>3.导出数据字典</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201954.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201954.png"></li>
 </ul>
 </li>
 <li>Q:如何选择合适的列建立索引？<ul>
@@ -446,7 +446,7 @@
 </li>
 <li>Q:表的水平拆分方法？<ul>
 <li>使用对主键进行hash key的方法</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905202000.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905202000.png"></li>
 </ul>
 </li>
 </ul>
@@ -463,155 +463,11 @@
       </tags>
   </entry>
   <entry>
-    <title>《分布式协议与算法实战》理论篇 学习笔记</title>
-    <url>/distrib-protocal-algo-1/</url>
-    <content><![CDATA[<h1 id="01-拜占庭将军问题：有叛徒的情况下，如何才能达成共识？"><a href="#01-拜占庭将军问题：有叛徒的情况下，如何才能达成共识？" class="headerlink" title="01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？"></a>01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？</h1><ul>
-<li>Q:二忠一叛难题<ul>
-<li>假设3个国家齐、楚、燕要攻打秦国，以只有半数以上的将军参与进攻，才能击败敌人，在这个期间，将军们彼此之间需要通过信使传递消息，然后协商一致之后，并让信使传递信息，按照“少数服从多数”的原则投票表决，然后在同一时间点发动进攻</li>
-<li>但若有人暗通秦国出现作战计划不一致的情况。比如齐向楚、 燕分别发送了“撤退”的消息，燕向齐和楚发送了“进攻”的消息。撤退：进攻 =1:1，无 论楚投进攻还是撤退，都会成为 2:1，这个时候还是会形成一个一致性的作战方案</li>
-<li>但是，楚这个叛徒在暗中配合秦国，让信使向齐发送了“撤退”，向燕发送了“进攻”，那么：</li>
-<li>燕看到的是，撤退：进攻 =1:2</li>
-<li>齐看到的是，撤退：进攻 =2:1。</li>
-<li>按照“少数服从多数”的原则，就会出现燕单独进攻秦军，当然，最后肯定是因为寡不敌众，被秦军给灭了</li>
-<li><img src="http://anki190912.xuexihaike.com/20210223143644.png"></li>
-</ul>
-</li>
-<li>Q:口信消息型拜占庭问题之解<ul>
-<li>增加讨论中忠诚将军的数量，由3位将军变为4位将军。并约定如果没有收到命令，就执行预设的默认命令如“撤退”。以及进行两轮作战信息协商</li>
-<li>第一轮<ul>
-<li>先发送作战信息的将军作为指挥官，其他的将军作为副官</li>
-<li>指挥官将他的作战信息发送给每位副官</li>
-<li>每位副官，将从指挥官处收到的作战信息，作为他的作战指令；如果没有收到作战信 息，将把默认的“撤退”作为作战指令</li>
-</ul>
-</li>
-<li>第二轮<ul>
-<li>除了第一轮的指挥官外，剩余的 3 位将军将分别作为指挥官，向另外 2 位将军发送作战信息；</li>
-<li>然后，这 3 位将军按照“少数服从多数”，执行收到的作战指令</li>
-</ul>
-</li>
-<li>这个解决办法实现了作战计划的一致性</li>
-<li>如果叛将人数为 m，将军人数不能少于 3m + 1 ，那么拜占庭将军问题就能解决了</li>
-<li>这个算法的前提是，叛将人数m是已知的，这个算法中，叛将数m决定递归循环的次数，即m+1轮</li>
-</ul>
-</li>
-<li>Q:签名消息型拜占庭问题之解<ul>
-<li>通过签名的方式，可在不增加将军人数的情况下，解决二忠一叛的难题</li>
-<li>签名的特性：<ul>
-<li>忠诚将军的签名无法伪造，而且对他签名消息的内容进行任何更改都会被发现</li>
-<li>任何人都能验证将军签名的真伪</li>
-</ul>
-</li>
-<li><img src="http://anki190912.xuexihaike.com/20210223145130.png"></li>
-<li><img src="http://anki190912.xuexihaike.com/20210223145141.png"></li>
-</ul>
-</li>
-<li>Q:拜占庭容错算法和非拜占庭容错算法<ul>
-<li>拜占庭将军问题描述的是最困难的，也是最复杂的一种分布式故障场景，除了存在故障行为，还存在恶意行为的一个场景。必须使用拜占庭容错算法（Byzantine Fault Tolerance，BFT）。还有：PBFT 算法，PoW 算法</li>
-<li>在计算机分布式系统中，最常用的是非拜占庭容错算法，即故障容错算法（Crash Fault Tolerance，CFT）。CFT 解决的是分布式的系统中存在故障，但不存在恶意节点的场景下的共识问题。这个场景可能会丢失消息，或者有消息重复，但不存在错误消息，或者伪造消息的情况。常见的算法有 Paxos 算法、Raft 算法、ZAB 协议</li>
-</ul>
-</li>
-</ul>
-<h1 id="02-CAP理论：分布式系统的PH试纸，用它来测酸碱度"><a href="#02-CAP理论：分布式系统的PH试纸，用它来测酸碱度" class="headerlink" title="02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度"></a>02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度</h1><ul>
-<li>Q:CAP的三个指标<ul>
-<li>一致性Consistency：客户端的每次读操作，不管访问哪个节点，要么读到的都是同一份最新的数据，要么读取失败，强调的是各节点间的数据一致</li>
-<li>可用性Availability：任何来自客户端的请求，不管访问哪个节点，都能得到相应数据，但不保证是同一份最新数据，强调的是服务可用，但不保证数据的一致</li>
-<li>分区容错性Partition Tolerance：当节点间出现任意数量的消息丢失或高延迟时，系统仍然可以继续提供服务，强调的是集群对分区故障的容错能力</li>
-</ul>
-</li>
-<li>Q:CAP不可能三角<ul>
-<li>是对于一个分布式系统而言，一致性（Consistency）、可用性（Availability）、分区容错性（Partition Tolerance）3 个指标不可兼得，只能在 3 个指标中选择 2 个</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224102536.png"></li>
-<li>在不存在网络分区的情况下，即分布式系统正常运行时（这也是系统在绝大部分时候所处的状态），就是说在不需要 P 时，C 和 A 能够同时保证。只有当发生分区故障的时候，也就是说需要 P 时，才会在 C 和 A 之间做出选择。而且如果各节点数据不一致，影响到了系统运行或业务运行（也就是说会有负面的影响），推荐选择 C，否则选 A</li>
-</ul>
-</li>
-<li>Q:CAP的三个模型<ul>
-<li>CA 模型，在分布式系统中不存在。因为舍弃 P，意味着舍弃分布式系统，就比如单机版关系型数据库 MySQL，如果 MySQL 要考虑主备或集群部署时，它必须考虑 P</li>
-<li>CP 模型，采用 CP 模型的分布式系统，一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性。因为为了防止数据不一致，集群将拒绝新数据的写入，典型的应用是 ZooKeeper，Etcd 和 HBase</li>
-<li>AP 模型，采用 AP 模型的分布式系统，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误，但当出现分区故障时，相同的读操作，访问不同的节点，得到响应数据可能不一样。典型应用就比如 Cassandra 和 DynamoDB</li>
-</ul>
-</li>
-</ul>
-<h1 id="03-ACID理论：CAP的酸，追求一致性"><a href="#03-ACID理论：CAP的酸，追求一致性" class="headerlink" title="03 | ACID理论：CAP的酸，追求一致性"></a>03 | ACID理论：CAP的酸，追求一致性</h1><ul>
-<li>Q:二阶段提交协议<ul>
-<li>提交请求阶段（又称投票阶段）<ul>
-<li>协调者(Coordinator)向所有节点发起请求，各节点评估事务中需要操作的对象和对象状态，是否准备好，能否提交新操作。如果能，预留时间并锁定，不再安排其它事务</li>
-<li>这个阶段每个参与者投票表决事务是放弃还是提交。一旦参与者投票要求提交事务，那么就不允许放弃事务。在一个参与者投票要求提交事务之前，它必须保证能够执行提交协议中它自己那一部分，即使参与者出现故障或者中途被替换掉。这个特性，是需要在代码实现时保障的</li>
-</ul>
-</li>
-<li>提交执行阶段（又称完成阶段）<ul>
-<li>事务的每个参与者执行最终统一的决定，提交事务或者放弃事务，这个是为了实现ACID中的原子性</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:原始的二阶段提交协议和 XA 协议存在的问题是<ul>
-<li>在提交请求阶段，需要预留资源，在资源预留期间，其他人不能操作（比如，XA 在第一阶段会将相关资源锁定）</li>
-<li>数据库是独立的系统</li>
-<li>因此无法根据业务特点弹性地调整锁的粒度，这些都会影响数据库的并发性能</li>
-</ul>
-</li>
-<li>Q:TCC(Try预留-Confirm确认-Cancel取消)<ul>
-<li>预留阶段<ul>
-<li>协调者注册确认操作和撤销操作，各个节点预留资源，并返回消息答复</li>
-</ul>
-</li>
-<li>确认阶段<ul>
-<li>协调者执行确认操作，各节点收到确认操作的响应，完成分布式事务</li>
-</ul>
-</li>
-<li>撤销阶段<ul>
-<li>如果预留阶段出错，则进入撤销阶段</li>
-<li>协调者执行撤销操作，通知各个节点取消事务执行，并返回撤销操作的响应</li>
-</ul>
-</li>
-<li>TCC 本质上是补偿事务，核心思想是针对每个操作都要注册一个与其对应的确认操作和补偿操作（也就是撤销操作）</li>
-<li>TCC 不依赖于数据库的事务，而是在业务中实现了分布式事务，这样能减轻数据库的压力，但对业务代码的入侵性也更强，实现的复杂度也更高</li>
-<li>荐在需要分布式事务能力时，优先考虑现成的事务型数据库（比如 MySQL XA），当现有的事务型数据库不能满足业务的需求时，再考虑基于 TCC 实现分布式事务</li>
-</ul>
-</li>
-</ul>
-<h1 id="04-BASE理论：CAP的碱，追求可用性"><a href="#04-BASE理论：CAP的碱，追求可用性" class="headerlink" title="04 | BASE理论：CAP的碱，追求可用性"></a>04 | BASE理论：CAP的碱，追求可用性</h1><ul>
-<li>Q:BASE理论<ul>
-<li>基本可用(Basically Available)</li>
-<li>最终一致性(Eventually consistent)</li>
-<li>软状态(Soft state)：实现服务可用性的时候系统数据的一种过渡状态，即不同节点间，数据副本存在短暂的不一致</li>
-</ul>
-</li>
-<li>Q:实现基本可用的 4 板斧<ul>
-<li>流量削峰：将访问请求错开，削弱请求峰值</li>
-<li>延迟响应：把请求放在队列中排队等待，一段时间后，系统开始处理，并响应处理结果</li>
-<li>体验降级：通过降低图片清晰度和大小，提升系统的处理能力</li>
-<li>过载保护：把接收到的请求放在指定的队列中排队处理，如果请求等待时间超时了，直接拒绝超时请求；队列满了之后，清楚队列中一定数量的排队请求，保护系统不过载</li>
-</ul>
-</li>
-<li>Q:实际工程实践中何实现最终一致性以什么为准<ul>
-<li>以最新写入的数据为准，比如 AP 模型的 KV 存储采用的就是这种方式</li>
-<li>以第一次写入的数据为准，如果你不希望存储的数据被更改，可以以它为准</li>
-</ul>
-</li>
-<li>Q:实现最终一致性的具体方式<ul>
-<li>读时修复：在读取数据时，检测数据的不一致，进行修复。如 Cassandra 的 Read Repair 实现，即在向Cassandra系统查询数据时，如果检测到不同节点的副本数据不一致，系统就自动修复数据</li>
-<li>写时修复：在写入数据时，检测数据的不一致，进行修复。如 Cassandra 的 Hinted Handoff 实现。即Cannandra集群的节点之间远程写数据的时候，如果写失败就将数据缓存下来，然后定时重传，修复数据的不一致性</li>
-<li>异步修复：最常用的方式，通过定时对账检测副本数据的一致性，并修复</li>
-<li>写时修复不需要做数据一致性对比，性能消耗比较低，对系统运行影响也不大，推荐你在实现最终一致性时优先实现这种方式。而读时修复和异步修复因为需要做数据的一致性对比，性能消耗比较多，在开发实际系统时，要尽量优化一致性对比的算法，降低性能消耗，避免对系统运行造成影响</li>
-<li>实现最终一致性的时候，推荐同时实现自定义写一致性级别（All、Quorum、One、Any）， 让用户可以自主选择相应的一致性级别，比如可以通过设置一致性级别为 All，来实现强一致性</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>分布式</category>
-      </categories>
-      <tags>
-        <tag>分布式</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
     <url>/distrib-principal-algo-1/</url>
     <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
 <li>Q：分布式技术涉及内容<ul>
-<li><img src="http://anki190912.xuexihaike.com/20200905201734.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
 <li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
 <li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
 </ul>
@@ -710,6 +566,150 @@
       </tags>
   </entry>
   <entry>
+    <title>《分布式协议与算法实战》理论篇 学习笔记</title>
+    <url>/distrib-protocal-algo-1/</url>
+    <content><![CDATA[<h1 id="01-拜占庭将军问题：有叛徒的情况下，如何才能达成共识？"><a href="#01-拜占庭将军问题：有叛徒的情况下，如何才能达成共识？" class="headerlink" title="01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？"></a>01 | 拜占庭将军问题：有叛徒的情况下，如何才能达成共识？</h1><ul>
+<li>Q:二忠一叛难题<ul>
+<li>假设3个国家齐、楚、燕要攻打秦国，以只有半数以上的将军参与进攻，才能击败敌人，在这个期间，将军们彼此之间需要通过信使传递消息，然后协商一致之后，并让信使传递信息，按照“少数服从多数”的原则投票表决，然后在同一时间点发动进攻</li>
+<li>但若有人暗通秦国出现作战计划不一致的情况。比如齐向楚、 燕分别发送了“撤退”的消息，燕向齐和楚发送了“进攻”的消息。撤退：进攻 =1:1，无 论楚投进攻还是撤退，都会成为 2:1，这个时候还是会形成一个一致性的作战方案</li>
+<li>但是，楚这个叛徒在暗中配合秦国，让信使向齐发送了“撤退”，向燕发送了“进攻”，那么：</li>
+<li>燕看到的是，撤退：进攻 =1:2</li>
+<li>齐看到的是，撤退：进攻 =2:1。</li>
+<li>按照“少数服从多数”的原则，就会出现燕单独进攻秦军，当然，最后肯定是因为寡不敌众，被秦军给灭了</li>
+<li><img src="https://img.shiqi-lu.tech/20210223143644.png"></li>
+</ul>
+</li>
+<li>Q:口信消息型拜占庭问题之解<ul>
+<li>增加讨论中忠诚将军的数量，由3位将军变为4位将军。并约定如果没有收到命令，就执行预设的默认命令如“撤退”。以及进行两轮作战信息协商</li>
+<li>第一轮<ul>
+<li>先发送作战信息的将军作为指挥官，其他的将军作为副官</li>
+<li>指挥官将他的作战信息发送给每位副官</li>
+<li>每位副官，将从指挥官处收到的作战信息，作为他的作战指令；如果没有收到作战信 息，将把默认的“撤退”作为作战指令</li>
+</ul>
+</li>
+<li>第二轮<ul>
+<li>除了第一轮的指挥官外，剩余的 3 位将军将分别作为指挥官，向另外 2 位将军发送作战信息；</li>
+<li>然后，这 3 位将军按照“少数服从多数”，执行收到的作战指令</li>
+</ul>
+</li>
+<li>这个解决办法实现了作战计划的一致性</li>
+<li>如果叛将人数为 m，将军人数不能少于 3m + 1 ，那么拜占庭将军问题就能解决了</li>
+<li>这个算法的前提是，叛将人数m是已知的，这个算法中，叛将数m决定递归循环的次数，即m+1轮</li>
+</ul>
+</li>
+<li>Q:签名消息型拜占庭问题之解<ul>
+<li>通过签名的方式，可在不增加将军人数的情况下，解决二忠一叛的难题</li>
+<li>签名的特性：<ul>
+<li>忠诚将军的签名无法伪造，而且对他签名消息的内容进行任何更改都会被发现</li>
+<li>任何人都能验证将军签名的真伪</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20210223145130.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210223145141.png"></li>
+</ul>
+</li>
+<li>Q:拜占庭容错算法和非拜占庭容错算法<ul>
+<li>拜占庭将军问题描述的是最困难的，也是最复杂的一种分布式故障场景，除了存在故障行为，还存在恶意行为的一个场景。必须使用拜占庭容错算法（Byzantine Fault Tolerance，BFT）。还有：PBFT 算法，PoW 算法</li>
+<li>在计算机分布式系统中，最常用的是非拜占庭容错算法，即故障容错算法（Crash Fault Tolerance，CFT）。CFT 解决的是分布式的系统中存在故障，但不存在恶意节点的场景下的共识问题。这个场景可能会丢失消息，或者有消息重复，但不存在错误消息，或者伪造消息的情况。常见的算法有 Paxos 算法、Raft 算法、ZAB 协议</li>
+</ul>
+</li>
+</ul>
+<h1 id="02-CAP理论：分布式系统的PH试纸，用它来测酸碱度"><a href="#02-CAP理论：分布式系统的PH试纸，用它来测酸碱度" class="headerlink" title="02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度"></a>02 | CAP理论：分布式系统的PH试纸，用它来测酸碱度</h1><ul>
+<li>Q:CAP的三个指标<ul>
+<li>一致性Consistency：客户端的每次读操作，不管访问哪个节点，要么读到的都是同一份最新的数据，要么读取失败，强调的是各节点间的数据一致</li>
+<li>可用性Availability：任何来自客户端的请求，不管访问哪个节点，都能得到相应数据，但不保证是同一份最新数据，强调的是服务可用，但不保证数据的一致</li>
+<li>分区容错性Partition Tolerance：当节点间出现任意数量的消息丢失或高延迟时，系统仍然可以继续提供服务，强调的是集群对分区故障的容错能力</li>
+</ul>
+</li>
+<li>Q:CAP不可能三角<ul>
+<li>是对于一个分布式系统而言，一致性（Consistency）、可用性（Availability）、分区容错性（Partition Tolerance）3 个指标不可兼得，只能在 3 个指标中选择 2 个</li>
+<li><img src="https://img.shiqi-lu.tech/20210224102536.png"></li>
+<li>在不存在网络分区的情况下，即分布式系统正常运行时（这也是系统在绝大部分时候所处的状态），就是说在不需要 P 时，C 和 A 能够同时保证。只有当发生分区故障的时候，也就是说需要 P 时，才会在 C 和 A 之间做出选择。而且如果各节点数据不一致，影响到了系统运行或业务运行（也就是说会有负面的影响），推荐选择 C，否则选 A</li>
+</ul>
+</li>
+<li>Q:CAP的三个模型<ul>
+<li>CA 模型，在分布式系统中不存在。因为舍弃 P，意味着舍弃分布式系统，就比如单机版关系型数据库 MySQL，如果 MySQL 要考虑主备或集群部署时，它必须考虑 P</li>
+<li>CP 模型，采用 CP 模型的分布式系统，一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性。因为为了防止数据不一致，集群将拒绝新数据的写入，典型的应用是 ZooKeeper，Etcd 和 HBase</li>
+<li>AP 模型，采用 AP 模型的分布式系统，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误，但当出现分区故障时，相同的读操作，访问不同的节点，得到响应数据可能不一样。典型应用就比如 Cassandra 和 DynamoDB</li>
+</ul>
+</li>
+</ul>
+<h1 id="03-ACID理论：CAP的酸，追求一致性"><a href="#03-ACID理论：CAP的酸，追求一致性" class="headerlink" title="03 | ACID理论：CAP的酸，追求一致性"></a>03 | ACID理论：CAP的酸，追求一致性</h1><ul>
+<li>Q:二阶段提交协议<ul>
+<li>提交请求阶段（又称投票阶段）<ul>
+<li>协调者(Coordinator)向所有节点发起请求，各节点评估事务中需要操作的对象和对象状态，是否准备好，能否提交新操作。如果能，预留时间并锁定，不再安排其它事务</li>
+<li>这个阶段每个参与者投票表决事务是放弃还是提交。一旦参与者投票要求提交事务，那么就不允许放弃事务。在一个参与者投票要求提交事务之前，它必须保证能够执行提交协议中它自己那一部分，即使参与者出现故障或者中途被替换掉。这个特性，是需要在代码实现时保障的</li>
+</ul>
+</li>
+<li>提交执行阶段（又称完成阶段）<ul>
+<li>事务的每个参与者执行最终统一的决定，提交事务或者放弃事务，这个是为了实现ACID中的原子性</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:原始的二阶段提交协议和 XA 协议存在的问题是<ul>
+<li>在提交请求阶段，需要预留资源，在资源预留期间，其他人不能操作（比如，XA 在第一阶段会将相关资源锁定）</li>
+<li>数据库是独立的系统</li>
+<li>因此无法根据业务特点弹性地调整锁的粒度，这些都会影响数据库的并发性能</li>
+</ul>
+</li>
+<li>Q:TCC(Try预留-Confirm确认-Cancel取消)<ul>
+<li>预留阶段<ul>
+<li>协调者注册确认操作和撤销操作，各个节点预留资源，并返回消息答复</li>
+</ul>
+</li>
+<li>确认阶段<ul>
+<li>协调者执行确认操作，各节点收到确认操作的响应，完成分布式事务</li>
+</ul>
+</li>
+<li>撤销阶段<ul>
+<li>如果预留阶段出错，则进入撤销阶段</li>
+<li>协调者执行撤销操作，通知各个节点取消事务执行，并返回撤销操作的响应</li>
+</ul>
+</li>
+<li>TCC 本质上是补偿事务，核心思想是针对每个操作都要注册一个与其对应的确认操作和补偿操作（也就是撤销操作）</li>
+<li>TCC 不依赖于数据库的事务，而是在业务中实现了分布式事务，这样能减轻数据库的压力，但对业务代码的入侵性也更强，实现的复杂度也更高</li>
+<li>荐在需要分布式事务能力时，优先考虑现成的事务型数据库（比如 MySQL XA），当现有的事务型数据库不能满足业务的需求时，再考虑基于 TCC 实现分布式事务</li>
+</ul>
+</li>
+</ul>
+<h1 id="04-BASE理论：CAP的碱，追求可用性"><a href="#04-BASE理论：CAP的碱，追求可用性" class="headerlink" title="04 | BASE理论：CAP的碱，追求可用性"></a>04 | BASE理论：CAP的碱，追求可用性</h1><ul>
+<li>Q:BASE理论<ul>
+<li>基本可用(Basically Available)</li>
+<li>最终一致性(Eventually consistent)</li>
+<li>软状态(Soft state)：实现服务可用性的时候系统数据的一种过渡状态，即不同节点间，数据副本存在短暂的不一致</li>
+</ul>
+</li>
+<li>Q:实现基本可用的 4 板斧<ul>
+<li>流量削峰：将访问请求错开，削弱请求峰值</li>
+<li>延迟响应：把请求放在队列中排队等待，一段时间后，系统开始处理，并响应处理结果</li>
+<li>体验降级：通过降低图片清晰度和大小，提升系统的处理能力</li>
+<li>过载保护：把接收到的请求放在指定的队列中排队处理，如果请求等待时间超时了，直接拒绝超时请求；队列满了之后，清楚队列中一定数量的排队请求，保护系统不过载</li>
+</ul>
+</li>
+<li>Q:实际工程实践中何实现最终一致性以什么为准<ul>
+<li>以最新写入的数据为准，比如 AP 模型的 KV 存储采用的就是这种方式</li>
+<li>以第一次写入的数据为准，如果你不希望存储的数据被更改，可以以它为准</li>
+</ul>
+</li>
+<li>Q:实现最终一致性的具体方式<ul>
+<li>读时修复：在读取数据时，检测数据的不一致，进行修复。如 Cassandra 的 Read Repair 实现，即在向Cassandra系统查询数据时，如果检测到不同节点的副本数据不一致，系统就自动修复数据</li>
+<li>写时修复：在写入数据时，检测数据的不一致，进行修复。如 Cassandra 的 Hinted Handoff 实现。即Cannandra集群的节点之间远程写数据的时候，如果写失败就将数据缓存下来，然后定时重传，修复数据的不一致性</li>
+<li>异步修复：最常用的方式，通过定时对账检测副本数据的一致性，并修复</li>
+<li>写时修复不需要做数据一致性对比，性能消耗比较低，对系统运行影响也不大，推荐你在实现最终一致性时优先实现这种方式。而读时修复和异步修复因为需要做数据的一致性对比，性能消耗比较多，在开发实际系统时，要尽量优化一致性对比的算法，降低性能消耗，避免对系统运行造成影响</li>
+<li>实现最终一致性的时候，推荐同时实现自定义写一致性级别（All、Quorum、One、Any）， 让用户可以自主选择相应的一致性级别，比如可以通过设置一致性级别为 All，来实现强一致性</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>特征选择方法汇总</title>
     <url>/feature-selection/</url>
     <content><![CDATA[<h1 id="什么是特征选择"><a href="#什么是特征选择" class="headerlink" title="什么是特征选择"></a>什么是特征选择</h1><ul>
@@ -763,7 +763,7 @@
 <li>没有考虑机器学习算法的特点</li>
 </ul>
 <h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2><ul>
-<li><img src="http://anki190912.xuexihaike.com/20201014172426.png?imageView2/2/h/80"></li>
+<li><img src="https://img.shiqi-lu.tech/20201014172426.png?imageView2/2/h/80"></li>
 </ul>
 <h2 id="常用的过滤方法"><a href="#常用的过滤方法" class="headerlink" title="常用的过滤方法"></a>常用的过滤方法</h2><h3 id="覆盖率"><a href="#覆盖率" class="headerlink" title="覆盖率"></a>覆盖率</h3><ul>
 <li>即特征在训练集中出现的比例。若覆盖率很小，如有10000个样本，但某个特征只出现了5次，则次覆盖率对模型的预测作用不大，可删除</li>
@@ -843,7 +843,7 @@
 <li>2.样本不够充分的情况下容易过拟合</li>
 <li>3.特征变量较多时计算复杂度太高</li>
 </ul>
-<h2 id="图示-1"><a href="#图示-1" class="headerlink" title="图示"></a>图示</h2><p><img src="http://anki190912.xuexihaike.com/20201014173616.png?imageView2/2/h/120"></p>
+<h2 id="图示-1"><a href="#图示-1" class="headerlink" title="图示"></a>图示</h2><p><img src="https://img.shiqi-lu.tech/20201014173616.png?imageView2/2/h/120"></p>
 <h2 id="3种常用的特征子集搜索方法"><a href="#3种常用的特征子集搜索方法" class="headerlink" title="3种常用的特征子集搜索方法"></a>3种常用的特征子集搜索方法</h2><h3 id="1-完全搜索"><a href="#1-完全搜索" class="headerlink" title="1.完全搜索"></a>1.完全搜索</h3><ul>
 <li>即穷举法，遍历所有可能的组合达到全局最优，时间复杂度$2^n$</li>
 </ul>
@@ -864,7 +864,7 @@
 <li>将特征选择嵌入到模型的构建过程中，具有包装法与机器学习算法相结合的优点，也具有过滤法计算效率高的优点</li>
 </ul>
 <h2 id="图示-2"><a href="#图示-2" class="headerlink" title="图示"></a>图示</h2><ul>
-<li><img src="http://anki190912.xuexihaike.com/20201014183741.png?imageView2/2/h/120"></li>
+<li><img src="https://img.shiqi-lu.tech/20201014183741.png?imageView2/2/h/120"></li>
 </ul>
 <h2 id="LASSO方法"><a href="#LASSO方法" class="headerlink" title="LASSO方法"></a>LASSO方法</h2><ul>
 <li>使用LASSO(Least Absolute Shrinkage and Selection Operator)方法</li>
@@ -1128,7 +1128,7 @@
 <li>暂停和继续Deployment</li>
 </ul>
 </li>
-<li><img src="http://anki190912.xuexihaike.com/20200921170358.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200921170358.png"></li>
 </ul>
 </li>
 <li><h2 id="Q-如何使用Deployment部署一个简单的Nginx应用"><a href="#Q-如何使用Deployment部署一个简单的Nginx应用" class="headerlink" title="Q:如何使用Deployment部署一个简单的Nginx应用"></a>Q:如何使用Deployment部署一个简单的Nginx应用</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.7.9</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
@@ -1287,7 +1287,7 @@
 </ul>
 </li>
 <li>Q:Service的实现流程是怎样？<ul>
-<li><img src="http://anki190912.xuexihaike.com/20201027163257.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027163257.png"></li>
 <li>1.监听服务的端点是由apiserver完成的，通过kube-proxy监控，进行服务和端点信息的发现</li>
 <li>2.kube-proxy负责监控标签匹配的Pod的信息，并把它写入到iptables的规则里</li>
 <li>3.当客户端想去访问svc的时候，其实访问的是iptables，并导向后端的pod的信息，即iptables通过kube-proxy写入的</li>
@@ -1295,17 +1295,17 @@
 </li>
 <li>Q:service有哪3种代理模式？<ul>
 <li>userspace代理模式</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027171941.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027171941.png"></li>
 <li>iptables代理模式</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027171954.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027171954.png"></li>
 <li>ipvs代理模式</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027172005.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027172005.png"></li>
 <li>ipvs模式下，kube-proxy会监视k8s service对象和endpoints，调用netlink接口以相应地创建ipvs规则并定期与k8s service对象和endpoints对象同步ipvs规则，以确保ipvs状态与期望一致。访问服务时，流量将被重定向到其中一个后端Pod</li>
 </ul>
 </li>
 <li>Q:ClusterIP的工作方式是什么？<ul>
 <li>ClustuerIP主要在每个node节点使用iptables，将发向clusterIP对应端口的数据，转发到kube-proxy中。然后kube-proxy自己内部实现负载均衡的方法，并可以查询到这个service下对应pod的地址和端口，进而把数据转发给对应的Pod的地址和端口</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027175214.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027175214.png"></li>
 <li>为了实现图上的功能，主要需要以下几个组件的协同工作：<ul>
 <li>apiserver用户通过kubectl命令向apiserver发送创建service的命令，apiserver接收到请求后将数据存储到etcd中</li>
 <li>kube-proxy k8s的每个节点中都有一个叫做kube-proxy的进程，这个进程负责感知service，pod的变化，并将变化的信息写入本地的iptables规则中</li>
@@ -1338,7 +1338,7 @@
 </li>
 <li>Q:LoadBalancer是什么？<ul>
 <li>和nodePort其实是同一种方式，区别在于loadBalancer比nodePort多了一步，就是可以调用cloud provider去创建LoadBalancer来向节点导流</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027202612.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027202612.png"></li>
 </ul>
 </li>
 <li>Q:ExternalName是什么?<ul>
@@ -1352,10 +1352,10 @@
 </ul>
 </li>
 <li>Q:nginx-ingress的工作原理<ul>
-<li><img src="http://anki190912.xuexihaike.com/20201027210932.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027210932.png"></li>
 <li>客户端访问域名，ingress必须先绑定一个域名，不同域名访问nginx，nginx会反向代理，负载均衡选择后端的service，每个service会有一些容器</li>
 <li>nginx其实使用nodeport的方式</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027210938.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027210938.png"></li>
 <li>首先k8s的apiserver和store建立监听状态，这里的监听方式是以协程的Pod的形式向apiserver发起连接的方案进行监听，如果发生新的数据写入，会被写入到updateChannel的循环队列里面，然后有一个nginxController的主进程会去监听这个循环队列里面的资源和事件，发生一个循环以后会更新一个事件，把它写入到我们的同步队列里去，等待被协程去更改配置文件，协程会定期的从队列里拉去执行添加的一些任务，如果有一些必要的直接需要去修改的，不需要去等待直接要更新的一些任务会自动发直接发送到SyncQueue协程，两个协程之间协商直接沟通，收取到所有的要更新的数据以后会去他去判断是否要进行一个重载(reload)，写入数据的这么一个方案，还是等等再去添加，如果有的话就会写入nginx主配置文件，然后重新载入nginx的一些数据，那如果不需要的话就等待后面去执行，直接发送构建的post的数据接口，也就是一些不需要存在的数据即可，最后以nginx模块去运行，那这就是nginx-ingress的进程以及协程的沟通方案</li>
 </ul>
 </li>
@@ -1436,7 +1436,7 @@
 </ul>
 </li>
 <li>除了所需的path，用户还可以为hostPath卷指定type</li>
-<li><img src="http://anki190912.xuexihaike.com/20201028153031.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201028153031.png"></li>
 <li>使用这种卷类型时请注意，因为<ul>
 <li>由于每个节点上的文件都不同，具有相同配置(例如从podTemplate创建的)的pod在不同节点上的行为可能会有所不同</li>
 <li>当k8s按照计划添加资源感知调度时，将无法考虑hostPath使用的资源</li>
@@ -1564,7 +1564,7 @@
 </ul>
 </li>
 <li>Q:亲和性/反亲和性调度策略比较<ul>
-<li><img src="http://anki190912.xuexihaike.com/20201104154834.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
 </ul>
 </li>
 <li>Q:给节点打标签<ul>
@@ -1584,138 +1584,6 @@
       </categories>
       <tags>
         <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>海量数据处理</title>
-    <url>/mass-data-processing/</url>
-    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
-<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
-<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
-<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
-<li>3.堆/快排：排序得到频率最高的IP</li>
-</ul>
-</li>
-<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
-<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
-<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
-<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
-<li>也可用trie树</li>
-</ul>
-</li>
-<li>堆排找topK过程<ul>
-<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
-</ul>
-</li>
-<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
-<li>如果同一个数据元素只出现在某一台机器中<ul>
-<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
-<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
-</ul>
-</li>
-<li>如果同一个数据元素出现在不同机器中<ul>
-<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
-<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
-<li>解法一<ul>
-<li>1.散列映射</li>
-<li>2.hash_map统计</li>
-<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
-</ul>
-</li>
-<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
-</ul>
-</li>
-<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
-<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
-<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
-<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
-<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
-<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
-<li>2.不同的区域再利用位图进行统计</li>
-</ul>
-</li>
-<li>寻找中位数：找出5亿个int型数的中位数<ul>
-<li>1.将这5亿个int型数划分为2^{16}个区域</li>
-<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
-<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
-</ul>
-</li>
-</ul>
-<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
-<li>外排序介绍<ul>
-<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
-</ul>
-</li>
-<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
-<li>1.位图<ul>
-<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
-<li>能采用位图方案的原因<ul>
-<li>输入数据限制在相对较小的范围内</li>
-<li>数据没有重复</li>
-<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>2.多路归并<ul>
-<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
-<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
-<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
-</ul>
-</li>
-<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
-<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
-<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
-<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
-</ul>
-</li>
-<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
-<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
-<li>读入40亿个数，设置相应的位</li>
-<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
-<li>原理<ul>
-<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
-<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
-<li>但会有误判的可能</li>
-</ul>
-</li>
-</ul>
-<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
-<li>设计一个比较两篇文档相似度的算法<ul>
-<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
-<li>simhash算法</li>
-</ul>
-</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
-- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>海量数据</tag>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -1867,6 +1735,138 @@
       </categories>
       <tags>
         <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>海量数据处理</title>
+    <url>/mass-data-processing/</url>
+    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
+<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
+<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
+<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
+<li>3.堆/快排：排序得到频率最高的IP</li>
+</ul>
+</li>
+<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
+<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
+<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
+<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
+<li>也可用trie树</li>
+</ul>
+</li>
+<li>堆排找topK过程<ul>
+<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
+</ul>
+</li>
+<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
+<li>如果同一个数据元素只出现在某一台机器中<ul>
+<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
+<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
+</ul>
+</li>
+<li>如果同一个数据元素出现在不同机器中<ul>
+<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
+<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
+<li>解法一<ul>
+<li>1.散列映射</li>
+<li>2.hash_map统计</li>
+<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
+</ul>
+</li>
+<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
+</ul>
+</li>
+<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
+<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
+<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
+<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
+<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
+<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
+<li>2.不同的区域再利用位图进行统计</li>
+</ul>
+</li>
+<li>寻找中位数：找出5亿个int型数的中位数<ul>
+<li>1.将这5亿个int型数划分为2^{16}个区域</li>
+<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
+<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
+</ul>
+</li>
+</ul>
+<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
+<li>外排序介绍<ul>
+<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
+</ul>
+</li>
+<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
+<li>1.位图<ul>
+<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
+<li>能采用位图方案的原因<ul>
+<li>输入数据限制在相对较小的范围内</li>
+<li>数据没有重复</li>
+<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.多路归并<ul>
+<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
+<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
+<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
+</ul>
+</li>
+<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
+<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
+<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
+<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
+</ul>
+</li>
+<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
+<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
+<li>读入40亿个数，设置相应的位</li>
+<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
+<li>原理<ul>
+<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
+<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
+<li>但会有误判的可能</li>
+</ul>
+</li>
+</ul>
+<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
+<li>设计一个比较两篇文档相似度的算法<ul>
+<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
+<li>simhash算法</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
+- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>海量数据</tag>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -2564,7 +2564,7 @@
 <li>运行python脚本<code>python roam2anki.py example.txt</code>，程序把转换成对应的只有两列的csv文件，问题是第一列，回答是第二列</li>
 <li>把csv导入到anki中，保持默认设置即可。即fields separated by: Tab；勾选上Allow HTML in fields；Field 1为正面；field 2为背面</li>
 </ol>
-<p><img src="http://anki190912.xuexihaike.com/20210127160319.jpeg"></p>
+<p><img src="https://img.shiqi-lu.tech/20210127160319.jpeg"></p>
 <h1 id="功能列表"><a href="#功能列表" class="headerlink" title="功能列表"></a>功能列表</h1><ul>
 <li><input checked="" disabled="" type="checkbox"> 支持所有样式：加粗、斜体、高亮、删字符、行内代码、超链接</li>
 <li><input checked="" disabled="" type="checkbox"> 支持图片并居中，支持引用图片</li>
@@ -2609,32 +2609,32 @@
 <li>提议者(Proposer)：提议一个值用于投票表决，可把客户端当成提议者。但在绝大多数场景中，集群中收到客户端请求的节点，才是提议者。好处是对业务代码没有入侵性，即不需要再业务代码中实现算法逻辑，可像使用数据库一样访问后端数据。代表的是接入和协调功能，收到客户端请求后，发起二阶段提交，进行共识协商</li>
 <li>接受者(Acceptor)：对每个提议的值进行投票，并存储接受的值。一般集群中的所有节点都在扮演接受者的角色，参与共识协商，并接受和存储数据。代表投票协商和存储数据，对提议的值进行投票，并接受达成共识的值，存储保存</li>
 <li>学习者(Learner)：被告知投票的结果，接受达成共识的值，存储保存，不参与投票的过程。通常学习者是数据备份节点，如「Master-Slaev」模型中的Slave，被动地接受数据，容灾备份。代表存储数据，不参与共识协商，值接受达成共识的值，存储保存</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224113354.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224113354.png"></li>
 </ul>
 </li>
 <li>Q:Basic Paxos如何达成共识<ul>
 <li>假设客户端 1 的提案编号为 1，客户端 2 的提案编号为 5，并假设节点 A、B 先收到来自客户端 1 的准备请求，节点 C 先收到来自客户端 2 的准备请求</li>
 <li>准备(Prepare)阶段<ul>
 <li>客户端1、2作为提议者，分别向所有接受者发送包含提案编号的准备请求</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224130253.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224130253.png"></li>
 <li>在准备请求中是不需要指定提议的值的，只需要携带提案编号即可</li>
 <li>当节点A、B收到提案编号为1的准备请求，节点C收到提案编号为5的准备请求后，将这样处理：</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224131137.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224131137.png"></li>
 <li>由于之前没有通过任何提案，所以结点A、B将返回一个「尚无提案」的相应，并以后不再响应提案编号小于等于1的准备请求，不会通过编号小于1的提案</li>
 <li>结点C则返回「尚无提案」的响应并以后不再响应提案编号小于等于5的准备请求，不会通过编号小于5的提案</li>
 <li>另外，当节点 A、B 收到提案编号为 5 的准备请求，和节点 C 收到提案编号为 1 的准备请求的时候，将这样处理：</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224131639.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224131639.png"></li>
 <li>当节点A、B收到提案编号为5的准备请求的时候，因为提案编号5大于它们之前响应的准备请求的提案编号1，而且两个节点都没有通过诺任何提案，所以它将返回一个「尚无提案」的响应，并承诺以后不再响应提案编号小于等于5的准备请求，不会通过编号小于5的提案</li>
 <li>当节点C收到提案编号为1的准备请求的时候，由于提案编号1小于它之前响应的准备请求的提案编号5，所以丢弃该准备请求，不做响应</li>
 </ul>
 </li>
 <li>接受(Accept)阶段<ul>
 <li>首先客户端1、2在收到大多数节点的准备响应之后，会分别发送接受请求：</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224132014.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224132014.png"></li>
 <li>当客户端1收到大多数的接受者(节点A、B)的准备响应后，根据响应中提案编号最大的提案的值，设置接受请求中的值。因为该值在来自节点A、B的准备响应中都为空，所以就把自己的提议值3作为提案的值，发送接受请求[1, 3]</li>
 <li>当客户端2收到大多数的接受者的准备响应后(节点A、B和节点C)，根据响应中提案编号最大的提案的值，来设置接受请求中的值。因为该值来自节点A、B、C的准备响应中都为空，所以就把自己的提议值7作为提案的值，发送请求[5, 7]</li>
 <li>当三个节点收到2 个客户端的接受请求时，会这样处理：</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224142538.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224142538.png"></li>
 <li>当节点A、B、C收到接受请求[1, 3]时，由于提案的提案编号1小于三个节点承诺能通过的提案的最小提案编号5，所以提案[1, 3]将被拒绝</li>
 <li>当节点A、B、C收到接受请求[5, 7]的时候，由于提案的提案编号 5 不小于三个节点承诺能通过的提案的最小提案编号 5，所以就通过提案[5, 7]，也就是接受了值 7，三个节点就 X 值为 7 达成了共识</li>
 </ul>
@@ -2660,16 +2660,16 @@
 </li>
 <li>Q:Raft算法选举领导者的过程<ul>
 <li>在初始状态下，集群中所有的节点都是跟随者的状态</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224152326.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224152326.png"></li>
 <li>Raft算法实现了随机超时时间的特性，即每个节点等待领导者节点心跳信息的超时时间间隔是随机的。如上图，集群中没有领导者，而节点A的等待超时时间最小(150ms)，它会最先因为没有等到领导者的心跳信息，发生超时</li>
 <li>这时，节点A就增加自己的任期编号，推举自己为候选人，先给自己投上一张选票，然后向其他节点发送请求投票 RPC 消息，请它们选举自己为领导者</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224152603.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224152603.png"></li>
 <li>如果其它节点接收到候选人A的请求投票RPC消息，在编号为1的这届任期内，也还没有进行过投票，那么它将把选票投给节点A，并增加自己的任期编号</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224152812.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224152812.png"></li>
 <li>如果候选人在选举超时时间内赢得了大多数的选票，那么它就会成为本届任期内的新领导者</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224152920.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224152920.png"></li>
 <li>节点A当选领导者后，将周期性地发送心跳消息，通知其他服务器我是领导者，阻止跟随者发起新的选举，篡权</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224153011.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224153011.png"></li>
 </ul>
 </li>
 <li>Q:节点间如何通讯？<ul>
@@ -2700,9 +2700,9 @@
 <li>3.在一次选举中，赢得大多数选票的候选人，将晋升为领导者</li>
 <li>4.在一个任期内，领导者一直都会是领导者，直到它自身出现问题(如宕机)，或者因为网络延迟，其它节点发起一轮新的选举</li>
 <li>5.在一次选举中，每一个服务器节点最多会对一个任期编号投出一章选票，并且按照「先来先服务」的原则进行投票。如节点C的任期编号为3，先收到了1个包含任期编号为4的投票请求(来自节点A)，然后又收到了1个包含任期编号为4的投票请求(来自节点B)。那么节点C将会把唯一一张选票投给节点A，当再收到节点B的投票请求RPC 消息时，对于编号为 4 的任期，已没有选票可投了</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224160810.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224160810.png"></li>
 <li>6.当任期编号相同时，日志完整性高的跟随者(即最后一条日志项对应的任期编号值更大，索引号更大)，拒绝投票给日志完整性低的候选人。比如节点B、C的任期编号都是3，节点B的最后一条日志项对应的任期编号为3，而节点C为2，那么当节点C请求节点B投票给自己时，节点B将拒绝投票</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224161027.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224161027.png"></li>
 <li>注意：选举时跟随者发起的，推举自己为候选人；大多数选票是指集群成员半数以上的选票；大多数选票规则的目标，是为了保证在一个给定的任期内最多只有一个领导者</li>
 <li>除了选举规则外，还需要避免一些会导致选举失败的情况，如同一任期内，多个候选人同时发起选举，导致选票被瓜分，选举失败。在Raft使用随机超时时间来避免这个问题</li>
 </ul>
@@ -2720,7 +2720,7 @@
 <h1 id="08-Raft算法（二）：如何复制日志？"><a href="#08-Raft算法（二）：如何复制日志？" class="headerlink" title="08 | Raft算法（二）：如何复制日志？"></a>08 | Raft算法（二）：如何复制日志？</h1><ul>
 <li>Q:Raft算法中的日志是什么？<ul>
 <li>在Raft算法中，副本数据以日志的形式存在，日志是由日志项组成，日志项是一种数据格式，主要包含用户指定的数据，即指令(Command)，和一些附加信息，如索引值(Log index)、任期编号(Term)</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224162319.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224162319.png"></li>
 <li>指令：一条由客户端请求指定的、状态机需要执行的指令。可理解成客户端指定的数据</li>
 <li>索引值：日志项对应的整数索引值，用来标识日志项，是一个连续的、单调递增的整数号码</li>
 <li>任期编号：创建这条日志项的领导者的任期编号</li>
@@ -2739,7 +2739,7 @@
 </ul>
 </li>
 <li>Q:日志复制过程？<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210224164552.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224164552.png"></li>
 <li>1.接收到客户端请求后，领导者基于客户端请求中的指令，创建一个新日志项，并附加到本地日志中</li>
 <li>2.领导者通过日志复制RPC，将新的日志项复制到其它的服务器</li>
 <li>3.当领导者将日志项，成功复制到大多数服务器上的时候，领导者会将这条日志项提交到它的状态机中</li>
@@ -2759,7 +2759,7 @@
 <li>PrevLogTerm：表示当前要复制的日志项，前面一条日志项的任期编号，如在图中，如果领导者将索引值为8的日志项发送给跟随者，那么此时PrevLogTerm值为4</li>
 </ul>
 </li>
-<li><img src="http://anki190912.xuexihaike.com/20210224170941.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224170941.png"></li>
 <li>1.领导者通过日志复制RPC消息，发送当前最新日志项到跟随者，这个消息的PrevLogEnetry值为7，PrevLogTerm值为4</li>
 <li>2.如果跟随者在它的日志中，找不到与PrevLogEntry值为7、PrevLogTerm值为4的日志项，即它的日志和领导者的不一致了，那么跟随者者就会拒绝接收新的日志项， 并返回失败信息给领导者</li>
 <li>3.这时，领导者会递减要复制的日志项的索引值，并发送新的日志项到跟随者，这个消息的 PrevLogEntry 值为 6，PrevLogTerm 值为 3</li>
@@ -2772,10 +2772,10 @@
 <h1 id="10-一致哈希算法：如何分群，突破集群的“领导者”限制？"><a href="#10-一致哈希算法：如何分群，突破集群的“领导者”限制？" class="headerlink" title="10 | 一致哈希算法：如何分群，突破集群的“领导者”限制？"></a>10 | 一致哈希算法：如何分群，突破集群的“领导者”限制？</h1><ul>
 <li>Q:使用哈希算法实现哈希寻址时，有什么问题？<ul>
 <li>通过哈希算法，每个 key 都可以寻址到对应的服务器，比如，查询 key 是 key-01，计算公式为 hash(key-01) % 3 ，经过计算寻址到了编号为 1 的服务器节点 A</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224172621.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224172621.png"></li>
 <li>但如果服务器数量发生变化，基于新的服务器数量来执行哈希算法的时候，就会出现路由寻址失败的情况，Proxy 无法找到之前寻址到的那个服务器节点</li>
 <li>假如 3 个节点不能满足业务需要了，这时我们增加了一个节点，节点的数量从 3 变化为 4，那么之前的 hash(key-01) % 3 = 1，就变成了 hash(key-01) % 4 = X，因为 取模运算发生了变化，所以这个 X 大概率不是 1（可能 X 为 2），这时你再查询，就会找 不到数据了，因为 key-01 对应的数据，存储在节点 A 上，而不是节点 B</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224172749.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224172749.png"></li>
 <li>同样的道理，如果我们需要下线 1 个服务器节点（也就是缩容），也会存在类似的可能查询不到数据的问题</li>
 <li>而解决这个问题的办法，在于我们要迁移数据，基于新的计算公式 hash(key-01) % 4 ，来重新对数据和节点做映射。需要你注意的是，数据的迁移成本是非常高的</li>
 <li>对于 1000 万 key 的 3 节点 KV 存储，如果我们增加 1 个 节点，变为 4 节点集群，则需要迁移 75% 的数据</li>
@@ -2783,37 +2783,37 @@
 </li>
 <li>Q:如何使用一致哈希实现哈希寻址<ul>
 <li>一致哈希算法是对 2^32 进行取模运算，将整个 哈希值空间组织成一个虚拟的圆环，即哈希环</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224173010.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224173010.png"></li>
 <li>哈希环的空间是按顺时针方向组织的，圆环的正上方的点代表0，0点右侧的第一个点代表1，以此类推，2、3、4、5、6……直到 2^32-1，即 0 点左 侧的第一个点代表 2^32-1</li>
 <li>在一致哈希中，通过执行哈希算法将节点映射到哈希环上，比如选择节点的主机名作为参数执行 c-hash()，那么每个节点就能确定其在哈希环上的位置了</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224173309.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224173309.png"></li>
 </ul>
 </li>
 <li>Q:对指定 key 的值进行读写的时候，通过哪 2 步进行寻址？<ul>
 <li>1.将key作为参数执行 c-hash() 计算哈希值，并确定此 key 在环上的位置</li>
 <li>2.从这个位置沿着哈希环顺时针“行走”，遇到的第一节点就是 key 对应的节点</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224175429.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224175429.png"></li>
 </ul>
 </li>
 <li>Q:有一个节点故障了(如节点C)，一致哈希是怎么处理的<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210224175616.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224175616.png"></li>
 <li>key-01 和 key-02 不会受到影响，只有 key-03 的寻址被重定位到 A。一般来说，在一致哈希算法中，如果某个节点宕机不可用了，那么受影响的数据仅仅是，会寻址到此节点和前一节点之间的数据</li>
 <li>如当节点 C 宕机了，受影响的数据是会寻址到节点 B 和节点 C 之间的数据（例如 key-03），寻址到其他哈希环空间的数据（例如 key-01），不会受到影响</li>
 </ul>
 </li>
 <li>Q:需要扩容一个节点，一致哈希是怎么处理的<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210224175729.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224175729.png"></li>
 <li>key-01、key-02 不受影响，只有 key-03 的寻址被重定位到新节点 D。一般 而言，在一致哈希算法中，如果增加一个节点，受影响的数据仅仅是，会寻址到新节点和前 一节点之间的数据，其它数据也不会受到影响</li>
 </ul>
 </li>
 <li>Q:在一致哈希中，客户端访问请求集中在少数的节点上，为什么会出现有些机器高负载，有些机器低负载的情况<ul>
 <li>在一致哈希中，如果节点太少，容易因为节点分布不均匀造成数据访问的冷热不均，即大多数访问请求都会集中少量几个节点上</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224175845.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224175845.png"></li>
 </ul>
 </li>
 <li>Q:如何通过虚拟节点解决冷热不均的问题？<ul>
 <li>对每一个服务器节点计算多个哈希值，在每个计算结果位置上，都放置一个虚拟 节点，并将虚拟节点映射到实际节点。比如，可以在主机名的后面增加编号，分别计算 “Node-A-01”“Node-A-02”“Node-B-01”“Node-B-02”“Node-C01”“Node-C-02”的哈希值，于是形成 6 个虚拟节点</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224180725.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224180725.png"></li>
 <li>增加了节点后，节点在哈希环上的分布就相对均匀了。这时，如果有访问请求寻址到“Node-A-01”这个虚拟节点，将被重定位到节点 A。这样我们就解决了冷热不均的问题</li>
 </ul>
 </li>
@@ -2831,7 +2831,7 @@
 </li>
 <li>Q:反熵是什么？<ul>
 <li>集群中的节点，每隔段时间就随机选择某个其它节点，然后通过互相交换自己的所有数据来消除两者之间的差异，实现数据的最终一致性</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224182702.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224182702.png"></li>
 <li>如上图，节点A通过反熵的方式，修复了节点 D 中缺失的数据</li>
 <li>注意，因为反熵熵需要节点两两交换和比对自己所有的数据，执行反熵时通讯成本会很高，不建议频繁执行，可通过引入校验和(Checksum)等机制，降低需要对比的数据量和通讯消息</li>
 <li>执行反熵时相关的节点都是已知的，而且节点数量不能太多，如果是一个动态变化或节点数比较多的分布式环境，这时反熵就不适用了，该用谣言传播</li>
@@ -2839,18 +2839,18 @@
 </li>
 <li>Q:反熵修复节点缺失数据的3种方式<ul>
 <li>以下图中，2 个数据副本的不一致为例</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224183252.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224183252.png"></li>
 <li>推：将自己的所有副本数据，推给对方，修复对方副本中的熵</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224183330.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224183330.png"></li>
 <li>拉：拉取对方的所有副本数据，修复自己副本中的熵</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224183401.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224183401.png"></li>
 <li>推拉：同时修复自己副本和对方副本中的熵</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224183422.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224183422.png"></li>
 </ul>
 </li>
 <li>Q:谣言传播是什么？<ul>
 <li>当一个节点有了新数据后，这个节点编程活跃状态，并周期性地联系其他节点向其发送新数据，直到所有的节点都存储了该新数据</li>
-<li><img src="http://anki190912.xuexihaike.com/20210224182841.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210224182841.png"></li>
 <li>如图，节点 A 向节点 B、D 发送新数据，节点 B 收到新数据后，变成活跃节点，然后节点 B 向节点 C、D 发送新数据。谣言传播非常具有传染性，它适合动态变化的分布式系统</li>
 </ul>
 </li>
@@ -4053,7 +4053,7 @@
 <li>2.长度头以CRLF(回车换行，即\r\n)结尾的一行明文，用16进制数字表示长度</li>
 <li>3.数据块紧跟在长度头后，最后也用CRLF结尾，但数据不包含CRLF</li>
 <li>4.最后用一个长度为0的块表示结束，即「0\r\n\r\n」</li>
-<li><img src="http://anki190912.xuexihaike.com/20210321121431.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210321121431.png"></li>
 </ul>
 </li>
 <li>Q:HTTP如何实现范围请求(range requests)<ul>
@@ -4089,7 +4089,7 @@
 <li>Q:如何一次性获取多个片段数据？<ul>
 <li>在请求头中的Range里使用多个「x-y」</li>
 <li>响应头中使用「multipart/byteranges」，表示报文的body是由多段字节序列组成的，并且还要用一个参数「boundary=xxx」给出段之间的分隔标记</li>
-<li><img src="http://anki190912.xuexihaike.com/20210321131108.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210321131108.png"></li>
 <li>每一个分段必须以「–boundary」开始，之后要用「Content-Type」和「Content-Range」标记这段数据的类型和所在范围，然后以回车换行结束，再加上分段数据，最后用一个「–boundary–」表示所有的分段结束</li>
 </ul>
 </li>
@@ -4114,7 +4114,7 @@
 <li>这是由 HTTP 基本的「请求 - 应答」模型所导致的</li>
 <li>因为HTTP规定报文必须是「一发一收」，这就形成了一个先进先出的「串行」队列。队列里的请求没有轻重缓急的优先级，只有入队的先后顺序，排在最前面的请求被最优先处理</li>
 <li>如果队首的请求因为处理的太慢耽误了时间，那么队列里后面的所有请求也不得不跟着一起等待，结果就是其他的请求承担了不应有的时间成本</li>
-<li><img src="http://anki190912.xuexihaike.com/20210321144626.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210321144626.png"></li>
 </ul>
 </li>
 <li>Q:在HTTP/1.1里如何缓解「队头阻塞」的问题？<ul>
@@ -4178,7 +4178,7 @@
 <li>no_store：不允许缓存，用于某些变化非常频繁的数据，例如秒杀页面</li>
 <li>no_cache：可以缓存，但在使用前必须要去服务器验证是否过期，是否有最新版本</li>
 <li>must-revalidate：如果缓存不过期可以继续使用，但过期了如果还想用就必须去服务器验证</li>
-<li><img src="http://anki190912.xuexihaike.com/20210321160000.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210321160000.png"></li>
 </ul>
 </li>
 <li>Q:客户端的缓存控制<ul>
@@ -4238,11 +4238,11 @@
 </ul>
 </li>
 <li>Q:可以同时控制客户端和代理的完整服务器端缓存控制策略的流程图<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210323210741.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323210741.png"></li>
 </ul>
 </li>
 <li>Q:客户端的缓存控制<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210323210930.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323210930.png"></li>
 <li>max-stale：如果代理上的缓存过期了也可以接受，但不能过期太多，超过 x 秒也会不要</li>
 <li>min-fresh：缓存必须有效，而且必须在 x 秒后依然有效，即必须处于过期前 x 秒</li>
 <li>only-if-cached：只接受代理缓存的数据，不接受源服务器的响应。如果代理上没有缓存或者缓存过期，就应该给客户端返回一个504(Gateway Timeout)</li>
@@ -4330,7 +4330,7 @@
 </li>
 <li>Q:CA 怎么证明自己呢<ul>
 <li>这是信任链的问题。小一点的 CA 可以让大 CA 签名认证，但链条的最后，也就是Root CA，就只能自己证明自己了，这个就叫“自签名证书”（Self-Signed Certificate）或者“根证书”（Root Certificate）。你必须相信，否则整个证书信任链就走不下去了</li>
-<li><img src="http://anki190912.xuexihaike.com/20210321183737.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210321183737.png"></li>
 <li>有了这个证书体系，操作系统和浏览器都内置了各大 CA 的根证书，上网的时候只要服务器发过来它的证书，就可以验证证书里的签名，顺着证书链（Certificate Chain）一层层地验证，直到找到根证书，就能够确定证书是可信的，从而里面的公钥也是可信的</li>
 </ul>
 </li>
@@ -4344,9 +4344,9 @@
 </ul>
 </li>
 <li>Q:TLS的握手过程<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210321192338.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210321192338.png"></li>
 <li>其中每一个“框”都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议</li>
-<li><img src="http://anki190912.xuexihaike.com/20210322090801.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322090801.png"></li>
 <li>1.在TCP建立连接后，浏览器会首先发一个「Client Hello」消息。里面有客户端的版本号、支持的密码套件，还有一个随机数(Client Random)，用于后续生成会话密钥</li>
 <li>2.服务器收到「Client Hello」后，会返回一个「Server Hello」消息。把版本号对一下，也给出一个随机数(Server Random)，然后从客户端列表里选一个作为本次通信使用的密码套件</li>
 <li>然后服务器为了证明自己的身份，就把证书也发给了客户端(Server Certificate)</li>
@@ -4366,7 +4366,7 @@
 <li>Q:主流的TLS握手过程和传统的RSA握手过程的区别是什么？<ul>
 <li>1.使用ECDHE实现密钥交换，而不是RSA，所以会在服务器端发出「Server Key Exchange」消息</li>
 <li>2.因为使用了ECDHE，客户端可以不用等到服务器发回「Finished」确认握手完毕，，立即就发出 HTTP 报文，省去了一个消息往返的时间浪费。这个叫「TLS False Start」，意思就是「抢跑」，和「TCP Fast Open」有点像，都是不等连接完全建立就提前发应用数据，提高传输的效率</li>
-<li><img src="http://anki190912.xuexihaike.com/20210322152509.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322152509.png"></li>
 <li>大体的流程没有变，只是「Pre-Master」不再需要用算法生成，而是客户端直接生成随机数，然后用服务器的公钥加密，通过「Client Key Exchange」消息发给服务器。服务器再用私钥解密，这样双方也实现了共享三个随机数，就可以生成主密钥</li>
 </ul>
 </li>
@@ -4398,8 +4398,8 @@
 </ul>
 </li>
 <li>Q:TLS1.3的握手过程<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210322162027.png"></li>
-<li><img src="http://anki190912.xuexihaike.com/20210322162054.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322162027.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322162054.png"></li>
 <li>在 TCP 建立连接之后，浏览器首先还是发一个「Client Hello」</li>
 <li>因为 1.3 的消息兼容 1.2，所以开头的版本号、支持的密码套件和随机数（Client Random）结构都是一样的（不过这时的随机数是 32 个字节）</li>
 <li>注意「Client Hello」里的扩展，「supported_versions」表示这是 TLS1.3，「supported_groups」是支持的曲线，「key_share」是曲线对应的参数</li>
@@ -4413,7 +4413,7 @@
 </ul>
 <h1 id="28-连接太慢该怎么办：HTTPS的优化"><a href="#28-连接太慢该怎么办：HTTPS的优化" class="headerlink" title="28 | 连接太慢该怎么办：HTTPS的优化"></a>28 | 连接太慢该怎么办：HTTPS的优化</h1><ul>
 <li>Q:TLS握手过程中影响性能的部分有哪些呢<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210322163414.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322163414.png"></li>
 </ul>
 </li>
 <li>Q:如何使用硬件优化的方式优化HTTPS<ul>
@@ -4449,7 +4449,7 @@
 <li>Q:如何进行会话复用（TLS session resumption）的「Session ID」<ul>
 <li>客户端和服务器首次连接后各自保存一个会话的 ID 号，内存里存储主密钥和其他相关的信息。当客户端再次连接时发一个 ID 过来，服务器就在内存里找，找到就直接用主密钥恢复会话状态，跳过证书验证和密钥交换，只用一个消息往返就可以建立安全通信</li>
 <li>服务器在“ServerHello”消息后直接发送了“Change Cipher Spec”和“Finished”消息，复用会话完成了握手</li>
-<li><img src="http://anki190912.xuexihaike.com/20210322164911.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322164911.png"></li>
 <li>「Session ID」是最早出现的会话复用技术，也是应用最广的，但它也有缺点，服务器必须保存每一个客户端的会话数据，对于拥有百万、千万级别用户的网站来说存储量就成了大问题，加重了服务器的负担</li>
 </ul>
 </li>
@@ -4461,7 +4461,7 @@
 </li>
 <li>Q:如何进行预共享密钥<ul>
 <li>“False Start”“Session ID”“Session Ticket”等方式只能实现 1-RTT，而 TLS1.3 更进一步实现了“0-RTT”，原理和“Session Ticket”差不多，但在发送 Ticket 的同时会带上应用数据（Early Data），免去了 1.2 里的服务器确认步骤，这种方式叫“Pre-shared Key”，简称为“PSK”</li>
-<li><img src="http://anki190912.xuexihaike.com/20210322165457.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322165457.png"></li>
 <li>但“PSK”也不是完美的，它为了追求效率而牺牲了一点安全性，容易受到“重放攻击”（Replay attack）的威胁。黑客可以截获“PSK”的数据，像复读机那样反复向服务器发送</li>
 <li>解决的办法是只允许安全的 GET/HEAD 方法，在消息里加入时间戳、“nonce”验证，或者“一次性票证”限制重放</li>
 </ul>
@@ -4527,7 +4527,7 @@
 <li>它是二进制帧的双向传输序列，同一个消息往返的帧会分配一个唯一的流ID。在里面的是一串有先后顺序的数据帧，这些数据帧按照次序组装起来就是 HTTP/1 里的请求报文和响应报文</li>
 <li>因为「流」是虚拟的，实际上并不存在，所以 HTTP/2 就可以在一个 TCP 连接上用「流」同时发送多个「碎片化」的消息，这就是常说的“多路复用”（Multiplexing）——多个往返通信都复用一个连接来处理</li>
 <li>在「流」的层面上看，消息是一些有序的「帧」序列，而在「连接」的层面上看，消息是乱序收发的「帧」。多个请求/响应之间没有了顺序关系，不需要排队等待， 也就不会再出现「队头阻塞」问题，降低了延迟，大幅度提高了连接的利用率</li>
-<li><img src="http://anki190912.xuexihaike.com/20210323130302.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323130302.png"></li>
 <li>为了更好地利用连接，加大吞吐量，HTTP/2 还添加了一些控制帧来管理虚拟的「流」，实现了优先级和流量控制，这些特性也和 TCP 协议非常相似</li>
 <li>HTTP/2 还在一定程度上改变了传统的「请求 - 应答」工作模式，服务器不再是完全被动地响应请求，也可以新建「流」主动向客户端发送消息。比如，在浏览器刚请求 HTML 的时候就提前把可能会用到的 JS、CSS 文件发给客户端，减少等待的延迟，这被称为“服务器推送”（Server Push，也叫 Cache Push）</li>
 </ul>
@@ -4547,10 +4547,10 @@
 <li>为了方便管理和压缩，HTTP/2 废除了原有的起始行概念，把起始行里面的请求方法、URI、状态码等统一转换成了头字段的形式，即「伪头字段」(pseudo-header fields)。并废除起始行里的版本号和错误原因短语</li>
 <li>伪头字段会在名字前加一个「:」，比如「:authority」、「:method」、「:status」，分别表示的是域名、请求方法和状态码</li>
 <li>现在HTTP报文头全都是「Key-Value」形式的字段，于是 HTTP/2 就为一些最常用的头字段定义了一个只读的静态表（Static Table），如下表，如数字「2」代表「GET」，数字「8」代表状态码200</li>
-<li><img src="http://anki190912.xuexihaike.com/20210323144257.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323144257.png"></li>
 <li>但如果表里只有 Key 没有 Value，或者是自定义字段根本找不到就要用到“动态表”（Dynamic Table），它添加在静态表后面，结构相同，但会在编码解码的时候随时更新</li>
 <li>如第一次发送请求时的「user-agent」字段长是一百多个字节，用哈夫曼压缩编码发送之后，客户端和服务器都更新自己的动态表，添加一个新的索引号「65」。那么下一次发送的时候就不用再重复发那么多字节了，只要用一个字节发送编号就好</li>
-<li><img src="http://anki190912.xuexihaike.com/20210323144506.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323144506.png"></li>
 <li>随着在 HTTP/2 连接上发送的报文越来越多，两边的「字典」也会越来越丰富，最终每次的头部字段都会变成一两个字节的代码，原来上千字节的头用几十个字节就可以表示了，压缩效果比 gzip 要好得多</li>
 </ul>
 </li>
@@ -4558,7 +4558,7 @@
 <li>头部数据压缩之后，HTTP/2 就要把报文拆成二进制的帧准备发送</li>
 <li>HTTP/2 的帧结构有点类似 TCP 的段或者 TLS 里的记录，但报头很小，只有 9 字节</li>
 <li>二进制的格式也保证了不会有歧义，而且使用位运算能够非常简单高效地解析</li>
-<li><img src="http://anki190912.xuexihaike.com/20210323145002.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323145002.png"></li>
 <li>帧开头是 3 个字节的长度（但不包括头的 9 个字节），默认上限是 2^14，最大是 2^24，也就是说 HTTP/2 的帧通常不超过 16K，最大是 16M</li>
 <li>长度后面的一个字节是帧类型，大致可分为数据帧和控制帧两类，HEADERS帧和DATA帧属于数据帧，存放的HTTP报文，而SETTINGS、PING、PRIORITY等则是用来管理流的控制帧</li>
 <li>HTTP/2 总共定义了 10 种类型的帧，但一个字节可以表示最多 256 种，所以也允许在标准之外定义其他类型实现功能扩展。比如 Google 的 gRPC 就利用了这个特点，定义了几种自用的新帧类型</li>
@@ -4586,8 +4586,8 @@
 </li>
 <li>Q:连接中无序的帧是如何依据流 ID 重组成流的<ul>
 <li>在 Wireshark 抓包里，就有“0、1、3”一共三个流，实际上就是分配了三个流 ID 号，把这些帧按编号分组，再排一下队，就成了流</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324075750.png"></li>
-<li><img src="http://anki190912.xuexihaike.com/20210324075756.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324075750.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324075756.png"></li>
 <li>HTTP/2 在一个连接上使用多个流收发数据，那么它本身默认就会是长连接，所以永远不需要“Connection”头字段（keepalive 或 close）</li>
 <li>下载大文件的时候想取消接收，在 HTTP/1 里只能断开 TCP 连接重新“三次握手”，成本很高，而在 HTTP/2 里就可以简单地发送一个“RST_STREAM”中断流，而长连接会继续保持</li>
 <li>因为客户端和服务器两端都可以创建流，而流 ID 有奇数偶数和上限的区分，所以大多数的流 ID 都会是奇数，而且客户端在一个连接里最多只能发出 2^30，也就是 10 亿个请求</li>
@@ -4595,7 +4595,7 @@
 </ul>
 </li>
 <li>Q:HTTP/2如何根据帧的标志位实现流状态转换<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210324080322.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324080322.png"></li>
 <li>最开始的时候流都是空闲(idle)状态</li>
 <li>当客户端发送HEADERS帧后，有了流ID，流就进入了「打开」状态，两端都可以收发数据，然后客户端发送一个带「END_STREAM」标志位的帧，流就进入了「半关闭」状态。意味着客户端的请求数据已经发送完了，需要接受响应数据，而服务端也知道请求数据接收完毕，之后就要内部处理，再发送响应数据</li>
 <li>响应数据发完了之后，也要带上「END_STREAM」标志位，表示数据发送完毕，这样流两端就都进入了关闭状态，流就结束了</li>
@@ -4613,7 +4613,7 @@
 </ul>
 </li>
 <li>Q:不同HTTP协议栈图的对比<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210324100732.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324100732.png"></li>
 </ul>
 </li>
 <li>Q:QUIC有什么特点？<ul>
@@ -4627,11 +4627,11 @@
 <li>Q:QUIC内部介绍<ul>
 <li>QUIC 的基本数据传输单位是包（packet）和帧（frame），一个包由多个帧组成，包面向的是“连接”，帧面向的是“流”</li>
 <li>QUIC 使用不透明的“连接 ID”来标记通信的两个端点，客户端和服务器可以自行选择一组 ID 来标记自己，这样就解除了 TCP 里连接对“IP 地址 + 端口”（即常说的四元组）的强绑定，支持“连接迁移”（Connection Migration）</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324103531.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324103531.png"></li>
 <li>即当 IP 地址会发生变化，TCP 就必须重新建立连接。而 QUIC 连接里的两端连接 ID 不会变，所以连接在“逻辑上”没有中断，它就可以在新的 IP 地址上继续使用之前的连接，消除重连的成本，实现连接的无缝迁移</li>
 <li>QUIC 的帧里有多种类型，PING、ACK 等帧用于管理连接，而 STREAM 帧专门用来实流</li>
 <li>QUIC 里的流与 HTTP/2 的流非常相似，也是帧的序列，但 HTTP/2 里的流都是双向的，而 QUIC 则分为双向流和单向流</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324103702.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324103702.png"></li>
 <li>QUIC 帧普遍采用变长编码，最少只要 1 个字节，最多有 8 个字节。流 ID 的最大可用位数是 62，数量上比 HTTP/2 的 2^31 大大增加</li>
 <li>流 ID 还保留了最低两位用作标志，第 1 位标记流的发起者，0 表示客户端，1 表示服务器；第 2 位标记流的方向，0 表示双向流，1 表示单向流</li>
 <li>所以 QUIC 流 ID 的奇偶性质和 HTTP/2 刚好相反，客户端的 ID 是偶数，从 0 开始计数</li>
@@ -4642,7 +4642,7 @@
 <li>HTTP/3 里使用QUIC流来发送「请求 - 响应」</li>
 <li>HTTP/3 里的“双向流”可以完全对应到 HTTP/2 的流，而“单向流”在 HTTP/3 里用来实现控制和推送，近似地对应 HTTP/2 的 0 号流</li>
 <li>HTTP/3 里帧的结构变简单了。帧头只有两个字段：类型和长度，而且同样都采用变长编码，最小只需要两个字节</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324103944.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324103944.png"></li>
 <li>HTTP/3 里的帧仍然分成数据帧和控制帧两类，HEADERS 帧和 DATA 帧传输数据，但其他一些帧因为在下层的 QUIC 里有了替代，所以在 HTTP/3 里就都消失了，比如 RST_STREAM、WINDOW_UPDATE、PING 等</li>
 <li>头部压缩算法在 HTTP/3 里升级成了“QPACK”，使用方式上也做了改变。虽然也分成静态表和动态表，但在流上发送 HEADERS 帧时不能更新字段，只能引用，索引表的更新需要在专门的单向流上发送指令来管理，解决了 HPACK 的“队头阻塞”问题</li>
 <li>另外，QPACK 的字典也做了优化，静态表由之前的 61 个增加到了 98 个，而且序号从 0 开始，也就是说“:authority”的编号是 0</li>
@@ -4683,9 +4683,9 @@
 <li>在 TLS 的扩展里，使用ALPN（Application Layer Protocol Negotiation）来与服务器就 TLS 上跑的应用协议进行“协商”</li>
 <li>客户端在发起“Client Hello”握手的时候，后面会带上一个“ALPN”扩展，里面按照优先顺序列出客户端支持的应用协议</li>
 <li>如下图，最优先的是“h2”，其次是“http/1.1”，以前还有“spdy”，以后还可能会有“h3”</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324110303.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324110303.png"></li>
 <li>服务器看到 ALPN 扩展以后就可以从列表里选择一种应用协议，在“Server Hello”里也带上“ALPN”扩展，告诉客户端服务器决定使用的是哪一种。因为我们在 Nginx 配置里使用了 HTTP/2 协议，所以在这里它选择的就是“h2”</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324110315.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324110315.png"></li>
 <li>这样在 TLS 握手结束后，客户端和服务器就通过“ALPN”完成了应用层的协议协商，后面就可以使用 HTTP/2 通信了</li>
 </ul>
 </li>
@@ -4749,7 +4749,7 @@
 <h1 id="第６章-过滤数据"><a href="#第６章-过滤数据" class="headerlink" title="第６章 过滤数据"></a>第６章 过滤数据</h1><ul>
 <li>Q:根据指定的搜索条件进行过滤<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_price = 2.50;</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">| prod_name     | prod_price |</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">| Carrots       |       2.50 |</span><br><span class="line">| TNT (1 stick) |       2.50 |</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:WHERE子句操作符的条件<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209151932.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209151932.png"></li>
 </ul>
 </li>
 <li>Q:使用不同WHERE条件的例子<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT prod_name, prod_price</span><br><span class="line">    -&gt; FROM products</span><br><span class="line">    -&gt; WHERE prod_price &lt; 10;</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">| prod_name     | prod_price |</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">| .5 ton anvil  |       5.99 |</span><br><span class="line">| 1 ton anvil   |       9.99 |</span><br><span class="line">| Carrots       |       2.50 |</span><br><span class="line">| Fuses         |       3.42 |</span><br><span class="line">| Oil can       |       8.99 |</span><br><span class="line">| Sling         |       4.49 |</span><br><span class="line">| TNT (1 stick) |       2.50 |</span><br><span class="line">+<span class="comment">---------------+------------+</span></span><br><span class="line">7 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
@@ -4816,7 +4816,7 @@
 <h1 id="2-张量简介与创建"><a href="#2-张量简介与创建" class="headerlink" title="2.张量简介与创建"></a>2.张量简介与创建</h1><p>Q:张量是什么？</p>
 <ul>
 <li>一个多维数组，它是标量、向量、矩阵的高维拓展</li>
-<li><img src="http://anki190912.xuexihaike.com/20200918142143.png?imageView2/2/h/150"></li>
+<li><img src="https://img.shiqi-lu.tech/20200918142143.png?imageView2/2/h/150"></li>
 </ul>
 <p>Q:Pytorch中的Variable是什么？与Tensor的关系是什么？</p>
 <ul>
@@ -4826,7 +4826,7 @@
 <li>grad_fn:创建Tensor的Function，是自动求导的关键</li>
 <li>requires_grad:指示是否需要梯度</li>
 <li>is_leaf:指示是否是叶子结点（张量）</li>
-<li><img src="http://anki190912.xuexihaike.com/20200918143346.png?imageView2/2/w/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200918143346.png?imageView2/2/w/200"></li>
 </ul>
 <p>Q:Pytorch中的Tensor是什么？</p>
 <ul>
@@ -4834,7 +4834,7 @@
 <li>dtype: 张量的数据类型，如torch.FloatTensor, torch.cuda.FloatTensor</li>
 <li>shape: 张量的形状，如（64，3， 224， 224）</li>
 <li>device: 张量所在设备，GPU/CPU，是加速的关键</li>
-<li><img src="http://anki190912.xuexihaike.com/20200918143722.png?imageView2/2/h/100"></li>
+<li><img src="https://img.shiqi-lu.tech/20200918143722.png?imageView2/2/h/100"></li>
 </ul>
 <p>Q:Tensor的函数原型是怎样？</p>
 <ul>
@@ -4864,7 +4864,7 @@ tensor([[1., 1., 1.],
 <li>函数原型：<code>torch.from_numpy(ndarray)</code></li>
 <li>功能：从numpy创建tensor</li>
 <li>注意事项：从torch.from_numpy创建的tensor于原ndarray共享内存，当修改其中一个的数据，另外一个也将会被改动</li>
-<li><img src="http://anki190912.xuexihaike.com/20200918151039.png?imageView2/2/h/150"></li>
+<li><img src="https://img.shiqi-lu.tech/20200918151039.png?imageView2/2/h/150"></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">arr = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]])</span><br><span class="line">t = torch.from_numpy(arr)</span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;修改arr:&quot;</span>)</span><br><span class="line">arr[<span class="number">0</span>, <span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;修改tensor:&quot;</span>)</span><br><span class="line">arr[<span class="number">1</span>, <span class="number">1</span>] = <span class="number">-10</span></span><br><span class="line">print(<span class="string">&quot;numpy array:&quot;</span>)</span><br><span class="line">print(arr)</span><br><span class="line">print(<span class="string">&quot;tensor:&quot;</span>)</span><br><span class="line">print(t)</span><br></pre></td></tr></table></figure>
 
@@ -5268,7 +5268,7 @@ tensor([[10.5570,  9.5257, 11.0113],
 </ul>
 <h2 id="线性回归的Pytorch实现"><a href="#线性回归的Pytorch实现" class="headerlink" title="线性回归的Pytorch实现"></a>线性回归的Pytorch实现</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">torch.manual_seed(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">lr = <span class="number">0.05</span>  <span class="comment"># 学习率</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建训练数据</span></span><br><span class="line">x = torch.rand(<span class="number">20</span>, <span class="number">1</span>) * <span class="number">10</span>  <span class="comment"># x data (tensor), shape=(20, 1)</span></span><br><span class="line">y = <span class="number">2</span>*x + (<span class="number">5</span> + torch.randn(<span class="number">20</span>, <span class="number">1</span>))  <span class="comment"># y data (tensor), shape=(20, 1)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建线性回归参数的初始值</span></span><br><span class="line">w = torch.randn((<span class="number">1</span>), requires_grad=<span class="literal">True</span>)</span><br><span class="line">b = torch.zeros((<span class="number">1</span>), requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> iteration <span class="keyword">in</span> range(<span class="number">1000</span>):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 前向传播，计算y_pred=w * x+b</span></span><br><span class="line">    wx = torch.mul(w, x)</span><br><span class="line">    y_pred = torch.add(wx, b)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算 MSE loss</span></span><br><span class="line">    loss = (<span class="number">0.5</span> * (y - y_pred) ** <span class="number">2</span>).mean()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 反向传播</span></span><br><span class="line">    loss.backward()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 更新参数</span></span><br><span class="line">    b.data.sub_(lr * b.grad)</span><br><span class="line">    w.data.sub_(lr * w.grad)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 清零张量的梯度</span></span><br><span class="line">    w.grad.zero_()</span><br><span class="line">    b.grad.zero_()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 绘图</span></span><br><span class="line">    <span class="keyword">if</span> iteration % <span class="number">20</span> == <span class="number">0</span>:</span><br><span class="line">        plt.scatter(x.data.numpy(), y.data.numpy())</span><br><span class="line">        plt.plot(x.data.numpy(), y_pred.data.numpy(), <span class="string">&#x27;r-&#x27;</span>, lw=<span class="number">5</span>)</span><br><span class="line">        plt.text(<span class="number">2</span>, <span class="number">20</span>, <span class="string">&#x27;Loss=%.4f&#x27;</span> % loss.data.numpy(), fontdict=&#123;<span class="string">&#x27;size&#x27;</span>: <span class="number">20</span>, <span class="string">&#x27;color&#x27;</span>:  <span class="string">&#x27;red&#x27;</span>&#125;)</span><br><span class="line">        plt.xlim(<span class="number">1.5</span>, <span class="number">10</span>)</span><br><span class="line">        plt.ylim(<span class="number">8</span>, <span class="number">28</span>)</span><br><span class="line">        plt.title(<span class="string">f&quot;Iteration: <span class="subst">&#123;iteration&#125;</span>\nw: <span class="subst">&#123;w.data.numpy()&#125;</span> b: <span class="subst">&#123;b.data.numpy()&#125;</span>&quot;</span>)</span><br><span class="line">        plt.pause(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> loss.data.numpy() &lt; <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p><img src="http://anki190912.xuexihaike.com/20200920095346.png"></p>
+<p><img src="https://img.shiqi-lu.tech/20200920095346.png"></p>
 <h1 id="4-计算图与动态图机制"><a href="#4-计算图与动态图机制" class="headerlink" title="4.计算图与动态图机制"></a>4.计算图与动态图机制</h1><p>Q:计算图是什么？</p>
 <ul>
 <li>用来描述运算的有向无环图</li>
@@ -5278,18 +5278,18 @@ tensor([[10.5570,  9.5257, 11.0113],
 <p>Q:如何用计算图表示$y = (x+w)*(w+1)$?</p>
 <ul>
 <li>$a = x + w, b = w + 1, y = a * b$</li>
-<li><img src="http://anki190912.xuexihaike.com/20200919144309.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200919144309.png?imageView2/2/h/200"></li>
 </ul>
 <p>Q:如何用计算图进行梯度求导，如$y = (x+w)*(w+1)$</p>
 <ul>
 <li>$a = x + w, b = w + 1, y = a * b$</li>
 <li>$$\begin{aligned}<br>\frac{\partial \mathrm{y}}{\partial w} &amp;=\frac{\partial \mathrm{y}}{\partial a} \frac{\partial a}{\partial w}+\frac{\partial \mathrm{y}}{\partial b} \frac{\partial b}{\partial w} \\<br>&amp;=b * 1+\mathrm{a} * 1 \\<br>&amp;=\mathrm{b}+\mathrm{a} \\<br>&amp;=(\mathrm{w}+1)+(\mathrm{x}+\mathrm{w}) \\<br>&amp;=2 * \mathrm{w}+\mathrm{x}+1 \\<br>&amp;=2 * 1+2+1=5\end{aligned}$$</li>
-<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200"></li>
 <li>y对w求导在计算图中其实就是找到y到w的所有路径上的导数，进行求和</li>
 </ul>
 <p>Q:叶子结点是什么？</p>
 <ul>
-<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200"></li>
 <li>用户创建的结点称为叶子结点，如X和W</li>
 <li>torch.Tensor中有is_leaf指示张量是否为叶子结点</li>
 <li>设置叶子结点主要是为了节省内存，因为非叶子结点的梯度在反向传播后会被释放掉</li>
@@ -5298,7 +5298,7 @@ tensor([[10.5570,  9.5257, 11.0113],
 <p>Q:torch.Tensor中的grad_fn作用是什么？</p>
 <ul>
 <li>记录创建该张量时所用的方法（函数）</li>
-<li><img src="http://anki190912.xuexihaike.com/20200919144541.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20200919144541.png?imageView2/2/h/200"></li>
 <li>y.grad_fn = &lt;MulBackward0&gt;</li>
 <li>a.grad_fn = &lt;AddBackward0&gt;</li>
 </ul>
@@ -5357,7 +5357,7 @@ tensor([10.])</code></pre>
 <p>Q:逻辑回归的pytorch代码实现是什么？</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">torch.manual_seed(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成数据</span></span><br><span class="line">sample_nums = <span class="number">100</span></span><br><span class="line">mean_value = <span class="number">1.7</span></span><br><span class="line">bias = <span class="number">1</span></span><br><span class="line">n_data = torch.ones(sample_nums, <span class="number">2</span>)</span><br><span class="line"><span class="comment"># 类别0 数据 shape=(100, 2)</span></span><br><span class="line">x0 = torch.normal(mean_value * n_data, <span class="number">1</span>) + bias</span><br><span class="line"><span class="comment"># 类别0 标签 shape=(100)</span></span><br><span class="line">y0 = torch.zeros(sample_nums)</span><br><span class="line"><span class="comment"># 类别1 数据 shape=(100, 2)</span></span><br><span class="line">x1 = torch.normal(-mean_value * n_data, <span class="number">1</span>) + bias</span><br><span class="line"><span class="comment"># 类别1 标签 shape=(100)</span></span><br><span class="line">y1 = torch.ones(sample_nums)</span><br><span class="line">train_x = torch.cat((x0, x1), <span class="number">0</span>)</span><br><span class="line">train_y = torch.cat((y0, y1), <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LR</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(LR, self).__init__()</span><br><span class="line">        self.features = nn.Linear(<span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        self.sigmoid = nn.Sigmoid()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.features(x)</span><br><span class="line">        x = self.sigmoid(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化逻辑回归模型</span></span><br><span class="line">lr_net = LR()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择损失函数，交叉熵损失</span></span><br><span class="line">loss_fn = nn.BCELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选择优化器</span></span><br><span class="line">lr = <span class="number">0.01</span> <span class="comment"># 学习率</span></span><br><span class="line">optimizer = torch.optim.SGD(lr_net.parameters(), lr=lr, momentum=<span class="number">0.9</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型训练</span></span><br><span class="line"><span class="keyword">for</span> iteration <span class="keyword">in</span> range(<span class="number">1000</span>):</span><br><span class="line">    <span class="comment"># 前向传播</span></span><br><span class="line">    y_pred = lr_net(train_x)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算loss</span></span><br><span class="line">    loss = loss_fn(y_pred.squeeze(), train_y)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 反向传播</span></span><br><span class="line">    loss.backward()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 更新参数</span></span><br><span class="line">    optimizer.step()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 清空梯度</span></span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 绘图</span></span><br><span class="line">    <span class="keyword">if</span> iteration % <span class="number">50</span> == <span class="number">0</span>:</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 以0.5为阈值进行分类</span></span><br><span class="line">        mask = y_pred.ge(<span class="number">0.5</span>).float().squeeze()</span><br><span class="line">        <span class="comment"># 计算正确预测的样本个数</span></span><br><span class="line">        correct = (mask == train_y).sum()</span><br><span class="line">        <span class="comment"># 计算分类准确率</span></span><br><span class="line">        acc = correct.item() / train_y.size(<span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        plt.scatter(x0.data.numpy()[:, <span class="number">0</span>], x0.data.numpy()[:, <span class="number">1</span>], c=<span class="string">&#x27;r&#x27;</span>, label=<span class="string">&#x27;class 0&#x27;</span>)</span><br><span class="line">        plt.scatter(x1.data.numpy()[:, <span class="number">0</span>], x1.data.numpy()[:, <span class="number">1</span>], c=<span class="string">&#x27;b&#x27;</span>, label=<span class="string">&#x27;class 1&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        w0, w1 = lr_net.features.weight[<span class="number">0</span>]</span><br><span class="line">        w0, w1 = float(w0.item()), float(w1.item())</span><br><span class="line">        plot_b = float(lr_net.features.bias[<span class="number">0</span>].item())</span><br><span class="line">        plot_x = np.arange(<span class="number">-6</span>, <span class="number">6</span>, <span class="number">0.1</span>)</span><br><span class="line">        plot_y = (-w0 * plot_x - plot_b) / w1</span><br><span class="line">        </span><br><span class="line">        plt.xlim(<span class="number">-5</span>, <span class="number">7</span>)</span><br><span class="line">        plt.ylim(<span class="number">-7</span>, <span class="number">7</span>)</span><br><span class="line">        plt.plot(plot_x, plot_y)</span><br><span class="line">        </span><br><span class="line">        plt.text(<span class="number">-5</span>, <span class="number">5</span>, <span class="string">&#x27;Loss=%.4f&#x27;</span> % loss.data.numpy(), fontdict=&#123;<span class="string">&#x27;size&#x27;</span>:<span class="number">20</span>, <span class="string">&#x27;color&#x27;</span>:<span class="string">&#x27;red&#x27;</span>&#125;)</span><br><span class="line">        plt.title(<span class="string">&quot;Iteration: &#123;&#125;\nw0:&#123;:.2f&#125; w1:&#123;:.2f&#125; b: &#123;:.2f&#125; accuracy:&#123;:.2%&#125;&quot;</span>.format(iteration, w0, w1, plot_b, acc))</span><br><span class="line">        plt.legend()</span><br><span class="line"></span><br><span class="line">        plt.show()</span><br><span class="line">        plt.pause(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> acc &gt; <span class="number">0.99</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="http://anki190912.xuexihaike.com/20200920100028.png"></p>
+<p><img src="https://img.shiqi-lu.tech/20200920100028.png"></p>
 ]]></content>
       <categories>
         <category>pytorch学习笔记</category>
@@ -5383,7 +5383,7 @@ tensor([10.])</code></pre>
 </li>
 <li>Q:中央服务器算法或集中式算法是什么？<ul>
 <li>每个程序在需要访问临界资源时，先给协调者发送一个请求。如果当前没有程序使用这个资源，协调者直接授权请求程序访问；否则，按照先来后到的顺序为请求程序排一个号。如果有程序使用完资源，则通知协调者，协调者从“排号”的队列里取出排在最前面的请求，并给它发送授权信息。拿到授权消息的程序，可以直接去访问临界资源</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201509.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201509.png"></li>
 </ul>
 </li>
 <li>Q:集中式算法中每个程序完成一次临界资源访问需要进行哪3次消息交互？<ul>
@@ -5405,7 +5405,7 @@ tensor([10.])</code></pre>
 <li>当一个程序要访问临界资源时，先向系统中的其它程序发送一条请求消息，在接收到所有程序返回的同意消息后，才可以访问临界资源。其中，请求消息需要包含所请求的资源、请求者ID，以及发起请求的时间</li>
 <li>即根据“先到先得”和“投票全票通过”机制，让每个程序按时间顺序公平地访问资源</li>
 <li>适合节点数目少且变动不频繁的系统，且由于每个程序均需通信交互，因此适合P2P结构的系统</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201602.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201602.png"></li>
 </ul>
 </li>
 <li>Q:分布式算法中，一个程序完成一次临界资源访问需要的消息交互：<ul>
@@ -5426,12 +5426,12 @@ tensor([10.])</code></pre>
 <li>3.计算机1收到其它所有计算机的同意消息后，开始修改该文件</li>
 <li>4.计算机1修改完成后，向计算机2、3发送文件修改完成的消息，并发送修改后的文件数据</li>
 <li>5.计算机2和3收到计算机1的新文件数据后，更新本地的备份文件</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201526.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201526.png"></li>
 </ul>
 </li>
 <li>Q:令牌环算法或基于环的算法是怎样的？<ul>
 <li>所有程序构成一个环结构，令牌按照顺时针（或逆时针）方向在程序之间传递，收到令牌的程序有权访问临界资源，访问完成后将令牌传送到下一个程序；若该程序不需要访问临界资源，则直接把令牌传送给下一个程序</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201547.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201547.png"></li>
 </ul>
 </li>
 <li>Q:令牌环方法的优缺点和适用场景是什么？<ul>
@@ -5471,7 +5471,7 @@ tensor([10.])</code></pre>
 <li>2.如果自己不是当前活着的节点中ID最大的，则向比自己大的所有节点发送Election消息，并等待其它节点的回复</li>
 <li>3.若在给定的时间范围内，本节点没有收到其它节点回复的Alive消息，则认为自己成为主节点，并向其它节点发送Victory消息，宣誓自己成为主节点；若接收到来自比自己ID打的节点的Alive消息，则等待其它节点发送Victory消息</li>
 <li>4.若本节点收到比自己ID小的节点发送的Election消息，则回复一个Alive消息，告知其它节点，我比你大，重新选举</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201614.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201614.png"></li>
 </ul>
 </li>
 <li>Q:Bully算法的优缺点是什么？<ul>
@@ -5497,7 +5497,7 @@ tensor([10.])</code></pre>
 <li>3.其它节点根据接收到的选举请求的先后顺序，回复是否同意成为主。注意这里的每一轮选举中，一个节点只能投出一张票</li>
 <li>4.若发起选举请求的节点获得超过一半的投票，则成为主节点，其状态转化为Leader，其它节点的状态则由Candidate降为Follower。Leader节点与Follower节点之间会定期发送心跳包，以检测主节点是否活着</li>
 <li>5.当Leader节点的任期到了，即发现其它服务器开始下一轮选主周期时，Leader节点的状态由Leader降级为Follower，进入新一轮选主</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201819.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201819.png"></li>
 </ul>
 </li>
 <li>Q:Raft算法的应用例子？<ul>
@@ -5544,11 +5544,11 @@ tensor([10.])</code></pre>
 </li>
 <li>Q:ZAB算法的选举过程是怎样？<ul>
 <li>1.当系统刚启动时，3个服务器当前投票均为第一轮投票，即epoch=1, 且zxID均为0。此时每个服务器都推选自己，并将选票信息&lt;epoch, vote_id, vote_zxID&gt;广播出去</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201623.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201623.png"></li>
 <li>2.根据判断规则，由于3个Server的epoch、zxID都相同，因此比较server_id，较大者即为推选对象，因此Server1和Server2将vote_id改为3，更新自己的投票箱并重新广播自己的投票</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201632.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201632.png"></li>
 <li>3.此时系统内所有服务器都推选了Server3，因此Server3当选Leader，处于Leading状态，向其它服务器发送心跳包并维护连接；Server1和2处于Following状态</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201638.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201638.png"></li>
 </ul>
 </li>
 <li>Q:ZAB算法的优缺点是什么？<ul>
@@ -5565,7 +5565,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:Bully、Raft、ZAB算法对比图？<ul>
-<li><img src="http://anki190912.xuexihaike.com/20200905201805.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201805.png"></li>
 </ul>
 </li>
 </ul>
@@ -5619,7 +5619,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:基于PoW的共识记账过程是怎样的？(以分散在世界各地的 5 台服务器为例，假设客户端A产生一个新的交易)<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209112307.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209112307.png"></li>
 <li>1.客户端A产生新的交易，向全网进行广播，要求对交易进行记账</li>
 <li>2.每个记账节点接收到这个请求后，将受到的交易信息放入一个区块中</li>
 <li>3.每个节点通过PoW算法，计算本节点的区块的哈希值，尝试找到一个具有足够工作量难度的工作量证明</li>
@@ -5644,7 +5644,7 @@ tensor([10.])</code></pre>
 </li>
 <li>Q:通过 PoS 算法决定区块记账权的流程和 PoW 算法的唯一不同的是？<ul>
 <li>每个节点在计算自己记账权的时候，通过计算自己的股权或权益来评估，如果发现自己权益最大，则将自己的区块广播给其它节点，当然必须保证该区块的有效性</li>
-<li><img src="http://anki190912.xuexihaike.com/20210209114030.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209114030.png"></li>
 </ul>
 </li>
 <li>Q:PoS算法的优缺点？<ul>
@@ -5664,7 +5664,7 @@ tensor([10.])</code></pre>
 <li>由被社区选举的可信账户（受托人，比如得票数排行前 101 位）来拥有记账权</li>
 <li>为了成为正式受托人，用户要去社区拉票，获得足够多的信任。用户根据自己持有的货币数量占总量的百分比来投票</li>
 <li>根据自己拥有的权益，投票选出可代表自己的受托节点，受托节点之间竞争记账权</li>
-<li><img src="http://anki190912.xuexihaike.com/20210209114943.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209114943.png"></li>
 <li>通常会选出k(如101)个受托结点，它们的权利是完全相等的。受托节点之间争取记账权也是根据算力进行竞争的。只要受托节点提供的算力不稳定，计算机宕机或者利用手中的权力作恶，随时可以被握着货币的普通节点投票踢出整个系统，而后备的受托节点可以随时顶上去</li>
 </ul>
 </li>
@@ -5682,7 +5682,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:PoW、PoS和DPoS三种共识算法的对比图<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209114542.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209114542.png"></li>
 </ul>
 </li>
 <li>Q:一致性和共识的区别是什么？<ul>
@@ -5770,7 +5770,7 @@ tensor([10.])</code></pre>
 <li>1.CanCommit阶段<ul>
 <li>协调者向参与者发送请求操作（CanCommit请求），询问参与者是否可以执行事务提交操作，然后等待参与者的响应；参与者收到 CanCommit 请求之后，回复 Yes，表示可以顺利执行事务；否则回复 No</li>
 <li>CanCommit 阶段不同节点之间的事务请求成功和失败的流程，如图</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225155731.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225155731.png"></li>
 </ul>
 </li>
 <li>2.PreCommit阶段<ul>
@@ -5789,7 +5789,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>预执行阶段，不同节点上事务执行成功和失败的流程，如图</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225155951.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225155951.png"></li>
 </ul>
 </li>
 <li>3.DoCommit阶段<ul>
@@ -5809,7 +5809,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>执行阶段不同节点上事务执行成功和失败 (事务终断) 的流程，如图</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225160141.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225160141.png"></li>
 </ul>
 </li>
 </ul>
@@ -5822,15 +5822,15 @@ tensor([10.])</code></pre>
 <li>Q:基于分布式消息的最终一致性方案的核心思想是什么<ul>
 <li>将需要分布式处理的事务通过消息或者日志的方式异步执行，消息或日志可以存到本地文件、数据库或消息队列中，再通过业务规则进行失败重试</li>
 <li>基于分布式消息的最终一致性方案的事务处理，引入了一个消息中间件（Message Queue，MQ），用于在多个应用之间进行消息传递</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225160602.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225160602.png"></li>
 </ul>
 </li>
 <li>Q:以网上购物为例，阐述分布式消息的最终一致性方案的事务处理<ul>
 <li>假设用户 A 在某电商平台下了一个订单，需要支付 50 元，发现自己的账户余额共 150 元，就使用余额支付，支付成功之后，订单状态修改为支付成功，然后通知仓库发货</li>
 <li>在该事件中，涉及到了订单系统、支付系统、仓库系统，这三个系统是相互独立的应用，通过远程服务进行调用</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225161139.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225161139.png"></li>
 <li>整个购物流程如下</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225161206.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225161206.png"></li>
 <li><ol>
 <li>订单系统把订单消息发给消息中间件，消息状态标记为“待确认”</li>
 </ol>
@@ -5862,7 +5862,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:三种分布式事务的实现方式对比图<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210225160719.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225160719.png"></li>
 </ul>
 </li>
 <li>Q:刚性事务和柔性事务是什么？<ul>
@@ -6250,7 +6250,7 @@ tensor([10.])</code></pre>
 </ul>
 <h1 id="2-如何避免犯时态错误"><a href="#2-如何避免犯时态错误" class="headerlink" title="2.如何避免犯时态错误"></a>2.如何避免犯时态错误</h1><h2 id="时态的本质"><a href="#时态的本质" class="headerlink" title="时态的本质"></a>时态的本质</h2><ul>
 <li>时态=”时间”和”状态”=tense and aspect</li>
-<li><img src="http://anki190912.xuexihaike.com/20201104130711.png?imageView2/2/h/200"></li>
+<li><img src="https://img.shiqi-lu.tech/20201104130711.png?imageView2/2/h/200"></li>
 </ul>
 <h2 id="谓语动词的四种状态"><a href="#谓语动词的四种状态" class="headerlink" title="谓语动词的四种状态"></a>谓语动词的四种状态</h2><ul>
 <li>1.一般（simple）:强调动作发生的时间，而非状态<ul>
@@ -6831,25 +6831,25 @@ tensor([10.])</code></pre>
     <url>/mysql-crash-course-11-20/</url>
     <content><![CDATA[<h1 id="第11章-使用数据处理函数"><a href="#第11章-使用数据处理函数" class="headerlink" title="第11章 使用数据处理函数"></a>第11章 使用数据处理函数</h1><ul>
 <li>Q:常用的文本处理函数<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209162820.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209162820.png"></li>
 </ul>
 </li>
 <li>Q:使用大写处理<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT vend_name, Upper(vend_name) AS vend_name_upcase</span><br><span class="line">    -&gt; FROM vendors</span><br><span class="line">    -&gt; ORDER BY vend_name;</span><br><span class="line">+<span class="comment">----------------+------------------+</span></span><br><span class="line">| vend_name      | vend_name_upcase |</span><br><span class="line">+<span class="comment">----------------+------------------+</span></span><br><span class="line">| ACME           | ACME             |</span><br><span class="line">| Anvils R Us    | ANVILS R US      |</span><br><span class="line">| Furball Inc.   | FURBALL INC.     |</span><br><span class="line">| Jet <span class="keyword">Set</span>        | JET <span class="keyword">SET</span>          |</span><br><span class="line">| Jouets Et Ours | JOUETS ET OURS   |</span><br><span class="line">| LT Supplies    | LT SUPPLIES      |</span><br><span class="line">+<span class="comment">----------------+------------------+</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:常用的时间日期处理函数<ul>
 <li>注意日期格式必须为’yyyy-mm-dd’</li>
-<li><img src="http://anki190912.xuexihaike.com/20210209163055.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209163055.png"></li>
 </ul>
 </li>
 <li>Q:根据日期查询<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT cust_id, order_num</span><br><span class="line">    -&gt; FROM orders</span><br><span class="line">    -&gt; WHERE Date(order_date) = &#x27;2005-09-01&#x27;;</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">| cust_id | order_num |</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">|   10001 |     20005 |</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:查询某个月的订单<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT cust_id, order_num</span><br><span class="line">    -&gt; FROM orders</span><br><span class="line">    -&gt; WHERE Year(order_date) = 2005 AND Month(order_date) = 9;</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">| cust_id | order_num |</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">|   10001 |     20005 |</span><br><span class="line">|   10003 |     20006 |</span><br><span class="line">|   10004 |     20007 |</span><br><span class="line">+<span class="comment">---------+-----------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:常用的数值处理函数<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209163709.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209163709.png"></li>
 </ul>
 </li>
 </ul>
 <h1 id="第12章-汇总数据"><a href="#第12章-汇总数据" class="headerlink" title="第12章 汇总数据"></a>第12章 汇总数据</h1><ul>
 <li>Q:SQL的5个聚集函数<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209163930.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209163930.png"></li>
 </ul>
 </li>
 <li>Q:取平均的使用<ul>
@@ -6872,7 +6872,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:SELECT子句的顺序<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209171155.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209171155.png"></li>
 </ul>
 </li>
 </ul>
@@ -6978,7 +6978,7 @@ tensor([10.])</code></pre>
 <li>Q:布尔文本搜索举例<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT note_text</span><br><span class="line">    -&gt; FROM productnotes</span><br><span class="line">    -&gt; WHERE Match(note_text) Against(&#x27;heavy&#x27; IN BOOLEAN MODE);</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| note_text                                                                                                                                                |</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| Item is extremely heavy. Designed for dropping, not recommended for <span class="keyword">use</span> <span class="keyword">with</span> slings, ropes, pulleys, <span class="keyword">or</span> tightropes.                                      |</span><br><span class="line">| Customer complaint:</span><br><span class="line"><span class="keyword">Not</span> heavy enough <span class="keyword">to</span> generate flying stars around <span class="keyword">head</span> <span class="keyword">of</span> victim. <span class="keyword">If</span> being purchased <span class="keyword">for</span> dropping, recommend ANV02 <span class="keyword">or</span> ANV03 instead. |</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:匹配包含heavy但不包含任意以rope开始的词的行<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT note_text</span><br><span class="line">    -&gt; FROM productnotes</span><br><span class="line">    -&gt; WHERE Match(note_text) Against(&#x27;heavy -rope*&#x27; IN BOOLEAN MODE);</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| note_text                                                                                                                                                |</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| Customer complaint:</span><br><span class="line">Not heavy enough to generate flying stars around head of victim. If being purchased for dropping, recommend ANV02 or ANV03 instead. |</span><br><span class="line">+<span class="comment">----------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
 <li>Q:全文本布尔操作符<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210219143512.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210219143512.png"></li>
 </ul>
 </li>
 <li>Q:匹配包含词rabbit和bait的行<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT note_text</span><br><span class="line">    -&gt; FROM productnotes</span><br><span class="line">    -&gt; WHERE Match(note_text) Against(&#x27;+rabbit +bait&#x27; IN BOOLEAN MODE);</span><br><span class="line">+<span class="comment">-----------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| note_text                                                                                                             |</span><br><span class="line">+<span class="comment">-----------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line">| Quantity varies, sold by the sack load.</span><br><span class="line">All guaranteed to be bright and orange, and suitable for <span class="keyword">use</span> <span class="keyword">as</span> rabbit bait. |</span><br><span class="line">+<span class="comment">-----------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
@@ -7143,7 +7143,7 @@ tensor([10.])</code></pre>
 </ul>
 <h1 id="第三部分：传输层"><a href="#第三部分：传输层" class="headerlink" title="第三部分：传输层"></a>第三部分：传输层</h1><ul>
 <li>Q:三次握手<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210220115326.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210220115326.png"></li>
 <li>是TCP连接的建立过程。在握手之前，主动打开连接的客户端结束CLOSE阶段，被动打开的服务器也结束CLOSE阶段，被动打开的服务器也结束CLOSE阶段，并进入LISTEN阶段。随后进入三次握手阶段</li>
 <li>1.首先客户端向服务器发送一个SYN包，并等待服务器确认，其中<ul>
 <li>标志位为SYN，表示请求建立连接</li>
@@ -7168,7 +7168,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:四次挥手<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210220121011.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210220121011.png"></li>
 <li>即TCP连接的释放，这里假设客户端主动释放连接。在挥手之前主动释放连接的客户端结束ESTABLISHED。随后四次挥手</li>
 <li>1.首先客户端向服务器发送一段TCP报文想要释放TCP连接，其中<ul>
 <li>标记位为FIN，表示请求释放连接</li>
@@ -7242,7 +7242,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:TCP 和 UDP 的区别<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210220163423.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210220163423.png"></li>
 </ul>
 </li>
 <li>Q:TCP协议中的7种定时器<ul>
@@ -7281,12 +7281,12 @@ tensor([10.])</code></pre>
 <li>Q:TCP 的停止等待协议是什么<ul>
 <li>停止等待协议是为了实现 TCP 可靠传输而提出的一种相对简单的协议，该协议指的是发送方每发完一组数据后，直到收到接收方的确认信号才继续发送下一组数据。通过四种情形来帮助理解停等协议是如何实现可靠传输的：</li>
 <li>1.无差错传输<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210220172913.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210220172913.png"></li>
 <li>A 发送分组 Msg 1，发完就暂停发送，直到收到接收方确认收到 Msg 1 的报文后，继续发送 Msg 2，以此类推，该情形是通信中的一种理想状态</li>
 </ul>
 </li>
 <li>2.出现差错<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210220173007.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210220173007.png"></li>
 <li>发送方发送的报文出现差错导致接收方不能正确接收数据，出现差错的情况主要分为两种：<ul>
 <li>发送方发送的 Msg 1 在中途丢失了，接收方完全没收到数据。</li>
 <li>接收方收到 Msg 1 后检测出现了差错，直接丢弃 Msg 1。</li>
@@ -7296,12 +7296,12 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>3.确认丢失<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210220173100.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210220173100.png"></li>
 <li>当接收方回应的 Msg 1 确认报文在传输过程中丢失，发送方无法接收到确认报文。于是发送方等待一段时间后重传 Msg 1，接收方将收到重复的 Msg1 数据包，此时接收方会丢弃掉这个重复报文并向发送方再次发送 Msg1 的确认报文</li>
 </ul>
 </li>
 <li>4.确认迟到<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210220173136.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210220173136.png"></li>
 <li>当接收方回应的 Msg 1 确认报文由于网络各种原因导致发送方没有及时收到，此时发送方在超时重传机制的作用下再次发送了 Msg 数据包，接收方此时进行和确认丢失情形下相同的动作（丢弃重复的数据包并再次发送 Msg 1 确认报文）。发送方此时收到了接收方的确认数据包，于是继续进行数据发送。过了一段时间后，发送方收到了迟到的 Msg 1 确认包会直接丢弃</li>
 </ul>
 </li>
@@ -7535,7 +7535,7 @@ tensor([10.])</code></pre>
 <li>Q:表示IPv4地址的结构体<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> &#123;</span></span><br><span class="line">    <span class="keyword">sa_family_t</span>    sin_family;  <span class="comment">// 地址族（Address Family）</span></span><br><span class="line">    <span class="keyword">uint16_t</span>       sin_port;    <span class="comment">// 16位TCP/UDP端口号</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">sin_addr</span>;</span>    <span class="comment">// 32位IP地址</span></span><br><span class="line">    <span class="keyword">char</span>           sin_zero[<span class="number">8</span>]; <span class="comment">// 不使用</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> &#123;</span></span><br><span class="line">    <span class="keyword">in_addr_t</span> s_addr; <span class="comment">// 32位IPv4地址</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>定义的数据类型说明<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210213152341.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210213152341.png"></li>
 </ul>
 </li>
 <li>sin_family：指定每种协议族适用的地址族(Address Family)<ul>
@@ -7566,7 +7566,7 @@ tensor([10.])</code></pre>
 <li>Q:CPU向内存保存数据的2种方式<ul>
 <li>大端序（Big Endian）：高位字节存放到低位地址</li>
 <li>小端序（Little Endian）：高位字节存放到高位地址</li>
-<li><img src="http://anki190912.xuexihaike.com/20210213160004.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210213160004.png"></li>
 <li>网络传输数据时约定统一为大端序，即网络字节序(Network Byte Order)</li>
 </ul>
 </li>
@@ -7621,7 +7621,7 @@ tensor([10.])</code></pre>
 </ul>
 <h1 id="第-4-章-基于-TCP-的服务端-客户端（1）"><a href="#第-4-章-基于-TCP-的服务端-客户端（1）" class="headerlink" title="第 4 章 基于 TCP 的服务端/客户端（1）"></a>第 4 章 基于 TCP 的服务端/客户端（1）</h1><h2 id="4-1-理解-TCP-和-UDP"><a href="#4-1-理解-TCP-和-UDP" class="headerlink" title="4.1 理解 TCP 和 UDP"></a>4.1 理解 TCP 和 UDP</h2><h2 id="4-2-实现基于-TCP-的服务器-客户端"><a href="#4-2-实现基于-TCP-的服务器-客户端" class="headerlink" title="4.2 实现基于 TCP 的服务器/客户端"></a>4.2 实现基于 TCP 的服务器/客户端</h2><ul>
 <li>Q:TCP 服务端的默认函数的调用程序<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210213171357.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210213171357.png"></li>
 </ul>
 </li>
 <li>Q:进入等待连接请求状态的listen函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">listen</span><span class="params">(<span class="keyword">int</span> sock, <span class="keyword">int</span> backlog)</span></span>;</span><br><span class="line"><span class="comment">// sock：希望进入等待连接请求状态的套接字文件描述符，</span></span><br><span class="line"><span class="comment">//       传递的描述符套接字参数成为服务端套接字（监听套接字）</span></span><br><span class="line"><span class="comment">// backlog：连接请求等待队列的长度，若为5，则队列长度为5，</span></span><br><span class="line"><span class="comment">//          表示最多使5个连接请求进入队列</span></span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
@@ -7632,7 +7632,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:TCP 客户端的默认函数调用顺序<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210213180234.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210213180234.png"></li>
 </ul>
 </li>
 <li>Q:客户端发起连接请求的connect函数<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">connect</span><span class="params">(<span class="keyword">int</span> sock, </span></span></span><br><span class="line"><span class="function"><span class="params">            struct sockaddr * servaddr, </span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// sock: 客户端套接字文件描述符</span></span><br><span class="line"><span class="comment">// servaddr: 保存目标服务器端地址信息的变量地址值</span></span><br><span class="line"><span class="comment">// addrlen: 以字节为单位传递给第二个结构体参数 servaddr 的变量地址长度</span></span><br><span class="line"><span class="comment">// 成功时返回0，失败返回-1</span></span><br></pre></td></tr></table></figure>
@@ -7646,7 +7646,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>Q:基于 TCP 的服务端/客户端函数调用关系<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210213181511.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210213181511.png"></li>
 <li>1.服务器端创建套接字后连续调用bind、listen函数进入等待状态</li>
 <li>2.客户端通过调用connect函数发起连接请求。(只能等到服务器端调用listen函数后才能调connect函数，同事客户端调用connect函数前，服务器端可能率先调用accept函数。当然此时服务器端在调用accept函数时进入阻塞(blocking)状态，知道客户端调connect函数为止)</li>
 </ul>
@@ -7655,7 +7655,7 @@ tensor([10.])</code></pre>
 <h2 id="4-3-实现迭代服务端-客户端：服务端将客户端传输的字符串数据原封不动的传回客户端"><a href="#4-3-实现迭代服务端-客户端：服务端将客户端传输的字符串数据原封不动的传回客户端" class="headerlink" title="4.3 实现迭代服务端/客户端：服务端将客户端传输的字符串数据原封不动的传回客户端"></a>4.3 实现迭代服务端/客户端：服务端将客户端传输的字符串数据原封不动的传回客户端</h2><ul>
 <li>Q:迭代服务器端的流程<ul>
 <li>通过插入循环语句反复调用accept函数，可实现继续处理后续客户端连接请求</li>
-<li><img src="http://anki190912.xuexihaike.com/20210213182055.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210213182055.png"></li>
 <li>目前该程序同一时刻只能服务于一个客户端</li>
 </ul>
 </li>
@@ -8259,7 +8259,7 @@ tensor([10.])</code></pre>
 <li>不定式的4态构成非常简单，就是to+4态</li>
 <li>而不定式的被动语态，就是to+4态的被动语态(但进行态和完成进行态很少用于被动语态)。</li>
 <li>以动词do为例:</li>
-<li><img src="http://anki190912.xuexihaike.com/20201117145336.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201117145336.png"></li>
 <li>He wanted some photographs <code>to be taken</code> when he visited Taiwan. 他在台湾参观的时候想找人拍几张照片。(一般态，被动语态)</li>
 </ul>
 </li>
@@ -8416,7 +8416,7 @@ tensor([10.])</code></pre>
 </ul>
 </li>
 <li>虚拟语气的常规构成<ul>
-<li><img src="http://anki190912.xuexihaike.com/mweb/16055960586548-2020-11-17.jpg"></li>
+<li><img src="https://img.shiqi-lu.tech/mweb/16055960586548-2020-11-17.jpg"></li>
 </ul>
 </li>
 <li>现在虚拟<ul>
@@ -9526,7 +9526,7 @@ tensor([10.])</code></pre>
 <li>注意<ul>
 <li>不管简化前的句子是什么时态，简化为分词短语时都是一样的V-ing形式。也就是说：不管简化前的句子是什么“时”，简化之后，通通不考虑其“时”，而只考虑其“态”。所以分词短语只有两种“态”：一般态和完成态。另外，定语从句简化为分词短语之后，绝对不能用完成态，所以绝对没有分词的完成态作定语的情况</li>
 <li>以动词do为例</li>
-<li><img src="http://anki190912.xuexihaike.com/20201107163642.png?imageView2/2/h/100"></li>
+<li><img src="https://img.shiqi-lu.tech/20201107163642.png?imageView2/2/h/100"></li>
 <li>1.Singing a song, he sat down. 唱歌的时候，他就坐下了</li>
 <li>2.Having sung a song, he sat down. 唱完歌后，他坐下了</li>
 <li>第一句话是分词的一般态，表示“唱歌”这个动作（延续动作）和“坐下”这个动作同时发生。第二句话是分词的完成态，表示“唱歌”这个动作先发生</li>

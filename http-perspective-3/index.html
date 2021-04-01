@@ -29,26 +29,26 @@
 <meta property="og:site_name" content="每天净瞎搞">
 <meta property="og:description" content="主要包括HTTP&#x2F;2和3的特性">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210323130302.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210323144257.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210323144506.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210323145002.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324075750.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324075756.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324080322.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324100732.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324103531.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324103702.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324103944.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324110303.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210324110315.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210323130302.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210323144257.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210323144506.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210323145002.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324075750.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324075756.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324080322.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324100732.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324103531.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324103702.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324103944.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324110303.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210324110315.png">
 <meta property="article:published_time" content="2021-03-24T00:33:04.000Z">
-<meta property="article:modified_time" content="2021-03-26T03:00:31.751Z">
+<meta property="article:modified_time" content="2021-04-01T06:12:06.184Z">
 <meta property="article:author" content="Shiqi Lu">
 <meta property="article:tag" content="HTTP">
 <meta property="article:tag" content="网络">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20210323130302.png">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210323130302.png">
 
 
 <link rel="canonical" href="http://shiqi-lu.tech/http-perspective-3/">
@@ -340,7 +340,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-26 11:00:31" itemprop="dateModified" datetime="2021-03-26T11:00:31+08:00">2021-03-26</time>
+        <time title="修改时间：2021-04-01 14:12:06" itemprop="dateModified" datetime="2021-04-01T14:12:06+08:00">2021-04-01</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -413,7 +413,7 @@
 <li>它是二进制帧的双向传输序列，同一个消息往返的帧会分配一个唯一的流ID。在里面的是一串有先后顺序的数据帧，这些数据帧按照次序组装起来就是 HTTP/1 里的请求报文和响应报文</li>
 <li>因为「流」是虚拟的，实际上并不存在，所以 HTTP/2 就可以在一个 TCP 连接上用「流」同时发送多个「碎片化」的消息，这就是常说的“多路复用”（Multiplexing）——多个往返通信都复用一个连接来处理</li>
 <li>在「流」的层面上看，消息是一些有序的「帧」序列，而在「连接」的层面上看，消息是乱序收发的「帧」。多个请求/响应之间没有了顺序关系，不需要排队等待， 也就不会再出现「队头阻塞」问题，降低了延迟，大幅度提高了连接的利用率</li>
-<li><img src="http://anki190912.xuexihaike.com/20210323130302.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323130302.png"></li>
 <li>为了更好地利用连接，加大吞吐量，HTTP/2 还添加了一些控制帧来管理虚拟的「流」，实现了优先级和流量控制，这些特性也和 TCP 协议非常相似</li>
 <li>HTTP/2 还在一定程度上改变了传统的「请求 - 应答」工作模式，服务器不再是完全被动地响应请求，也可以新建「流」主动向客户端发送消息。比如，在浏览器刚请求 HTML 的时候就提前把可能会用到的 JS、CSS 文件发给客户端，减少等待的延迟，这被称为“服务器推送”（Server Push，也叫 Cache Push）</li>
 </ul>
@@ -433,10 +433,10 @@
 <li>为了方便管理和压缩，HTTP/2 废除了原有的起始行概念，把起始行里面的请求方法、URI、状态码等统一转换成了头字段的形式，即「伪头字段」(pseudo-header fields)。并废除起始行里的版本号和错误原因短语</li>
 <li>伪头字段会在名字前加一个「:」，比如「:authority」、「:method」、「:status」，分别表示的是域名、请求方法和状态码</li>
 <li>现在HTTP报文头全都是「Key-Value」形式的字段，于是 HTTP/2 就为一些最常用的头字段定义了一个只读的静态表（Static Table），如下表，如数字「2」代表「GET」，数字「8」代表状态码200</li>
-<li><img src="http://anki190912.xuexihaike.com/20210323144257.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323144257.png"></li>
 <li>但如果表里只有 Key 没有 Value，或者是自定义字段根本找不到就要用到“动态表”（Dynamic Table），它添加在静态表后面，结构相同，但会在编码解码的时候随时更新</li>
 <li>如第一次发送请求时的「user-agent」字段长是一百多个字节，用哈夫曼压缩编码发送之后，客户端和服务器都更新自己的动态表，添加一个新的索引号「65」。那么下一次发送的时候就不用再重复发那么多字节了，只要用一个字节发送编号就好</li>
-<li><img src="http://anki190912.xuexihaike.com/20210323144506.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323144506.png"></li>
 <li>随着在 HTTP/2 连接上发送的报文越来越多，两边的「字典」也会越来越丰富，最终每次的头部字段都会变成一两个字节的代码，原来上千字节的头用几十个字节就可以表示了，压缩效果比 gzip 要好得多</li>
 </ul>
 </li>
@@ -444,7 +444,7 @@
 <li>头部数据压缩之后，HTTP/2 就要把报文拆成二进制的帧准备发送</li>
 <li>HTTP/2 的帧结构有点类似 TCP 的段或者 TLS 里的记录，但报头很小，只有 9 字节</li>
 <li>二进制的格式也保证了不会有歧义，而且使用位运算能够非常简单高效地解析</li>
-<li><img src="http://anki190912.xuexihaike.com/20210323145002.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210323145002.png"></li>
 <li>帧开头是 3 个字节的长度（但不包括头的 9 个字节），默认上限是 2^14，最大是 2^24，也就是说 HTTP/2 的帧通常不超过 16K，最大是 16M</li>
 <li>长度后面的一个字节是帧类型，大致可分为数据帧和控制帧两类，HEADERS帧和DATA帧属于数据帧，存放的HTTP报文，而SETTINGS、PING、PRIORITY等则是用来管理流的控制帧</li>
 <li>HTTP/2 总共定义了 10 种类型的帧，但一个字节可以表示最多 256 种，所以也允许在标准之外定义其他类型实现功能扩展。比如 Google 的 gRPC 就利用了这个特点，定义了几种自用的新帧类型</li>
@@ -472,8 +472,8 @@
 </li>
 <li>Q:连接中无序的帧是如何依据流 ID 重组成流的<ul>
 <li>在 Wireshark 抓包里，就有“0、1、3”一共三个流，实际上就是分配了三个流 ID 号，把这些帧按编号分组，再排一下队，就成了流</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324075750.png"></li>
-<li><img src="http://anki190912.xuexihaike.com/20210324075756.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324075750.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324075756.png"></li>
 <li>HTTP/2 在一个连接上使用多个流收发数据，那么它本身默认就会是长连接，所以永远不需要“Connection”头字段（keepalive 或 close）</li>
 <li>下载大文件的时候想取消接收，在 HTTP/1 里只能断开 TCP 连接重新“三次握手”，成本很高，而在 HTTP/2 里就可以简单地发送一个“RST_STREAM”中断流，而长连接会继续保持</li>
 <li>因为客户端和服务器两端都可以创建流，而流 ID 有奇数偶数和上限的区分，所以大多数的流 ID 都会是奇数，而且客户端在一个连接里最多只能发出 2^30，也就是 10 亿个请求</li>
@@ -481,7 +481,7 @@
 </ul>
 </li>
 <li>Q:HTTP/2如何根据帧的标志位实现流状态转换<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210324080322.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324080322.png"></li>
 <li>最开始的时候流都是空闲(idle)状态</li>
 <li>当客户端发送HEADERS帧后，有了流ID，流就进入了「打开」状态，两端都可以收发数据，然后客户端发送一个带「END_STREAM」标志位的帧，流就进入了「半关闭」状态。意味着客户端的请求数据已经发送完了，需要接受响应数据，而服务端也知道请求数据接收完毕，之后就要内部处理，再发送响应数据</li>
 <li>响应数据发完了之后，也要带上「END_STREAM」标志位，表示数据发送完毕，这样流两端就都进入了关闭状态，流就结束了</li>
@@ -499,7 +499,7 @@
 </ul>
 </li>
 <li>Q:不同HTTP协议栈图的对比<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210324100732.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324100732.png"></li>
 </ul>
 </li>
 <li>Q:QUIC有什么特点？<ul>
@@ -513,11 +513,11 @@
 <li>Q:QUIC内部介绍<ul>
 <li>QUIC 的基本数据传输单位是包（packet）和帧（frame），一个包由多个帧组成，包面向的是“连接”，帧面向的是“流”</li>
 <li>QUIC 使用不透明的“连接 ID”来标记通信的两个端点，客户端和服务器可以自行选择一组 ID 来标记自己，这样就解除了 TCP 里连接对“IP 地址 + 端口”（即常说的四元组）的强绑定，支持“连接迁移”（Connection Migration）</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324103531.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324103531.png"></li>
 <li>即当 IP 地址会发生变化，TCP 就必须重新建立连接。而 QUIC 连接里的两端连接 ID 不会变，所以连接在“逻辑上”没有中断，它就可以在新的 IP 地址上继续使用之前的连接，消除重连的成本，实现连接的无缝迁移</li>
 <li>QUIC 的帧里有多种类型，PING、ACK 等帧用于管理连接，而 STREAM 帧专门用来实流</li>
 <li>QUIC 里的流与 HTTP/2 的流非常相似，也是帧的序列，但 HTTP/2 里的流都是双向的，而 QUIC 则分为双向流和单向流</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324103702.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324103702.png"></li>
 <li>QUIC 帧普遍采用变长编码，最少只要 1 个字节，最多有 8 个字节。流 ID 的最大可用位数是 62，数量上比 HTTP/2 的 2^31 大大增加</li>
 <li>流 ID 还保留了最低两位用作标志，第 1 位标记流的发起者，0 表示客户端，1 表示服务器；第 2 位标记流的方向，0 表示双向流，1 表示单向流</li>
 <li>所以 QUIC 流 ID 的奇偶性质和 HTTP/2 刚好相反，客户端的 ID 是偶数，从 0 开始计数</li>
@@ -528,7 +528,7 @@
 <li>HTTP/3 里使用QUIC流来发送「请求 - 响应」</li>
 <li>HTTP/3 里的“双向流”可以完全对应到 HTTP/2 的流，而“单向流”在 HTTP/3 里用来实现控制和推送，近似地对应 HTTP/2 的 0 号流</li>
 <li>HTTP/3 里帧的结构变简单了。帧头只有两个字段：类型和长度，而且同样都采用变长编码，最小只需要两个字节</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324103944.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324103944.png"></li>
 <li>HTTP/3 里的帧仍然分成数据帧和控制帧两类，HEADERS 帧和 DATA 帧传输数据，但其他一些帧因为在下层的 QUIC 里有了替代，所以在 HTTP/3 里就都消失了，比如 RST_STREAM、WINDOW_UPDATE、PING 等</li>
 <li>头部压缩算法在 HTTP/3 里升级成了“QPACK”，使用方式上也做了改变。虽然也分成静态表和动态表，但在流上发送 HEADERS 帧时不能更新字段，只能引用，索引表的更新需要在专门的单向流上发送指令来管理，解决了 HPACK 的“队头阻塞”问题</li>
 <li>另外，QPACK 的字典也做了优化，静态表由之前的 61 个增加到了 98 个，而且序号从 0 开始，也就是说“:authority”的编号是 0</li>
@@ -569,9 +569,9 @@
 <li>在 TLS 的扩展里，使用ALPN（Application Layer Protocol Negotiation）来与服务器就 TLS 上跑的应用协议进行“协商”</li>
 <li>客户端在发起“Client Hello”握手的时候，后面会带上一个“ALPN”扩展，里面按照优先顺序列出客户端支持的应用协议</li>
 <li>如下图，最优先的是“h2”，其次是“http/1.1”，以前还有“spdy”，以后还可能会有“h3”</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324110303.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324110303.png"></li>
 <li>服务器看到 ALPN 扩展以后就可以从列表里选择一种应用协议，在“Server Hello”里也带上“ALPN”扩展，告诉客户端服务器决定使用的是哪一种。因为我们在 Nginx 配置里使用了 HTTP/2 协议，所以在这里它选择的就是“h2”</li>
-<li><img src="http://anki190912.xuexihaike.com/20210324110315.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324110315.png"></li>
 <li>这样在 TLS 握手结束后，客户端和服务器就通过“ALPN”完成了应用层的协议协商，后面就可以使用 HTTP/2 通信了</li>
 </ul>
 </li>
@@ -633,6 +633,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/first-blog/" rel="next" title="第一篇博客：为什么我要建博客和写博客">
+                  第一篇博客：为什么我要建博客和写博客 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

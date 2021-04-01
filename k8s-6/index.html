@@ -29,20 +29,20 @@
 <meta property="og:site_name" content="每天净瞎搞">
 <meta property="og:description" content="k8s培训第6课 Service 学习笔记">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20201027163257.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20201027171941.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20201027171954.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20201027172005.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20201027175214.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20201027202612.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20201027210932.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20201027210938.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201027163257.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201027171941.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201027171954.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201027172005.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201027175214.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201027202612.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201027210932.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201027210938.png">
 <meta property="article:published_time" content="2020-11-11T04:58:17.000Z">
-<meta property="article:modified_time" content="2021-02-19T06:52:06.790Z">
+<meta property="article:modified_time" content="2021-04-01T06:12:06.188Z">
 <meta property="article:author" content="Shiqi Lu">
 <meta property="article:tag" content="k8s">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20201027163257.png">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20201027163257.png">
 
 
 <link rel="canonical" href="http://shiqi-lu.tech/k8s-6/">
@@ -333,7 +333,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-02-19 14:52:06" itemprop="dateModified" datetime="2021-02-19T14:52:06+08:00">2021-02-19</time>
+        <time title="修改时间：2021-04-01 14:12:06" itemprop="dateModified" datetime="2021-04-01T14:12:06+08:00">2021-04-01</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -407,7 +407,7 @@
 </ul>
 </li>
 <li>Q:Service的实现流程是怎样？<ul>
-<li><img src="http://anki190912.xuexihaike.com/20201027163257.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027163257.png"></li>
 <li>1.监听服务的端点是由apiserver完成的，通过kube-proxy监控，进行服务和端点信息的发现</li>
 <li>2.kube-proxy负责监控标签匹配的Pod的信息，并把它写入到iptables的规则里</li>
 <li>3.当客户端想去访问svc的时候，其实访问的是iptables，并导向后端的pod的信息，即iptables通过kube-proxy写入的</li>
@@ -415,17 +415,17 @@
 </li>
 <li>Q:service有哪3种代理模式？<ul>
 <li>userspace代理模式</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027171941.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027171941.png"></li>
 <li>iptables代理模式</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027171954.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027171954.png"></li>
 <li>ipvs代理模式</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027172005.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027172005.png"></li>
 <li>ipvs模式下，kube-proxy会监视k8s service对象和endpoints，调用netlink接口以相应地创建ipvs规则并定期与k8s service对象和endpoints对象同步ipvs规则，以确保ipvs状态与期望一致。访问服务时，流量将被重定向到其中一个后端Pod</li>
 </ul>
 </li>
 <li>Q:ClusterIP的工作方式是什么？<ul>
 <li>ClustuerIP主要在每个node节点使用iptables，将发向clusterIP对应端口的数据，转发到kube-proxy中。然后kube-proxy自己内部实现负载均衡的方法，并可以查询到这个service下对应pod的地址和端口，进而把数据转发给对应的Pod的地址和端口</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027175214.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027175214.png"></li>
 <li>为了实现图上的功能，主要需要以下几个组件的协同工作：<ul>
 <li>apiserver用户通过kubectl命令向apiserver发送创建service的命令，apiserver接收到请求后将数据存储到etcd中</li>
 <li>kube-proxy k8s的每个节点中都有一个叫做kube-proxy的进程，这个进程负责感知service，pod的变化，并将变化的信息写入本地的iptables规则中</li>
@@ -458,7 +458,7 @@
 </li>
 <li>Q:LoadBalancer是什么？<ul>
 <li>和nodePort其实是同一种方式，区别在于loadBalancer比nodePort多了一步，就是可以调用cloud provider去创建LoadBalancer来向节点导流</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027202612.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027202612.png"></li>
 </ul>
 </li>
 <li>Q:ExternalName是什么?<ul>
@@ -472,10 +472,10 @@
 </ul>
 </li>
 <li>Q:nginx-ingress的工作原理<ul>
-<li><img src="http://anki190912.xuexihaike.com/20201027210932.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027210932.png"></li>
 <li>客户端访问域名，ingress必须先绑定一个域名，不同域名访问nginx，nginx会反向代理，负载均衡选择后端的service，每个service会有一些容器</li>
 <li>nginx其实使用nodeport的方式</li>
-<li><img src="http://anki190912.xuexihaike.com/20201027210938.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20201027210938.png"></li>
 <li>首先k8s的apiserver和store建立监听状态，这里的监听方式是以协程的Pod的形式向apiserver发起连接的方案进行监听，如果发生新的数据写入，会被写入到updateChannel的循环队列里面，然后有一个nginxController的主进程会去监听这个循环队列里面的资源和事件，发生一个循环以后会更新一个事件，把它写入到我们的同步队列里去，等待被协程去更改配置文件，协程会定期的从队列里拉去执行添加的一些任务，如果有一些必要的直接需要去修改的，不需要去等待直接要更新的一些任务会自动发直接发送到SyncQueue协程，两个协程之间协商直接沟通，收取到所有的要更新的数据以后会去他去判断是否要进行一个重载(reload)，写入数据的这么一个方案，还是等等再去添加，如果有的话就会写入nginx主配置文件，然后重新载入nginx的一些数据，那如果不需要的话就等待后面去执行，直接发送构建的post的数据接口，也就是一些不需要存在的数据即可，最后以nginx模块去运行，那这就是nginx-ingress的进程以及协程的沟通方案</li>
 </ul>
 </li>

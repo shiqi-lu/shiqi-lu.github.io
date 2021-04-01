@@ -29,33 +29,33 @@
 <meta property="og:site_name" content="每天净瞎搞">
 <meta property="og:description" content="3.分布式互斥，4.分布式选举，5.分布式共识，6.分布式事务">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201509.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201602.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201526.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201547.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201614.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201819.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201623.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201632.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201638.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20200905201805.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209112307.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209114030.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209114943.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210209114542.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210225155731.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210225155951.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210225160141.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210225160602.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210225161139.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210225161206.png">
-<meta property="og:image" content="http://anki190912.xuexihaike.com/20210225160719.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201509.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201602.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201526.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201547.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201614.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201819.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201623.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201632.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201638.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201805.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209112307.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209114030.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209114943.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209114542.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225155731.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225155951.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225160141.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225160602.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225161139.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225161206.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225160719.png">
 <meta property="article:published_time" content="2021-02-24T08:21:22.000Z">
 <meta property="article:modified_time" content="2021-02-24T08:21:22.000Z">
 <meta property="article:author" content="Shiqi Lu">
 <meta property="article:tag" content="分布式">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://anki190912.xuexihaike.com/20200905201509.png">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20200905201509.png">
 
 
 <link rel="canonical" href="http://shiqi-lu.tech/distrib-principal-algo-2/">
@@ -413,7 +413,7 @@
 </li>
 <li>Q:中央服务器算法或集中式算法是什么？<ul>
 <li>每个程序在需要访问临界资源时，先给协调者发送一个请求。如果当前没有程序使用这个资源，协调者直接授权请求程序访问；否则，按照先来后到的顺序为请求程序排一个号。如果有程序使用完资源，则通知协调者，协调者从“排号”的队列里取出排在最前面的请求，并给它发送授权信息。拿到授权消息的程序，可以直接去访问临界资源</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201509.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201509.png"></li>
 </ul>
 </li>
 <li>Q:集中式算法中每个程序完成一次临界资源访问需要进行哪3次消息交互？<ul>
@@ -435,7 +435,7 @@
 <li>当一个程序要访问临界资源时，先向系统中的其它程序发送一条请求消息，在接收到所有程序返回的同意消息后，才可以访问临界资源。其中，请求消息需要包含所请求的资源、请求者ID，以及发起请求的时间</li>
 <li>即根据“先到先得”和“投票全票通过”机制，让每个程序按时间顺序公平地访问资源</li>
 <li>适合节点数目少且变动不频繁的系统，且由于每个程序均需通信交互，因此适合P2P结构的系统</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201602.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201602.png"></li>
 </ul>
 </li>
 <li>Q:分布式算法中，一个程序完成一次临界资源访问需要的消息交互：<ul>
@@ -456,12 +456,12 @@
 <li>3.计算机1收到其它所有计算机的同意消息后，开始修改该文件</li>
 <li>4.计算机1修改完成后，向计算机2、3发送文件修改完成的消息，并发送修改后的文件数据</li>
 <li>5.计算机2和3收到计算机1的新文件数据后，更新本地的备份文件</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201526.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201526.png"></li>
 </ul>
 </li>
 <li>Q:令牌环算法或基于环的算法是怎样的？<ul>
 <li>所有程序构成一个环结构，令牌按照顺时针（或逆时针）方向在程序之间传递，收到令牌的程序有权访问临界资源，访问完成后将令牌传送到下一个程序；若该程序不需要访问临界资源，则直接把令牌传送给下一个程序</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201547.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201547.png"></li>
 </ul>
 </li>
 <li>Q:令牌环方法的优缺点和适用场景是什么？<ul>
@@ -501,7 +501,7 @@
 <li>2.如果自己不是当前活着的节点中ID最大的，则向比自己大的所有节点发送Election消息，并等待其它节点的回复</li>
 <li>3.若在给定的时间范围内，本节点没有收到其它节点回复的Alive消息，则认为自己成为主节点，并向其它节点发送Victory消息，宣誓自己成为主节点；若接收到来自比自己ID打的节点的Alive消息，则等待其它节点发送Victory消息</li>
 <li>4.若本节点收到比自己ID小的节点发送的Election消息，则回复一个Alive消息，告知其它节点，我比你大，重新选举</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201614.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201614.png"></li>
 </ul>
 </li>
 <li>Q:Bully算法的优缺点是什么？<ul>
@@ -527,7 +527,7 @@
 <li>3.其它节点根据接收到的选举请求的先后顺序，回复是否同意成为主。注意这里的每一轮选举中，一个节点只能投出一张票</li>
 <li>4.若发起选举请求的节点获得超过一半的投票，则成为主节点，其状态转化为Leader，其它节点的状态则由Candidate降为Follower。Leader节点与Follower节点之间会定期发送心跳包，以检测主节点是否活着</li>
 <li>5.当Leader节点的任期到了，即发现其它服务器开始下一轮选主周期时，Leader节点的状态由Leader降级为Follower，进入新一轮选主</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201819.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201819.png"></li>
 </ul>
 </li>
 <li>Q:Raft算法的应用例子？<ul>
@@ -574,11 +574,11 @@
 </li>
 <li>Q:ZAB算法的选举过程是怎样？<ul>
 <li>1.当系统刚启动时，3个服务器当前投票均为第一轮投票，即epoch=1, 且zxID均为0。此时每个服务器都推选自己，并将选票信息&lt;epoch, vote_id, vote_zxID&gt;广播出去</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201623.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201623.png"></li>
 <li>2.根据判断规则，由于3个Server的epoch、zxID都相同，因此比较server_id，较大者即为推选对象，因此Server1和Server2将vote_id改为3，更新自己的投票箱并重新广播自己的投票</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201632.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201632.png"></li>
 <li>3.此时系统内所有服务器都推选了Server3，因此Server3当选Leader，处于Leading状态，向其它服务器发送心跳包并维护连接；Server1和2处于Following状态</li>
-<li><img src="http://anki190912.xuexihaike.com/20200905201638.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201638.png"></li>
 </ul>
 </li>
 <li>Q:ZAB算法的优缺点是什么？<ul>
@@ -595,7 +595,7 @@
 </ul>
 </li>
 <li>Q:Bully、Raft、ZAB算法对比图？<ul>
-<li><img src="http://anki190912.xuexihaike.com/20200905201805.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20200905201805.png"></li>
 </ul>
 </li>
 </ul>
@@ -649,7 +649,7 @@
 </ul>
 </li>
 <li>Q:基于PoW的共识记账过程是怎样的？(以分散在世界各地的 5 台服务器为例，假设客户端A产生一个新的交易)<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209112307.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209112307.png"></li>
 <li>1.客户端A产生新的交易，向全网进行广播，要求对交易进行记账</li>
 <li>2.每个记账节点接收到这个请求后，将受到的交易信息放入一个区块中</li>
 <li>3.每个节点通过PoW算法，计算本节点的区块的哈希值，尝试找到一个具有足够工作量难度的工作量证明</li>
@@ -674,7 +674,7 @@
 </li>
 <li>Q:通过 PoS 算法决定区块记账权的流程和 PoW 算法的唯一不同的是？<ul>
 <li>每个节点在计算自己记账权的时候，通过计算自己的股权或权益来评估，如果发现自己权益最大，则将自己的区块广播给其它节点，当然必须保证该区块的有效性</li>
-<li><img src="http://anki190912.xuexihaike.com/20210209114030.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209114030.png"></li>
 </ul>
 </li>
 <li>Q:PoS算法的优缺点？<ul>
@@ -694,7 +694,7 @@
 <li>由被社区选举的可信账户（受托人，比如得票数排行前 101 位）来拥有记账权</li>
 <li>为了成为正式受托人，用户要去社区拉票，获得足够多的信任。用户根据自己持有的货币数量占总量的百分比来投票</li>
 <li>根据自己拥有的权益，投票选出可代表自己的受托节点，受托节点之间竞争记账权</li>
-<li><img src="http://anki190912.xuexihaike.com/20210209114943.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209114943.png"></li>
 <li>通常会选出k(如101)个受托结点，它们的权利是完全相等的。受托节点之间争取记账权也是根据算力进行竞争的。只要受托节点提供的算力不稳定，计算机宕机或者利用手中的权力作恶，随时可以被握着货币的普通节点投票踢出整个系统，而后备的受托节点可以随时顶上去</li>
 </ul>
 </li>
@@ -712,7 +712,7 @@
 </ul>
 </li>
 <li>Q:PoW、PoS和DPoS三种共识算法的对比图<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210209114542.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210209114542.png"></li>
 </ul>
 </li>
 <li>Q:一致性和共识的区别是什么？<ul>
@@ -800,7 +800,7 @@
 <li>1.CanCommit阶段<ul>
 <li>协调者向参与者发送请求操作（CanCommit请求），询问参与者是否可以执行事务提交操作，然后等待参与者的响应；参与者收到 CanCommit 请求之后，回复 Yes，表示可以顺利执行事务；否则回复 No</li>
 <li>CanCommit 阶段不同节点之间的事务请求成功和失败的流程，如图</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225155731.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225155731.png"></li>
 </ul>
 </li>
 <li>2.PreCommit阶段<ul>
@@ -819,7 +819,7 @@
 </ul>
 </li>
 <li>预执行阶段，不同节点上事务执行成功和失败的流程，如图</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225155951.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225155951.png"></li>
 </ul>
 </li>
 <li>3.DoCommit阶段<ul>
@@ -839,7 +839,7 @@
 </ul>
 </li>
 <li>执行阶段不同节点上事务执行成功和失败 (事务终断) 的流程，如图</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225160141.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225160141.png"></li>
 </ul>
 </li>
 </ul>
@@ -852,15 +852,15 @@
 <li>Q:基于分布式消息的最终一致性方案的核心思想是什么<ul>
 <li>将需要分布式处理的事务通过消息或者日志的方式异步执行，消息或日志可以存到本地文件、数据库或消息队列中，再通过业务规则进行失败重试</li>
 <li>基于分布式消息的最终一致性方案的事务处理，引入了一个消息中间件（Message Queue，MQ），用于在多个应用之间进行消息传递</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225160602.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225160602.png"></li>
 </ul>
 </li>
 <li>Q:以网上购物为例，阐述分布式消息的最终一致性方案的事务处理<ul>
 <li>假设用户 A 在某电商平台下了一个订单，需要支付 50 元，发现自己的账户余额共 150 元，就使用余额支付，支付成功之后，订单状态修改为支付成功，然后通知仓库发货</li>
 <li>在该事件中，涉及到了订单系统、支付系统、仓库系统，这三个系统是相互独立的应用，通过远程服务进行调用</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225161139.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225161139.png"></li>
 <li>整个购物流程如下</li>
-<li><img src="http://anki190912.xuexihaike.com/20210225161206.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225161206.png"></li>
 <li><ol>
 <li>订单系统把订单消息发给消息中间件，消息状态标记为“待确认”</li>
 </ol>
@@ -892,7 +892,7 @@
 </ul>
 </li>
 <li>Q:三种分布式事务的实现方式对比图<ul>
-<li><img src="http://anki190912.xuexihaike.com/20210225160719.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210225160719.png"></li>
 </ul>
 </li>
 <li>Q:刚性事务和柔性事务是什么？<ul>
