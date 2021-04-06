@@ -189,6 +189,109 @@
       </tags>
   </entry>
   <entry>
+    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
+    <url>/distrib-principal-algo-1/</url>
+    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
+<li>Q：分布式技术涉及内容<ul>
+<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
+<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
+<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
+<li>Q:分布式的三个演进模式是什么？<ul>
+<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
+<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
+<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
+</ul>
+</li>
+<li>Q:分布式是什么？<ul>
+<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
+</ul>
+</li>
+<li>Q:判断采取数据并行还是任务并行的方式：<ul>
+<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
+<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
+</ul>
+</li>
+</ul>
+<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
+<li>Q:分布式系统的目的是什么？<ul>
+<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
+</ul>
+</li>
+<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
+<li>一个系统处理各种任务的能力</li>
+</ul>
+</li>
+<li>Q:分布式的3个性能指标是什么？<ul>
+<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
+</ul>
+</li>
+<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
+<li>系统在一定时间内可以处理的任务数</li>
+<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
+</ul>
+</li>
+<li>Q:QPS是什么？<ul>
+<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
+</ul>
+</li>
+<li>Q:TPS是什么？<ul>
+<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
+</ul>
+</li>
+<li>Q:BPS是什么？<ul>
+<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
+</ul>
+</li>
+<li>Q:响应时间是什么？<ul>
+<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
+</ul>
+</li>
+<li>Q:完成时间是什么？<ul>
+<li>系统真正完成一个请求或处理需要花费的时间</li>
+</ul>
+</li>
+<li>Q:资源占用是什么？<ul>
+<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
+</ul>
+</li>
+<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
+<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
+<li>满载资源占用：一个系统满额负载时的资源占用</li>
+</ul>
+</li>
+<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
+<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
+<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
+</ul>
+</li>
+<li>Q:系统可用性的两个指标是什么？<ul>
+<li>1.系统停止服务的时间与总的时间之比</li>
+<li>2.某功能的失败次数与总的请求次数之比</li>
+</ul>
+</li>
+<li>Q:可扩展性(Scalability)是什么?<ul>
+<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
+</ul>
+</li>
+<li>Q:有哪两种扩展系统的方法？<ul>
+<li>垂直/纵向扩展：增加单机的硬件能力</li>
+<li>水平/横向扩展：增加计算机数量</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《数据库设计那些事》学习笔记</title>
     <url>/db-design-thing/</url>
     <content><![CDATA[<ul>
@@ -460,109 +563,6 @@
       </categories>
       <tags>
         <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
-    <url>/distrib-principal-algo-1/</url>
-    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
-<li>Q：分布式技术涉及内容<ul>
-<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
-<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
-<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
-</ul>
-</li>
-</ul>
-<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
-<li>Q:分布式的三个演进模式是什么？<ul>
-<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
-<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
-<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
-</ul>
-</li>
-<li>Q:分布式是什么？<ul>
-<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
-</ul>
-</li>
-<li>Q:判断采取数据并行还是任务并行的方式：<ul>
-<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
-<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
-</ul>
-</li>
-</ul>
-<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
-<li>Q:分布式系统的目的是什么？<ul>
-<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
-</ul>
-</li>
-<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
-<li>一个系统处理各种任务的能力</li>
-</ul>
-</li>
-<li>Q:分布式的3个性能指标是什么？<ul>
-<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
-</ul>
-</li>
-<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
-<li>系统在一定时间内可以处理的任务数</li>
-<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
-</ul>
-</li>
-<li>Q:QPS是什么？<ul>
-<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
-</ul>
-</li>
-<li>Q:TPS是什么？<ul>
-<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
-</ul>
-</li>
-<li>Q:BPS是什么？<ul>
-<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
-</ul>
-</li>
-<li>Q:响应时间是什么？<ul>
-<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
-</ul>
-</li>
-<li>Q:完成时间是什么？<ul>
-<li>系统真正完成一个请求或处理需要花费的时间</li>
-</ul>
-</li>
-<li>Q:资源占用是什么？<ul>
-<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
-</ul>
-</li>
-<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
-<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
-<li>满载资源占用：一个系统满额负载时的资源占用</li>
-</ul>
-</li>
-<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
-<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
-<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
-</ul>
-</li>
-<li>Q:系统可用性的两个指标是什么？<ul>
-<li>1.系统停止服务的时间与总的时间之比</li>
-<li>2.某功能的失败次数与总的请求次数之比</li>
-</ul>
-</li>
-<li>Q:可扩展性(Scalability)是什么?<ul>
-<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
-</ul>
-</li>
-<li>Q:有哪两种扩展系统的方法？<ul>
-<li>垂直/纵向扩展：增加单机的硬件能力</li>
-<li>水平/横向扩展：增加计算机数量</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>分布式</category>
-      </categories>
-      <tags>
-        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
@@ -1719,6 +1719,148 @@
       </tags>
   </entry>
   <entry>
+    <title>《左手MongoDB，右手Redis》第3章 MongoDB快速入门</title>
+    <url>/mongodb-redis3/</url>
+    <content><![CDATA[<ul>
+<li>3.4 MongoDB的基本操作<ul>
+<li>创建数据库与集合<ul>
+<li>创建数据库：Robo 3T中，右键小电脑选择“Create Database”</li>
+<li>创建集合：在新创建的数据库里，右键“Collections”，选择”Create Collection”</li>
+</ul>
+</li>
+<li>插入单条数据<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).insertOne(&#123;&quot;name&quot;:&quot;张小三&quot;, &quot;age&quot;:18, &quot;address&quot;:&quot;上海&quot;&#125;)</code></li>
+<li>使用cmd+r运行</li>
+</ul>
+</li>
+<li>批量插入数据<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">db.getCollection(&#x27;example_data_1&#x27;).insertMany([</span><br><span class="line">    &#123;&quot;name&quot;:&quot;kk&quot;, &quot;age&quot;:20&#125;,</span><br><span class="line">    &#123;&quot;name&quot;:&quot;ll&quot;, &quot;age&quot;:21&#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure></li>
+<li>查询所有数据<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;)</code></li>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find()</code></li>
+</ul>
+</li>
+<li>查询特定数据<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;字段1&#39;:&#39;值1&#39;, &#39;字段2&#39;:&#39;值2&#39;&#125;)</code></li>
+</ul>
+</li>
+<li>查询范围值数据<ul>
+<li>查询’age’字段不小于25的记录<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;)</code></li>
+</ul>
+</li>
+<li>各个操作符<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">大于：$gt</span><br><span class="line">大于等于：$gte</span><br><span class="line">小于：$lt</span><br><span class="line">小于等于：$lte</span><br><span class="line">不等于：$ne</span><br></pre></td></tr></table></figure></li>
+<li>查询’age’大于21并小于等于24的数据<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$lte&#39;: 24, &#39;$gt&#39;: 21&#125;&#125;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>限定返回哪些字段<ul>
+<li>find命令第1个参数用于过滤不同的记录，第2个参数用于修改返回的字段。如果省略第2个参数，则会返回所有字段</li>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(用于过滤记录的字典, 用于限定字段的字典)</code></li>
+<li>限定字段的字典的Key为各个字段名，其值只有两个0或1<ul>
+<li>0表示在全部字段中剔除值为0的这些字段返回</li>
+<li>1表示只返回值为1的这些字段</li>
+</ul>
+</li>
+<li>查询数据集，但不返回address和age字段<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;, &#123;&#39;address&#39;:0, &#39;age&#39;:0&#125;)</code></li>
+</ul>
+</li>
+<li>查询数据集，只返回address和age字段<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;, &#123;&#39;address&#39;:1, &#39;age&#39;:1&#125;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询满足结果的数据集的条数<ul>
+<li>查询’age’字段不小于25的记录的条数<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;).count()</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回限定的条数<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find().limit(限制返回的条数)</code></li>
+</ul>
+</li>
+<li>对查询结果进行排序<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;).sort(&#123;&#39;字段名&#39;: -1或1&#125;)</code></li>
+<li>其中-1表示倒序，1表示正序</li>
+</ul>
+</li>
+<li>修改数据updateOne()和updateMany()<ul>
+<li><code>sql db.getCollection(&#39;example_data_1&#39;).updateMany( 参数1：查询语句的第一个字典， &#123;&#39;$set&#39;: &#123;&#39;字段1&#39;: &#39;新的值1&#39;, &#39;字段2&#39;: &#39;新的值2&#39;&#125;&#125; )</code></li>
+</ul>
+</li>
+<li>删除数据<ul>
+<li>只需把find改成deleteOne或deleteMany即可，对应删除第1条数据和所有满足要求的数据</li>
+</ul>
+</li>
+<li>数据去重<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).distinct(&#39;字段名&#39;, 查询语句的第一个字典)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.5 使用Python操作MongoDB<ul>
+<li>安装<ul>
+<li><code>pip install pymongo</code></li>
+</ul>
+</li>
+<li>连接数据库<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>client = MongoClient(<span class="string">&#x27;mongodb://192.168.1.53:27017&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>database = client.chapter_3</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection = database.example_data_1</span><br></pre></td></tr></table></figure></li>
+<li>MongoDB与PyMongo的对比<ul>
+<li>把MongoDB的驼峰命名转化为PyMongo的小写加下划线即可</li>
+</ul>
+</li>
+<li>插入数据insert_one和insert_many<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.insert_many([</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;new_new&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">30</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;old_old&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">31</span>&#125;</span><br><span class="line"><span class="meta">... </span>])</span><br></pre></td></tr></table></figure></li>
+<li>查询数据find<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>rows = collection.find(&#123;<span class="string">&#x27;age&#x27;</span>: &#123;<span class="string">&#x27;$lt&#x27;</span>: <span class="number">30</span>&#125;&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line"><span class="meta">... </span>    print(row)</span><br></pre></td></tr></table></figure></li>
+<li>更新数据<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.update_many(</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;kk&#x27;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;$set&#x27;</span>: &#123;<span class="string">&#x27;age&#x27;</span>: <span class="number">44</span>&#125;&#125;</span><br><span class="line"><span class="meta">... </span>)</span><br></pre></td></tr></table></figure></li>
+<li>更新或插入数据<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.update_many(</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;kk&#x27;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;$set&#x27;</span>: &#123;<span class="string">&#x27;age&#x27;</span>: <span class="number">44</span>&#125;&#125;,</span><br><span class="line"><span class="meta">... </span>    upsert=<span class="literal">True</span></span><br><span class="line"><span class="meta">... </span>)</span><br></pre></td></tr></table></figure></li>
+<li>删除数据<ul>
+<li><code>collection.delete_many(&#123;&#39;age&#39;:0&#125;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.6 MongoDB与Python不通用的操作<ul>
+<li>1.空值<ul>
+<li>MongoDB中写作null，Python中写作None</li>
+</ul>
+</li>
+<li>2.布尔值<ul>
+<li>MongoDB中真为true，假为false</li>
+<li>Python中真为True，假为False</li>
+</ul>
+</li>
+<li>3.排序参数<ul>
+<li>MongoDB: .sort({‘age’: -1})</li>
+<li>Python: .sort(‘age’, -1)</li>
+</ul>
+</li>
+<li>4.查询_id<ul>
+<li>MongoDB<ul>
+<li><code>db.getCollection(&#39;example_data_2&#39;).find(&#123;&#39;_id&#39;: ObjectId(&#39;mxmmmmm&#39;)&#125;)</code></li>
+</ul>
+</li>
+<li>Python<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> bson <span class="keyword">import</span> ObjectId</span><br><span class="line">collection.find(&#123;<span class="string">&#x27;_id&#x27;</span>: ObjectId(<span class="string">&#x27;mxmmmmm&#x27;</span>)&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>MongoDB</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>MongoDB</tag>
+        <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>机器学习项目清单</title>
     <url>/ml-checklist/</url>
     <content><![CDATA[<h1 id="1-框出问题并看整体"><a href="#1-框出问题并看整体" class="headerlink" title="1.框出问题并看整体"></a>1.框出问题并看整体</h1><ul>
@@ -2077,148 +2219,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《左手MongoDB，右手Redis》第3章 MongoDB快速入门</title>
-    <url>/mongodb-redis3/</url>
-    <content><![CDATA[<ul>
-<li>3.4 MongoDB的基本操作<ul>
-<li>创建数据库与集合<ul>
-<li>创建数据库：Robo 3T中，右键小电脑选择“Create Database”</li>
-<li>创建集合：在新创建的数据库里，右键“Collections”，选择”Create Collection”</li>
-</ul>
-</li>
-<li>插入单条数据<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).insertOne(&#123;&quot;name&quot;:&quot;张小三&quot;, &quot;age&quot;:18, &quot;address&quot;:&quot;上海&quot;&#125;)</code></li>
-<li>使用cmd+r运行</li>
-</ul>
-</li>
-<li>批量插入数据<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">db.getCollection(&#x27;example_data_1&#x27;).insertMany([</span><br><span class="line">    &#123;&quot;name&quot;:&quot;kk&quot;, &quot;age&quot;:20&#125;,</span><br><span class="line">    &#123;&quot;name&quot;:&quot;ll&quot;, &quot;age&quot;:21&#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure></li>
-<li>查询所有数据<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;)</code></li>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find()</code></li>
-</ul>
-</li>
-<li>查询特定数据<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;字段1&#39;:&#39;值1&#39;, &#39;字段2&#39;:&#39;值2&#39;&#125;)</code></li>
-</ul>
-</li>
-<li>查询范围值数据<ul>
-<li>查询’age’字段不小于25的记录<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;)</code></li>
-</ul>
-</li>
-<li>各个操作符<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">大于：$gt</span><br><span class="line">大于等于：$gte</span><br><span class="line">小于：$lt</span><br><span class="line">小于等于：$lte</span><br><span class="line">不等于：$ne</span><br></pre></td></tr></table></figure></li>
-<li>查询’age’大于21并小于等于24的数据<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$lte&#39;: 24, &#39;$gt&#39;: 21&#125;&#125;)</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>限定返回哪些字段<ul>
-<li>find命令第1个参数用于过滤不同的记录，第2个参数用于修改返回的字段。如果省略第2个参数，则会返回所有字段</li>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(用于过滤记录的字典, 用于限定字段的字典)</code></li>
-<li>限定字段的字典的Key为各个字段名，其值只有两个0或1<ul>
-<li>0表示在全部字段中剔除值为0的这些字段返回</li>
-<li>1表示只返回值为1的这些字段</li>
-</ul>
-</li>
-<li>查询数据集，但不返回address和age字段<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;, &#123;&#39;address&#39;:0, &#39;age&#39;:0&#125;)</code></li>
-</ul>
-</li>
-<li>查询数据集，只返回address和age字段<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;, &#123;&#39;address&#39;:1, &#39;age&#39;:1&#125;)</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>查询满足结果的数据集的条数<ul>
-<li>查询’age’字段不小于25的记录的条数<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;).count()</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>返回限定的条数<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find().limit(限制返回的条数)</code></li>
-</ul>
-</li>
-<li>对查询结果进行排序<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;).sort(&#123;&#39;字段名&#39;: -1或1&#125;)</code></li>
-<li>其中-1表示倒序，1表示正序</li>
-</ul>
-</li>
-<li>修改数据updateOne()和updateMany()<ul>
-<li><code>sql db.getCollection(&#39;example_data_1&#39;).updateMany( 参数1：查询语句的第一个字典， &#123;&#39;$set&#39;: &#123;&#39;字段1&#39;: &#39;新的值1&#39;, &#39;字段2&#39;: &#39;新的值2&#39;&#125;&#125; )</code></li>
-</ul>
-</li>
-<li>删除数据<ul>
-<li>只需把find改成deleteOne或deleteMany即可，对应删除第1条数据和所有满足要求的数据</li>
-</ul>
-</li>
-<li>数据去重<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).distinct(&#39;字段名&#39;, 查询语句的第一个字典)</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>3.5 使用Python操作MongoDB<ul>
-<li>安装<ul>
-<li><code>pip install pymongo</code></li>
-</ul>
-</li>
-<li>连接数据库<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>client = MongoClient(<span class="string">&#x27;mongodb://192.168.1.53:27017&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>database = client.chapter_3</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection = database.example_data_1</span><br></pre></td></tr></table></figure></li>
-<li>MongoDB与PyMongo的对比<ul>
-<li>把MongoDB的驼峰命名转化为PyMongo的小写加下划线即可</li>
-</ul>
-</li>
-<li>插入数据insert_one和insert_many<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.insert_many([</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;new_new&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">30</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;old_old&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">31</span>&#125;</span><br><span class="line"><span class="meta">... </span>])</span><br></pre></td></tr></table></figure></li>
-<li>查询数据find<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>rows = collection.find(&#123;<span class="string">&#x27;age&#x27;</span>: &#123;<span class="string">&#x27;$lt&#x27;</span>: <span class="number">30</span>&#125;&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line"><span class="meta">... </span>    print(row)</span><br></pre></td></tr></table></figure></li>
-<li>更新数据<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.update_many(</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;kk&#x27;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;$set&#x27;</span>: &#123;<span class="string">&#x27;age&#x27;</span>: <span class="number">44</span>&#125;&#125;</span><br><span class="line"><span class="meta">... </span>)</span><br></pre></td></tr></table></figure></li>
-<li>更新或插入数据<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.update_many(</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;kk&#x27;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;$set&#x27;</span>: &#123;<span class="string">&#x27;age&#x27;</span>: <span class="number">44</span>&#125;&#125;,</span><br><span class="line"><span class="meta">... </span>    upsert=<span class="literal">True</span></span><br><span class="line"><span class="meta">... </span>)</span><br></pre></td></tr></table></figure></li>
-<li>删除数据<ul>
-<li><code>collection.delete_many(&#123;&#39;age&#39;:0&#125;)</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>3.6 MongoDB与Python不通用的操作<ul>
-<li>1.空值<ul>
-<li>MongoDB中写作null，Python中写作None</li>
-</ul>
-</li>
-<li>2.布尔值<ul>
-<li>MongoDB中真为true，假为false</li>
-<li>Python中真为True，假为False</li>
-</ul>
-</li>
-<li>3.排序参数<ul>
-<li>MongoDB: .sort({‘age’: -1})</li>
-<li>Python: .sort(‘age’, -1)</li>
-</ul>
-</li>
-<li>4.查询_id<ul>
-<li>MongoDB<ul>
-<li><code>db.getCollection(&#39;example_data_2&#39;).find(&#123;&#39;_id&#39;: ObjectId(&#39;mxmmmmm&#39;)&#125;)</code></li>
-</ul>
-</li>
-<li>Python<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> bson <span class="keyword">import</span> ObjectId</span><br><span class="line">collection.find(&#123;<span class="string">&#x27;_id&#x27;</span>: ObjectId(<span class="string">&#x27;mxmmmmm&#x27;</span>)&#125;)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>MongoDB</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>MongoDB</tag>
-        <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《OFF学》读书笔记</title>
     <url>/off-time/</url>
     <content><![CDATA[<ul>
@@ -2552,22 +2552,6 @@
       </tags>
   </entry>
   <entry>
-    <title>博客升级纪要</title>
-    <url>/update-blog/</url>
-    <content><![CDATA[<p>学完HTTP协议后，然后下决心要把博客和图床都升级为HTTPS，然后域名也备案，并且把图床也用自己的域名</p>
-<p>参考：<a href="https://jiapeng.me/markdown-picbed/">https://jiapeng.me/markdown-picbed/</a></p>
-<p>简要步骤：<br>1.先把原有的域名走备案流程，原有申请的域名在万网，就直接在阿里云备案了，这需要一周左右时间，这里我要吐槽一下，备案一定要买阿里云的服务器，，，，，，<br>2.在阿里云上课直接申请免费的SSL证书，同时在七牛云上的图床的对象存储中新开一个域名，配置好后，打开HTTPS访问，并且自动转换HTTP为HTTPS访问<br>3.申请一个子域名img.shiqi-lu.tech，然后指向七牛云中<br>4.批量替换原有图床的域名为新域名</p>
-<p>除了第1个步骤等了很久，其它都很快。。。整个过程阿里云的服务器买了最低配的，花了300多，七牛云以后用HTTPS的话，就没有免费额度了，看了一下价格也不贵，19块有100G流量，够用了。。。</p>
-]]></content>
-      <categories>
-        <category>自我提升</category>
-      </categories>
-      <tags>
-        <tag>感想</tag>
-        <tag>自我提升</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>自研小工具roam2anki介绍</title>
     <url>/roam2anki-intro/</url>
     <content><![CDATA[<h1 id="roam2anki"><a href="#roam2anki" class="headerlink" title="roam2anki"></a>roam2anki</h1><p>roam2anki用来把Roam Research的笔记转成anki进行记忆</p>
@@ -2615,6 +2599,22 @@
         <tag>学习</tag>
         <tag>Roam Research</tag>
         <tag>anki</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>博客升级纪要</title>
+    <url>/update-blog/</url>
+    <content><![CDATA[<p>学完HTTP协议后，然后下决心要把博客和图床都升级为HTTPS，然后域名也备案，并且把图床也用自己的域名</p>
+<p>参考：<a href="https://jiapeng.me/markdown-picbed/">https://jiapeng.me/markdown-picbed/</a></p>
+<p>简要步骤：<br>1.先把原有的域名走备案流程，原有申请的域名在万网，就直接在阿里云备案了，这需要一周左右时间，这里我要吐槽一下，备案一定要买阿里云的服务器，，，，，，<br>2.在阿里云上课直接申请免费的SSL证书，同时在七牛云上的图床的对象存储中新开一个域名，配置好后，打开HTTPS访问，并且自动转换HTTP为HTTPS访问<br>3.申请一个子域名img.shiqi-lu.tech，然后指向七牛云中<br>4.批量替换原有图床的域名为新域名</p>
+<p>除了第1个步骤等了很久，其它都很快。。。整个过程阿里云的服务器买了最低配的，花了300多，七牛云以后用HTTPS的话，就没有免费额度了，看了一下价格也不贵，19块有100G流量，够用了。。。</p>
+]]></content>
+      <categories>
+        <category>自我提升</category>
+      </categories>
+      <tags>
+        <tag>感想</tag>
+        <tag>自我提升</tag>
       </tags>
   </entry>
   <entry>
