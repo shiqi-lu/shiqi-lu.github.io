@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="冒泡、选择、插入、希尔、堆排、快排、归并">
+<meta property="og:type" content="article">
+<meta property="og:title" content="排序算法全整理（python3）">
+<meta property="og:url" content="http://shiqi-lu.tech/sort-algo/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="冒泡、选择、插入、希尔、堆排、快排、归并">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-22T15:46:15.000Z">
+<meta property="article:modified_time" content="2021-04-22T16:00:50.700Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="排序">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/sort-algo/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>排序算法全整理（python3） | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">25</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">35</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F-%E5%9F%BA%E7%A1%80%E5%86%99%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">冒泡排序(基础写法)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F-%E5%9F%BA%E7%A1%80%E6%94%B9%E8%BF%9B%E5%86%99%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">冒泡排序(基础改进写法)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F-%E7%AC%AC%E4%B8%89%E7%A7%8D%E5%86%99%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">冒泡排序(第三种写法)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F-%E5%9F%BA%E6%9C%AC%E5%86%99%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">选择排序(基本写法)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F-%E6%94%B9%E8%BF%9B%E5%86%99%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">选择排序(改进写法)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F"><span class="nav-number">6.</span> <span class="nav-text">插入排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F"><span class="nav-number">7.</span> <span class="nav-text">希尔排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A0%86%E6%8E%92%E5%BA%8F"><span class="nav-number">8.</span> <span class="nav-text">堆排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BF%AB%E6%8E%92"><span class="nav-number">9.</span> <span class="nav-text">快排</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F-%E9%80%92%E5%BD%92%E5%86%99%E6%B3%95"><span class="nav-number">10.</span> <span class="nav-text">归并排序(递归写法)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F-%E9%9D%9E%E9%80%92%E5%BD%92%E5%86%99%E6%B3%95"><span class="nav-number">11.</span> <span class="nav-text">归并排序(非递归写法)</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/20200914142317.JPG">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/sort-algo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/20200914142317.JPG">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          排序算法全整理（python3）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-22 23:46:15" itemprop="dateCreated datePublished" datetime="2021-04-22T23:46:15+08:00">2021-04-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-23 00:00:50" itemprop="dateModified" datetime="2021-04-23T00:00:50+08:00">2021-04-23</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/sort-algo/" class="post-meta-item leancloud_visitors" data-flag-title="排序算法全整理（python3）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/sort-algo/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/sort-algo/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">冒泡、选择、插入、希尔、堆排、快排、归并</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="冒泡排序-基础写法"><a href="#冒泡排序-基础写法" class="headerlink" title="冒泡排序(基础写法)"></a>冒泡排序(基础写法)</h1><ul>
+<li>核心思想：每一趟都通过按顺序两两比较的方法，把当前剩余元素的最大值移动到一端<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 超时</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        length = len(nums)</span><br><span class="line">        <span class="comment"># 外层循环：从第0到n-2共n-1趟，比较是以当前元素和后一个元素比较</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(length<span class="number">-1</span>):</span><br><span class="line">            <span class="comment"># 内层循环：从0到n-i-1，减i是因为每一趟结束均有一个已排好序的值</span></span><br><span class="line">            <span class="comment"># 如进行第i=1趟时，意味着有1个数字已排好</span></span><br><span class="line">            <span class="comment"># 如进行第i=n-2趟时(最后一趟)，此时i为n-2个数字已排好，</span></span><br><span class="line">            <span class="comment"># 最后2个数字再比较一次即可</span></span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(length - i - <span class="number">1</span>):</span><br><span class="line">                <span class="comment"># 交换当前元素和后一个元素</span></span><br><span class="line">                <span class="keyword">if</span> nums[j] &gt; nums[j+<span class="number">1</span>]:</span><br><span class="line">                    nums[j], nums[j+<span class="number">1</span>] = nums[j+<span class="number">1</span>], nums[j]</span><br><span class="line">        <span class="keyword">return</span> nums</span><br></pre></td></tr></table></figure></li>
+<li>最坏时间复杂度O(n^2)，平均时间复杂度O(n^2)，空间复杂度：O(1)<h1 id="冒泡排序-基础改进写法"><a href="#冒泡排序-基础改进写法" class="headerlink" title="冒泡排序(基础改进写法)"></a>冒泡排序(基础改进写法)</h1></li>
+<li>思想是如果一次排序中没有经过交换，则停止排序<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 超时</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        length = len(nums)</span><br><span class="line">        swapped = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(length<span class="number">-1</span>):</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> swapped:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            swapped = <span class="literal">False</span></span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(length - i - <span class="number">1</span>):</span><br><span class="line">                <span class="keyword">if</span> nums[j] &gt; nums[j+<span class="number">1</span>]:</span><br><span class="line">                    swapped = <span class="literal">True</span></span><br><span class="line">                    nums[j], nums[j+<span class="number">1</span>] = nums[j+<span class="number">1</span>], nums[j]</span><br><span class="line">        <span class="keyword">return</span> nums</span><br></pre></td></tr></table></figure></li>
+<li>最坏时间复杂度O(n^2)，平均时间复杂度O(n^2)，空间复杂度：O(1)<h1 id="冒泡排序-第三种写法"><a href="#冒泡排序-第三种写法" class="headerlink" title="冒泡排序(第三种写法)"></a>冒泡排序(第三种写法)</h1></li>
+<li>在第二种写法的基础上继续优化，下一轮比较时，只需比较到上一轮中，最后一次发生交换的位置即可。因为后面的所有元素都没有发生过交换，必然已经有序了<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 超时</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        swapped = <span class="literal">True</span></span><br><span class="line">        <span class="comment"># 最后一个没有经过排序的元素的下标</span></span><br><span class="line">        last_unsorted = len(nums) - <span class="number">1</span></span><br><span class="line">        <span class="comment"># 上次交换的位置</span></span><br><span class="line">        swapped_index = <span class="number">-1</span></span><br><span class="line">        <span class="keyword">while</span> swapped:</span><br><span class="line">            swapped = <span class="literal">False</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(last_unsorted):</span><br><span class="line">                <span class="keyword">if</span> nums[i] &gt; nums[i+<span class="number">1</span>]:</span><br><span class="line">                    nums[i], nums[i+<span class="number">1</span>] = nums[i+<span class="number">1</span>], nums[i]</span><br><span class="line">                    swapped = <span class="literal">True</span></span><br><span class="line">                    swapped_index = i</span><br><span class="line">            <span class="comment"># 最后一个没有经过排序的元素的下标就是</span></span><br><span class="line">            <span class="comment"># 最后一次发生交换的位置</span></span><br><span class="line">            last_unsorted = swapped_index</span><br><span class="line">        <span class="keyword">return</span> nums</span><br></pre></td></tr></table></figure></li>
+<li>最坏时间复杂度O(n^2)，平均时间复杂度O(n^2)，空间复杂度：O(1)<h1 id="选择排序-基本写法"><a href="#选择排序-基本写法" class="headerlink" title="选择排序(基本写法)"></a>选择排序(基本写法)</h1></li>
+<li>对一个序列A中的元素A[0]~A[n-1]，令i从0到n-1枚举，进行第n趟操作，每趟从待排序部分[i,n-1]中选择最小的元素，令其与待排序部分的第一个元素A[i]进行交换，这样元素A[i]就会与当前有序区间[1,i-1]形成新的有序区间[1,i]。于是在n趟操作之后，所有的元素都是有序的，时间复杂度O(n^2)<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        length = len(nums)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(length - <span class="number">1</span>):</span><br><span class="line">            min_index = i</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(i + <span class="number">1</span>, length):</span><br><span class="line">                <span class="keyword">if</span> nums[min_index] &gt; nums[j]:</span><br><span class="line">                    min_index = j</span><br><span class="line">            nums[min_index], nums[i] = nums[i], nums[min_index]</span><br><span class="line">        <span class="keyword">return</span> nums</span><br></pre></td></tr></table></figure></li>
+<li>空间复杂度O(1)，时间复杂度O(n^2)<h1 id="选择排序-改进写法"><a href="#选择排序-改进写法" class="headerlink" title="选择排序(改进写法)"></a>选择排序(改进写法)</h1></li>
+<li>每次选择是记录最小值和最大值<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        length = len(nums)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(length // <span class="number">2</span>):</span><br><span class="line">            min_index, max_index = i, i</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(i + <span class="number">1</span>, length - i):</span><br><span class="line">                <span class="keyword">if</span> nums[min_index] &gt; nums[j]:</span><br><span class="line">                    min_index = j</span><br><span class="line">                <span class="keyword">if</span> nums[max_index] &lt; nums[j]:</span><br><span class="line">                    max_index = j</span><br><span class="line">            <span class="comment"># 若min_index和max_index相等，那么必定都等于i，</span></span><br><span class="line">            <span class="comment"># 且后面的所有数字都与 nums[i] 相等，此时排序完成</span></span><br><span class="line">            <span class="keyword">if</span> min_index == max_index:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            nums[min_index], nums[i] = nums[i], nums[min_index]</span><br><span class="line">            <span class="comment"># 若最大值的下标刚好是i，由于nums[i]和nums[min_index]已</span></span><br><span class="line">            <span class="comment"># 交换，所以这里要更新 max_index 的值</span></span><br><span class="line">            <span class="keyword">if</span> max_index == i:</span><br><span class="line">                max_index = min_index</span><br><span class="line">            last_index = length - i - <span class="number">1</span></span><br><span class="line">            nums[max_index], nums[last_index] = nums[last_index], nums[max_index]</span><br><span class="line">        <span class="keyword">return</span> nums</span><br></pre></td></tr></table></figure></li>
+<li>空间复杂度O(1)，时间复杂度O(n^2)<h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1></li>
+<li>对序列A的前n个元素A[0]到A[n-1]，令i从1到n-1枚举，进行n-1趟操作。假设某一趟时，序列A的前i-1个元素A[i]到A[i-1]已经有序，而范围[i,n-1]还未有序，那么从范围[1,i-1]中寻找某个位置j，是的将a[i]插入位置j后（此时A[j]到A[i-1]会后移一位至A[j+1]到A[i]），范围[1,i]有序<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        length = len(nums)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, length):</span><br><span class="line">            cur_num = nums[i]</span><br><span class="line">            j = i - <span class="number">1</span></span><br><span class="line">            <span class="comment"># 寻找插入位置的过程中，不断地将比cur_num大的数字向后挪</span></span><br><span class="line">            <span class="keyword">while</span> j &gt;= <span class="number">0</span> <span class="keyword">and</span> cur_num &lt; nums[j]:</span><br><span class="line">                nums[j+<span class="number">1</span>] = nums[j]</span><br><span class="line">                j -= <span class="number">1</span></span><br><span class="line">            <span class="comment"># 跳出循环的两种情况:</span></span><br><span class="line">            <span class="comment"># 1.遇到一个小于或等于cur_num的数字，跳出循环，</span></span><br><span class="line">            <span class="comment"># curr_num就坐到它后面</span></span><br><span class="line">            <span class="comment"># 2.已经走到数列头部，仍然没有遇到小于或等于cur_num的数字，</span></span><br><span class="line">            <span class="comment"># 也会跳出循环，此时j等于-1，cur_num就坐到数列头部</span></span><br><span class="line">            nums[j+<span class="number">1</span>] = cur_num</span><br><span class="line">        <span class="keyword">return</span> nums</span><br></pre></td></tr></table></figure></li>
+<li>空间复杂度O(1)，时间复杂度O(n^2)<h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 执行用时：568 ms, 在所有 Python3 提交中击败了5.08%的用户</span></span><br><span class="line"><span class="comment"># 内存消耗：17.9 MB, 在所有 Python3 提交中击败了58.54%的用户</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_gaps</span>(<span class="params">self, length</span>):</span></span><br><span class="line">        gaps = []</span><br><span class="line">        gap = length // <span class="number">2</span></span><br><span class="line">        <span class="keyword">while</span> gap &gt; <span class="number">0</span>:</span><br><span class="line">            gaps.append(gap)</span><br><span class="line">            gap //= <span class="number">2</span></span><br><span class="line">        <span class="keyword">return</span> gaps</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        length = len(nums)</span><br><span class="line">        <span class="comment"># 间隔序列</span></span><br><span class="line">        <span class="keyword">for</span> gap <span class="keyword">in</span> self.get_gaps(length):</span><br><span class="line">            <span class="comment"># 分组</span></span><br><span class="line">            <span class="keyword">for</span> group_index <span class="keyword">in</span> range(gap):</span><br><span class="line">                <span class="comment"># 插入排序</span></span><br><span class="line">                <span class="keyword">for</span> cur_index <span class="keyword">in</span> range(group_index+gap, length, gap):</span><br><span class="line">                    cur_num = nums[cur_index]</span><br><span class="line">                    pre_index = cur_index - gap</span><br><span class="line">                    <span class="keyword">while</span> pre_index &gt;= group_index <span class="keyword">and</span> cur_num &lt; nums[pre_index]:</span><br><span class="line">                        nums[pre_index + gap] = nums[pre_index]</span><br><span class="line">                        pre_index -= gap</span><br><span class="line">                    nums[pre_index + gap] = cur_num</span><br><span class="line">        <span class="keyword">return</span> nums</span><br></pre></td></tr></table></figure></li>
+<li>空间复杂度O(1)，时间复杂度O(n^1.3)，最坏时间复杂度O(n^2)<h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1></li>
+<li>根节点下标视为0的完全二叉树的3个性质<ul>
+<li>1.对于完全二叉树中的第 i 个数，它的左孩子下标是：<code>left = 2i + 1</code></li>
+<li>2.对于完全二叉树中的第 i 个数，它的右孩子下标是：<code>right = left + 1 = 2i + 2 = 2(i+1)</code></li>
+<li>3.对于n个元素的完全二叉树(n &gt;= 2)，它的最后一个非叶子结点的下标：$\lfloor n / 2 \rfloor -1$，等价于该结点的父节点下标<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#执行用时：1052 ms, 在所有 Python3 提交中击败了5.09%的用户</span></span><br><span class="line"><span class="comment">#内存消耗：20.1 MB, 在所有 Python3 提交中击败了6.51%的用户</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        <span class="comment"># 构建初始大顶堆</span></span><br><span class="line">        nums = self.build_max_heap(nums)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(nums)<span class="number">-1</span>, <span class="number">0</span>, <span class="number">-1</span>):</span><br><span class="line">            <span class="comment"># 将最大值交换到数组最后</span></span><br><span class="line">            nums[<span class="number">0</span>], nums[i] = nums[i], nums[<span class="number">0</span>]</span><br><span class="line">            <span class="comment"># 调整剩余数组，使其满足大顶堆</span></span><br><span class="line">            nums = self.max_heapify(nums, <span class="number">0</span>, i)</span><br><span class="line">        <span class="keyword">return</span> nums</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build_max_heap</span>(<span class="params">self, nums</span>) -&gt; List[int]:</span></span><br><span class="line">        <span class="comment"># 从最后一个非叶子结点开始调整大顶堆，</span></span><br><span class="line">        <span class="comment"># 最后一个非叶子结点的下标是 len(nums) // 2 - 1</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(nums)//<span class="number">2</span><span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>):</span><br><span class="line">            nums = self.max_heapify(nums, i, len(nums))</span><br><span class="line">        <span class="keyword">return</span> nums</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 调整大顶堆，第三个参数表示剩余未排序的数字的数量，即剩余堆的大小</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">max_heapify</span>(<span class="params">self, nums, i, heap_size</span>) -&gt; List[int]:</span></span><br><span class="line">        <span class="comment"># 左右子节点下标</span></span><br><span class="line">        l, r = <span class="number">2</span> * i + <span class="number">1</span>, <span class="number">2</span> * i + <span class="number">2</span></span><br><span class="line">        <span class="comment"># 找到根节点、左右子树结点中的最大值下标</span></span><br><span class="line">        largest = i</span><br><span class="line">        <span class="keyword">if</span> l &lt; heap_size <span class="keyword">and</span> nums[l] &gt; nums[largest]:</span><br><span class="line">            largest = l</span><br><span class="line">        <span class="keyword">if</span> r &lt; heap_size <span class="keyword">and</span> nums[r] &gt; nums[largest]:</span><br><span class="line">            largest = r</span><br><span class="line">        <span class="keyword">if</span> largest != i:</span><br><span class="line">            <span class="comment"># 将最大值交换为根结点</span></span><br><span class="line">            nums[i], nums[largest] = nums[largest], nums[i]</span><br><span class="line">            <span class="comment"># 再次调整交换数字后的大顶堆</span></span><br><span class="line">            nums = self.max_heapify(nums, largest, heap_size)</span><br><span class="line">        <span class="keyword">return</span> nums</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>初始化堆(build_max_heap)的时间复杂度是O(n)，重建堆(max_heapify)的时间复杂度为O(nlogn)，总时间复杂度O(nlogn)</li>
+<li>空间复杂度O(1)<h1 id="快排"><a href="#快排" class="headerlink" title="快排"></a>快排</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 执行用时：176 ms, 在所有 Python3 提交中击败了75.38%的用户</span></span><br><span class="line"><span class="comment"># 内存消耗：18 MB, 在所有 Python3 提交中击败了40.91%的用户</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        self.quicksort(nums, <span class="number">0</span>, len(nums)<span class="number">-1</span>)</span><br><span class="line">        <span class="keyword">return</span> nums</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">quicksort</span>(<span class="params">self, nums, start, end</span>):</span></span><br><span class="line">        <span class="comment"># 如果区域内少于2个，退出递归</span></span><br><span class="line">        <span class="keyword">if</span> start &gt;= end:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        mid = self.partition(nums, start, end)</span><br><span class="line">        self.quicksort(nums, start, mid<span class="number">-1</span>)</span><br><span class="line">        self.quicksort(nums, mid+<span class="number">1</span>, end)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">partition</span>(<span class="params">self, nums, start, end</span>):</span></span><br><span class="line">        <span class="comment"># 避免有序数组</span></span><br><span class="line">        random_index = random.randint(start, end)</span><br><span class="line">        nums[start], nums[random_index] = nums[random_index], nums[start]</span><br><span class="line">        pivot = nums[start]</span><br><span class="line">        <span class="keyword">while</span> start &lt; end:</span><br><span class="line">            <span class="keyword">while</span> start &lt; end <span class="keyword">and</span> pivot &lt;= nums[end]:</span><br><span class="line">                end -= <span class="number">1</span></span><br><span class="line">            nums[start] = nums[end]</span><br><span class="line">            <span class="keyword">while</span> start &lt; end <span class="keyword">and</span> nums[start] &lt;= pivot:</span><br><span class="line">                start += <span class="number">1</span></span><br><span class="line">            nums[end] = nums[start]</span><br><span class="line">        nums[start] = pivot</span><br><span class="line">        <span class="keyword">return</span> start</span><br></pre></td></tr></table></figure></li>
+<li>平均时间复杂度为 O(nlogn)，最坏的时间复杂度为 O(n^2)，空间复杂度与递归的层数有关，每层递归会生成一些临时变量，所以空间复杂度为 O(logn) ~ O(n)，平均空间复杂度为 O(logn)</li>
+</ul>
+<h1 id="归并排序-递归写法"><a href="#归并排序-递归写法" class="headerlink" title="归并排序(递归写法)"></a>归并排序(递归写法)</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 执行用时：252 ms, 在所有 Python3 提交中击败了32.87%的用户</span></span><br><span class="line"><span class="comment"># 内存消耗：19 MB, 在所有 Python3 提交中击败了15.42%的用户</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        <span class="keyword">if</span> len(nums) &lt;= <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> nums</span><br><span class="line">        mid = len(nums) // <span class="number">2</span></span><br><span class="line">        a = self.sortArray(nums[:mid])</span><br><span class="line">        b = self.sortArray(nums[mid:])</span><br><span class="line">        <span class="keyword">return</span> self.merge(a,b)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">merge</span>(<span class="params">self, a, b</span>):</span></span><br><span class="line">        merged = []</span><br><span class="line">        i, j = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> i &lt; len(a) <span class="keyword">and</span> j &lt; len(b):</span><br><span class="line">            <span class="keyword">if</span> a[i] &lt;= b[j]:</span><br><span class="line">                merged.append(a[i])</span><br><span class="line">                i += <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                merged.append(b[j])</span><br><span class="line">                j += <span class="number">1</span></span><br><span class="line">        merged.extend(a[i:])</span><br><span class="line">        merged.extend(b[j:])</span><br><span class="line">        <span class="keyword">return</span> merged</span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度是 O(nlogn)，因拆分数组的过程中，会将数组拆分 logn 次，每层执行的比较次数都约等于 n 次，空间复杂度是 O(n)，主要占用空间的就是我们在排序前创建的长度为 n 的数组</li>
+</ul>
+<h1 id="归并排序-非递归写法"><a href="#归并排序-非递归写法" class="headerlink" title="归并排序(非递归写法)"></a>归并排序(非递归写法)</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#执行用时：276 ms, 在所有 Python3 提交中击败了24.61%的用户</span></span><br><span class="line"><span class="comment">#内存消耗：17.9 MB, 在所有 Python3 提交中击败了60.92%的用户</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sortArray</span>(<span class="params">self, nums: List[int]</span>) -&gt; List[int]:</span></span><br><span class="line">        self.nums = nums</span><br><span class="line">        self.merge_sort(<span class="number">0</span>, len(nums)<span class="number">-1</span>)</span><br><span class="line">        <span class="keyword">return</span> self.nums</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span>(<span class="params">self, low, high</span>):</span></span><br><span class="line">        <span class="keyword">if</span> low &gt;= high:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        mid = (low + high) // <span class="number">2</span></span><br><span class="line">        self.merge_sort(low, mid)</span><br><span class="line">        self.merge_sort(mid+<span class="number">1</span>, high)</span><br><span class="line">        self.merge(low, mid, high)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">merge</span>(<span class="params">self, low, mid, high</span>):</span></span><br><span class="line">        <span class="comment"># 只需要拷贝前半份</span></span><br><span class="line">        merged = self.nums[low:mid+<span class="number">1</span>]</span><br><span class="line">        i, i1, i2 = low, <span class="number">0</span>, mid+<span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i1 &lt; len(merged) <span class="keyword">and</span> i2 &lt;= high:</span><br><span class="line">            <span class="keyword">if</span> merged[i1] &lt;= self.nums[i2]:</span><br><span class="line">                self.nums[i] = merged[i1]</span><br><span class="line">                i, i1 = i+<span class="number">1</span>, i1+<span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.nums[i] = self.nums[i2]</span><br><span class="line">                i, i2 = i+<span class="number">1</span>, i2+<span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i1 &lt; len(merged):</span><br><span class="line">            self.nums[i] = merged[i1]</span><br><span class="line">            i, i1 = i+<span class="number">1</span>, i1+<span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i2 &lt;= high:</span><br><span class="line">            self.nums[i] = self.nums[i2]</span><br><span class="line">            i, i2 = i+<span class="number">1</span>, i2+<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度是 O(nlogn)，空间复杂度是 O(n)</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/sort-algo/" title="排序算法全整理（python3）">http://shiqi-lu.tech/sort-algo/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E6%8E%92%E5%BA%8F/" rel="tag"># 排序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/update-blog/" rel="prev" title="博客升级纪要">
+                  <i class="fa fa-chevron-left"></i> 博客升级纪要
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/sort-algo/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
