@@ -1,191 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>类别不平衡问题的方法汇总</title>
-    <url>/class-imbalance/</url>
-    <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
-<li>指分类任务中不同类别的训练样例数目差别很大的情况</li>
-<li>若不同类别的训练样例数目稍有差别，通常影响不大，但若差别很大，则会对学习过程造成困扰。例如有998个反例，但是正例只有2个，那么学习方法只需要返回一个永远将新样本预测为反例的学习器，就能达到99.8%的精度；然而这样的学习器往往没有价值，因为它不能预测出任何正例</li>
-</ul>
-<h1 id="上采样-过采样-Oversampling"><a href="#上采样-过采样-Oversampling" class="headerlink" title="上采样(过采样, Oversampling)"></a>上采样(过采样, Oversampling)</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>对训练集中的少数类进行“过采样”，即增加一些少数类样本使得正、反例数目接近，然后再进行学习</li>
-</ul>
-<h2 id="Random-Oversampling-随机上采样"><a href="#Random-Oversampling-随机上采样" class="headerlink" title="Random Oversampling(随机上采样)"></a>Random Oversampling(随机上采样)</h2><ul>
-<li>简单复制样本的策略来增加少数类样本，容易产生模型过拟合的问题</li>
-</ul>
-<h2 id="SMOTE"><a href="#SMOTE" class="headerlink" title="SMOTE"></a>SMOTE</h2><ul>
-<li>即合成少数类过采样技术(Synthetic Minority Oversampling Technique)，是基于随机采样算法的一种改进，其基本思想是对少数类样本进行分析并根据少数类样本人工合成新样本添加到数据集中</li>
-</ul>
-<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>1.对于少数类中每一个样本$x_i$，以欧氏距离为标准计算它到少数类样本集$S_{min}$中所有样本的距离，得到其k近邻</li>
-<li>2.根据样本不平衡比例设置一个采样比例以确定采样倍率N，对于每一个少数类样本$x_i$，从其k近邻中随机选择若干个样本，假设选择的近邻为$\tilde{x}$。</li>
-<li>3.对于每一个随机选出的近邻$\tilde{x}$，分别于原样本按照如下的公式构建新的样本</li>
-<li>$$x_{n e w}=x+\operatorname{rand}(0,1) \times |\tilde{x}-x|$$</li>
-<li><img src="https://img.shiqi-lu.tech/20201019195529.png?imageView2/2/h/250"></li>
-</ul>
-<h3 id="SMOTE的问题"><a href="#SMOTE的问题" class="headerlink" title="SMOTE的问题"></a>SMOTE的问题</h3><ul>
-<li>随机选取少数类样本用以合成新样本，而不考虑周边样本的情况<ul>
-<li>1.如果选取的少数类样本周围都是少数类样本，则新合成的样本不会提供太多有用信息。就像SVM中远离margin的点对决策边界影响不大</li>
-<li>2.如果选取的少数类样本周围都是多数类样本，这类的样本可能是噪声，则新合成的样本会与周围的多数类样本产生大部分重叠，导致分类困难</li>
+    <title>六种不同的二分查找全总结</title>
+    <url>/binary-search/</url>
+    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
+<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
+<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
+<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
+<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
+<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
 </ul>
 </li>
 </ul>
-<h2 id="Borderline-SMOTE"><a href="#Borderline-SMOTE" class="headerlink" title="Borderline-SMOTE"></a>Borderline-SMOTE</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
-<li>由于原始SMOTE算法的对所有少数类样本都是一视同仁的，我们希望新合成的少数类样本能处于两个类别的边界附近，因为在实际建模过程中那些处于边界位置的样本更容易被错分，因此利用边界位置的样本信息产生新样本可以给模型带来更大的体征，能提供足够的信息用以分类，即Borderline SMOTE算法做的事情</li>
-</ul>
-<h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>这个算法会先将所有的少数类样本分成三类，如图</li>
-<li><img src="https://img.shiqi-lu.tech/20201019140912.png"></li>
-<li>“noise”：所有的k近邻个样本都属于多数类，可认为是噪声不能生成合成样本</li>
-<li>“danger”：超过一半的k近邻样本属于多数类</li>
-<li>“safe”：超过一半的k近邻样本属于少数类</li>
-<li>borderline smote算法只会从处于”danger”状态的样本中随机选择，然后用SMOTE算法产生新的样本。处于”danger”状态的样本代表靠近”边界”附近的少数类样本往往更容易被误分类。因而Border-line SMOTE只对那些靠近”边界”的少数类样本进行人工合成样本，而SMOTE则对所有少数类样本一视同仁</li>
-</ul>
-<h3 id="危险集的判断流程"><a href="#危险集的判断流程" class="headerlink" title="危险集的判断流程"></a>危险集的判断流程</h3><ul>
-<li>1.对于每个$x_{i} \subset S_{\min }$确定一系列K近邻样本集，称该数据集为$S_{i-kNN}$，且$S_{i-kNN} \subset S$</li>
-<li>2.对每个样本$x_i$，判断出最近邻样本集中属于多数类样本的个数，即$\left|S_{i-k N N} \cap S_{m a j}\right|$</li>
-<li>3.选择满足不等式$\frac{k}{2} \leq\left|S_{i-k N N} \cap S_{m a j}\right| \leq k$，将其加入危险集DANGER</li>
-</ul>
-<h3 id="Borderline-SMOTE分类两种："><a href="#Borderline-SMOTE分类两种：" class="headerlink" title="Borderline SMOTE分类两种："></a>Borderline SMOTE分类两种：</h3><ul>
-<li>Borderline-1 SMOTE：在合成样本时所选的近邻是一个少数类样本</li>
-<li>Borderline-2 SMOTE：在合成样本时所选的近邻是任意一个样本</li>
-</ul>
-<h2 id="ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用"><a href="#ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用" class="headerlink" title="ADASYN(Adaptive Synthetic Sampling，自适应合成采用)"></a>ADASYN(Adaptive Synthetic Sampling，自适应合成采用)</h2><ul>
-<li>根据数据分布情况为不同的少数类样本生成不同数量的新样本</li>
-<li>首先根据最终的平衡程度设定总共需要生成的新少数类样本数量，然后为每个少数类样本x计算分布比例</li>
-</ul>
-<h1 id="下采样-降采样-UnserSampling"><a href="#下采样-降采样-UnserSampling" class="headerlink" title="下采样(降采样, UnserSampling)"></a>下采样(降采样, UnserSampling)</h1><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>对训练集中多数类样本进行“下采样”(undersampling)，即去除一些多数类中的样本使得正例、反例数目接近，然后再学习</li>
-</ul>
-<h2 id="Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection"><a href="#Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection" class="headerlink" title="Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)"></a>Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)</h2><h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><ul>
-<li>从多数类$S_{maj}$中随机选择一些样本组成样本集E。然后将样本集E从$S_{maj}$中移除。新的数据集$S_{n e w-m a j}=S_{m a j}-E$</li>
-<li>通过改变多数类样本比例以达到修改样本分布的目的，从而使样本分布较为均衡</li>
-</ul>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>操作简单，只依赖于样本分布，不依赖任何距离信息，属于非启发式方法</li>
-</ul>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
-<li>由于采样的样本集合要少于原来的样本集合，因此会造成一些信息缺失，即将多数类样本删除有可能导致分类器丢失有关多数类的重要信息</li>
-</ul>
-<h2 id="Ensemble-Methods"><a href="#Ensemble-Methods" class="headerlink" title="Ensemble Methods"></a>Ensemble Methods</h2><h3 id="EasyEnsemble"><a href="#EasyEnsemble" class="headerlink" title="EasyEnsemble"></a>EasyEnsemble</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><ul>
-<li>多次随机欠采样，尽可能全面地涵盖所有信息，特点是利用boosting减少偏差(Adaboost)、bagging减少方差(集成分类器)。实际应用的时候可尝试选用不同的分类器来提高分类的效果</li>
-<li><img src="https://img.shiqi-lu.tech/20201020145429.png?imageView2/2/h/350"></li>
-</ul>
-<h4 id="算法流程-2"><a href="#算法流程-2" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
-<li>1.把数据划分为两部分，分别是多数类样本$S_{maj}$和少数类样本$S_{min}$</li>
-<li>2.从多数类$S_{maj}$中有放回的随机采样n次，每次选取与少数类数目相近的样本个数即$|S_{imaj}|=|S_{min}|$，可得到n个样本集合，记作$\{S_{1 m a j}, S_{2 m a j}, \ldots, S_{n m a j}\}$</li>
-<li>3.将每一个多数类样本的子集$S_{imaj}$与少数类样本$S_{min}$合并后训练出Adaboost分类器$H_i$，阈值设置为$\theta_i$，可得到n个模型，即$H_{i}(x)=\operatorname{sgn}\left(\sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i, j}(x)-\theta_{i}\right)$</li>
-<li>4.将这些模型组合形成一个集成学习系统，最终的模型结果是这n个模型的投票值。此处采用加权多数表决的方法，加大分类误差率小的弱分类器的权值，使其在表决中起较大的作用，减小分类误差率小的弱分类器的权值，使其在表决中起较小的作用，即最终分类器为$H(x)=\operatorname{sgn}\left(\sum\limits_{i=1}^{n} \sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i j}(x)-\sum\limits_{i=1}^{n} \theta_{i}\right)$</li>
-</ul>
-<h3 id="BalanceCascade"><a href="#BalanceCascade" class="headerlink" title="BalanceCascade"></a>BalanceCascade</h3><h4 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h4><ul>
-<li>该算法得到的是一个级联分类器，基于Adaboost，将若干个强分类器由简单到复杂排列，只有和少数类样本特征比较接近的才有可能输入到后面的分类器，比如边界点，因此能更充分地利用多数类样本的信息，一定程度上解决随机欠采样的信息丢失问题</li>
-</ul>
-<h4 id="算法流程-3"><a href="#算法流程-3" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
-<li>输入：一个包含少数类阳性样本P和多数类阴性样本集N的训练集D，定义T是从N中抽取的子集个数，$s_i$是训练Adaboost基分类器$H_i$时的循环次数</li>
-<li>输出：一个组合分类器H(x)</li>
-<li>1.$f=\sqrt[(\mathrm{T}-1)]{\left(\frac{|\mathrm{P}|}{|\mathrm{N}|}\right)}$，$f$是每一层级的分类器$H_i$该达到的假阳性率(False Positive Rate)，即把多数类样本误分为少数类的错误率</li>
-<li>for i = 1 to T:<ul>
-<li>从多数类N中随机抽取一个样本子集$N_i$，使得$|N_i| = |P|$</li>
-<li>使用少数类样本集P和样本子集$N_i$训练一个Adaboost分类器$H_i$($H_i$由$s_i$个基分类器$h_{i,j}$及其权重$\alpha_{i,j}$构成，$\theta_i$是$H_i$的调节参数)</li>
-<li>$\mathrm{H}_{\mathrm{i}}(x)=\operatorname{sgn}(\sum\limits_{j=1}^{s_{i}} \alpha_{i, j} h_{i, j}(x)-\theta_{i})$</li>
-<li>调节阈值$\theta_i$令$H_i$的FP率为$f$</li>
-<li>移除多数类样本集N中所有被$H_i$正确分类的样本</li>
-</ul>
+<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
+<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
 </li>
-<li>输出一个集成分类器</li>
-<li>$\mathrm{H}(\mathrm{x})=\operatorname{sgn}\left(\sum\limits_{i=1}^{T} \sum\limits_{j=1}^{s_{l}} \alpha_{i, j} h_{i, j}(x)-\sum\limits_{i=1}^{T} \theta_{i}\right)$</li>
 </ul>
-<h2 id="NearMiss"><a href="#NearMiss" class="headerlink" title="NearMiss"></a>NearMiss</h2><ul>
-<li>本质上是一种原型选择(prototype selection)方法，即从多数类样本中选取最具代表性的样本用于训练，主要是为了缓解随机欠采样中的信息丢失问题。Nearmiss采用了3中不同的启发式规则来选择样本<ul>
-<li>NearMiss-1：选择到最近的K个少数类样本平均距离最近的多数类样本，考虑的是与最近的k个少数类样本的平均距离，是局部的。该方法得到的多数类样本分布是“不均衡”的，它倾向于在比较集中的少数类附近找到更多的多数类样本，而在孤立的(离群的)少数类附近找到更少的多数类样本，原因是该方法考虑的局部性质和平均距离</li>
-<li>NearMiss-2：选择到最远的K个少数类样本平均距离最近的多数类样本，考虑的是与最远的k个少数类样本的平均距离，是全局的。实验结果表明该方法的不均衡分类性能最优</li>
-<li>NearMiss-3：对于每个少数类样本选择K个最近的多数类样本，目的是保证每个少数类样本都被多数类样本包围，该方法会使每一个少数类样本附近都有足够多的多数类样本，显然这会使得模型的精确度高、召回率低</li>
+<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while 中是&lt;而不是&lt;=<ul>
+<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
+<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
+<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
 </ul>
 </li>
 </ul>
-<h2 id="原型生成-Prototype-generation"><a href="#原型生成-Prototype-generation" class="headerlink" title="原型生成(Prototype generation)"></a>原型生成(Prototype generation)</h2><ul>
-<li>给定数据集S，原型生成算法将生成一个子集S’，其中|S’|&lt;|S|，但是子集并非来自于原始数据，而是由原始数据集生成，方法是聚类成|S’|个类，然后取其中心点</li>
+<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
+<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
+<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
 </ul>
-<h2 id="Data-Cleaning-Techniques"><a href="#Data-Cleaning-Techniques" class="headerlink" title="Data Cleaning Techniques"></a>Data Cleaning Techniques</h2><h3 id="Tomek-Links"><a href="#Tomek-Links" class="headerlink" title="Tomek Links"></a>Tomek Links</h3><h4 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h4><ul>
-<li>给定一个样本对$(x_i, x_j)$，其中$x_{i} \in S_{m a j}, x_{j} \in S_{\min }$，记$d(x_i, x_j)$是样本$x_i$和样本$x_j$之间的距离，如果不存在任何样本$x_k$，使得$d\left(x_{i}, x_{k}\right)&lt;d\left(x_{i}, x_{j}\right)$，那么样本对$(x_i, x_j)$即称为Tomek Links。即Tomek links为相反类最近邻样本之间的一对连接</li>
-<li>不属于Tomek Links的情况有这个少数类样本最近的样本是同一类</li>
+<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
+<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
-<h4 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h4><ul>
-<li>如果两个样本来自Tomek Links，那么他们中的一个样本要么是噪声，要么它们都在两类的边界上</li>
+<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
 </ul>
-<h4 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h4><ul>
-<li><img src="https://img.shiqi-lu.tech/20201021171029.png?imageView2/2/h/300"></li>
+<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
+<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
+<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
+<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
+<li>循环判断规则为<code>left &lt;= right</code></li>
+<li>结束时<code>left == right+1</code></li>
+<li>判断规则如下</li>
+<li><code>java else if (nums[mid] &lt; target) &#123; left = mid + 1; &#125; else if (target &lt; nums[mid]) &#123; right = mid - 1;</code></li>
 </ul>
-<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><ul>
-<li>欠采样：将Tomek Links中属于是多数类的样本剔除</li>
-<li>数据清洗：将Tomek Links中的两个样本都剔除</li>
+</li>
+<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
+<li>初始化为<code>left = 0; right = nums.length</code></li>
+<li>循环判断规则为<code>left &lt; right</code></li>
+<li>结束时<code>left == right</code></li>
+<li>判断规则如下</li>
+<li><code>java else if (nums[mid] &lt; target) &#123; left = mid + 1; &#125; else if (target &lt; nums[mid]) &#123; right = mid;</code></li>
 </ul>
-<h3 id="ENN-edited-nearest-neighborhood"><a href="#ENN-edited-nearest-neighborhood" class="headerlink" title="ENN(edited nearest neighborhood)"></a>ENN(edited nearest neighborhood)</h3><ul>
-<li>这种方法应用knn来编辑(edit)数据集，对于每一个要进行下采样的样本，那些绝大多数近邻样本不属于该类的样本会被移除，而绝大多数的近邻样本属于同一类的样本会被保留</li>
+</li>
 </ul>
-<h1 id="综合采样-Oversampling-Undersampling"><a href="#综合采样-Oversampling-Undersampling" class="headerlink" title="综合采样(Oversampling + Undersampling)"></a>综合采样(Oversampling + Undersampling)</h1><h2 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>先过采样，然后再进行数据的清洗</li>
+</li>
+<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
+<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
+<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
+<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
+<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
 </ul>
-<h2 id="SMOTE-Tomek-Links"><a href="#SMOTE-Tomek-Links" class="headerlink" title="SMOTE+Tomek Links"></a>SMOTE+Tomek Links</h2><h3 id="算法流程-4"><a href="#算法流程-4" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
-<li>2.剔除T中的Tomek Links对</li>
+</li>
+<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
+<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
+<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
+<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
+<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
+<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
+<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
 </ul>
-<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>普通的SMOTE方法生成的少数类样本是通过线性插值得到的，在平衡类别分布的同时也扩张了少数类的样本空间，产生的问题是可能原本属于多数类样本的空间被少数类“入侵”，容易造成模型的过拟合</li>
-<li>Tomek Links对寻找的是那种噪声点或者边界点，可以很好地解决“入侵”问题，如图红色加号为SMOTE产生的少数类样本，可以看到红色样本“入侵”到原本属于多数类样本的空间，这种噪声数据问题可以通过Tomek Links很好地解决</li>
-<li><img src="https://img.shiqi-lu.tech/20201021171629.png?imageView2/2/h/150"></li>
+</li>
 </ul>
-<h2 id="SMOTE-ENN"><a href="#SMOTE-ENN" class="headerlink" title="SMOTE+ENN"></a>SMOTE+ENN</h2><ul>
-<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
-<li>2.对T中的每一个样本使用KNN(一般k取3)方法预测，若预测结果与实际类别标签不符，则剔除该样本</li>
+<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
+<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>Python3<ul>
+<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
+<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
+<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
+<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
 </ul>
-<h1 id="其它方法"><a href="#其它方法" class="headerlink" title="其它方法"></a>其它方法</h1><h2 id="基于异常检测的方法"><a href="#基于异常检测的方法" class="headerlink" title="基于异常检测的方法"></a>基于异常检测的方法</h2><ul>
-<li>把小类的样本作为异常点(outliers)，因此该问题便转化为异常点检测(anomaly detection)与变化趋势检测问题(change detection)</li>
+</li>
 </ul>
-<h2 id="分治ensemble"><a href="#分治ensemble" class="headerlink" title="分治ensemble"></a>分治ensemble</h2><ul>
-<li>将大类中样本聚类到L个聚类中，然后训练L个分类器</li>
-<li>每个分类器使用大类中的一个簇与所有的小类样本进行训练得到</li>
-<li>最后对这L个分类器采取少数服从多数的方式对未知类别数据进行分类，如果是连续值，采用平均值</li>
-</ul>
-<h2 id="分层级ensemble"><a href="#分层级ensemble" class="headerlink" title="分层级ensemble"></a>分层级ensemble</h2><ul>
-<li>使用原始数据集训练第一个学习器L1</li>
-<li>将L1错分的数据集作为新的数据集训练L2</li>
-<li>将L1和L2分类结果不一致的数据作为数据集训练L3</li>
-<li>最后测试集上将三个分类器的结果汇总(结合这三个分类器，采用投票的方式来决定分类结果，因此只有当L2与L3都分类为false时，最终结果才为false，否则为true)</li>
-</ul>
-<h2 id="对小类错分进行加权惩罚"><a href="#对小类错分进行加权惩罚" class="headerlink" title="对小类错分进行加权惩罚"></a>对小类错分进行加权惩罚</h2><ul>
-<li>对分类器的小类样本数据增加权值，降低大类样本的权重，从而使得分类器将重点集中在小类样本身上</li>
-<li>一个具体做法是，在训练分类器时，若分类器将小类样本分错时，额外增加分类器一个小类样本分错代价，这个额外的代价可以使得分类器更加“关心”小类样本。如penalized-SVM和penalized-LDA算法</li>
-<li>对小样本进行过采样(例如含L倍重复数据)，其实在计算小样本错分cost functions时会累加L倍的惩罚分数</li>
-</ul>
-<h2 id="尝试其它评价指标"><a href="#尝试其它评价指标" class="headerlink" title="尝试其它评价指标"></a>尝试其它评价指标</h2><ul>
-<li>准确度这个评价指标在类别不均衡的分类任务中不够好，甚至会造成误导。可考虑更有说服力的评价指标。如混淆矩阵、精确度、召回率、F1得分，其中可关注Kappa和ROC曲线</li>
-</ul>
-<h2 id="尝试不同的分类算法"><a href="#尝试不同的分类算法" class="headerlink" title="尝试不同的分类算法"></a>尝试不同的分类算法</h2><ul>
-<li>决策树在类别不均衡数据上表现不错。它使用基于类变量的划分规则去创建分类树，因此可以强制地将不同类别的样本分开</li>
-<li>Lightgbm中有两个参数处理类别不平衡，分别是is_unbalance和scale_pos_weight</li>
-<li>xgboost有一个参数类别不平衡，即scale_pos_weight</li>
-</ul>
-<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
-<li><a href="https://www.jiqizhixin.com/articles/021704">机器学习中如何处理不平衡数据？</a></li>
-<li><a href="https://blog.csdn.net/jiede1/article/details/70215477">SMOTE算法(人工合成数据)</a></li>
-<li><a href="https://www.jianshu.com/p/13fc0f7f5565">SMOTE算法</a></li>
-<li><a href="https://blog.csdn.net/anshuai_aw1/article/details/89177406">分类问题中类别不平衡问题的有效解决方法</a></li>
-<li><a href="http://freewill.top/2017/04/18/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%B3%BB%E5%88%97%EF%BC%8817%EF%BC%89%EF%BC%9A%E9%9D%9E%E5%B9%B3%E8%A1%A1%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">机器学习算法系列（17）：非平衡数据处理</a></li>
-<li><a href="https://blog.csdn.net/weixin_44871660/article/details/90600522">样本不平衡处理</a></li>
-<li><a href="https://imbalanced-learn.readthedocs.io/en/stable/index.html">imbalanced官网</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/36093594">非平衡分类问题 | BalanceCascade方法及其Python实现</a></li>
-<li><a href="https://blog.csdn.net/songhk0209/article/details/71484469">解决样本不平衡问题的奇技淫巧 汇总</a></li>
-<li><a href="https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/">8 Tactics to Combat Imbalanced Classes in Your Machine Learning Dataset</a></li>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
 </ul>
 ]]></content>
       <categories>
-        <category>机器学习</category>
+        <category>数据结构与算法</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
-        <tag>特征工程</tag>
-        <tag>数据预处理</tag>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>二分查找</tag>
       </tags>
   </entry>
   <entry>
@@ -460,6 +376,194 @@
       </categories>
       <tags>
         <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>类别不平衡问题的方法汇总</title>
+    <url>/class-imbalance/</url>
+    <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
+<li>指分类任务中不同类别的训练样例数目差别很大的情况</li>
+<li>若不同类别的训练样例数目稍有差别，通常影响不大，但若差别很大，则会对学习过程造成困扰。例如有998个反例，但是正例只有2个，那么学习方法只需要返回一个永远将新样本预测为反例的学习器，就能达到99.8%的精度；然而这样的学习器往往没有价值，因为它不能预测出任何正例</li>
+</ul>
+<h1 id="上采样-过采样-Oversampling"><a href="#上采样-过采样-Oversampling" class="headerlink" title="上采样(过采样, Oversampling)"></a>上采样(过采样, Oversampling)</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>对训练集中的少数类进行“过采样”，即增加一些少数类样本使得正、反例数目接近，然后再进行学习</li>
+</ul>
+<h2 id="Random-Oversampling-随机上采样"><a href="#Random-Oversampling-随机上采样" class="headerlink" title="Random Oversampling(随机上采样)"></a>Random Oversampling(随机上采样)</h2><ul>
+<li>简单复制样本的策略来增加少数类样本，容易产生模型过拟合的问题</li>
+</ul>
+<h2 id="SMOTE"><a href="#SMOTE" class="headerlink" title="SMOTE"></a>SMOTE</h2><ul>
+<li>即合成少数类过采样技术(Synthetic Minority Oversampling Technique)，是基于随机采样算法的一种改进，其基本思想是对少数类样本进行分析并根据少数类样本人工合成新样本添加到数据集中</li>
+</ul>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>1.对于少数类中每一个样本$x_i$，以欧氏距离为标准计算它到少数类样本集$S_{min}$中所有样本的距离，得到其k近邻</li>
+<li>2.根据样本不平衡比例设置一个采样比例以确定采样倍率N，对于每一个少数类样本$x_i$，从其k近邻中随机选择若干个样本，假设选择的近邻为$\tilde{x}$。</li>
+<li>3.对于每一个随机选出的近邻$\tilde{x}$，分别于原样本按照如下的公式构建新的样本</li>
+<li>$$x_{n e w}=x+\operatorname{rand}(0,1) \times |\tilde{x}-x|$$</li>
+<li><img src="https://img.shiqi-lu.tech/20201019195529.png?imageView2/2/h/250"></li>
+</ul>
+<h3 id="SMOTE的问题"><a href="#SMOTE的问题" class="headerlink" title="SMOTE的问题"></a>SMOTE的问题</h3><ul>
+<li>随机选取少数类样本用以合成新样本，而不考虑周边样本的情况<ul>
+<li>1.如果选取的少数类样本周围都是少数类样本，则新合成的样本不会提供太多有用信息。就像SVM中远离margin的点对决策边界影响不大</li>
+<li>2.如果选取的少数类样本周围都是多数类样本，这类的样本可能是噪声，则新合成的样本会与周围的多数类样本产生大部分重叠，导致分类困难</li>
+</ul>
+</li>
+</ul>
+<h2 id="Borderline-SMOTE"><a href="#Borderline-SMOTE" class="headerlink" title="Borderline-SMOTE"></a>Borderline-SMOTE</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
+<li>由于原始SMOTE算法的对所有少数类样本都是一视同仁的，我们希望新合成的少数类样本能处于两个类别的边界附近，因为在实际建模过程中那些处于边界位置的样本更容易被错分，因此利用边界位置的样本信息产生新样本可以给模型带来更大的体征，能提供足够的信息用以分类，即Borderline SMOTE算法做的事情</li>
+</ul>
+<h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>这个算法会先将所有的少数类样本分成三类，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20201019140912.png"></li>
+<li>“noise”：所有的k近邻个样本都属于多数类，可认为是噪声不能生成合成样本</li>
+<li>“danger”：超过一半的k近邻样本属于多数类</li>
+<li>“safe”：超过一半的k近邻样本属于少数类</li>
+<li>borderline smote算法只会从处于”danger”状态的样本中随机选择，然后用SMOTE算法产生新的样本。处于”danger”状态的样本代表靠近”边界”附近的少数类样本往往更容易被误分类。因而Border-line SMOTE只对那些靠近”边界”的少数类样本进行人工合成样本，而SMOTE则对所有少数类样本一视同仁</li>
+</ul>
+<h3 id="危险集的判断流程"><a href="#危险集的判断流程" class="headerlink" title="危险集的判断流程"></a>危险集的判断流程</h3><ul>
+<li>1.对于每个$x_{i} \subset S_{\min }$确定一系列K近邻样本集，称该数据集为$S_{i-kNN}$，且$S_{i-kNN} \subset S$</li>
+<li>2.对每个样本$x_i$，判断出最近邻样本集中属于多数类样本的个数，即$\left|S_{i-k N N} \cap S_{m a j}\right|$</li>
+<li>3.选择满足不等式$\frac{k}{2} \leq\left|S_{i-k N N} \cap S_{m a j}\right| \leq k$，将其加入危险集DANGER</li>
+</ul>
+<h3 id="Borderline-SMOTE分类两种："><a href="#Borderline-SMOTE分类两种：" class="headerlink" title="Borderline SMOTE分类两种："></a>Borderline SMOTE分类两种：</h3><ul>
+<li>Borderline-1 SMOTE：在合成样本时所选的近邻是一个少数类样本</li>
+<li>Borderline-2 SMOTE：在合成样本时所选的近邻是任意一个样本</li>
+</ul>
+<h2 id="ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用"><a href="#ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用" class="headerlink" title="ADASYN(Adaptive Synthetic Sampling，自适应合成采用)"></a>ADASYN(Adaptive Synthetic Sampling，自适应合成采用)</h2><ul>
+<li>根据数据分布情况为不同的少数类样本生成不同数量的新样本</li>
+<li>首先根据最终的平衡程度设定总共需要生成的新少数类样本数量，然后为每个少数类样本x计算分布比例</li>
+</ul>
+<h1 id="下采样-降采样-UnserSampling"><a href="#下采样-降采样-UnserSampling" class="headerlink" title="下采样(降采样, UnserSampling)"></a>下采样(降采样, UnserSampling)</h1><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>对训练集中多数类样本进行“下采样”(undersampling)，即去除一些多数类中的样本使得正例、反例数目接近，然后再学习</li>
+</ul>
+<h2 id="Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection"><a href="#Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection" class="headerlink" title="Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)"></a>Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)</h2><h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><ul>
+<li>从多数类$S_{maj}$中随机选择一些样本组成样本集E。然后将样本集E从$S_{maj}$中移除。新的数据集$S_{n e w-m a j}=S_{m a j}-E$</li>
+<li>通过改变多数类样本比例以达到修改样本分布的目的，从而使样本分布较为均衡</li>
+</ul>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>操作简单，只依赖于样本分布，不依赖任何距离信息，属于非启发式方法</li>
+</ul>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>由于采样的样本集合要少于原来的样本集合，因此会造成一些信息缺失，即将多数类样本删除有可能导致分类器丢失有关多数类的重要信息</li>
+</ul>
+<h2 id="Ensemble-Methods"><a href="#Ensemble-Methods" class="headerlink" title="Ensemble Methods"></a>Ensemble Methods</h2><h3 id="EasyEnsemble"><a href="#EasyEnsemble" class="headerlink" title="EasyEnsemble"></a>EasyEnsemble</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><ul>
+<li>多次随机欠采样，尽可能全面地涵盖所有信息，特点是利用boosting减少偏差(Adaboost)、bagging减少方差(集成分类器)。实际应用的时候可尝试选用不同的分类器来提高分类的效果</li>
+<li><img src="https://img.shiqi-lu.tech/20201020145429.png?imageView2/2/h/350"></li>
+</ul>
+<h4 id="算法流程-2"><a href="#算法流程-2" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
+<li>1.把数据划分为两部分，分别是多数类样本$S_{maj}$和少数类样本$S_{min}$</li>
+<li>2.从多数类$S_{maj}$中有放回的随机采样n次，每次选取与少数类数目相近的样本个数即$|S_{imaj}|=|S_{min}|$，可得到n个样本集合，记作$\{S_{1 m a j}, S_{2 m a j}, \ldots, S_{n m a j}\}$</li>
+<li>3.将每一个多数类样本的子集$S_{imaj}$与少数类样本$S_{min}$合并后训练出Adaboost分类器$H_i$，阈值设置为$\theta_i$，可得到n个模型，即$H_{i}(x)=\operatorname{sgn}\left(\sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i, j}(x)-\theta_{i}\right)$</li>
+<li>4.将这些模型组合形成一个集成学习系统，最终的模型结果是这n个模型的投票值。此处采用加权多数表决的方法，加大分类误差率小的弱分类器的权值，使其在表决中起较大的作用，减小分类误差率小的弱分类器的权值，使其在表决中起较小的作用，即最终分类器为$H(x)=\operatorname{sgn}\left(\sum\limits_{i=1}^{n} \sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i j}(x)-\sum\limits_{i=1}^{n} \theta_{i}\right)$</li>
+</ul>
+<h3 id="BalanceCascade"><a href="#BalanceCascade" class="headerlink" title="BalanceCascade"></a>BalanceCascade</h3><h4 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h4><ul>
+<li>该算法得到的是一个级联分类器，基于Adaboost，将若干个强分类器由简单到复杂排列，只有和少数类样本特征比较接近的才有可能输入到后面的分类器，比如边界点，因此能更充分地利用多数类样本的信息，一定程度上解决随机欠采样的信息丢失问题</li>
+</ul>
+<h4 id="算法流程-3"><a href="#算法流程-3" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
+<li>输入：一个包含少数类阳性样本P和多数类阴性样本集N的训练集D，定义T是从N中抽取的子集个数，$s_i$是训练Adaboost基分类器$H_i$时的循环次数</li>
+<li>输出：一个组合分类器H(x)</li>
+<li>1.$f=\sqrt[(\mathrm{T}-1)]{\left(\frac{|\mathrm{P}|}{|\mathrm{N}|}\right)}$，$f$是每一层级的分类器$H_i$该达到的假阳性率(False Positive Rate)，即把多数类样本误分为少数类的错误率</li>
+<li>for i = 1 to T:<ul>
+<li>从多数类N中随机抽取一个样本子集$N_i$，使得$|N_i| = |P|$</li>
+<li>使用少数类样本集P和样本子集$N_i$训练一个Adaboost分类器$H_i$($H_i$由$s_i$个基分类器$h_{i,j}$及其权重$\alpha_{i,j}$构成，$\theta_i$是$H_i$的调节参数)</li>
+<li>$\mathrm{H}_{\mathrm{i}}(x)=\operatorname{sgn}(\sum\limits_{j=1}^{s_{i}} \alpha_{i, j} h_{i, j}(x)-\theta_{i})$</li>
+<li>调节阈值$\theta_i$令$H_i$的FP率为$f$</li>
+<li>移除多数类样本集N中所有被$H_i$正确分类的样本</li>
+</ul>
+</li>
+<li>输出一个集成分类器</li>
+<li>$\mathrm{H}(\mathrm{x})=\operatorname{sgn}\left(\sum\limits_{i=1}^{T} \sum\limits_{j=1}^{s_{l}} \alpha_{i, j} h_{i, j}(x)-\sum\limits_{i=1}^{T} \theta_{i}\right)$</li>
+</ul>
+<h2 id="NearMiss"><a href="#NearMiss" class="headerlink" title="NearMiss"></a>NearMiss</h2><ul>
+<li>本质上是一种原型选择(prototype selection)方法，即从多数类样本中选取最具代表性的样本用于训练，主要是为了缓解随机欠采样中的信息丢失问题。Nearmiss采用了3中不同的启发式规则来选择样本<ul>
+<li>NearMiss-1：选择到最近的K个少数类样本平均距离最近的多数类样本，考虑的是与最近的k个少数类样本的平均距离，是局部的。该方法得到的多数类样本分布是“不均衡”的，它倾向于在比较集中的少数类附近找到更多的多数类样本，而在孤立的(离群的)少数类附近找到更少的多数类样本，原因是该方法考虑的局部性质和平均距离</li>
+<li>NearMiss-2：选择到最远的K个少数类样本平均距离最近的多数类样本，考虑的是与最远的k个少数类样本的平均距离，是全局的。实验结果表明该方法的不均衡分类性能最优</li>
+<li>NearMiss-3：对于每个少数类样本选择K个最近的多数类样本，目的是保证每个少数类样本都被多数类样本包围，该方法会使每一个少数类样本附近都有足够多的多数类样本，显然这会使得模型的精确度高、召回率低</li>
+</ul>
+</li>
+</ul>
+<h2 id="原型生成-Prototype-generation"><a href="#原型生成-Prototype-generation" class="headerlink" title="原型生成(Prototype generation)"></a>原型生成(Prototype generation)</h2><ul>
+<li>给定数据集S，原型生成算法将生成一个子集S’，其中|S’|&lt;|S|，但是子集并非来自于原始数据，而是由原始数据集生成，方法是聚类成|S’|个类，然后取其中心点</li>
+</ul>
+<h2 id="Data-Cleaning-Techniques"><a href="#Data-Cleaning-Techniques" class="headerlink" title="Data Cleaning Techniques"></a>Data Cleaning Techniques</h2><h3 id="Tomek-Links"><a href="#Tomek-Links" class="headerlink" title="Tomek Links"></a>Tomek Links</h3><h4 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h4><ul>
+<li>给定一个样本对$(x_i, x_j)$，其中$x_{i} \in S_{m a j}, x_{j} \in S_{\min }$，记$d(x_i, x_j)$是样本$x_i$和样本$x_j$之间的距离，如果不存在任何样本$x_k$，使得$d\left(x_{i}, x_{k}\right)&lt;d\left(x_{i}, x_{j}\right)$，那么样本对$(x_i, x_j)$即称为Tomek Links。即Tomek links为相反类最近邻样本之间的一对连接</li>
+<li>不属于Tomek Links的情况有这个少数类样本最近的样本是同一类</li>
+</ul>
+<h4 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h4><ul>
+<li>如果两个样本来自Tomek Links，那么他们中的一个样本要么是噪声，要么它们都在两类的边界上</li>
+</ul>
+<h4 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h4><ul>
+<li><img src="https://img.shiqi-lu.tech/20201021171029.png?imageView2/2/h/300"></li>
+</ul>
+<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><ul>
+<li>欠采样：将Tomek Links中属于是多数类的样本剔除</li>
+<li>数据清洗：将Tomek Links中的两个样本都剔除</li>
+</ul>
+<h3 id="ENN-edited-nearest-neighborhood"><a href="#ENN-edited-nearest-neighborhood" class="headerlink" title="ENN(edited nearest neighborhood)"></a>ENN(edited nearest neighborhood)</h3><ul>
+<li>这种方法应用knn来编辑(edit)数据集，对于每一个要进行下采样的样本，那些绝大多数近邻样本不属于该类的样本会被移除，而绝大多数的近邻样本属于同一类的样本会被保留</li>
+</ul>
+<h1 id="综合采样-Oversampling-Undersampling"><a href="#综合采样-Oversampling-Undersampling" class="headerlink" title="综合采样(Oversampling + Undersampling)"></a>综合采样(Oversampling + Undersampling)</h1><h2 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>先过采样，然后再进行数据的清洗</li>
+</ul>
+<h2 id="SMOTE-Tomek-Links"><a href="#SMOTE-Tomek-Links" class="headerlink" title="SMOTE+Tomek Links"></a>SMOTE+Tomek Links</h2><h3 id="算法流程-4"><a href="#算法流程-4" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
+<li>2.剔除T中的Tomek Links对</li>
+</ul>
+<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>普通的SMOTE方法生成的少数类样本是通过线性插值得到的，在平衡类别分布的同时也扩张了少数类的样本空间，产生的问题是可能原本属于多数类样本的空间被少数类“入侵”，容易造成模型的过拟合</li>
+<li>Tomek Links对寻找的是那种噪声点或者边界点，可以很好地解决“入侵”问题，如图红色加号为SMOTE产生的少数类样本，可以看到红色样本“入侵”到原本属于多数类样本的空间，这种噪声数据问题可以通过Tomek Links很好地解决</li>
+<li><img src="https://img.shiqi-lu.tech/20201021171629.png?imageView2/2/h/150"></li>
+</ul>
+<h2 id="SMOTE-ENN"><a href="#SMOTE-ENN" class="headerlink" title="SMOTE+ENN"></a>SMOTE+ENN</h2><ul>
+<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
+<li>2.对T中的每一个样本使用KNN(一般k取3)方法预测，若预测结果与实际类别标签不符，则剔除该样本</li>
+</ul>
+<h1 id="其它方法"><a href="#其它方法" class="headerlink" title="其它方法"></a>其它方法</h1><h2 id="基于异常检测的方法"><a href="#基于异常检测的方法" class="headerlink" title="基于异常检测的方法"></a>基于异常检测的方法</h2><ul>
+<li>把小类的样本作为异常点(outliers)，因此该问题便转化为异常点检测(anomaly detection)与变化趋势检测问题(change detection)</li>
+</ul>
+<h2 id="分治ensemble"><a href="#分治ensemble" class="headerlink" title="分治ensemble"></a>分治ensemble</h2><ul>
+<li>将大类中样本聚类到L个聚类中，然后训练L个分类器</li>
+<li>每个分类器使用大类中的一个簇与所有的小类样本进行训练得到</li>
+<li>最后对这L个分类器采取少数服从多数的方式对未知类别数据进行分类，如果是连续值，采用平均值</li>
+</ul>
+<h2 id="分层级ensemble"><a href="#分层级ensemble" class="headerlink" title="分层级ensemble"></a>分层级ensemble</h2><ul>
+<li>使用原始数据集训练第一个学习器L1</li>
+<li>将L1错分的数据集作为新的数据集训练L2</li>
+<li>将L1和L2分类结果不一致的数据作为数据集训练L3</li>
+<li>最后测试集上将三个分类器的结果汇总(结合这三个分类器，采用投票的方式来决定分类结果，因此只有当L2与L3都分类为false时，最终结果才为false，否则为true)</li>
+</ul>
+<h2 id="对小类错分进行加权惩罚"><a href="#对小类错分进行加权惩罚" class="headerlink" title="对小类错分进行加权惩罚"></a>对小类错分进行加权惩罚</h2><ul>
+<li>对分类器的小类样本数据增加权值，降低大类样本的权重，从而使得分类器将重点集中在小类样本身上</li>
+<li>一个具体做法是，在训练分类器时，若分类器将小类样本分错时，额外增加分类器一个小类样本分错代价，这个额外的代价可以使得分类器更加“关心”小类样本。如penalized-SVM和penalized-LDA算法</li>
+<li>对小样本进行过采样(例如含L倍重复数据)，其实在计算小样本错分cost functions时会累加L倍的惩罚分数</li>
+</ul>
+<h2 id="尝试其它评价指标"><a href="#尝试其它评价指标" class="headerlink" title="尝试其它评价指标"></a>尝试其它评价指标</h2><ul>
+<li>准确度这个评价指标在类别不均衡的分类任务中不够好，甚至会造成误导。可考虑更有说服力的评价指标。如混淆矩阵、精确度、召回率、F1得分，其中可关注Kappa和ROC曲线</li>
+</ul>
+<h2 id="尝试不同的分类算法"><a href="#尝试不同的分类算法" class="headerlink" title="尝试不同的分类算法"></a>尝试不同的分类算法</h2><ul>
+<li>决策树在类别不均衡数据上表现不错。它使用基于类变量的划分规则去创建分类树，因此可以强制地将不同类别的样本分开</li>
+<li>Lightgbm中有两个参数处理类别不平衡，分别是is_unbalance和scale_pos_weight</li>
+<li>xgboost有一个参数类别不平衡，即scale_pos_weight</li>
+</ul>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
+<li><a href="https://www.jiqizhixin.com/articles/021704">机器学习中如何处理不平衡数据？</a></li>
+<li><a href="https://blog.csdn.net/jiede1/article/details/70215477">SMOTE算法(人工合成数据)</a></li>
+<li><a href="https://www.jianshu.com/p/13fc0f7f5565">SMOTE算法</a></li>
+<li><a href="https://blog.csdn.net/anshuai_aw1/article/details/89177406">分类问题中类别不平衡问题的有效解决方法</a></li>
+<li><a href="http://freewill.top/2017/04/18/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%B3%BB%E5%88%97%EF%BC%8817%EF%BC%89%EF%BC%9A%E9%9D%9E%E5%B9%B3%E8%A1%A1%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">机器学习算法系列（17）：非平衡数据处理</a></li>
+<li><a href="https://blog.csdn.net/weixin_44871660/article/details/90600522">样本不平衡处理</a></li>
+<li><a href="https://imbalanced-learn.readthedocs.io/en/stable/index.html">imbalanced官网</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/36093594">非平衡分类问题 | BalanceCascade方法及其Python实现</a></li>
+<li><a href="https://blog.csdn.net/songhk0209/article/details/71484469">解决样本不平衡问题的奇技淫巧 汇总</a></li>
+<li><a href="https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/">8 Tactics to Combat Imbalanced Classes in Your Machine Learning Dataset</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>特征工程</tag>
+        <tag>数据预处理</tag>
       </tags>
   </entry>
   <entry>
@@ -1019,68 +1123,6 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s培训第4课 资源清单</title>
-    <url>/k8s-4/</url>
-    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
-<ul>
-<li>Q:集群资源有哪些分类？<ul>
-<li>名称空间级别<ul>
-<li>工作负载型资源(workload): Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
-<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress</li>
-<li>配置与存储型资源：Volume(存储卷)、CSI(容器存储接口，可扩展各种第三方存储卷)</li>
-<li>特殊类型的存储卷：ConfigMap(当配置中心来使用的资源类型)、Secret(保存敏感数据)、DownwardAPI(把外部环境中的信息输出给容器)</li>
-</ul>
-</li>
-<li>集群级别：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
-<li>元数据级别：HPA、PodTemplate、LimitRange</li>
-</ul>
-</li>
-<li>Q:容器报错后如何处理？<ul>
-<li><code>kubectl describe pod myapp-pod</code></li>
-<li>若有多个容器需要用-c指定，查看日志</li>
-<li><code>kubectl log myapp-pod -c test</code></li>
-</ul>
-</li>
-<li>Q:initContainer模板是什么？<ul>
-<li>initContainers里面会按照顺序依次往下执行</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup mydb; do echo waiting for mydb; sleep 2; done;&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-就绪检测模板？readinessProbe-httpget</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-exec</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;touch /tmp/live ; sleep 60; rm -rf /tmp/live; sleep 3600&quot;</span>]</span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;test&quot;</span>,<span class="string">&quot;-e&quot;</span>,<span class="string">&quot;/tmp/live&quot;</span>]</span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-httpget</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-tcp</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:启动、退出动作pod模板</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">postStart:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the postStart handler &gt; /usr/share/message&quot;</span>]</span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the poststop handler &gt; /usr/share/message&quot;</span>]</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>k8s培训第5课 资源管理器</title>
     <url>/k8s-5/</url>
     <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
@@ -1271,95 +1313,59 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s培训第6课 Service</title>
-    <url>/k8s-6/</url>
-    <content><![CDATA[<ul>
-<li>Q:Service是什么？<ul>
-<li>k8s的service定义了这样一种抽象：一个pod的逻辑分组，一种可以访问它们的策略——通常称为微服务。这一组Pod能够被Service访问到，通常是通过Label Selector</li>
-<li>只提供4层负载均衡能力，而没有7层功能，有时可能需要更多的匹配规则来转发请求，此时4层负载均衡是不支持的</li>
-</ul>
-</li>
-<li>Q:Service有哪4种类型？<ul>
-<li>ClusterIp：默认类型，自动分配一个仅 Cluster 内部可以访问的虚拟 IP</li>
-<li>NodePort：在 ClusterIP 基础上为 Service 在每台机器上绑定一个端口，这样就可以通过<NodeIP>: NodePort 来访问该服务</li>
-<li>LoadBalancer：在 NodePort 的基础上，借助 cloud provider 创建一个外部负载均衡器，并将请求转发到<NodeIP>: NodePort</li>
-<li>ExternalName：把集群外部的服务引入到集群内部来，在集群内部直接使用。没有任何类型代理被创建， 这只有 kubernetes 1.7 或更高版本的 kube-dns 才支持</li>
-</ul>
-</li>
-<li>Q:Service的实现流程是怎样？<ul>
-<li><img src="https://img.shiqi-lu.tech/20201027163257.png"></li>
-<li>1.监听服务的端点是由apiserver完成的，通过kube-proxy监控，进行服务和端点信息的发现</li>
-<li>2.kube-proxy负责监控标签匹配的Pod的信息，并把它写入到iptables的规则里</li>
-<li>3.当客户端想去访问svc的时候，其实访问的是iptables，并导向后端的pod的信息，即iptables通过kube-proxy写入的</li>
-</ul>
-</li>
-<li>Q:service有哪3种代理模式？<ul>
-<li>userspace代理模式</li>
-<li><img src="https://img.shiqi-lu.tech/20201027171941.png"></li>
-<li>iptables代理模式</li>
-<li><img src="https://img.shiqi-lu.tech/20201027171954.png"></li>
-<li>ipvs代理模式</li>
-<li><img src="https://img.shiqi-lu.tech/20201027172005.png"></li>
-<li>ipvs模式下，kube-proxy会监视k8s service对象和endpoints，调用netlink接口以相应地创建ipvs规则并定期与k8s service对象和endpoints对象同步ipvs规则，以确保ipvs状态与期望一致。访问服务时，流量将被重定向到其中一个后端Pod</li>
-</ul>
-</li>
-<li>Q:ClusterIP的工作方式是什么？<ul>
-<li>ClustuerIP主要在每个node节点使用iptables，将发向clusterIP对应端口的数据，转发到kube-proxy中。然后kube-proxy自己内部实现负载均衡的方法，并可以查询到这个service下对应pod的地址和端口，进而把数据转发给对应的Pod的地址和端口</li>
-<li><img src="https://img.shiqi-lu.tech/20201027175214.png"></li>
-<li>为了实现图上的功能，主要需要以下几个组件的协同工作：<ul>
-<li>apiserver用户通过kubectl命令向apiserver发送创建service的命令，apiserver接收到请求后将数据存储到etcd中</li>
-<li>kube-proxy k8s的每个节点中都有一个叫做kube-proxy的进程，这个进程负责感知service，pod的变化，并将变化的信息写入本地的iptables规则中</li>
-<li>iptables使用NAT等技术将virtualIP的流量转至endpoint中</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:ClusterIP的实验演示<ul>
-<li>创建deployment：myapp-deploy.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-deploy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">      <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">        <span class="attr">env:</span> <span class="string">test</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v2</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f myapp-deploy.yaml</span><br><span class="line">deployment.apps/myapp-deploy created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get pod</span><br><span class="line">NAME                           READY   STATUS              RESTARTS   AGE</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   0/1     ContainerCreating   0          22s</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   0/1     ContainerCreating   0          22s</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   0/1     ContainerCreating   0          22s</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   1/1     Running   0          62m   10.244.6.101   zhangliang   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   1/1     Running   0          62m   10.244.8.108   kongming     &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   1/1     Running   0          62m   10.244.4.51    laojun       &lt;none&gt;           &lt;none&gt;</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.244.6.101</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>创建service信息：myapp-service.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f myapp-service.yaml</span><br><span class="line">service/myapp created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">myapp   ClusterIP   10.101.48.92   &lt;none&gt;        80/TCP    20s</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc -n default</span><br><span class="line">NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes   ClusterIP   10.96.0.1    &lt;none&gt;        443/TCP   114d</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+    <title>k8s培训第4课 资源清单</title>
+    <url>/k8s-4/</url>
+    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
 <ul>
-<li>可以使用命令：<code>ipvsadm -Ln</code>查看ipvs的情况</li>
-<li>查看服务轮训的情况<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr</span><br></pre></td></tr></table></figure></li>
+<li>Q:集群资源有哪些分类？<ul>
+<li>名称空间级别<ul>
+<li>工作负载型资源(workload): Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
+<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress</li>
+<li>配置与存储型资源：Volume(存储卷)、CSI(容器存储接口，可扩展各种第三方存储卷)</li>
+<li>特殊类型的存储卷：ConfigMap(当配置中心来使用的资源类型)、Secret(保存敏感数据)、DownwardAPI(把外部环境中的信息输出给容器)</li>
 </ul>
 </li>
-<li>Q:Headless Service是什么？<ul>
-<li>有时不需要或不想要负载均衡，以及单独的Service IP。遇到这种情况，可以通过制定ClusterIP(spec.clusterIP)的值为”None”来创建Headless Service。这类Service并不会分配Cluster IP，kube-proxy不会处理它们，而且平台也不会为它们进行负载均衡和路由器</li>
-<li>通过这个方式来解决clustername和podname变化问题，即通过它来绑定</li>
+<li>集群级别：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
+<li>元数据级别：HPA、PodTemplate、LimitRange</li>
 </ul>
 </li>
-<li>Q:Headless Service的实验<ul>
-<li>创建myapp-svc-headless.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-headless</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">&quot;None&quot;</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">t:</span> <span class="number">8</span><span class="string">```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">myapp-svc-headless.yaml</span></span><br><span class="line"><span class="string">service/myapp-headless</span> <span class="string">created</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">svc</span></span><br><span class="line"><span class="string">NAME</span>             <span class="string">TYPE</span>        <span class="string">CLUSTER-IP</span>     <span class="string">EXTERNAL-IP</span>   <span class="string">PORT(S)</span>   <span class="string">AGE</span></span><br><span class="line"><span class="string">myapp</span>            <span class="string">ClusterIP</span>   <span class="number">10.101</span><span class="number">.48</span><span class="number">.92</span>   <span class="string">&lt;none&gt;</span>        <span class="number">80</span><span class="string">/TCP</span>    <span class="string">46m</span></span><br><span class="line"><span class="string">myapp-headless</span>   <span class="string">ClusterIP</span>   <span class="string">None</span>           <span class="string">&lt;none&gt;</span>        <span class="number">80</span><span class="string">/TCP</span>    <span class="string">3m11s```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">发现底下的地址为空</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pod</span> <span class="string">-n</span> <span class="string">kube-system</span> <span class="string">-o</span> <span class="string">wide</span></span><br><span class="line"><span class="string">NAME</span>                                            <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>     <span class="string">IP</span>              <span class="string">NODE</span>               <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">coredns-7ff77c879f-kdvsd</span>                        <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">1</span>          <span class="string">10d</span>     <span class="number">10.244</span><span class="number">.8</span><span class="number">.16</span>     <span class="string">kongming</span>           <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">coredns-7ff77c879f-vc9gn</span>                        <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">2</span>          <span class="string">10d</span>     <span class="number">10.244</span><span class="number">.1</span><span class="number">.116</span>    <span class="string">shennong</span>           <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">从coredns中找一个ip，下面这个命令试试来解析，格式是Service的名字+namespace+host</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">dig</span> <span class="string">-t</span> <span class="string">A</span> <span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">@10.244.8.16</span></span><br><span class="line"></span><br><span class="line"><span class="string">;</span> <span class="string">&lt;&lt;&gt;&gt;</span> <span class="string">DiG</span> <span class="number">9.11</span><span class="number">.3</span><span class="string">-1ubuntu1.13-Ubuntu</span> <span class="string">&lt;&lt;&gt;&gt;</span> <span class="string">-t</span> <span class="string">A</span> <span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">@10.244.8.16</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">global options:</span> <span class="string">+cmd</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">Got answer:</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WARNING:</span> <span class="string">.local</span> <span class="string">is</span> <span class="string">reserved</span> <span class="string">for</span> <span class="string">Multicast</span> <span class="string">DNS</span></span><br><span class="line"><span class="string">;;</span> <span class="string">You</span> <span class="string">are</span> <span class="string">currently</span> <span class="string">testing</span> <span class="string">what</span> <span class="string">happens</span> <span class="string">when</span> <span class="string">an</span> <span class="string">mDNS</span> <span class="string">query</span> <span class="string">is</span> <span class="string">leaked</span> <span class="string">to</span> <span class="string">DNS</span></span><br><span class="line"><span class="string">;;</span> <span class="string">-&gt;&gt;HEADER&lt;&lt;-</span> <span class="attr">opcode:</span> <span class="string">QUERY,</span> <span class="attr">status:</span> <span class="string">NOERROR,</span> <span class="attr">id:</span> <span class="number">54521</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">flags:</span> <span class="string">qr</span> <span class="string">aa</span> <span class="string">rd;</span> <span class="attr">QUERY:</span> <span class="number">1</span><span class="string">,</span> <span class="attr">ANSWER:</span> <span class="number">3</span><span class="string">,</span> <span class="attr">AUTHORITY:</span> <span class="number">0</span><span class="string">,</span> <span class="attr">ADDITIONAL:</span> <span class="number">1</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WARNING:</span> <span class="string">recursion</span> <span class="string">requested</span> <span class="string">but</span> <span class="string">not</span> <span class="string">available</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">OPT PSEUDOSECTION:</span></span><br><span class="line"><span class="string">;</span> <span class="attr">EDNS: version:</span> <span class="number">0</span><span class="string">,</span> <span class="string">flags:;</span> <span class="attr">udp:</span> <span class="number">4096</span></span><br><span class="line"><span class="string">;</span> <span class="attr">COOKIE:</span> <span class="string">a253bf35c4375eaf</span> <span class="string">(echoed)</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">QUESTION SECTION:</span></span><br><span class="line"><span class="string">;myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">IN</span> <span class="string">A</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">ANSWER SECTION:</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.4</span><span class="number">.51</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.6</span><span class="number">.101</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.8</span><span class="number">.108</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">Query time:</span> <span class="number">0</span> <span class="string">msec</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">SERVER:</span> <span class="number">10.244</span><span class="number">.8</span><span class="number">.16</span><span class="comment">#53(10.244.8.16)</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WHEN:</span> <span class="string">Tue</span> <span class="string">Oct</span> <span class="number">27</span> <span class="number">20</span><span class="string">:05:35</span> <span class="string">CST</span> <span class="number">2020</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">MSG SIZE  rcvd:</span> <span class="number">253</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pod</span> <span class="string">-o</span> <span class="string">wide</span></span><br><span class="line"><span class="string">NAME</span>                           <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>    <span class="string">IP</span>             <span class="string">NODE</span>         <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-lw9rr</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.6</span><span class="number">.101</span>   <span class="string">zhangliang</span>   <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-pqd8j</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.8</span><span class="number">.108</span>   <span class="string">kongming</span>     <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-stkdm</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.4</span><span class="number">.51</span>    <span class="string">laojun</span>       <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">虽然headless没有IP，但仍然可以通过访问域名的方式访问</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Q:NodePort是什么？</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">原理是在node上开了一个端口，将向该端口的流量导入到kube-proxy，然后由kube-proxy进一步给到对应的Pod</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">创建nodeport.yaml，除了type中不一样，其它几乎不变</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f nodeport.yaml</span><br><span class="line">service/myapp configured</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">myapp            NodePort    10.101.48.92   &lt;none&gt;        80:30707/TCP   64m</span><br><span class="line">myapp-headless   ClusterIP   None           &lt;none&gt;        80/TCP         21m</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl localhost:30707</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
+<li>Q:容器报错后如何处理？<ul>
+<li><code>kubectl describe pod myapp-pod</code></li>
+<li>若有多个容器需要用-c指定，查看日志</li>
+<li><code>kubectl log myapp-pod -c test</code></li>
 </ul>
 </li>
-<li>Q:LoadBalancer是什么？<ul>
-<li>和nodePort其实是同一种方式，区别在于loadBalancer比nodePort多了一步，就是可以调用cloud provider去创建LoadBalancer来向节点导流</li>
-<li><img src="https://img.shiqi-lu.tech/20201027202612.png"></li>
-</ul>
-</li>
-<li>Q:ExternalName是什么?<ul>
-<li>这种类型的Service通过返回CNAME和它的值，可以将服务映射到externalName字段的内容(例如:hub.atguigu.com)。ExternalName Service是Service的特例，它没有selector，也没有定义任何端口和endpoint。相反，对于运行在集群外部的服务，它通过返回该外部服务的别名这种方式来提供服务 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service-1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure></li>
-<li>当查询主机my-service-1.default.svc.cluster.local (SVC_NAME.NAMESPACE.svc.cluster.local)时，集群的DNS服务将返回一个值hub.atguigu.com的CNAME记录。访问这个服务的工作方式和其它的相同，唯一不同的是重定向发生在DNS层，而且不会进行代理或转发</li>
-</ul>
-</li>
-<li>Q:ExternalName的创建实验<ul>
-<li>创建ex.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service-1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl create -f ex.yaml</span><br><span class="line">service/my-service-1 created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME             TYPE           CLUSTER-IP     EXTERNAL-IP       PORT(S)        AGE</span><br><span class="line">my-service-1     ExternalName   &lt;none&gt;         hub.atguigu.com   &lt;none&gt;         9s</span><br><span class="line">myapp            NodePort       10.101.48.92   &lt;none&gt;            80:30707/TCP   91m</span><br><span class="line">myapp-headless   ClusterIP      None           &lt;none&gt;            80/TCP         47m</span><br><span class="line">shiqi-lu@k8s-master:~/6$ dig -t A my-service-1.shiqi-lu.svc.cluster.local. @10.244.8.16</span><br><span class="line"></span><br><span class="line">; &lt;&lt;&gt;&gt; DiG 9.11.3-1ubuntu1.13-Ubuntu &lt;&lt;&gt;&gt; -t A my-service-1.shiqi-lu.svc.cluster.local. @10.244.8.16</span><br><span class="line">;; global options: +cmd</span><br><span class="line">;; Got answer:</span><br><span class="line">;; WARNING: .local is reserved for Multicast DNS</span><br><span class="line">;; You are currently testing what happens when an mDNS query is leaked to DNS</span><br><span class="line">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 60219</span><br><span class="line">;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1</span><br><span class="line">;; WARNING: recursion requested but not available</span><br><span class="line"></span><br><span class="line">;; OPT PSEUDOSECTION:</span><br><span class="line">; EDNS: version: 0, flags:; udp: 4096</span><br><span class="line">; COOKIE: ed3b24efd39612a1 (echoed)</span><br><span class="line">;; QUESTION SECTION:</span><br><span class="line">;my-service-1.shiqi-lu.svc.cluster.local. IN A</span><br><span class="line"></span><br><span class="line">;; ANSWER SECTION:</span><br><span class="line">my-service-1.shiqi-lu.svc.cluster.local. 30 IN CNAME hub.atguigu.com.</span><br><span class="line"></span><br><span class="line">;; Query time: 39 msec</span><br><span class="line">;; SERVER: 10.244.8.16#53(10.244.8.16)</span><br><span class="line">;; WHEN: Tue Oct 27 20:45:03 CST 2020</span><br><span class="line">;; MSG SIZE  rcvd: 148</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:nginx-ingress的工作原理<ul>
-<li><img src="https://img.shiqi-lu.tech/20201027210932.png"></li>
-<li>客户端访问域名，ingress必须先绑定一个域名，不同域名访问nginx，nginx会反向代理，负载均衡选择后端的service，每个service会有一些容器</li>
-<li>nginx其实使用nodeport的方式</li>
-<li><img src="https://img.shiqi-lu.tech/20201027210938.png"></li>
-<li>首先k8s的apiserver和store建立监听状态，这里的监听方式是以协程的Pod的形式向apiserver发起连接的方案进行监听，如果发生新的数据写入，会被写入到updateChannel的循环队列里面，然后有一个nginxController的主进程会去监听这个循环队列里面的资源和事件，发生一个循环以后会更新一个事件，把它写入到我们的同步队列里去，等待被协程去更改配置文件，协程会定期的从队列里拉去执行添加的一些任务，如果有一些必要的直接需要去修改的，不需要去等待直接要更新的一些任务会自动发直接发送到SyncQueue协程，两个协程之间协商直接沟通，收取到所有的要更新的数据以后会去他去判断是否要进行一个重载(reload)，写入数据的这么一个方案，还是等等再去添加，如果有的话就会写入nginx主配置文件，然后重新载入nginx的一些数据，那如果不需要的话就等待后面去执行，直接发送构建的post的数据接口，也就是一些不需要存在的数据即可，最后以nginx模块去运行，那这就是nginx-ingress的进程以及协程的沟通方案</li>
+<li>Q:initContainer模板是什么？<ul>
+<li>initContainers里面会按照顺序依次往下执行</li>
 </ul>
 </li>
 </ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup mydb; do echo waiting for mydb; sleep 2; done;&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-就绪检测模板？readinessProbe-httpget</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-exec</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;touch /tmp/live ; sleep 60; rm -rf /tmp/live; sleep 3600&quot;</span>]</span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;test&quot;</span>,<span class="string">&quot;-e&quot;</span>,<span class="string">&quot;/tmp/live&quot;</span>]</span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-httpget</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-tcp</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:启动、退出动作pod模板</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">postStart:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the postStart handler &gt; /usr/share/message&quot;</span>]</span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the poststop handler &gt; /usr/share/message&quot;</span>]</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>k8s</category>
@@ -1492,6 +1498,104 @@
 <li>Q:如何安装nfs服务器<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nfs-common nfs-utils rpcbind</span><br><span class="line">mkdir /nfsdata</span><br><span class="line">chmod 666 /nfsdata</span><br><span class="line">chown nfsnobody /nfsdata</span><br><span class="line">cat /etc/exports</span><br><span class="line">      /nfsdata *(rw,no_root_squash,no_all_squash,sync)</span><br><span class="line">systemctl start rpcbind</span><br><span class="line">systemctl start nfs</span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载</span></span><br><span class="line">showmount -e xxx.xxx.xxx.xxx</span><br><span class="line">mount -t nfs xxx.xxx.xxx.xxx:/nfs /test</span><br><span class="line">umount /test</span><br></pre></td></tr></table></figure></li>
 <li>Q:部署PV<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfspv1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfs</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">10.66</span><span class="number">.66</span><span class="number">.10</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl create -f pv.yaml</span><br><span class="line">kubectl get pv```</span><br><span class="line">- Q:创建服务并使用pvc</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    name: web</span><br><span class="line">  clusterIP: None</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: web</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  serviceName: &quot;nginx&quot;</span><br><span class="line">  replicas: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: wangyanglinux/myapp:v2</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: web</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: www</span><br><span class="line">          mountPath: /usr/share/nginx/html</span><br><span class="line">  volumeClaimTemplates:</span><br><span class="line">  - metadata:</span><br><span class="line">      name: www</span><br><span class="line">    spec:</span><br><span class="line">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span><br><span class="line">      storageClassName: &quot;nfs&quot;</span><br><span class="line">      resources:</span><br><span class="line">        requests:</span><br><span class="line">          storage: 1Gi</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s培训第6课 Service</title>
+    <url>/k8s-6/</url>
+    <content><![CDATA[<ul>
+<li>Q:Service是什么？<ul>
+<li>k8s的service定义了这样一种抽象：一个pod的逻辑分组，一种可以访问它们的策略——通常称为微服务。这一组Pod能够被Service访问到，通常是通过Label Selector</li>
+<li>只提供4层负载均衡能力，而没有7层功能，有时可能需要更多的匹配规则来转发请求，此时4层负载均衡是不支持的</li>
+</ul>
+</li>
+<li>Q:Service有哪4种类型？<ul>
+<li>ClusterIp：默认类型，自动分配一个仅 Cluster 内部可以访问的虚拟 IP</li>
+<li>NodePort：在 ClusterIP 基础上为 Service 在每台机器上绑定一个端口，这样就可以通过<NodeIP>: NodePort 来访问该服务</li>
+<li>LoadBalancer：在 NodePort 的基础上，借助 cloud provider 创建一个外部负载均衡器，并将请求转发到<NodeIP>: NodePort</li>
+<li>ExternalName：把集群外部的服务引入到集群内部来，在集群内部直接使用。没有任何类型代理被创建， 这只有 kubernetes 1.7 或更高版本的 kube-dns 才支持</li>
+</ul>
+</li>
+<li>Q:Service的实现流程是怎样？<ul>
+<li><img src="https://img.shiqi-lu.tech/20201027163257.png"></li>
+<li>1.监听服务的端点是由apiserver完成的，通过kube-proxy监控，进行服务和端点信息的发现</li>
+<li>2.kube-proxy负责监控标签匹配的Pod的信息，并把它写入到iptables的规则里</li>
+<li>3.当客户端想去访问svc的时候，其实访问的是iptables，并导向后端的pod的信息，即iptables通过kube-proxy写入的</li>
+</ul>
+</li>
+<li>Q:service有哪3种代理模式？<ul>
+<li>userspace代理模式</li>
+<li><img src="https://img.shiqi-lu.tech/20201027171941.png"></li>
+<li>iptables代理模式</li>
+<li><img src="https://img.shiqi-lu.tech/20201027171954.png"></li>
+<li>ipvs代理模式</li>
+<li><img src="https://img.shiqi-lu.tech/20201027172005.png"></li>
+<li>ipvs模式下，kube-proxy会监视k8s service对象和endpoints，调用netlink接口以相应地创建ipvs规则并定期与k8s service对象和endpoints对象同步ipvs规则，以确保ipvs状态与期望一致。访问服务时，流量将被重定向到其中一个后端Pod</li>
+</ul>
+</li>
+<li>Q:ClusterIP的工作方式是什么？<ul>
+<li>ClustuerIP主要在每个node节点使用iptables，将发向clusterIP对应端口的数据，转发到kube-proxy中。然后kube-proxy自己内部实现负载均衡的方法，并可以查询到这个service下对应pod的地址和端口，进而把数据转发给对应的Pod的地址和端口</li>
+<li><img src="https://img.shiqi-lu.tech/20201027175214.png"></li>
+<li>为了实现图上的功能，主要需要以下几个组件的协同工作：<ul>
+<li>apiserver用户通过kubectl命令向apiserver发送创建service的命令，apiserver接收到请求后将数据存储到etcd中</li>
+<li>kube-proxy k8s的每个节点中都有一个叫做kube-proxy的进程，这个进程负责感知service，pod的变化，并将变化的信息写入本地的iptables规则中</li>
+<li>iptables使用NAT等技术将virtualIP的流量转至endpoint中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:ClusterIP的实验演示<ul>
+<li>创建deployment：myapp-deploy.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-deploy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">      <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">        <span class="attr">env:</span> <span class="string">test</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v2</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f myapp-deploy.yaml</span><br><span class="line">deployment.apps/myapp-deploy created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get pod</span><br><span class="line">NAME                           READY   STATUS              RESTARTS   AGE</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   0/1     ContainerCreating   0          22s</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   0/1     ContainerCreating   0          22s</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   0/1     ContainerCreating   0          22s</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   1/1     Running   0          62m   10.244.6.101   zhangliang   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   1/1     Running   0          62m   10.244.8.108   kongming     &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   1/1     Running   0          62m   10.244.4.51    laojun       &lt;none&gt;           &lt;none&gt;</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.244.6.101</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>创建service信息：myapp-service.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f myapp-service.yaml</span><br><span class="line">service/myapp created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">myapp   ClusterIP   10.101.48.92   &lt;none&gt;        80/TCP    20s</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc -n default</span><br><span class="line">NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes   ClusterIP   10.96.0.1    &lt;none&gt;        443/TCP   114d</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>可以使用命令：<code>ipvsadm -Ln</code>查看ipvs的情况</li>
+<li>查看服务轮训的情况<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:Headless Service是什么？<ul>
+<li>有时不需要或不想要负载均衡，以及单独的Service IP。遇到这种情况，可以通过制定ClusterIP(spec.clusterIP)的值为”None”来创建Headless Service。这类Service并不会分配Cluster IP，kube-proxy不会处理它们，而且平台也不会为它们进行负载均衡和路由器</li>
+<li>通过这个方式来解决clustername和podname变化问题，即通过它来绑定</li>
+</ul>
+</li>
+<li>Q:Headless Service的实验<ul>
+<li>创建myapp-svc-headless.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-headless</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">&quot;None&quot;</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">t:</span> <span class="number">8</span><span class="string">```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">myapp-svc-headless.yaml</span></span><br><span class="line"><span class="string">service/myapp-headless</span> <span class="string">created</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">svc</span></span><br><span class="line"><span class="string">NAME</span>             <span class="string">TYPE</span>        <span class="string">CLUSTER-IP</span>     <span class="string">EXTERNAL-IP</span>   <span class="string">PORT(S)</span>   <span class="string">AGE</span></span><br><span class="line"><span class="string">myapp</span>            <span class="string">ClusterIP</span>   <span class="number">10.101</span><span class="number">.48</span><span class="number">.92</span>   <span class="string">&lt;none&gt;</span>        <span class="number">80</span><span class="string">/TCP</span>    <span class="string">46m</span></span><br><span class="line"><span class="string">myapp-headless</span>   <span class="string">ClusterIP</span>   <span class="string">None</span>           <span class="string">&lt;none&gt;</span>        <span class="number">80</span><span class="string">/TCP</span>    <span class="string">3m11s```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">发现底下的地址为空</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pod</span> <span class="string">-n</span> <span class="string">kube-system</span> <span class="string">-o</span> <span class="string">wide</span></span><br><span class="line"><span class="string">NAME</span>                                            <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>     <span class="string">IP</span>              <span class="string">NODE</span>               <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">coredns-7ff77c879f-kdvsd</span>                        <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">1</span>          <span class="string">10d</span>     <span class="number">10.244</span><span class="number">.8</span><span class="number">.16</span>     <span class="string">kongming</span>           <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">coredns-7ff77c879f-vc9gn</span>                        <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">2</span>          <span class="string">10d</span>     <span class="number">10.244</span><span class="number">.1</span><span class="number">.116</span>    <span class="string">shennong</span>           <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">从coredns中找一个ip，下面这个命令试试来解析，格式是Service的名字+namespace+host</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">dig</span> <span class="string">-t</span> <span class="string">A</span> <span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">@10.244.8.16</span></span><br><span class="line"></span><br><span class="line"><span class="string">;</span> <span class="string">&lt;&lt;&gt;&gt;</span> <span class="string">DiG</span> <span class="number">9.11</span><span class="number">.3</span><span class="string">-1ubuntu1.13-Ubuntu</span> <span class="string">&lt;&lt;&gt;&gt;</span> <span class="string">-t</span> <span class="string">A</span> <span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">@10.244.8.16</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">global options:</span> <span class="string">+cmd</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">Got answer:</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WARNING:</span> <span class="string">.local</span> <span class="string">is</span> <span class="string">reserved</span> <span class="string">for</span> <span class="string">Multicast</span> <span class="string">DNS</span></span><br><span class="line"><span class="string">;;</span> <span class="string">You</span> <span class="string">are</span> <span class="string">currently</span> <span class="string">testing</span> <span class="string">what</span> <span class="string">happens</span> <span class="string">when</span> <span class="string">an</span> <span class="string">mDNS</span> <span class="string">query</span> <span class="string">is</span> <span class="string">leaked</span> <span class="string">to</span> <span class="string">DNS</span></span><br><span class="line"><span class="string">;;</span> <span class="string">-&gt;&gt;HEADER&lt;&lt;-</span> <span class="attr">opcode:</span> <span class="string">QUERY,</span> <span class="attr">status:</span> <span class="string">NOERROR,</span> <span class="attr">id:</span> <span class="number">54521</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">flags:</span> <span class="string">qr</span> <span class="string">aa</span> <span class="string">rd;</span> <span class="attr">QUERY:</span> <span class="number">1</span><span class="string">,</span> <span class="attr">ANSWER:</span> <span class="number">3</span><span class="string">,</span> <span class="attr">AUTHORITY:</span> <span class="number">0</span><span class="string">,</span> <span class="attr">ADDITIONAL:</span> <span class="number">1</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WARNING:</span> <span class="string">recursion</span> <span class="string">requested</span> <span class="string">but</span> <span class="string">not</span> <span class="string">available</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">OPT PSEUDOSECTION:</span></span><br><span class="line"><span class="string">;</span> <span class="attr">EDNS: version:</span> <span class="number">0</span><span class="string">,</span> <span class="string">flags:;</span> <span class="attr">udp:</span> <span class="number">4096</span></span><br><span class="line"><span class="string">;</span> <span class="attr">COOKIE:</span> <span class="string">a253bf35c4375eaf</span> <span class="string">(echoed)</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">QUESTION SECTION:</span></span><br><span class="line"><span class="string">;myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">IN</span> <span class="string">A</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">ANSWER SECTION:</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.4</span><span class="number">.51</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.6</span><span class="number">.101</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.8</span><span class="number">.108</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">Query time:</span> <span class="number">0</span> <span class="string">msec</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">SERVER:</span> <span class="number">10.244</span><span class="number">.8</span><span class="number">.16</span><span class="comment">#53(10.244.8.16)</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WHEN:</span> <span class="string">Tue</span> <span class="string">Oct</span> <span class="number">27</span> <span class="number">20</span><span class="string">:05:35</span> <span class="string">CST</span> <span class="number">2020</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">MSG SIZE  rcvd:</span> <span class="number">253</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pod</span> <span class="string">-o</span> <span class="string">wide</span></span><br><span class="line"><span class="string">NAME</span>                           <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>    <span class="string">IP</span>             <span class="string">NODE</span>         <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-lw9rr</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.6</span><span class="number">.101</span>   <span class="string">zhangliang</span>   <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-pqd8j</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.8</span><span class="number">.108</span>   <span class="string">kongming</span>     <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-stkdm</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.4</span><span class="number">.51</span>    <span class="string">laojun</span>       <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">虽然headless没有IP，但仍然可以通过访问域名的方式访问</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Q:NodePort是什么？</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">原理是在node上开了一个端口，将向该端口的流量导入到kube-proxy，然后由kube-proxy进一步给到对应的Pod</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">创建nodeport.yaml，除了type中不一样，其它几乎不变</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f nodeport.yaml</span><br><span class="line">service/myapp configured</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">myapp            NodePort    10.101.48.92   &lt;none&gt;        80:30707/TCP   64m</span><br><span class="line">myapp-headless   ClusterIP   None           &lt;none&gt;        80/TCP         21m</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl localhost:30707</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:LoadBalancer是什么？<ul>
+<li>和nodePort其实是同一种方式，区别在于loadBalancer比nodePort多了一步，就是可以调用cloud provider去创建LoadBalancer来向节点导流</li>
+<li><img src="https://img.shiqi-lu.tech/20201027202612.png"></li>
+</ul>
+</li>
+<li>Q:ExternalName是什么?<ul>
+<li>这种类型的Service通过返回CNAME和它的值，可以将服务映射到externalName字段的内容(例如:hub.atguigu.com)。ExternalName Service是Service的特例，它没有selector，也没有定义任何端口和endpoint。相反，对于运行在集群外部的服务，它通过返回该外部服务的别名这种方式来提供服务 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service-1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure></li>
+<li>当查询主机my-service-1.default.svc.cluster.local (SVC_NAME.NAMESPACE.svc.cluster.local)时，集群的DNS服务将返回一个值hub.atguigu.com的CNAME记录。访问这个服务的工作方式和其它的相同，唯一不同的是重定向发生在DNS层，而且不会进行代理或转发</li>
+</ul>
+</li>
+<li>Q:ExternalName的创建实验<ul>
+<li>创建ex.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service-1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl create -f ex.yaml</span><br><span class="line">service/my-service-1 created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME             TYPE           CLUSTER-IP     EXTERNAL-IP       PORT(S)        AGE</span><br><span class="line">my-service-1     ExternalName   &lt;none&gt;         hub.atguigu.com   &lt;none&gt;         9s</span><br><span class="line">myapp            NodePort       10.101.48.92   &lt;none&gt;            80:30707/TCP   91m</span><br><span class="line">myapp-headless   ClusterIP      None           &lt;none&gt;            80/TCP         47m</span><br><span class="line">shiqi-lu@k8s-master:~/6$ dig -t A my-service-1.shiqi-lu.svc.cluster.local. @10.244.8.16</span><br><span class="line"></span><br><span class="line">; &lt;&lt;&gt;&gt; DiG 9.11.3-1ubuntu1.13-Ubuntu &lt;&lt;&gt;&gt; -t A my-service-1.shiqi-lu.svc.cluster.local. @10.244.8.16</span><br><span class="line">;; global options: +cmd</span><br><span class="line">;; Got answer:</span><br><span class="line">;; WARNING: .local is reserved for Multicast DNS</span><br><span class="line">;; You are currently testing what happens when an mDNS query is leaked to DNS</span><br><span class="line">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 60219</span><br><span class="line">;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1</span><br><span class="line">;; WARNING: recursion requested but not available</span><br><span class="line"></span><br><span class="line">;; OPT PSEUDOSECTION:</span><br><span class="line">; EDNS: version: 0, flags:; udp: 4096</span><br><span class="line">; COOKIE: ed3b24efd39612a1 (echoed)</span><br><span class="line">;; QUESTION SECTION:</span><br><span class="line">;my-service-1.shiqi-lu.svc.cluster.local. IN A</span><br><span class="line"></span><br><span class="line">;; ANSWER SECTION:</span><br><span class="line">my-service-1.shiqi-lu.svc.cluster.local. 30 IN CNAME hub.atguigu.com.</span><br><span class="line"></span><br><span class="line">;; Query time: 39 msec</span><br><span class="line">;; SERVER: 10.244.8.16#53(10.244.8.16)</span><br><span class="line">;; WHEN: Tue Oct 27 20:45:03 CST 2020</span><br><span class="line">;; MSG SIZE  rcvd: 148</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:nginx-ingress的工作原理<ul>
+<li><img src="https://img.shiqi-lu.tech/20201027210932.png"></li>
+<li>客户端访问域名，ingress必须先绑定一个域名，不同域名访问nginx，nginx会反向代理，负载均衡选择后端的service，每个service会有一些容器</li>
+<li>nginx其实使用nodeport的方式</li>
+<li><img src="https://img.shiqi-lu.tech/20201027210938.png"></li>
+<li>首先k8s的apiserver和store建立监听状态，这里的监听方式是以协程的Pod的形式向apiserver发起连接的方案进行监听，如果发生新的数据写入，会被写入到updateChannel的循环队列里面，然后有一个nginxController的主进程会去监听这个循环队列里面的资源和事件，发生一个循环以后会更新一个事件，把它写入到我们的同步队列里去，等待被协程去更改配置文件，协程会定期的从队列里拉去执行添加的一些任务，如果有一些必要的直接需要去修改的，不需要去等待直接要更新的一些任务会自动发直接发送到SyncQueue协程，两个协程之间协商直接沟通，收取到所有的要更新的数据以后会去他去判断是否要进行一个重载(reload)，写入数据的这么一个方案，还是等等再去添加，如果有的话就会写入nginx主配置文件，然后重新载入nginx的一些数据，那如果不需要的话就等待后面去执行，直接发送构建的post的数据接口，也就是一些不需要存在的数据即可，最后以nginx模块去运行，那这就是nginx-ingress的进程以及协程的沟通方案</li>
+</ul>
 </li>
 </ul>
 ]]></content>
@@ -1713,9 +1817,9 @@
         <category>数据结构与算法</category>
       </categories>
       <tags>
-        <tag>海量数据</tag>
         <tag>数据结构</tag>
         <tag>算法</tag>
+        <tag>海量数据</tag>
       </tags>
   </entry>
   <entry>
@@ -2951,509 +3055,6 @@
       </tags>
   </entry>
   <entry>
-    <title>恶魔奶爸语法4-6课</title>
-    <url>/gramma4-6/</url>
-    <content><![CDATA[<h1 id="4-被动语态的重难点——不完全及物动词和授予动词补充"><a href="#4-被动语态的重难点——不完全及物动词和授予动词补充" class="headerlink" title="4.被动语态的重难点——不完全及物动词和授予动词补充"></a>4.被动语态的重难点——不完全及物动词和授予动词补充</h1><ul>
-<li>第四大句型，主谓宾补，其实就是“让某人做某事”<ul>
-<li>My mother made me wash the car.</li>
-<li>宾语是“我”，宾补是“洗车”，也就是说，宾语和宾补放在一起，逻辑上可以构成一个句子“我洗车”。</li>
-<li>宾语和宾补之间的关系是被动语态呢?</li>
-<li>他让这个任务完成了。</li>
-<li>如果按照造句规律，应该是: He made this task be finished.或者He get this task to be finished.</li>
-<li>宾补中，出现的be或者to be，通常要省略！所以，这句话应该说成: He made this task finished.</li>
-</ul>
-</li>
-<li>英语中还有什么时候会出现be动词呢?<ul>
-<li>除了被动语态(过去分词作表语)之外，还有主系表句型(be动词后面的名词作表语，形容词作表语，地点副词作表语)</li>
-</ul>
-</li>
-<li>使役动词+宾语+过去分词（补语）<ul>
-<li>Now a group of students will have the plane restored.一群学生计划修复这架飞机。</li>
-<li>Officials have the clock checked twice a day.官员们每天两次派人检查此钟。</li>
-</ul>
-</li>
-<li>使役动词+宾语+名词、形容词或地点副词<ul>
-<li>使役动词也可加名词、形容词或地点副词等作补语，其原因是前面省略了不定式be或to be。<ul>
-<li>His teacher made him a good student. (名词作宾补)他的老师使他成为好学生。</li>
-<li>The trip made him happy.(形容词作宾补)这次旅行使他很愉快。</li>
-<li>He let me in. (地点副词作宾补)他让我进来。</li>
-<li>Get him out of here. (介词短语，相当于地点副词)把他弄出去!</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>各种不完全及物动词：接上宾语后意思仍然不完整<ul>
-<li>让某人做某事，只能接不定时作宾语补语：ask、encourage、tell、push、expect、want、drive/force/oblige/compel、order、cause/urge<ul>
-<li>The postman <code>wanted</code> me to sign for a letter!邮递员要我签收一封挂号信!</li>
-<li>Last week at a dinner-party, the hostess <code>asked</code> me to sit next to Mrs. Rumbold.在上星期的一次宴会上，女主人安排我坐在兰伯尔德夫人的身旁。</li>
-<li>Byrd at once <code>ordered</code> his men to throw out two heavy food sacks.伯德马上命令他的助手们把两个沉重的食物袋扔掉。</li>
-<li>My dentist had <code>told</code> me to rest for a while.我的牙科医生叫我休息一会儿。</li>
-<li>My old friend Brian <code>urged</code> me to accept a cigarette.我的老朋友布赖恩极力劝我接受一枝香烟。</li>
-</ul>
-</li>
-<li>知觉动词（5看，2听，1感觉）：感觉：feel，听：hear, listen to，看：see, observe, watch, look at, notice<ul>
-<li>表事实：此类动词+宾语+动词原形(补语)，译为”……..了。”<ul>
-<li>I <code>saw</code> him dance.我看见他跳舞了。</li>
-<li>I <code>heard</code> him sing.我听见他唱歌了。</li>
-</ul>
-</li>
-<li>表进行状态：此类动词+宾语+现在分词(补语)，译为”…..正在……”<ul>
-<li>Early next morning, she <code>heard</code> planes passing overhead. 第二天一大早，她听到头顶上飞机正在盘旋。</li>
-<li>The pilot <code>saw</code> one of the men taking photographs.当气球飞临基地上空时，飞行员看见有一个人在拍照。</li>
-</ul>
-</li>
-<li>表被动状态：此类动词+宾语+过去分词(补语)，译为”…..被…..”<ul>
-<li>I <code>saw</code> him killed.我看见他被杀了。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>认定动词：视…为…；认为…是…：动词 + 宾语 + 介词as + 名词或形容词(补语)<ul>
-<li>regard<ul>
-<li>In spite of this, the Italians <code>regarded</code> him <code>as</code> a sort of hero.尽管如此，意大利人还是把他视作某种英雄。</li>
-</ul>
-</li>
-<li>look upon<ul>
-<li>His students all <code>look upon</code> him <code>as</code> a friend.他的学生都把他看成是朋友。</li>
-</ul>
-</li>
-<li>think of<ul>
-<li>They <code>think of</code> themselves <code>as</code> the salt of the earth.他们自认为是社会中坚。</li>
-</ul>
-</li>
-<li>see<ul>
-<li>I’d like to <code>see</code> Europe <code>as</code> a nuclear-free zone.我希望欧洲成为无核区。</li>
-</ul>
-</li>
-<li>view<ul>
-<li>We <code>view</code> every customer <code>as</code> a partner.我们将每一位客户视为合作伙伴。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>认定动词：视…为…；认为…是…：动词 + 宾语 + (to be) + 名词或形容词(补语)：consider, deem, think, find, believe<ul>
-<li>He is <code>finding</code> his new work far more exciting.他发觉自己的新工作令人兴奋得多。</li>
-<li>I <code>found</code> his advice really useful.我发现他的建议非常有用。</li>
-<li>People <code>think</code> this problem determination.人们认为这个问题解决了。</li>
-</ul>
-</li>
-<li>转变动词：使…变成…：change/turn + 宾语 + into + 名词(补语)<ul>
-<li>I need to change my dollars into francs.我需要把美金换成法郎。</li>
-<li>The experience turned him into a good student.这个经验使他变成了好学生。</li>
-</ul>
-</li>
-<li>call/name + 宾语 + 名词(补语)<ul>
-<li>‘Do you call that a hat?’ I said to my wife.“你把那个叫帽子吗?”我对妻子说。</li>
-<li>You can name your pet dog Doctor.你可以把你的狗狗取名为博士。</li>
-</ul>
-</li>
-<li>help后接不定式(to可省略) 作宾语补语。<ul>
-<li>A short while ago, my sister helped me to carry my old bookcases up the stairs.几分钟前，我妹妹帮我把我的旧书橱抬上了楼。</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.店员看见这个衣着很好的妇女正在偷东西。<ul>
-<li>1.The shop assistant saw the well-dressed woman stealing something.</li>
-</ul>
-</li>
-<li>2.你能帮我洗衣服吗?<ul>
-<li>2.Can you help me to wash clothes?</li>
-</ul>
-</li>
-<li>3.作为老师，你应该鼓励你的学生努力学习。<ul>
-<li>3.As a teacher, you should encourage your students to study hard.</li>
-</ul>
-</li>
-<li>4.父母不应该期望他们的孩子做任何事都成功。<ul>
-<li>4.The parents should not expect their children to succeed in doing everything.</li>
-</ul>
-</li>
-<li>5.你应该命令这个计划在一个月内完成。(order)<ul>
-<li>5.You should order this project to finished within a month.</li>
-</ul>
-</li>
-<li>6.我发现我们的老师被警察逮捕了。<ul>
-<li>6.I found our teacher arrested by the police.</li>
-</ul>
-</li>
-<li>7.工人们明天将把墙刷成绿色。<ul>
-<li>7.The workers will paint the wall green.</li>
-</ul>
-</li>
-<li>8.女主人邀请我们进去。<ul>
-<li>8.The hostess invited us in.</li>
-</ul>
-</li>
-<li>9.我们认为这个男人处于危险中。<ul>
-<li>9.We considered the man in danger.</li>
-</ul>
-</li>
-<li>10.大部分人把他当作英雄。<ul>
-<li>10.Most people regarded him as a hero.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>特殊的授予动词<ul>
-<li>间接宾语与直接宾语位置可以倒置，此时需要加介词to, for, of。<ul>
-<li>表“给予”的概念，要用to<ul>
-<li>My holidays passed quickly, but I did not send any cards <code>to</code> my friends.假期过得真快，可我还没有给我的朋友们寄过一张明信片。</li>
-</ul>
-</li>
-<li>表“代劳”的概念(buy等) ，要用for<ul>
-<li>I bought a book <code>for</code> him.我为他买了一本书</li>
-</ul>
-</li>
-<li>ask要用of<ul>
-<li>I asked a question <code>of</code> him.我问了他一个问题。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>下列授予动词与of连用<ul>
-<li>1.rob 抢夺<ul>
-<li>He robbed me of my money.他抢了我的钱。</li>
-<li>注:中式思维容易说成He robbed my money. (X) 这是绝对错误的!</li>
-</ul>
-</li>
-<li>2.deprive 剥夺(权利)<ul>
-<li>This law will deprive us of our most basic rights.这条法律将剥夺我们最基本的权利。</li>
-</ul>
-</li>
-<li>3.cure 治愈<ul>
-<li>The teacher cured him of bad habits.老师纠正了他的坏习惯。</li>
-</ul>
-</li>
-<li>4.relieve 减轻<ul>
-<li>It will relieve her of a tremendous burden. 这将给她解决一个巨大的负担。</li>
-</ul>
-</li>
-<li>5.remind 提醒<ul>
-<li>I continually have to remind him of his responsibilities.我得一再提醒他记住他的责任。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>表“提供”概念的授予动词provide, furnish, supply必须与介词with连用。(但双宾语倒置的时候任然用to，for)<ul>
-<li>He provided me with a lot of money.他提供给我很多钱。</li>
-<li>The present conflict may provide fresh impetus for peace talk.目前的冲突可能会给和谈提供新的推动力。</li>
-<li>The school doesn’t furnish students with lunch.学校不供给学生午饭。</li>
-<li>The gas station usually supplies its nearby communities with gas.这个加油站通常为附近的社区提供汽油。</li>
-<li>We supply power to the three nearby towns.我们对附近的三个城镇提供电力。</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.这个著名的歌手给我们演唱了一首流行歌曲。<ul>
-<li>1.The famous singer sang us a popular song.</li>
-</ul>
-</li>
-<li>2.这座新桥带给当地人极大的方便。<ul>
-<li>2.The new bridge brings the local people the great convenience.</li>
-</ul>
-</li>
-<li>3.你不能剥夺她的权利。<ul>
-<li>3.You can’t deprive her of her rights.</li>
-</ul>
-</li>
-<li>4.这张照片使我想起了我们在夏令营度过的日子。<ul>
-<li>4.The photo reminds me of the days which spent in the summer camp.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>第四大句型:主语+不完全及物动词+宾语+宾语补语，变成被动语态时，原句的宾语补语，在被动语态中的名称为“主语补语”<ul>
-<li>My father was shocked. Now we are not allowed to touch it. 我父亲大为吃惊，不许我们再动它。</li>
-<li>The Games will be held just outside the capital and the whole area will be called ‘Olympic City’. 奥运会就在首都市郊举办，整个地区将被称作奥林匹克城”。</li>
-<li>The man was ordered to pay 43,545 for the cost of the trip. 此人被责令交付旅费3,500英镑.</li>
-</ul>
-</li>
-<li>make, have, let, get 这4个使役动词，只有make可以用于被动语态。这类句型在被动语态句里边，主语补语必须加上to!<ul>
-<li>They made me repeat the story. / I was made to repeat the story.他们让我又把那事讲了一遍。</li>
-</ul>
-</li>
-<li>能用动词原形作宾语补语的不完全(及物)动词有<ul>
-<li>5看：see, observe, watch, look at, notice<ul>
-<li>I saw him dance. / He was seen to dance. 我看见他跳舞了。</li>
-</ul>
-</li>
-<li>1使：make</li>
-<li>2听：hear, listen to</li>
-<li>1感：feel</li>
-</ul>
-</li>
-<li>第五大句型变成被动语态时，两个宾语都可以成为被动句的主语。但由于间接宾语是人，通常更常变成主语。<ul>
-<li>I give him a book. = He was given a book by me. = A book was given to him by me.</li>
-</ul>
-</li>
-</ul>
-<h1 id="5-最简单的长句——并列句"><a href="#5-最简单的长句——并列句" class="headerlink" title="5.最简单的长句——并列句"></a>5.最简单的长句——并列句</h1><h2 id="简单句、复合句、并列句"><a href="#简单句、复合句、并列句" class="headerlink" title="简单句、复合句、并列句"></a>简单句、复合句、并列句</h2><ul>
-<li>简单句：是只有一个主干的句子</li>
-<li>复合句：是除主句外还包含一个或一个以上从句的句子</li>
-<li>并列句：由并列连词连接两个或两个以上简单句而成的句子。</li>
-<li>注意：汉语可以用逗号分隔两个完整的句子，英语绝对不可以！而是必须有连词连接，或者把其中一个句子，化简为分词短语或不定时短语</li>
-</ul>
-<h2 id="连接主句和从句的连词有三种"><a href="#连接主句和从句的连词有三种" class="headerlink" title="连接主句和从句的连词有三种"></a>连接主句和从句的连词有三种</h2><ul>
-<li>引导词，连接名词性从句</li>
-<li>副词连词，连接状语从句</li>
-<li>关系词，连接定语从句</li>
-</ul>
-<h2 id="单一连接词：and-or-but"><a href="#单一连接词：and-or-but" class="headerlink" title="单一连接词：and, or, but"></a>单一连接词：and, or, but</h2><ul>
-<li>连接对等的句子<ul>
-<li>I had just lost $50 <code>and</code> I felt very upset. 我刚刚丢了50英镑，感到非常烦恼。(and连接不用加逗号)</li>
-<li>The police had a difficult time, <code>but</code> they were most amused. 警察虽然吃了苦头，但他们还是感到很有趣。(but连接要加逗号)</li>
-<li>注：or连接句子的时候，通常用于祈使句后面，翻译为“否则”</li>
-<li>Obey your boss <code>or</code> you will be fired. 服从你的上司，否则你会被解雇。</li>
-<li>Don’t cheat at exams <code>or</code> others will despise you. 考试不要作弊，否则别人会瞧不起你。</li>
-<li>Give me liberty <code>or</code> give me death. 不自由，毋宁死。</li>
-</ul>
-</li>
-<li>连接句子中任何对等的成分<ul>
-<li>连接主语<ul>
-<li>A young man <code>and</code> a young woman were sitting behind me.</li>
-<li>一青年男子与一青年女子坐在我的身后。</li>
-</ul>
-</li>
-<li>连接谓语：相当于是连接两个句子，省略了第二个句子的主语<ul>
-<li>I visited museums <code>and</code> sat in public gardens. 我参观了博物馆，还去了公园。</li>
-<li>I entered the hotel manager’s office <code>and</code> sat down. 我走进饭店经理的办公室，坐了下来</li>
-<li>注：连接谓语的时候，只要助动词相同，即可省略助动词<ul>
-<li>After taking off, we were flying low over the city <code>and</code> (were) slowly gaining height, when the plane suddenly turned round and flew back to the airport. 起飞之后，我们在城市上空低低地飞行，然后慢慢爬高。这时飞机突然调转头来，飞回了 机场。(括号里的助动词were可省略)</li>
-</ul>
-</li>
-<li>谓语动词相同的，也可以省略。<ul>
-<li>Mary is very happy <code>but</code> John (is) very miserable. 玛丽很幸福，但是约翰很悲惨。</li>
-<li>Experience is the father of wisdom, <code>and</code> memory (is) the mother. 经验乃智慧之父，记忆为智慧之母。</li>
-<li>Reading makes a full man; conference a ready man; <code>and</code> writing an exact man.读书使人渊博，交谈使人机敏，写作使人严谨。(conference和writing后省略了makes)- Francis Bacon(弗朗西斯培根)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>连接宾语<ul>
-<li>I looked at the man <code>and</code> the woman angrily. 我回过头去怒视着那一男一女。</li>
-<li>He asked me for a meal <code>and</code> a glass of beer. 他问我要一顿饭和一杯啤酒。(连接介词for的两个宾语)</li>
-</ul>
-</li>
-<li>连接表语<ul>
-<li>The railway station was big, black <code>and</code> dark. 火车站很大，又黑又暗。</li>
-<li>The explanation was simple <code>but</code> very unusual. 解释很简单，却异乎寻常</li>
-</ul>
-</li>
-<li>连接宾语补语<ul>
-<li>He saw two thieves rush out of a shop <code>and</code> run towards a waiting car. 他看到有两个小偷从一家商店里冲出来，奔向等在那里的一辆汽车。</li>
-</ul>
-</li>
-<li>连接定语<ul>
-<li>Pupils of the school, old <code>and</code> new, will be sending him a present to mark the occasion.为了纪念这个日子，学校的学生——无论老同学还是新同学——将送他一件礼物。</li>
-</ul>
-</li>
-<li>连接状语<ul>
-<li>We shall all remember Mr. Page for his patience <code>and</code> understanding and for the kindly encouragement.我们不会忘记佩奇先生对我们既有耐心又充满理解，还有亲切鼓励。</li>
-</ul>
-</li>
-<li>注：or连接对等成分的时候，通常翻译为“或者”<ul>
-<li>They will go to the zoo <code>or</code> play volleyball. 他们要去动物园或打排球</li>
-<li>I want to have a talk with Mr. Jones <code>or</code> Mr. Smith. 我想和琼斯先生或者史密斯先生谈谈。</li>
-</ul>
-</li>
-<li>And也可表示“然后”，“但是”，”那么，则”的意思<ul>
-<li>Cease to struggle and you cease to live. 停止奋斗，则终止了生命。</li>
-<li>Idleness is sweet, and its consequences are cruel.  懒惰是甜蜜的，但其结果是残酷的。</li>
-<li>I will set my goal and work toward it. 我要确定目标，然后为此努力。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="由单一连词衍生的连接词"><a href="#由单一连词衍生的连接词" class="headerlink" title="由单一连词衍生的连接词"></a>由单一连词衍生的连接词</h2><ul>
-<li>要么…要么…：either…or…(连接2者以上的结构)<ul>
-<li>In answer to these questions I <code>either</code> nodded <code>or</code> made strange noises. 作为对这些问题的回答，我不是点头，就是发出奇怪的声音。</li>
-<li><code>Either</code> Bob <code>or</code> Jim or Sam will be the new vice president of the company. 不是鲍勃就是吉姆或者是山姆会成为这家公司的新副总裁。</li>
-</ul>
-</li>
-<li>既不是…也不是…：neither…nor…，也可用其它否定词代替neither<ul>
-<li>He answered me, but he spoke <code>neither</code> slowly <code>nor</code> clearly. 他回答了，但他讲得既不慢也不清楚。</li>
-<li>We are worried about Mary. She <code>neither</code> eats <code>nor</code> drinks <code>nor</code> talks. 我们替玛丽担心。她不吃不喝也不说话</li>
-<li>The story is <code>not</code> interesting <code>nor</code> instructive. 这个故事没有味道，也没有教育意义。</li>
-<li>I have <code>never</code> spoken <code>nor</code> written to her. 我跟她从来没说过话，也没写过信。</li>
-</ul>
-</li>
-<li>不是…而是…：not…but…<ul>
-<li>I went to the concert <code>not</code> with my brother <code>but</code> with my friend. 我不是和我哥哥去音乐会，而是和我朋友去的。(只能省略动词，不能省略介词)</li>
-<li>We choose to go to the moon in this decade and do the other things, <code>not</code> because they are easy, <code>but</code> because they are hard. 我们选择10年内登月以及另外一些事情，不是因为它们容易，而是因为它们困难。(肯尼迪总统在阿波罗登月计划动员会上的讲话)</li>
-<li>“Listen, my dear, we must hold on to hope,” my father calm but insistently replied.“<code>Not</code> because hope is real, but because we have to live up to nobility.” “听着，亲爱的，我们必须抱有希望，”我爸爸平静但坚定地回答。“这并不是因为希望真的存在，而是因为我们要做高贵的人。” 《The wandering earth》Liu Cixin (刘慈欣《流浪地球》)</li>
-</ul>
-</li>
-<li>不仅…而且…：not only…but(also)…/not only…but…as well<ul>
-<li>He answered all the question <code>not only</code> quickly <code>but (also)</code> accurately. 他回答所有问题时不仅快，而且准确。</li>
-<li>The Big Ben is <code>not only</code> of immense size, <code>but</code> is extremely accurate <code>as well.</code> 此钟不仅外型巨大，而且走时也非常准确。</li>
-<li>英国英语常用not only… but… as well,</li>
-<li>美国英语常用not only… but also…(also可省略)</li>
-<li>I <code>not only</code> spoke English very carefully, <code>but</code> very clearly <code>as well</code>.(英)</li>
-<li>I <code>not only</code> spoke English very carefully, <code>but (also)</code> very clearly. (美)我的英语讲得不但非常认真，而且咬字也非常清楚。</li>
-</ul>
-</li>
-<li>注：上述并列连词连接的并列名词作主语时，谓语动词的单复数与靠后面的名词一致<ul>
-<li>Either Thomas or I <code>am</code> going to call you tomorrow about the job.不是托马斯就是我明天会打电话给你谈工作的事。</li>
-</ul>
-</li>
-<li>…和…两者都：both…and…<ul>
-<li>To go far, you need <code>both</code> a dream <code>and</code> a positive attitude.要成功，你需要梦想和积极的态度。</li>
-<li>注：本并列连接的并列名词作主语时，谓语动词一律用复数</li>
-<li>Both my mother and my sister <code>work</code> at the grocery store. 我妈妈和我姐姐都在这个杂货店工作。</li>
-</ul>
-</li>
-<li>既是…又是…：… as well as …<ul>
-<li>Nursing is a vocation <code>as well as</code> a profession. 护理工作既是职业又是救死扶伤的责任。</li>
-<li>He shared in my sorrows <code>as well as</code> in my joys. 他分担我的快乐也分享我的悲伤。</li>
-<li>注：…as well as…的意思和not only…but (also)…相近，但是前者强调前面的名词，谓语动词与强调的名词一致。<ul>
-<li>The bedrooms, as well as the kitchen, <code>need</code> to be repaired if we rent the house. 如果我们要租这个房子，卧室和厨房都需要维修。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>是…而不是…：…rather than…<ul>
-<li>These are political <code>rather than</code> social matters.这是政治问题而不是社会问题。</li>
-</ul>
-</li>
-</ul>
-<h2 id="造句练习"><a href="#造句练习" class="headerlink" title="造句练习"></a>造句练习</h2><ul>
-<li>1.中国和印度的人口都超过了10亿。<ul>
-<li>1.Both China and India have a population of over one billion.</li>
-</ul>
-</li>
-<li>2.我们应该要么把电脑送修要么买台新的。<ul>
-<li>2.We should either get the computer fixed or buy a new one.</li>
-</ul>
-</li>
-<li>3.冰箱里既没有牛奶也没有蔬菜。<ul>
-<li>3.Neither milk nor vegetables is in the refrigerator.</li>
-</ul>
-</li>
-<li>4.无论下雪、下雨或者高温天气都不能阻止这些邮递员完成他们的投递工作。<ul>
-<li>4.Neither snow nor rain nor hot weather prevents these postmen from completing their deliveries.</li>
-</ul>
-</li>
-<li>5.不是公司董事长而是我将出席明天早上的商务会议。<ul>
-<li>5.Not the company’s president but I am going to the business meeting tomorrow morning.</li>
-</ul>
-</li>
-<li>6.我们都喜欢张小姐，不是因为她是我们老师，而是因为她是美女。<ul>
-<li>6.We all like Miss Zhang not because she is our teacher but because she is very beautiful.</li>
-</ul>
-</li>
-<li>7.恶心和呕吐都是食物中毒的症状。<ul>
-<li>7.Both nausea and vomiting are signs of food poisoning.</li>
-</ul>
-</li>
-<li>8.他不但英语说得非常好，而且还会说法语。<ul>
-<li>8.He can not only speak English very well but also French.</li>
-</ul>
-</li>
-<li>9.这名女子听到这个消息的时候是高兴而不是悲伤。<ul>
-<li>9.The woman was happy rather than sad when she heard the news</li>
-</ul>
-</li>
-</ul>
-<h1 id="6-把句子套进另一个句子里，变身“大名词”"><a href="#6-把句子套进另一个句子里，变身“大名词”" class="headerlink" title="6.把句子套进另一个句子里，变身“大名词”"></a>6.把句子套进另一个句子里，变身“大名词”</h1><ul>
-<li>从句是什么<ul>
-<li>就是一个句子在另外一个句子里边做句子成分</li>
-</ul>
-</li>
-<li>名词从句<ul>
-<li>一个句子，在另外一个句子里边当名词使用</li>
-<li>4种用法：主语、宾语、同位语、表语</li>
-<li>名词从句需要有引导词：<code>That</code> he doesn’t like to study makes me angry.</li>
-</ul>
-</li>
-<li>that从句：任何一个陈述句，前面加上引导词that，构成that从句。（作宾语/表语时，that可省略）<ul>
-<li><code>That</code> everyone may receive a moderate education is an object of vital importance. 每个人能够接受适当的教育似乎是一个至关重要的目标。(主语从句)</li>
-<li>Many people pretend <code>that</code> they understand modern art. 有很多人装成很懂现代艺术的样子。(宾语从句)</li>
-<li>The most surprising thing about it, however, is <code>that</code> it can land anywhere: on snow, water, or even on a ploughed field. 然而，最令人惊奇的是它能够在任何地方降落:雪地，水面，甚至刚耕过的田里。(表语从句)</li>
-<li>No one could account for the fact <code>that</code> one of the boxes was extremely heavy.其中有只箱子特别重，可谁也弄不清是怎么回事。(同位语从句)</li>
-</ul>
-</li>
-<li>that从句作主语时，为了使主干更紧凑，通常可用it作行驶时主语，而将真正的主语后置<ul>
-<li>It was obvious <code>that</code> he was very embarrassed. 显然他感到很尴尬。</li>
-<li>It is a curious coincidence <code>that</code> Mr. Page will have been teaching for a total of forty years. 佩奇先生执教满总共40年，这真是奇妙的巧合。</li>
-</ul>
-</li>
-<li>consider, deem, think, find, believe五个动词是宾补动词，构成第四大句型，表示“认为…是…”<ul>
-<li>我认为健康是非常重要的</li>
-<li>I think health very important.其中health是宾语，important是补语</li>
-<li>我认为我们每天说英语是重要的</li>
-<li>I think that we should speak English important. X</li>
-<li>I think it important that we should speak English.√</li>
-<li>I think it necessary that you do it at once.我认为你必须立刻做那件事。</li>
-<li>We find it necessary that we practice spoken English every day. 我们发现每天练习英语口语很有必要。</li>
-</ul>
-</li>
-<li>whether/if从句：任何一个一般疑问句，前面加上引导词whether或if，构成whether从句，但主语与be动词或助动词的位置还原。如果助动词为do, does, did, 还原后将do, does, did去掉，后面的动词根据人称和时态变化<ul>
-<li><code>Whether</code> they would support us was a problem. 他们是否会支持我们还是一个问题。(主语从句) </li>
-<li>He asked <code>if</code> Mr Gilbert’s operation had been successful and the doctor told him that it had been. 他问吉尔伯特先生的手术中否成功，医生告诉他手术很成功。(宾语从句)</li>
-<li>On the way home, he asked Jenny <code>if</code> she had enjoyed the speech. 在回家的路上，他问珍妮是否喜欢他的祝词。(宾语从句， 直接宾语)</li>
-</ul>
-</li>
-<li>介词后及or not结构中，通常用whether<ul>
-<li>My sister is only seven, but she always tells me <code>whether</code> my pictures are good <code>or not</code>. 我的妹妹只有7岁，但她总能说出我的画是好还是坏。</li>
-<li>I worry about <code>whether</code> I hurt his feeling. 我担心是否伤害了他的感情</li>
-</ul>
-</li>
-<li>疑问词从句：构成方法与whether从句一样，只是将whether换成疑问词而已，句子必须改为陈述句语序<ul>
-<li>He then asked <code>when</code> Mr Gilbert would be allowed to go home and the doctor told him that he would have to stay in hospital for another two weeks.然后他又问吉尔伯特先生什么时候可以回家，医生说他在医院还必须再住上两个星期。(宾语从句，其中when作从句中的状语)</li>
-<li>The doctors have not yes decided <code>how</code> the woman died. 医生们至今还未确定这位妇女的死因。</li>
-<li>I have no idea <code>what</code> has happened to him. 我不知道他发生了什么事?</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.谁将负责这项工程还没有(被)决定。(be in charge of)<ul>
-<li>1.Who will be in charge of the project hasn’t been decided yet.</li>
-</ul>
-</li>
-<li>2.他要来参加这个会议(已经)使得我们每个人激动了。<ul>
-<li>2.That he will come to the conference has excited every one of us.</li>
-</ul>
-</li>
-<li>3.他告诉我他们会帮助我们完成整个工作的。<ul>
-<li>3.He told me that they would help us finish the whole work.</li>
-</ul>
-</li>
-<li>4.我不知道(wonder)您是否能小声点。<ul>
-<li>4.I wonder whether/if you would mind making less noise.</li>
-</ul>
-</li>
-<li>5.我认为每天多喝水是有必要的。<ul>
-<li>5.I think it necessary that we (should) take plenty of water every day.</li>
-</ul>
-</li>
-<li>6.我不知道(have no idea)他们什么时候回来定居。<ul>
-<li>6.I have no idea when they will be back and settle down.</li>
-</ul>
-</li>
-<li>7.我(已经)发现所有的票都(已经)卖光了。<ul>
-<li>7.I have found that all the tickets had been sold out.</li>
-</ul>
-</li>
-<li>8.问题是这部电视剧是否值得一看。<ul>
-<li>8.The question is whether the TV play is worth watching.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>英语</category>
-      </categories>
-      <tags>
-        <tag>英语</tag>
-        <tag>语法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>恶魔奶爸语法13-15课</title>
     <url>/gramma13-15/</url>
     <content><![CDATA[<h1 id="13-如何用好比较结构"><a href="#13-如何用好比较结构" class="headerlink" title="13.如何用好比较结构"></a>13.如何用好比较结构</h1><h2 id="比较句，其实并不是状语从句，而是一种特殊的并列句"><a href="#比较句，其实并不是状语从句，而是一种特殊的并列句" class="headerlink" title="比较句，其实并不是状语从句，而是一种特殊的并列句"></a>比较句，其实并不是状语从句，而是一种特殊的并列句</h2><ul>
@@ -3961,6 +3562,509 @@
 <li>He is <code>easy</code> to please.他很容易被取悦。</li>
 <li>He is <code>difficult</code> to fool.他不容易受骗。</li>
 <li>This book is hard to understand.这本书很难被理解。(绝对不能说: This book is hard to be understood.(X)</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>英语</category>
+      </categories>
+      <tags>
+        <tag>英语</tag>
+        <tag>语法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>恶魔奶爸语法4-6课</title>
+    <url>/gramma4-6/</url>
+    <content><![CDATA[<h1 id="4-被动语态的重难点——不完全及物动词和授予动词补充"><a href="#4-被动语态的重难点——不完全及物动词和授予动词补充" class="headerlink" title="4.被动语态的重难点——不完全及物动词和授予动词补充"></a>4.被动语态的重难点——不完全及物动词和授予动词补充</h1><ul>
+<li>第四大句型，主谓宾补，其实就是“让某人做某事”<ul>
+<li>My mother made me wash the car.</li>
+<li>宾语是“我”，宾补是“洗车”，也就是说，宾语和宾补放在一起，逻辑上可以构成一个句子“我洗车”。</li>
+<li>宾语和宾补之间的关系是被动语态呢?</li>
+<li>他让这个任务完成了。</li>
+<li>如果按照造句规律，应该是: He made this task be finished.或者He get this task to be finished.</li>
+<li>宾补中，出现的be或者to be，通常要省略！所以，这句话应该说成: He made this task finished.</li>
+</ul>
+</li>
+<li>英语中还有什么时候会出现be动词呢?<ul>
+<li>除了被动语态(过去分词作表语)之外，还有主系表句型(be动词后面的名词作表语，形容词作表语，地点副词作表语)</li>
+</ul>
+</li>
+<li>使役动词+宾语+过去分词（补语）<ul>
+<li>Now a group of students will have the plane restored.一群学生计划修复这架飞机。</li>
+<li>Officials have the clock checked twice a day.官员们每天两次派人检查此钟。</li>
+</ul>
+</li>
+<li>使役动词+宾语+名词、形容词或地点副词<ul>
+<li>使役动词也可加名词、形容词或地点副词等作补语，其原因是前面省略了不定式be或to be。<ul>
+<li>His teacher made him a good student. (名词作宾补)他的老师使他成为好学生。</li>
+<li>The trip made him happy.(形容词作宾补)这次旅行使他很愉快。</li>
+<li>He let me in. (地点副词作宾补)他让我进来。</li>
+<li>Get him out of here. (介词短语，相当于地点副词)把他弄出去!</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>各种不完全及物动词：接上宾语后意思仍然不完整<ul>
+<li>让某人做某事，只能接不定时作宾语补语：ask、encourage、tell、push、expect、want、drive/force/oblige/compel、order、cause/urge<ul>
+<li>The postman <code>wanted</code> me to sign for a letter!邮递员要我签收一封挂号信!</li>
+<li>Last week at a dinner-party, the hostess <code>asked</code> me to sit next to Mrs. Rumbold.在上星期的一次宴会上，女主人安排我坐在兰伯尔德夫人的身旁。</li>
+<li>Byrd at once <code>ordered</code> his men to throw out two heavy food sacks.伯德马上命令他的助手们把两个沉重的食物袋扔掉。</li>
+<li>My dentist had <code>told</code> me to rest for a while.我的牙科医生叫我休息一会儿。</li>
+<li>My old friend Brian <code>urged</code> me to accept a cigarette.我的老朋友布赖恩极力劝我接受一枝香烟。</li>
+</ul>
+</li>
+<li>知觉动词（5看，2听，1感觉）：感觉：feel，听：hear, listen to，看：see, observe, watch, look at, notice<ul>
+<li>表事实：此类动词+宾语+动词原形(补语)，译为”……..了。”<ul>
+<li>I <code>saw</code> him dance.我看见他跳舞了。</li>
+<li>I <code>heard</code> him sing.我听见他唱歌了。</li>
+</ul>
+</li>
+<li>表进行状态：此类动词+宾语+现在分词(补语)，译为”…..正在……”<ul>
+<li>Early next morning, she <code>heard</code> planes passing overhead. 第二天一大早，她听到头顶上飞机正在盘旋。</li>
+<li>The pilot <code>saw</code> one of the men taking photographs.当气球飞临基地上空时，飞行员看见有一个人在拍照。</li>
+</ul>
+</li>
+<li>表被动状态：此类动词+宾语+过去分词(补语)，译为”…..被…..”<ul>
+<li>I <code>saw</code> him killed.我看见他被杀了。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>认定动词：视…为…；认为…是…：动词 + 宾语 + 介词as + 名词或形容词(补语)<ul>
+<li>regard<ul>
+<li>In spite of this, the Italians <code>regarded</code> him <code>as</code> a sort of hero.尽管如此，意大利人还是把他视作某种英雄。</li>
+</ul>
+</li>
+<li>look upon<ul>
+<li>His students all <code>look upon</code> him <code>as</code> a friend.他的学生都把他看成是朋友。</li>
+</ul>
+</li>
+<li>think of<ul>
+<li>They <code>think of</code> themselves <code>as</code> the salt of the earth.他们自认为是社会中坚。</li>
+</ul>
+</li>
+<li>see<ul>
+<li>I’d like to <code>see</code> Europe <code>as</code> a nuclear-free zone.我希望欧洲成为无核区。</li>
+</ul>
+</li>
+<li>view<ul>
+<li>We <code>view</code> every customer <code>as</code> a partner.我们将每一位客户视为合作伙伴。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>认定动词：视…为…；认为…是…：动词 + 宾语 + (to be) + 名词或形容词(补语)：consider, deem, think, find, believe<ul>
+<li>He is <code>finding</code> his new work far more exciting.他发觉自己的新工作令人兴奋得多。</li>
+<li>I <code>found</code> his advice really useful.我发现他的建议非常有用。</li>
+<li>People <code>think</code> this problem determination.人们认为这个问题解决了。</li>
+</ul>
+</li>
+<li>转变动词：使…变成…：change/turn + 宾语 + into + 名词(补语)<ul>
+<li>I need to change my dollars into francs.我需要把美金换成法郎。</li>
+<li>The experience turned him into a good student.这个经验使他变成了好学生。</li>
+</ul>
+</li>
+<li>call/name + 宾语 + 名词(补语)<ul>
+<li>‘Do you call that a hat?’ I said to my wife.“你把那个叫帽子吗?”我对妻子说。</li>
+<li>You can name your pet dog Doctor.你可以把你的狗狗取名为博士。</li>
+</ul>
+</li>
+<li>help后接不定式(to可省略) 作宾语补语。<ul>
+<li>A short while ago, my sister helped me to carry my old bookcases up the stairs.几分钟前，我妹妹帮我把我的旧书橱抬上了楼。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.店员看见这个衣着很好的妇女正在偷东西。<ul>
+<li>1.The shop assistant saw the well-dressed woman stealing something.</li>
+</ul>
+</li>
+<li>2.你能帮我洗衣服吗?<ul>
+<li>2.Can you help me to wash clothes?</li>
+</ul>
+</li>
+<li>3.作为老师，你应该鼓励你的学生努力学习。<ul>
+<li>3.As a teacher, you should encourage your students to study hard.</li>
+</ul>
+</li>
+<li>4.父母不应该期望他们的孩子做任何事都成功。<ul>
+<li>4.The parents should not expect their children to succeed in doing everything.</li>
+</ul>
+</li>
+<li>5.你应该命令这个计划在一个月内完成。(order)<ul>
+<li>5.You should order this project to finished within a month.</li>
+</ul>
+</li>
+<li>6.我发现我们的老师被警察逮捕了。<ul>
+<li>6.I found our teacher arrested by the police.</li>
+</ul>
+</li>
+<li>7.工人们明天将把墙刷成绿色。<ul>
+<li>7.The workers will paint the wall green.</li>
+</ul>
+</li>
+<li>8.女主人邀请我们进去。<ul>
+<li>8.The hostess invited us in.</li>
+</ul>
+</li>
+<li>9.我们认为这个男人处于危险中。<ul>
+<li>9.We considered the man in danger.</li>
+</ul>
+</li>
+<li>10.大部分人把他当作英雄。<ul>
+<li>10.Most people regarded him as a hero.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>特殊的授予动词<ul>
+<li>间接宾语与直接宾语位置可以倒置，此时需要加介词to, for, of。<ul>
+<li>表“给予”的概念，要用to<ul>
+<li>My holidays passed quickly, but I did not send any cards <code>to</code> my friends.假期过得真快，可我还没有给我的朋友们寄过一张明信片。</li>
+</ul>
+</li>
+<li>表“代劳”的概念(buy等) ，要用for<ul>
+<li>I bought a book <code>for</code> him.我为他买了一本书</li>
+</ul>
+</li>
+<li>ask要用of<ul>
+<li>I asked a question <code>of</code> him.我问了他一个问题。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>下列授予动词与of连用<ul>
+<li>1.rob 抢夺<ul>
+<li>He robbed me of my money.他抢了我的钱。</li>
+<li>注:中式思维容易说成He robbed my money. (X) 这是绝对错误的!</li>
+</ul>
+</li>
+<li>2.deprive 剥夺(权利)<ul>
+<li>This law will deprive us of our most basic rights.这条法律将剥夺我们最基本的权利。</li>
+</ul>
+</li>
+<li>3.cure 治愈<ul>
+<li>The teacher cured him of bad habits.老师纠正了他的坏习惯。</li>
+</ul>
+</li>
+<li>4.relieve 减轻<ul>
+<li>It will relieve her of a tremendous burden. 这将给她解决一个巨大的负担。</li>
+</ul>
+</li>
+<li>5.remind 提醒<ul>
+<li>I continually have to remind him of his responsibilities.我得一再提醒他记住他的责任。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>表“提供”概念的授予动词provide, furnish, supply必须与介词with连用。(但双宾语倒置的时候任然用to，for)<ul>
+<li>He provided me with a lot of money.他提供给我很多钱。</li>
+<li>The present conflict may provide fresh impetus for peace talk.目前的冲突可能会给和谈提供新的推动力。</li>
+<li>The school doesn’t furnish students with lunch.学校不供给学生午饭。</li>
+<li>The gas station usually supplies its nearby communities with gas.这个加油站通常为附近的社区提供汽油。</li>
+<li>We supply power to the three nearby towns.我们对附近的三个城镇提供电力。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.这个著名的歌手给我们演唱了一首流行歌曲。<ul>
+<li>1.The famous singer sang us a popular song.</li>
+</ul>
+</li>
+<li>2.这座新桥带给当地人极大的方便。<ul>
+<li>2.The new bridge brings the local people the great convenience.</li>
+</ul>
+</li>
+<li>3.你不能剥夺她的权利。<ul>
+<li>3.You can’t deprive her of her rights.</li>
+</ul>
+</li>
+<li>4.这张照片使我想起了我们在夏令营度过的日子。<ul>
+<li>4.The photo reminds me of the days which spent in the summer camp.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>第四大句型:主语+不完全及物动词+宾语+宾语补语，变成被动语态时，原句的宾语补语，在被动语态中的名称为“主语补语”<ul>
+<li>My father was shocked. Now we are not allowed to touch it. 我父亲大为吃惊，不许我们再动它。</li>
+<li>The Games will be held just outside the capital and the whole area will be called ‘Olympic City’. 奥运会就在首都市郊举办，整个地区将被称作奥林匹克城”。</li>
+<li>The man was ordered to pay 43,545 for the cost of the trip. 此人被责令交付旅费3,500英镑.</li>
+</ul>
+</li>
+<li>make, have, let, get 这4个使役动词，只有make可以用于被动语态。这类句型在被动语态句里边，主语补语必须加上to!<ul>
+<li>They made me repeat the story. / I was made to repeat the story.他们让我又把那事讲了一遍。</li>
+</ul>
+</li>
+<li>能用动词原形作宾语补语的不完全(及物)动词有<ul>
+<li>5看：see, observe, watch, look at, notice<ul>
+<li>I saw him dance. / He was seen to dance. 我看见他跳舞了。</li>
+</ul>
+</li>
+<li>1使：make</li>
+<li>2听：hear, listen to</li>
+<li>1感：feel</li>
+</ul>
+</li>
+<li>第五大句型变成被动语态时，两个宾语都可以成为被动句的主语。但由于间接宾语是人，通常更常变成主语。<ul>
+<li>I give him a book. = He was given a book by me. = A book was given to him by me.</li>
+</ul>
+</li>
+</ul>
+<h1 id="5-最简单的长句——并列句"><a href="#5-最简单的长句——并列句" class="headerlink" title="5.最简单的长句——并列句"></a>5.最简单的长句——并列句</h1><h2 id="简单句、复合句、并列句"><a href="#简单句、复合句、并列句" class="headerlink" title="简单句、复合句、并列句"></a>简单句、复合句、并列句</h2><ul>
+<li>简单句：是只有一个主干的句子</li>
+<li>复合句：是除主句外还包含一个或一个以上从句的句子</li>
+<li>并列句：由并列连词连接两个或两个以上简单句而成的句子。</li>
+<li>注意：汉语可以用逗号分隔两个完整的句子，英语绝对不可以！而是必须有连词连接，或者把其中一个句子，化简为分词短语或不定时短语</li>
+</ul>
+<h2 id="连接主句和从句的连词有三种"><a href="#连接主句和从句的连词有三种" class="headerlink" title="连接主句和从句的连词有三种"></a>连接主句和从句的连词有三种</h2><ul>
+<li>引导词，连接名词性从句</li>
+<li>副词连词，连接状语从句</li>
+<li>关系词，连接定语从句</li>
+</ul>
+<h2 id="单一连接词：and-or-but"><a href="#单一连接词：and-or-but" class="headerlink" title="单一连接词：and, or, but"></a>单一连接词：and, or, but</h2><ul>
+<li>连接对等的句子<ul>
+<li>I had just lost $50 <code>and</code> I felt very upset. 我刚刚丢了50英镑，感到非常烦恼。(and连接不用加逗号)</li>
+<li>The police had a difficult time, <code>but</code> they were most amused. 警察虽然吃了苦头，但他们还是感到很有趣。(but连接要加逗号)</li>
+<li>注：or连接句子的时候，通常用于祈使句后面，翻译为“否则”</li>
+<li>Obey your boss <code>or</code> you will be fired. 服从你的上司，否则你会被解雇。</li>
+<li>Don’t cheat at exams <code>or</code> others will despise you. 考试不要作弊，否则别人会瞧不起你。</li>
+<li>Give me liberty <code>or</code> give me death. 不自由，毋宁死。</li>
+</ul>
+</li>
+<li>连接句子中任何对等的成分<ul>
+<li>连接主语<ul>
+<li>A young man <code>and</code> a young woman were sitting behind me.</li>
+<li>一青年男子与一青年女子坐在我的身后。</li>
+</ul>
+</li>
+<li>连接谓语：相当于是连接两个句子，省略了第二个句子的主语<ul>
+<li>I visited museums <code>and</code> sat in public gardens. 我参观了博物馆，还去了公园。</li>
+<li>I entered the hotel manager’s office <code>and</code> sat down. 我走进饭店经理的办公室，坐了下来</li>
+<li>注：连接谓语的时候，只要助动词相同，即可省略助动词<ul>
+<li>After taking off, we were flying low over the city <code>and</code> (were) slowly gaining height, when the plane suddenly turned round and flew back to the airport. 起飞之后，我们在城市上空低低地飞行，然后慢慢爬高。这时飞机突然调转头来，飞回了 机场。(括号里的助动词were可省略)</li>
+</ul>
+</li>
+<li>谓语动词相同的，也可以省略。<ul>
+<li>Mary is very happy <code>but</code> John (is) very miserable. 玛丽很幸福，但是约翰很悲惨。</li>
+<li>Experience is the father of wisdom, <code>and</code> memory (is) the mother. 经验乃智慧之父，记忆为智慧之母。</li>
+<li>Reading makes a full man; conference a ready man; <code>and</code> writing an exact man.读书使人渊博，交谈使人机敏，写作使人严谨。(conference和writing后省略了makes)- Francis Bacon(弗朗西斯培根)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>连接宾语<ul>
+<li>I looked at the man <code>and</code> the woman angrily. 我回过头去怒视着那一男一女。</li>
+<li>He asked me for a meal <code>and</code> a glass of beer. 他问我要一顿饭和一杯啤酒。(连接介词for的两个宾语)</li>
+</ul>
+</li>
+<li>连接表语<ul>
+<li>The railway station was big, black <code>and</code> dark. 火车站很大，又黑又暗。</li>
+<li>The explanation was simple <code>but</code> very unusual. 解释很简单，却异乎寻常</li>
+</ul>
+</li>
+<li>连接宾语补语<ul>
+<li>He saw two thieves rush out of a shop <code>and</code> run towards a waiting car. 他看到有两个小偷从一家商店里冲出来，奔向等在那里的一辆汽车。</li>
+</ul>
+</li>
+<li>连接定语<ul>
+<li>Pupils of the school, old <code>and</code> new, will be sending him a present to mark the occasion.为了纪念这个日子，学校的学生——无论老同学还是新同学——将送他一件礼物。</li>
+</ul>
+</li>
+<li>连接状语<ul>
+<li>We shall all remember Mr. Page for his patience <code>and</code> understanding and for the kindly encouragement.我们不会忘记佩奇先生对我们既有耐心又充满理解，还有亲切鼓励。</li>
+</ul>
+</li>
+<li>注：or连接对等成分的时候，通常翻译为“或者”<ul>
+<li>They will go to the zoo <code>or</code> play volleyball. 他们要去动物园或打排球</li>
+<li>I want to have a talk with Mr. Jones <code>or</code> Mr. Smith. 我想和琼斯先生或者史密斯先生谈谈。</li>
+</ul>
+</li>
+<li>And也可表示“然后”，“但是”，”那么，则”的意思<ul>
+<li>Cease to struggle and you cease to live. 停止奋斗，则终止了生命。</li>
+<li>Idleness is sweet, and its consequences are cruel.  懒惰是甜蜜的，但其结果是残酷的。</li>
+<li>I will set my goal and work toward it. 我要确定目标，然后为此努力。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="由单一连词衍生的连接词"><a href="#由单一连词衍生的连接词" class="headerlink" title="由单一连词衍生的连接词"></a>由单一连词衍生的连接词</h2><ul>
+<li>要么…要么…：either…or…(连接2者以上的结构)<ul>
+<li>In answer to these questions I <code>either</code> nodded <code>or</code> made strange noises. 作为对这些问题的回答，我不是点头，就是发出奇怪的声音。</li>
+<li><code>Either</code> Bob <code>or</code> Jim or Sam will be the new vice president of the company. 不是鲍勃就是吉姆或者是山姆会成为这家公司的新副总裁。</li>
+</ul>
+</li>
+<li>既不是…也不是…：neither…nor…，也可用其它否定词代替neither<ul>
+<li>He answered me, but he spoke <code>neither</code> slowly <code>nor</code> clearly. 他回答了，但他讲得既不慢也不清楚。</li>
+<li>We are worried about Mary. She <code>neither</code> eats <code>nor</code> drinks <code>nor</code> talks. 我们替玛丽担心。她不吃不喝也不说话</li>
+<li>The story is <code>not</code> interesting <code>nor</code> instructive. 这个故事没有味道，也没有教育意义。</li>
+<li>I have <code>never</code> spoken <code>nor</code> written to her. 我跟她从来没说过话，也没写过信。</li>
+</ul>
+</li>
+<li>不是…而是…：not…but…<ul>
+<li>I went to the concert <code>not</code> with my brother <code>but</code> with my friend. 我不是和我哥哥去音乐会，而是和我朋友去的。(只能省略动词，不能省略介词)</li>
+<li>We choose to go to the moon in this decade and do the other things, <code>not</code> because they are easy, <code>but</code> because they are hard. 我们选择10年内登月以及另外一些事情，不是因为它们容易，而是因为它们困难。(肯尼迪总统在阿波罗登月计划动员会上的讲话)</li>
+<li>“Listen, my dear, we must hold on to hope,” my father calm but insistently replied.“<code>Not</code> because hope is real, but because we have to live up to nobility.” “听着，亲爱的，我们必须抱有希望，”我爸爸平静但坚定地回答。“这并不是因为希望真的存在，而是因为我们要做高贵的人。” 《The wandering earth》Liu Cixin (刘慈欣《流浪地球》)</li>
+</ul>
+</li>
+<li>不仅…而且…：not only…but(also)…/not only…but…as well<ul>
+<li>He answered all the question <code>not only</code> quickly <code>but (also)</code> accurately. 他回答所有问题时不仅快，而且准确。</li>
+<li>The Big Ben is <code>not only</code> of immense size, <code>but</code> is extremely accurate <code>as well.</code> 此钟不仅外型巨大，而且走时也非常准确。</li>
+<li>英国英语常用not only… but… as well,</li>
+<li>美国英语常用not only… but also…(also可省略)</li>
+<li>I <code>not only</code> spoke English very carefully, <code>but</code> very clearly <code>as well</code>.(英)</li>
+<li>I <code>not only</code> spoke English very carefully, <code>but (also)</code> very clearly. (美)我的英语讲得不但非常认真，而且咬字也非常清楚。</li>
+</ul>
+</li>
+<li>注：上述并列连词连接的并列名词作主语时，谓语动词的单复数与靠后面的名词一致<ul>
+<li>Either Thomas or I <code>am</code> going to call you tomorrow about the job.不是托马斯就是我明天会打电话给你谈工作的事。</li>
+</ul>
+</li>
+<li>…和…两者都：both…and…<ul>
+<li>To go far, you need <code>both</code> a dream <code>and</code> a positive attitude.要成功，你需要梦想和积极的态度。</li>
+<li>注：本并列连接的并列名词作主语时，谓语动词一律用复数</li>
+<li>Both my mother and my sister <code>work</code> at the grocery store. 我妈妈和我姐姐都在这个杂货店工作。</li>
+</ul>
+</li>
+<li>既是…又是…：… as well as …<ul>
+<li>Nursing is a vocation <code>as well as</code> a profession. 护理工作既是职业又是救死扶伤的责任。</li>
+<li>He shared in my sorrows <code>as well as</code> in my joys. 他分担我的快乐也分享我的悲伤。</li>
+<li>注：…as well as…的意思和not only…but (also)…相近，但是前者强调前面的名词，谓语动词与强调的名词一致。<ul>
+<li>The bedrooms, as well as the kitchen, <code>need</code> to be repaired if we rent the house. 如果我们要租这个房子，卧室和厨房都需要维修。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>是…而不是…：…rather than…<ul>
+<li>These are political <code>rather than</code> social matters.这是政治问题而不是社会问题。</li>
+</ul>
+</li>
+</ul>
+<h2 id="造句练习"><a href="#造句练习" class="headerlink" title="造句练习"></a>造句练习</h2><ul>
+<li>1.中国和印度的人口都超过了10亿。<ul>
+<li>1.Both China and India have a population of over one billion.</li>
+</ul>
+</li>
+<li>2.我们应该要么把电脑送修要么买台新的。<ul>
+<li>2.We should either get the computer fixed or buy a new one.</li>
+</ul>
+</li>
+<li>3.冰箱里既没有牛奶也没有蔬菜。<ul>
+<li>3.Neither milk nor vegetables is in the refrigerator.</li>
+</ul>
+</li>
+<li>4.无论下雪、下雨或者高温天气都不能阻止这些邮递员完成他们的投递工作。<ul>
+<li>4.Neither snow nor rain nor hot weather prevents these postmen from completing their deliveries.</li>
+</ul>
+</li>
+<li>5.不是公司董事长而是我将出席明天早上的商务会议。<ul>
+<li>5.Not the company’s president but I am going to the business meeting tomorrow morning.</li>
+</ul>
+</li>
+<li>6.我们都喜欢张小姐，不是因为她是我们老师，而是因为她是美女。<ul>
+<li>6.We all like Miss Zhang not because she is our teacher but because she is very beautiful.</li>
+</ul>
+</li>
+<li>7.恶心和呕吐都是食物中毒的症状。<ul>
+<li>7.Both nausea and vomiting are signs of food poisoning.</li>
+</ul>
+</li>
+<li>8.他不但英语说得非常好，而且还会说法语。<ul>
+<li>8.He can not only speak English very well but also French.</li>
+</ul>
+</li>
+<li>9.这名女子听到这个消息的时候是高兴而不是悲伤。<ul>
+<li>9.The woman was happy rather than sad when she heard the news</li>
+</ul>
+</li>
+</ul>
+<h1 id="6-把句子套进另一个句子里，变身“大名词”"><a href="#6-把句子套进另一个句子里，变身“大名词”" class="headerlink" title="6.把句子套进另一个句子里，变身“大名词”"></a>6.把句子套进另一个句子里，变身“大名词”</h1><ul>
+<li>从句是什么<ul>
+<li>就是一个句子在另外一个句子里边做句子成分</li>
+</ul>
+</li>
+<li>名词从句<ul>
+<li>一个句子，在另外一个句子里边当名词使用</li>
+<li>4种用法：主语、宾语、同位语、表语</li>
+<li>名词从句需要有引导词：<code>That</code> he doesn’t like to study makes me angry.</li>
+</ul>
+</li>
+<li>that从句：任何一个陈述句，前面加上引导词that，构成that从句。（作宾语/表语时，that可省略）<ul>
+<li><code>That</code> everyone may receive a moderate education is an object of vital importance. 每个人能够接受适当的教育似乎是一个至关重要的目标。(主语从句)</li>
+<li>Many people pretend <code>that</code> they understand modern art. 有很多人装成很懂现代艺术的样子。(宾语从句)</li>
+<li>The most surprising thing about it, however, is <code>that</code> it can land anywhere: on snow, water, or even on a ploughed field. 然而，最令人惊奇的是它能够在任何地方降落:雪地，水面，甚至刚耕过的田里。(表语从句)</li>
+<li>No one could account for the fact <code>that</code> one of the boxes was extremely heavy.其中有只箱子特别重，可谁也弄不清是怎么回事。(同位语从句)</li>
+</ul>
+</li>
+<li>that从句作主语时，为了使主干更紧凑，通常可用it作行驶时主语，而将真正的主语后置<ul>
+<li>It was obvious <code>that</code> he was very embarrassed. 显然他感到很尴尬。</li>
+<li>It is a curious coincidence <code>that</code> Mr. Page will have been teaching for a total of forty years. 佩奇先生执教满总共40年，这真是奇妙的巧合。</li>
+</ul>
+</li>
+<li>consider, deem, think, find, believe五个动词是宾补动词，构成第四大句型，表示“认为…是…”<ul>
+<li>我认为健康是非常重要的</li>
+<li>I think health very important.其中health是宾语，important是补语</li>
+<li>我认为我们每天说英语是重要的</li>
+<li>I think that we should speak English important. X</li>
+<li>I think it important that we should speak English.√</li>
+<li>I think it necessary that you do it at once.我认为你必须立刻做那件事。</li>
+<li>We find it necessary that we practice spoken English every day. 我们发现每天练习英语口语很有必要。</li>
+</ul>
+</li>
+<li>whether/if从句：任何一个一般疑问句，前面加上引导词whether或if，构成whether从句，但主语与be动词或助动词的位置还原。如果助动词为do, does, did, 还原后将do, does, did去掉，后面的动词根据人称和时态变化<ul>
+<li><code>Whether</code> they would support us was a problem. 他们是否会支持我们还是一个问题。(主语从句) </li>
+<li>He asked <code>if</code> Mr Gilbert’s operation had been successful and the doctor told him that it had been. 他问吉尔伯特先生的手术中否成功，医生告诉他手术很成功。(宾语从句)</li>
+<li>On the way home, he asked Jenny <code>if</code> she had enjoyed the speech. 在回家的路上，他问珍妮是否喜欢他的祝词。(宾语从句， 直接宾语)</li>
+</ul>
+</li>
+<li>介词后及or not结构中，通常用whether<ul>
+<li>My sister is only seven, but she always tells me <code>whether</code> my pictures are good <code>or not</code>. 我的妹妹只有7岁，但她总能说出我的画是好还是坏。</li>
+<li>I worry about <code>whether</code> I hurt his feeling. 我担心是否伤害了他的感情</li>
+</ul>
+</li>
+<li>疑问词从句：构成方法与whether从句一样，只是将whether换成疑问词而已，句子必须改为陈述句语序<ul>
+<li>He then asked <code>when</code> Mr Gilbert would be allowed to go home and the doctor told him that he would have to stay in hospital for another two weeks.然后他又问吉尔伯特先生什么时候可以回家，医生说他在医院还必须再住上两个星期。(宾语从句，其中when作从句中的状语)</li>
+<li>The doctors have not yes decided <code>how</code> the woman died. 医生们至今还未确定这位妇女的死因。</li>
+<li>I have no idea <code>what</code> has happened to him. 我不知道他发生了什么事?</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.谁将负责这项工程还没有(被)决定。(be in charge of)<ul>
+<li>1.Who will be in charge of the project hasn’t been decided yet.</li>
+</ul>
+</li>
+<li>2.他要来参加这个会议(已经)使得我们每个人激动了。<ul>
+<li>2.That he will come to the conference has excited every one of us.</li>
+</ul>
+</li>
+<li>3.他告诉我他们会帮助我们完成整个工作的。<ul>
+<li>3.He told me that they would help us finish the whole work.</li>
+</ul>
+</li>
+<li>4.我不知道(wonder)您是否能小声点。<ul>
+<li>4.I wonder whether/if you would mind making less noise.</li>
+</ul>
+</li>
+<li>5.我认为每天多喝水是有必要的。<ul>
+<li>5.I think it necessary that we (should) take plenty of water every day.</li>
+</ul>
+</li>
+<li>6.我不知道(have no idea)他们什么时候回来定居。<ul>
+<li>6.I have no idea when they will be back and settle down.</li>
+</ul>
+</li>
+<li>7.我(已经)发现所有的票都(已经)卖光了。<ul>
+<li>7.I have found that all the tickets had been sold out.</li>
+</ul>
+</li>
+<li>8.问题是这部电视剧是否值得一看。<ul>
+<li>8.The question is whether the TV play is worth watching.</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

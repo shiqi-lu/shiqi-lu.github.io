@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="包括二分查找一个数、左侧区间、右侧区间，6种不同二分查找的实现和详细对比，C++和Python3中的库函数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="六种不同的二分查找全总结">
+<meta property="og:url" content="http://shiqi-lu.tech/binary-search/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="包括二分查找一个数、左侧区间、右侧区间，6种不同二分查找的实现和详细对比，C++和Python3中的库函数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150">
+<meta property="article:published_time" content="2021-04-24T07:42:55.000Z">
+<meta property="article:modified_time" content="2021-04-24T07:42:55.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="二分查找">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/binary-search/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>六种不同的二分查找全总结 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">36</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E4%B8%80%E4%B8%AA%E6%95%B0%E7%9A%84%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE-%E6%90%9C%E7%B4%A2%E5%8C%BA%E9%97%B4%E4%B8%A4%E7%AB%AF%E9%83%BD%E9%97%AD"><span class="nav-number">1.</span> <span class="nav-text">寻找一个数的二分查找(搜索区间两端都闭)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E4%B8%80%E4%B8%AA%E6%95%B0%E7%9A%84%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE-%E6%90%9C%E7%B4%A2%E5%8C%BA%E9%97%B4%E5%B7%A6%E9%97%AD%E5%8F%B3%E5%BC%80"><span class="nav-number">2.</span> <span class="nav-text">寻找一个数的二分查找(搜索区间左闭右开)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E5%B7%A6%E4%BE%A7%E8%BE%B9%E7%95%8C%E7%9A%84%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE-%E6%90%9C%E7%B4%A2%E5%8C%BA%E9%97%B4%E5%B7%A6%E9%97%AD%E5%8F%B3%E5%BC%80"><span class="nav-number">3.</span> <span class="nav-text">寻找左侧边界的二分查找(搜索区间左闭右开)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E5%B7%A6%E4%BE%A7%E8%BE%B9%E7%95%8C%E7%9A%84%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE-%E6%90%9C%E7%B4%A2%E5%8C%BA%E9%97%B4%E4%B8%A4%E7%AB%AF%E9%83%BD%E9%97%AD"><span class="nav-number">4.</span> <span class="nav-text">寻找左侧边界的二分查找(搜索区间两端都闭)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E5%8F%B3%E4%BE%A7%E8%BE%B9%E7%95%8C%E7%9A%84%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE-%E6%90%9C%E7%B4%A2%E5%8C%BA%E9%97%B4%E5%B7%A6%E9%97%AD%E5%8F%B3%E5%BC%80"><span class="nav-number">5.</span> <span class="nav-text">寻找右侧边界的二分查找(搜索区间左闭右开)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E5%8F%B3%E4%BE%A7%E8%BE%B9%E7%95%8C%E7%9A%84%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE-%E6%90%9C%E7%B4%A2%E5%8C%BA%E9%97%B4%E4%B8%A4%E7%AB%AF%E9%83%BD%E9%97%AD"><span class="nav-number">6.</span> <span class="nav-text">寻找右侧边界的二分查找(搜索区间两端都闭)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E5%85%AD%E7%A7%8D%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E7%9A%84%E5%87%BD%E6%95%B0%E6%96%B9%E6%B3%95"><span class="nav-number">7.</span> <span class="nav-text">记忆六种二分查找的函数方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E8%AF%AD%E8%A8%80%E7%9A%84%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E5%BA%93%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8"><span class="nav-number">8.</span> <span class="nav-text">现有语言的二分查找库函数调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/20200914142317.JPG">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/binary-search/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/20200914142317.JPG">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          六种不同的二分查找全总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-24 15:42:55" itemprop="dateCreated datePublished" datetime="2021-04-24T15:42:55+08:00">2021-04-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/binary-search/" class="post-meta-item leancloud_visitors" data-flag-title="六种不同的二分查找全总结" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/binary-search/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/binary-search/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">包括二分查找一个数、左侧区间、右侧区间，6种不同二分查找的实现和详细对比，C++和Python3中的库函数</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
+<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
+<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
+<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
+<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
+<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
+<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while 中是&lt;而不是&lt;=<ul>
+<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
+<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
+<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
+<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
+<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
+<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
+<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
+<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
+<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
+<li>循环判断规则为<code>left &lt;= right</code></li>
+<li>结束时<code>left == right+1</code></li>
+<li>判断规则如下</li>
+<li><code>java else if (nums[mid] &lt; target) &#123; left = mid + 1; &#125; else if (target &lt; nums[mid]) &#123; right = mid - 1;</code></li>
+</ul>
+</li>
+<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
+<li>初始化为<code>left = 0; right = nums.length</code></li>
+<li>循环判断规则为<code>left &lt; right</code></li>
+<li>结束时<code>left == right</code></li>
+<li>判断规则如下</li>
+<li><code>java else if (nums[mid] &lt; target) &#123; left = mid + 1; &#125; else if (target &lt; nums[mid]) &#123; right = mid;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
+<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
+<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
+<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
+<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
+</ul>
+</li>
+<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
+<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
+<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
+<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
+<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
+<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
+<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
+</ul>
+</li>
+</ul>
+<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
+<li>C++<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>Python3<ul>
+<li>参考：<a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
+<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
+<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
+<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/binary-search/" title="六种不同的二分查找全总结">http://shiqi-lu.tech/binary-search/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" rel="tag"># 二分查找</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/sort-algo/" rel="prev" title="排序算法全整理（python3）">
+                  <i class="fa fa-chevron-left"></i> 排序算法全整理（python3）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/binary-search/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
