@@ -430,16 +430,14 @@
 <li>初始化为<code>left = 0; right = nums.length - 1</code></li>
 <li>循环判断规则为<code>left &lt;= right</code></li>
 <li>结束时<code>left == right+1</code></li>
-<li>判断规则如下</li>
-<li><code>java else if (nums[mid] &lt; target) &#123; left = mid + 1; &#125; else if (target &lt; nums[mid]) &#123; right = mid - 1;</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 <li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
 <li>初始化为<code>left = 0; right = nums.length</code></li>
 <li>循环判断规则为<code>left &lt; right</code></li>
 <li>结束时<code>left == right</code></li>
-<li>判断规则如下</li>
-<li><code>java else if (nums[mid] &lt; target) &#123; left = mid + 1; &#125; else if (target &lt; nums[mid]) &#123; right = mid;</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 </ul>
