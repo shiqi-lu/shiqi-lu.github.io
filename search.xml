@@ -1,6 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>沈剑架构师训练营第1章 - 技术选型</title>
+    <url>/arch-sj-1/</url>
+    <content><![CDATA[<h1 id="2、技术选型：创业初期，技术如何选型"><a href="#2、技术选型：创业初期，技术如何选型" class="headerlink" title="2、技术选型：创业初期，技术如何选型"></a>2、技术选型：创业初期，技术如何选型</h1><ul>
+<li>no2：创业初期架构特点、选型依据、选型建议是什么？<ul>
+<li>特点：<ul>
+<li>1.单机系统(All in one)</li>
+<li>2.程序耦合(All in one)</li>
+<li>3.逻辑核心是 CURD</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20210823205116.png"></li>
+<li>主要依据：选择技术合伙人会的，熟悉的，是早期技术选型的</li>
+<li>选型建议：<ul>
+<li>PHP体系：Linux、Apache、MySQL、PHP</li>
+<li>Java 体系：Linux、Tomcat、MySQL、Java</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no2：创业初期工程师的主要矛盾是什么？如何解决？<ul>
+<li>矛盾：业务开发效率与质量低，CURD 频繁出错</li>
+<li>解决：尽早引入 DAO/ORM 技术</li>
+<li>DAO(Data Access Object)：像对象一样访问数据</li>
+<li>ORM(Object Relation Mapping)：简化数据库查询过程</li>
+<li><img src="https://img.shiqi-lu.tech/20210823205532.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="3、技术选型：框架组件要不要自研，什么时候自研？"><a href="#3、技术选型：框架组件要不要自研，什么时候自研？" class="headerlink" title="3、技术选型：框架组件要不要自研，什么时候自研？"></a>3、技术选型：框架组件要不要自研，什么时候自研？</h1><ul>
+<li>no3：框架组件要不要自研，什么时候自研？有哪 4 个观点？<ul>
+<li>1.早期不要自研，后期适当自定义</li>
+<li>2.随着规模的扩大，要控制技术栈</li>
+<li>3.建议浅浅的封装一层</li>
+<li>4.随着业务规模，研发团队进一步扩大，适当造一些轮子</li>
+</ul>
+</li>
+<li>no3：为什么说早期不建议自研？<ul>
+<li><ol>
+<li>早期的业务以快速迭代为最高优先级，快速实现功能，让公司活下来最重要</li>
+</ol>
+</li>
+<li>2.技术栈选择技术合伙人最熟悉的<ul>
+<li>研发语言：熟PHP选PHP，熟Java选Java</li>
+<li>数据库：熟MySQL选MySQL，熟SQL-server选SQL-server</li>
+<li>框架组件：熟Ruby on Rails选ROR，熟ThinkPHP选ThinkPHP，熟SSH选SSH</li>
+</ul>
+</li>
+<li>3.此时技术栈的选择对合伙人的技术视野有要求，能在未来少踩坑</li>
+</ul>
+</li>
+<li>no3：为什么要控制技术栈？<ul>
+<li>1.绝对不能每个人想用什么就用什么，否则会造成混乱</li>
+<li>2.即使用开源，技术栈也尽量统一</li>
+</ul>
+</li>
+<li>no3：什么叫「浅浅封装一层」？好处是什么？<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">String <span class="title">Memcache::get</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::set</span><span class="params">(String key, String value)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::del</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function">String 58<span class="title">DaojiaKV::get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    String result = Memcache::get(key);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>好处<ul>
+<li>对调用方屏蔽底层实现细节</li>
+<li>当底层变化的时候，调用方改动很小</li>
+<li>能很方便实现统一的功能，如时间统计等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no3：为什么说随着业务规模和研发团队的扩大可以适当造一些轮子？而不能全部使用开源？<ul>
+<li>不同技术团队，痛点是相似的</li>
+<li>开源解决不了全部个性化需求<ul>
+<li>有站点，监控服务的可用性，处理时间监控需求</li>
+<li>有告警需求</li>
+<li>有自动化发布，自动化运维需求</li>
+<li>有服务治理，服务自动发现需求</li>
+<li>有调用链跟踪需求</li>
+<li>有SQL监控需求</li>
+<li>有系统层面数据收集与可视化展现的需求</li>
+</ul>
+</li>
+<li>自研解决痛点，更贴合团队实际情况<ul>
+<li>开源框架/组件太重了，我们需要的可能只是一个轻量级的框架/组件</li>
+<li>开源框架/组件，只能满足我们的一部分需求</li>
+<li>不了解开源框架/组件的设计理念，要二次开发成本更高</li>
+<li>有些通用的需求是和业务紧密结合的，开源框架/组件可能满足不了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="4、容量设计：流量高低，对架构究竟有什么影响？"><a href="#4、容量设计：流量高低，对架构究竟有什么影响？" class="headerlink" title="4、容量设计：流量高低，对架构究竟有什么影响？"></a>4、容量设计：流量高低，对架构究竟有什么影响？</h1><ul>
+<li>no4：什么时候要进行容量评估？<ul>
+<li>1.容量有质变性增长</li>
+<li>2.临时运营活动</li>
+<li>3.新系统上线</li>
+</ul>
+</li>
+<li>no4：哪些指标要进行容量预估？<ul>
+<li>看具体业务，对应到系统侧的主要矛盾是什么，如：</li>
+<li>1.数据量</li>
+<li>2.并发量，吞吐量</li>
+<li>3.带宽</li>
+<li>4.CPU/MEM/DISK 等</li>
+</ul>
+</li>
+<li>no4：如何进行容量评估(以吞吐量为例)<ul>
+<li>1.评估总访问量：询问产品、运营</li>
+<li>2.评估平均访问量：总量除以总时间，一天可算 4w 秒</li>
+<li>3.评估高峰 QPS：可根据业务曲线图来</li>
+<li>4.评估系统、单机极限 QPS：使用压测</li>
+<li>5.根据线上冗余度做决策：计算需求和线上冗余度差值</li>
+</ul>
+</li>
+</ul>
+<h1 id="5、伪分布式：你以为，多机就是分布式？"><a href="#5、伪分布式：你以为，多机就是分布式？" class="headerlink" title="5、伪分布式：你以为，多机就是分布式？"></a>5、伪分布式：你以为，多机就是分布式？</h1><ul>
+<li>no5：随着流量的提升，早期系统最先遇到的两大问题是什么？如何分析系统特点与瓶颈？<ul>
+<li>现象：人多的时候会卡(即慢，性能下降)，压力会导致宕机(即一挂全挂，耦合严重)</li>
+<li>瓶颈分析：网络带宽、内存、CPU 计算、磁盘 IO</li>
+<li>初步结论：ALL in one 导致单机资源称为瓶颈</li>
+</ul>
+</li>
+<li>no5：架构早期最快速地解决「单机资源瓶颈」问题的思路？做法？原因？<ul>
+<li>思路：<ul>
+<li>增加硬件资源(时间短)，避免大规模代码重构(时间长)</li>
+</ul>
+</li>
+<li>做法：<ul>
+<li>把「单机」变「多机」，用最小的成本，扩展资源</li>
+</ul>
+</li>
+<li>原因：<ul>
+<li>此时最大的成本，是时间成本</li>
+<li>能用“钱”解决的系统问题，往往不是问题</li>
+<li>老板最不愿见到的，是解决一个系统问题， 花很长的时间(市场和投资人等不起)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no5：「单机」变「多机」的伪分布式的「三大分离」应该怎么做？设计思路？没解决的问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823225351.png"></li>
+<li>三大分离<ul>
+<li>1.读写分离(引发读写延时新问题)：将数据库的读写请求分散到不同的数据库机器上</li>
+<li>2.动静分离：将静态文件(css、jpg、静态页面)和动态生成的站点分离</li>
+<li>3.前台后台分离：前台即用户访问的系统，后台即运营使用的系统</li>
+</ul>
+</li>
+<li>设计思路：用最快的速度，增加硬件资源，提升系统性能，增加访问速度</li>
+<li>没解决的问题：<ul>
+<li>1.耦合问题：一个子系统挂了，仍然是全站挂</li>
+<li>2.主从延时新问题：读写分离只能提升读写性能，无法降低单库数据量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no5：如何解决「三大分离」的耦合问题和读写延时问题？设计思路？如何操作？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
+<li>方案：业务垂直拆分，解耦</li>
+<li>操作：<ul>
+<li>1.业务垂直拆分</li>
+<li>2.代码垂直拆分(子系统耦合)</li>
+<li>3.数据库垂直拆分(数据量降低，延时缓解)</li>
+<li>4.研发团队垂直拆分(专业化，效率提升)</li>
+</ul>
+</li>
+<li>设计思路：用最快的速度，增加硬件资源，解耦</li>
+<li>垂直拆分，会随着业务越来越复杂，不断持续地进行</li>
+<li>存在问题<ul>
+<li>1.对同一个垂直站点子系统，仍然是一个「单体架构」，每一个业务都并不是高可用的，子系统的性能仍然受到单机资源的限制无法扩展</li>
+<li>2.子系统不是高可用的，只能保证一个挂了，另一个不受影响</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>类别不平衡问题的方法汇总</title>
     <url>/class-imbalance/</url>
     <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
@@ -812,6 +992,115 @@
       </tags>
   </entry>
   <entry>
+    <title>第一篇博客：为什么我要建博客和写博客</title>
+    <url>/first-blog/</url>
+    <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
+<p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
+<h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
+<p>选择hexo是因为，能支持markdown的书写，和我现有的工具套件能配套上，可以无缝迁移过来，hexo的生态和主题都相对完善。</p>
+<h1 id="过程和踩坑"><a href="#过程和踩坑" class="headerlink" title="过程和踩坑"></a>过程和踩坑</h1><h2 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h2><p>直接上<a href="https://wanwang.aliyun.com/">万网</a>购买自己的域名，做完实名认证之后即可先放着，详细步骤具体参考<a href="https://zhuanlan.zhihu.com/p/103860494">知乎</a>。</p>
+<h2 id="安装node和hexo，并部署到github"><a href="#安装node和hexo，并部署到github" class="headerlink" title="安装node和hexo，并部署到github"></a>安装node和hexo，并部署到github</h2><p>具体参考<a href="https://zhuanlan.zhihu.com/p/105715224">知乎</a>，我是安装在macOS上，不需要搞这里面复杂的各种环境变量。</p>
+<p>踩坑：我原本以为是建完git仓库后，把仓库pull下来，在里面初始化hexo，但后面看了一下，是要在空文件夹操作，并且后续发布到github的文件是hexo进行编译后的文件。</p>
+<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>能够部署之后保证通过github.io能访问即可做域名解析，具体参考<a href="https://zhuanlan.zhihu.com/p/103813944">知乎</a></p>
+<h2 id="挑选主题"><a href="#挑选主题" class="headerlink" title="挑选主题"></a>挑选主题</h2><p>原本我想直接在<a href="https://hexo.io/themes/">官方的主题链接</a>里挑一个比较合适的，给自己定了几个标准：</p>
+<ol>
+<li>整体必须是简洁的，那种大量有图片装饰的，背景花哨的不考虑（原因是，挑图片暴露自己的垃圾审美，还要给每个博客挑配图太费心力了）</li>
+<li>必须能支持公式、代码块高亮等的解析</li>
+<li>偏好整体布局要简洁，偏好侧边栏在右边，并且偏好文章要有侧边栏</li>
+<li>主题必须有开发者长期维护和更新</li>
+<li>能有评论系统</li>
+</ol>
+<p>在上面看花了眼，都没有一个不合适的，看了大半天，猛然觉得自己挑选的思路不对，在最原始的未经过筛选的主题站里挑选，能不费劲吗？</p>
+<p>转换思路，直接搜推荐的hexo主题，然后看到next主题是几乎完全符合我的要求的，然后发现next主题经历了好几个大版本的迭代，甚至github仓库都换了几次，直接上最新的8.0版本，拉下来</p>
+<h2 id="next主题各种调整优化"><a href="#next主题各种调整优化" class="headerlink" title="next主题各种调整优化"></a>next主题各种调整优化</h2><p>next主题中可以进行自主化调整的地方还挺多的，而且8.0版本中，很多地方和以往版本中有不一样的调整方式，我尽量把我用到的写一下。所做的所有操作基本是改一下themes/next下的_config.yml，很少一部分是更改hexo下的_config.yml，偶尔会使用npm装个包</p>
+<h3 id="设置首页信息"><a href="#设置首页信息" class="headerlink" title="设置首页信息"></a>设置首页信息</h3><figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">每天净瞎搞</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;关注：AI/CS/数学/自我提升等&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;既然选择了远方，便只顾风雨兼程&#x27;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Shiqi</span> <span class="string">Lu</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://shiqi-lu.tech</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="风格选择"><a href="#风格选择" class="headerlink" title="风格选择"></a>风格选择</h3><p>我把四个风格都试了一遍，最后比较喜欢Gemini</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment"># scheme: Mist</span></span><br><span class="line"><span class="comment"># scheme: Pisces</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Gemini</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持暗黑模式"><a href="#支持暗黑模式" class="headerlink" title="支持暗黑模式"></a>支持暗黑模式</h3><p>这可是个意外惊喜，还会根据系统的设置自动适配</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Dark Mode</span></span><br><span class="line"><span class="attr">darkmode:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置建站时间"><a href="#设置建站时间" class="headerlink" title="设置建站时间"></a>设置建站时间</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2020</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置网站脚注的信息（图标、备案等）"><a href="#设置网站脚注的信息（图标、备案等）" class="headerlink" title="设置网站脚注的信息（图标、备案等）"></a>设置网站脚注的信息（图标、备案等）</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Icon between year and copyright info.</span></span><br><span class="line">  <span class="attr">icon:</span></span><br><span class="line">    <span class="comment"># Icon name in Font Awesome. See: https://fontawesome.com/icons</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">fa</span> <span class="string">fa-heart</span></span><br><span class="line">    <span class="comment"># If you want to animate the icon, set it to true.</span></span><br><span class="line">    <span class="attr">animated:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Change the color of icon, using Hex Code.</span></span><br><span class="line">    <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="网站图标"><a href="#网站图标" class="headerlink" title="网站图标"></a>网站图标</h3><p>先到网上找适合的图标，然后更新一下对应的文件，免费的图标素材网站：<a href="https://www.easyicon.net/1220579-maple_leaf_icon.html">Easyicon</a></p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/7-16.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/7-32.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/7-128.png</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="标签页和分类页"><a href="#标签页和分类页" class="headerlink" title="标签页和分类页"></a>标签页和分类页</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/custom-pages.html#Adding-%C2%ABTags%C2%BB-Page">next文档</a></p>
+<h3 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h3><p>我喜欢放在右边，主要是因为视觉聚焦主要是在左边的</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">sidebar:</span></span><br><span class="line">  <span class="comment"># Sidebar Position.</span></span><br><span class="line">  <span class="comment"># position: left</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">right</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="打开文章标题下方更新时间、阅读时长等信息"><a href="#打开文章标题下方更新时间、阅读时长等信息" class="headerlink" title="打开文章标题下方更新时间、阅读时长等信息"></a>打开文章标题下方更新时间、阅读时长等信息</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html#Post-Wordcount">官方文档</a><br>先按照npm包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-word-counter</span><br><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post meta display settings</span></span><br><span class="line"><span class="attr">post_meta:</span></span><br><span class="line">  <span class="attr">item_text:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">created_at:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">updated_at:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">another_day:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-word-counter</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="博客首页的摘要设置"><a href="#博客首页的摘要设置" class="headerlink" title="博客首页的摘要设置"></a>博客首页的摘要设置</h3><p>这个要配合文章中的description字段，或在文章中添加一行注释辅助，参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html?highlight=more#Preamble-Text">官方文档</a></p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Automatically excerpt description in homepage as preamble text.</span></span><br><span class="line"><span class="attr">excerpt_description:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read more button</span></span><br><span class="line"><span class="comment"># If true, the read more button will be displayed in excerpt section.</span></span><br><span class="line"><span class="attr">read_more_btn:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="置顶的百分比和顶部进度条"><a href="#置顶的百分比和顶部进度条" class="headerlink" title="置顶的百分比和顶部进度条"></a>置顶的百分比和顶部进度条</h3><p>默认给的颜色有点花哨，我改成了灰色</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="comment"># color: &quot;#37c6c0&quot;</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="头像设置"><a href="#头像设置" class="headerlink" title="头像设置"></a>头像设置</h3><p>在url里放置本地图片或者图床链接</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="代码块高亮风格选择"><a href="#代码块高亮风格选择" class="headerlink" title="代码块高亮风格选择"></a>代码块高亮风格选择</h3><p>使用了hightlight.js的高亮样式</p>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">highlight:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">auto_detect:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;    &#x27;</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">hljs:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">prismjs:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">preprocess:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># All available themes: https://theme-next.js.org/highlight/</span></span><br><span class="line">  <span class="attr">theme:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">tomorrow-night-bright</span></span><br><span class="line">  <span class="attr">prism:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">prism</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">prism-dark</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">flat</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="社交账号设置"><a href="#社交账号设置" class="headerlink" title="社交账号设置"></a>社交账号设置</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/shiqi-lu</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br><span class="line">  <span class="attr">E-Mail:</span> <span class="string">mailto:traumlou@163.com</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-envelope</span></span><br><span class="line">  <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">  <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">  <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">  <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">social_icons:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">icons_only:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">transition:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持本地搜索"><a href="#支持本地搜索" class="headerlink" title="支持本地搜索"></a>支持本地搜索</h3><p>参考<a href="https://theme-next.js.org/docs/third-party-services/search-services.html?highlight=search#Local-Search">官方文档</a><br>先装包：<code>$ npm install hexo-generator-searchdb </code></p>
+<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">content:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="评论系统"><a href="#评论系统" class="headerlink" title="评论系统"></a>评论系统</h3><p>评论系统选择了<a href="https://valine.js.org/">valine</a>，请参考<a href="https://theme-next.js.org/docs/third-party-services/comments.html?highlight=comme#Valine-China">next文档</a>，其中头像需要注册一下Gravatar，参考<a href="https://valine.js.org/avatar.html">头像配置</a>，这里的邮箱提醒好像有问题，官方说明的方法不能用了。这个以后再说吧，我也不想有个评论就给我发邮件，要真有比较紧急的事情，直接发我邮箱吧</p>
+<h3 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h3><p>注意这里8.0更新之后，就不是通过安装插件改源码的方式实现，直接在文章的front-matter里面添加一个字段：sticky就可以实现了，值越高排的越前，默认为0是按照时间顺序，参考<a href="https://theme-next.js.org/docs/advanced-settings/front-matter.html?highlight=stick">官方文档</a></p>
+<h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
+<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
+<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
+<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
+<h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
+<ul>
+<li>SEO</li>
+<li>个人简介</li>
+<li>README</li>
+<li>访问速度比较慢，考虑使用除github外的托管服务</li>
+<li>考虑使用CI</li>
+<li>考虑CDN加速</li>
+<li>考虑把http转换成https</li>
+<li>备案</li>
+<li>图床替换成自己的域名</li>
+<li>完善和链接一下领英</li>
+<li>研究一下博客如何分享链接到微信</li>
+</ul>
+<h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
+<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细）</a></li>
+<li><a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a></li>
+<li><a href="https://github.com/next-theme/hexo-theme-next">Next8.0 Github</a></li>
+<li><a href="https://theme-next.js.org/">Next8.0 文档</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>自我提升</category>
+      </categories>
+      <tags>
+        <tag>感想</tag>
+        <tag>自我提升</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>特征选择方法汇总</title>
     <url>/feature-selection/</url>
     <content><![CDATA[<h1 id="什么是特征选择"><a href="#什么是特征选择" class="headerlink" title="什么是特征选择"></a>什么是特征选择</h1><ul>
@@ -1009,115 +1298,6 @@
       <tags>
         <tag>机器学习</tag>
         <tag>特征工程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>第一篇博客：为什么我要建博客和写博客</title>
-    <url>/first-blog/</url>
-    <content><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>很久之前就想搭建自己的博客了，只是嘛，一直都没有时间（划掉，就是懒）。这一次之所以突然下定决心要搞一波，完全是因为我的同桌真的是个超级大神，北大本科，杜克大学博士，也有一个自己的博客和介绍页，看着她的介绍页真的是超级牛，超级强，而且不仅是学习强，还在自己感兴趣的各个领域钻研的很深。让我不禁连连感叹，大牛的人生真的是超级强，真可谓最强鸡血，对比下来仿佛我白活了这么多年，没有留下任何值得留存的记录。</p>
-<p>所以，受到这个启发（主要是刺激），我也要开始搭建自己的博客和个人主页，但同时我觉得我最好同时发布和维护3个平台，一个是CSDN，一个是公众号，一个是这个博客。毕竟文章写好之后，多发布一下几乎不费时间。</p>
-<h1 id="为什么要选择github和hexo"><a href="#为什么要选择github和hexo" class="headerlink" title="为什么要选择github和hexo"></a>为什么要选择github和hexo</h1><p>选择github主要是因为能借助git的版本管理，顺便可以在github的热力图刷的好看一点，还有托管在github免费哇，不需要再另外维护云主机，不想当运维。省一笔主机钱，我只需要出钱买个域名即可，万网这个.tech域名买了10年也才199块，就是整个博客搭建中的唯一花销了</p>
-<p>选择hexo是因为，能支持markdown的书写，和我现有的工具套件能配套上，可以无缝迁移过来，hexo的生态和主题都相对完善。</p>
-<h1 id="过程和踩坑"><a href="#过程和踩坑" class="headerlink" title="过程和踩坑"></a>过程和踩坑</h1><h2 id="申请域名"><a href="#申请域名" class="headerlink" title="申请域名"></a>申请域名</h2><p>直接上<a href="https://wanwang.aliyun.com/">万网</a>购买自己的域名，做完实名认证之后即可先放着，详细步骤具体参考<a href="https://zhuanlan.zhihu.com/p/103860494">知乎</a>。</p>
-<h2 id="安装node和hexo，并部署到github"><a href="#安装node和hexo，并部署到github" class="headerlink" title="安装node和hexo，并部署到github"></a>安装node和hexo，并部署到github</h2><p>具体参考<a href="https://zhuanlan.zhihu.com/p/105715224">知乎</a>，我是安装在macOS上，不需要搞这里面复杂的各种环境变量。</p>
-<p>踩坑：我原本以为是建完git仓库后，把仓库pull下来，在里面初始化hexo，但后面看了一下，是要在空文件夹操作，并且后续发布到github的文件是hexo进行编译后的文件。</p>
-<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>能够部署之后保证通过github.io能访问即可做域名解析，具体参考<a href="https://zhuanlan.zhihu.com/p/103813944">知乎</a></p>
-<h2 id="挑选主题"><a href="#挑选主题" class="headerlink" title="挑选主题"></a>挑选主题</h2><p>原本我想直接在<a href="https://hexo.io/themes/">官方的主题链接</a>里挑一个比较合适的，给自己定了几个标准：</p>
-<ol>
-<li>整体必须是简洁的，那种大量有图片装饰的，背景花哨的不考虑（原因是，挑图片暴露自己的垃圾审美，还要给每个博客挑配图太费心力了）</li>
-<li>必须能支持公式、代码块高亮等的解析</li>
-<li>偏好整体布局要简洁，偏好侧边栏在右边，并且偏好文章要有侧边栏</li>
-<li>主题必须有开发者长期维护和更新</li>
-<li>能有评论系统</li>
-</ol>
-<p>在上面看花了眼，都没有一个不合适的，看了大半天，猛然觉得自己挑选的思路不对，在最原始的未经过筛选的主题站里挑选，能不费劲吗？</p>
-<p>转换思路，直接搜推荐的hexo主题，然后看到next主题是几乎完全符合我的要求的，然后发现next主题经历了好几个大版本的迭代，甚至github仓库都换了几次，直接上最新的8.0版本，拉下来</p>
-<h2 id="next主题各种调整优化"><a href="#next主题各种调整优化" class="headerlink" title="next主题各种调整优化"></a>next主题各种调整优化</h2><p>next主题中可以进行自主化调整的地方还挺多的，而且8.0版本中，很多地方和以往版本中有不一样的调整方式，我尽量把我用到的写一下。所做的所有操作基本是改一下themes/next下的_config.yml，很少一部分是更改hexo下的_config.yml，偶尔会使用npm装个包</p>
-<h3 id="设置首页信息"><a href="#设置首页信息" class="headerlink" title="设置首页信息"></a>设置首页信息</h3><figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">每天净瞎搞</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;关注：AI/CS/数学/自我提升等&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;既然选择了远方，便只顾风雨兼程&#x27;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Shiqi</span> <span class="string">Lu</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://shiqi-lu.tech</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="风格选择"><a href="#风格选择" class="headerlink" title="风格选择"></a>风格选择</h3><p>我把四个风格都试了一遍，最后比较喜欢Gemini</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment"># scheme: Muse</span></span><br><span class="line"><span class="comment"># scheme: Mist</span></span><br><span class="line"><span class="comment"># scheme: Pisces</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Gemini</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="支持暗黑模式"><a href="#支持暗黑模式" class="headerlink" title="支持暗黑模式"></a>支持暗黑模式</h3><p>这可是个意外惊喜，还会根据系统的设置自动适配</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Dark Mode</span></span><br><span class="line"><span class="attr">darkmode:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置建站时间"><a href="#设置建站时间" class="headerlink" title="设置建站时间"></a>设置建站时间</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Specify the date when the site was setup. If not defined, current year will be used.</span></span><br><span class="line">  <span class="attr">since:</span> <span class="number">2020</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置网站脚注的信息（图标、备案等）"><a href="#设置网站脚注的信息（图标、备案等）" class="headerlink" title="设置网站脚注的信息（图标、备案等）"></a>设置网站脚注的信息（图标、备案等）</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line">  <span class="comment"># Icon between year and copyright info.</span></span><br><span class="line">  <span class="attr">icon:</span></span><br><span class="line">    <span class="comment"># Icon name in Font Awesome. See: https://fontawesome.com/icons</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">fa</span> <span class="string">fa-heart</span></span><br><span class="line">    <span class="comment"># If you want to animate the icon, set it to true.</span></span><br><span class="line">    <span class="attr">animated:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Change the color of icon, using Hex Code.</span></span><br><span class="line">    <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="网站图标"><a href="#网站图标" class="headerlink" title="网站图标"></a>网站图标</h3><p>先到网上找适合的图标，然后更新一下对应的文件，免费的图标素材网站：<a href="https://www.easyicon.net/1220579-maple_leaf_icon.html">Easyicon</a></p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/7-16.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/7-32.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/7-128.png</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="标签页和分类页"><a href="#标签页和分类页" class="headerlink" title="标签页和分类页"></a>标签页和分类页</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/custom-pages.html#Adding-%C2%ABTags%C2%BB-Page">next文档</a></p>
-<h3 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h3><p>我喜欢放在右边，主要是因为视觉聚焦主要是在左边的</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">sidebar:</span></span><br><span class="line">  <span class="comment"># Sidebar Position.</span></span><br><span class="line">  <span class="comment"># position: left</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">right</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="打开文章标题下方更新时间、阅读时长等信息"><a href="#打开文章标题下方更新时间、阅读时长等信息" class="headerlink" title="打开文章标题下方更新时间、阅读时长等信息"></a>打开文章标题下方更新时间、阅读时长等信息</h3><p>参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html#Post-Wordcount">官方文档</a><br>先按照npm包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-word-counter</span><br><span class="line">$ hexo clean</span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post meta display settings</span></span><br><span class="line"><span class="attr">post_meta:</span></span><br><span class="line">  <span class="attr">item_text:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">created_at:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">updated_at:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">another_day:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-word-counter</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="博客首页的摘要设置"><a href="#博客首页的摘要设置" class="headerlink" title="博客首页的摘要设置"></a>博客首页的摘要设置</h3><p>这个要配合文章中的description字段，或在文章中添加一行注释辅助，参考<a href="https://theme-next.js.org/docs/theme-settings/posts.html?highlight=more#Preamble-Text">官方文档</a></p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Automatically excerpt description in homepage as preamble text.</span></span><br><span class="line"><span class="attr">excerpt_description:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read more button</span></span><br><span class="line"><span class="comment"># If true, the read more button will be displayed in excerpt section.</span></span><br><span class="line"><span class="attr">read_more_btn:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="置顶的百分比和顶部进度条"><a href="#置顶的百分比和顶部进度条" class="headerlink" title="置顶的百分比和顶部进度条"></a>置顶的百分比和顶部进度条</h3><p>默认给的颜色有点花哨，我改成了灰色</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="comment"># color: &quot;#37c6c0&quot;</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#808080&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="头像设置"><a href="#头像设置" class="headerlink" title="头像设置"></a>头像设置</h3><p>在url里放置本地图片或者图床链接</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/7-128.png</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="代码块高亮风格选择"><a href="#代码块高亮风格选择" class="headerlink" title="代码块高亮风格选择"></a>代码块高亮风格选择</h3><p>使用了hightlight.js的高亮样式</p>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">highlight:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">auto_detect:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;    &#x27;</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">hljs:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">prismjs:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">preprocess:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">line_number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tab_replace:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># All available themes: https://theme-next.js.org/highlight/</span></span><br><span class="line">  <span class="attr">theme:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">tomorrow-night-bright</span></span><br><span class="line">  <span class="attr">prism:</span></span><br><span class="line">    <span class="attr">light:</span> <span class="string">prism</span></span><br><span class="line">    <span class="attr">dark:</span> <span class="string">prism-dark</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">flat</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="社交账号设置"><a href="#社交账号设置" class="headerlink" title="社交账号设置"></a>社交账号设置</h3><figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">  <span class="attr">GitHub:</span> <span class="string">https://github.com/shiqi-lu</span> <span class="string">||</span> <span class="string">fab</span> <span class="string">fa-github</span></span><br><span class="line">  <span class="attr">E-Mail:</span> <span class="string">mailto:traumlou@163.com</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-envelope</span></span><br><span class="line">  <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">  <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">  <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">  <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">social_icons:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">icons_only:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">transition:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="支持本地搜索"><a href="#支持本地搜索" class="headerlink" title="支持本地搜索"></a>支持本地搜索</h3><p>参考<a href="https://theme-next.js.org/docs/third-party-services/search-services.html?highlight=search#Local-Search">官方文档</a><br>先装包：<code>$ npm install hexo-generator-searchdb </code></p>
-<figure class="highlight yaml"><figcaption><span>hexo/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">content:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/next-theme/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="评论系统"><a href="#评论系统" class="headerlink" title="评论系统"></a>评论系统</h3><p>评论系统选择了<a href="https://valine.js.org/">valine</a>，请参考<a href="https://theme-next.js.org/docs/third-party-services/comments.html?highlight=comme#Valine-China">next文档</a>，其中头像需要注册一下Gravatar，参考<a href="https://valine.js.org/avatar.html">头像配置</a>，这里的邮箱提醒好像有问题，官方说明的方法不能用了。这个以后再说吧，我也不想有个评论就给我发邮件，要真有比较紧急的事情，直接发我邮箱吧</p>
-<h3 id="文章置顶"><a href="#文章置顶" class="headerlink" title="文章置顶"></a>文章置顶</h3><p>注意这里8.0更新之后，就不是通过安装插件改源码的方式实现，直接在文章的front-matter里面添加一个字段：sticky就可以实现了，值越高排的越前，默认为0是按照时间顺序，参考<a href="https://theme-next.js.org/docs/advanced-settings/front-matter.html?highlight=stick">官方文档</a></p>
-<h3 id="文章赞赏"><a href="#文章赞赏" class="headerlink" title="文章赞赏"></a>文章赞赏</h3><p>要先准备好微信，支付宝等的二维码，然后放在images下或放在图床中</p>
-<figure class="highlight yaml"><figcaption><span>themes/next/_config.yml</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment"># Donate (Sponsor) settings</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, a donate button will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#paypal: /images/paypal.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
-
-
-<h1 id="简单的使用指南"><a href="#简单的使用指南" class="headerlink" title="简单的使用指南"></a>简单的使用指南</h1><h2 id="写新博文"><a href="#写新博文" class="headerlink" title="写新博文"></a>写新博文</h2><p>在blog目录下输入命令<code>hexo new post &lt;title&gt;</code>，会自动在<code>&lt;blog-dir&gt;/source/_posts</code>目录下生成对应的title文件，这时候用md编辑器打开写博客即可</p>
-<h2 id="本地测试"><a href="#本地测试" class="headerlink" title="本地测试"></a>本地测试</h2><p>博文写完之后，因为各种不同的解析器和浏览器对md的支持会不一样，先本地看看效果，运行命令：<code>hexo clean &amp;&amp; hexo s</code>，然后根据提示在浏览器打开localhost:4000即可查看</p>
-<h2 id="推送到网站上"><a href="#推送到网站上" class="headerlink" title="推送到网站上"></a>推送到网站上</h2><p>运行命令：<code>hexo clean &amp;&amp; hexo g -d</code>即可</p>
-<h1 id="尚未完成部分"><a href="#尚未完成部分" class="headerlink" title="尚未完成部分"></a>尚未完成部分</h1><p>这部分以后看时间和心情做吧，每做一部分记录一部分吧</p>
-<ul>
-<li>SEO</li>
-<li>个人简介</li>
-<li>README</li>
-<li>访问速度比较慢，考虑使用除github外的托管服务</li>
-<li>考虑使用CI</li>
-<li>考虑CDN加速</li>
-<li>考虑把http转换成https</li>
-<li>备案</li>
-<li>图床替换成自己的域名</li>
-<li>完善和链接一下领英</li>
-<li>研究一下博客如何分享链接到微信</li>
-</ul>
-<h1 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h1><ul>
-<li>在ipad上的safari显示的时候没有font awesome图标显示，文章内容侧边栏等显示不出来，但ipad的chrome没问题，iphone的safari也没问题，真是奇怪</li>
-</ul>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
-<li><a href="https://kchen.cc/2016/11/12/hexo-instructions/">基于 Hexo 的全自动博客构建部署系统</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/102592286">从零开始搭建个人博客（超详细）</a></li>
-<li><a href="https://hexo.io/zh-cn/docs/">Hexo官方文档</a></li>
-<li><a href="https://github.com/next-theme/hexo-theme-next">Next8.0 Github</a></li>
-<li><a href="https://theme-next.js.org/">Next8.0 文档</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>自我提升</category>
-      </categories>
-      <tags>
-        <tag>感想</tag>
-        <tag>自我提升</tag>
       </tags>
   </entry>
   <entry>
@@ -4422,194 +4602,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《透视HTTP协议》飞翔篇</title>
-    <url>/http-perspective-3/</url>
-    <content><![CDATA[<h1 id="30-时代之风（上）：HTTP-2特性概览"><a href="#30-时代之风（上）：HTTP-2特性概览" class="headerlink" title="30 | 时代之风（上）：HTTP/2特性概览"></a>30 | 时代之风（上）：HTTP/2特性概览</h1><ul>
-<li>Q:HTTP/2怎么做头部压缩？<ul>
-<li>开发了专门的“HPACK”算法，在客户端和服务器两端建立“字典”，用索引号表示重复的字符串，还釆用哈夫曼编码来压缩整数和字符串，可以达到 50%~90% 的高压缩率</li>
-</ul>
-</li>
-<li>Q:HTTP/2怎么使用二进制<ul>
-<li>把TCP协议的部分特性挪到了应用层，把原来的「Header+Body」的消息打散为数个小片的二进制「帧」(Frame)，用「HEADERS」帧存放头数据、「DATA」帧存放实体数据</li>
-</ul>
-</li>
-<li>Q:HTTP/2的流(Stream)是什么？<ul>
-<li>它是二进制帧的双向传输序列，同一个消息往返的帧会分配一个唯一的流ID。在里面的是一串有先后顺序的数据帧，这些数据帧按照次序组装起来就是 HTTP/1 里的请求报文和响应报文</li>
-<li>因为「流」是虚拟的，实际上并不存在，所以 HTTP/2 就可以在一个 TCP 连接上用「流」同时发送多个「碎片化」的消息，这就是常说的“多路复用”（Multiplexing）——多个往返通信都复用一个连接来处理</li>
-<li>在「流」的层面上看，消息是一些有序的「帧」序列，而在「连接」的层面上看，消息是乱序收发的「帧」。多个请求/响应之间没有了顺序关系，不需要排队等待， 也就不会再出现「队头阻塞」问题，降低了延迟，大幅度提高了连接的利用率</li>
-<li><img src="https://img.shiqi-lu.tech/20210323130302.png"></li>
-<li>为了更好地利用连接，加大吞吐量，HTTP/2 还添加了一些控制帧来管理虚拟的「流」，实现了优先级和流量控制，这些特性也和 TCP 协议非常相似</li>
-<li>HTTP/2 还在一定程度上改变了传统的「请求 - 应答」工作模式，服务器不再是完全被动地响应请求，也可以新建「流」主动向客户端发送消息。比如，在浏览器刚请求 HTML 的时候就提前把可能会用到的 JS、CSS 文件发给客户端，减少等待的延迟，这被称为“服务器推送”（Server Push，也叫 Cache Push）</li>
-</ul>
-</li>
-</ul>
-<h1 id="31-时代之风（下）：HTTP-2内核剖析"><a href="#31-时代之风（下）：HTTP-2内核剖析" class="headerlink" title="31 | 时代之风（下）：HTTP/2内核剖析"></a>31 | 时代之风（下）：HTTP/2内核剖析</h1><ul>
-<li>Q:HTTP/2的连接前言(connection preface)是什么<ul>
-<li>由于 HTTP/2是基于 TLS，所以在正式收发数据之前，会有 TCP 握手和 TLS 握手，TLS 握手成功之后，客户端必须要发送一个连接前言用来确认建立 HTTP/2 连接</li>
-<li>这个连接前言是标准的HTTP/1请求报文，使用纯文本的ASCII码格式，请求方法是特别注册的一个关键字「PRI」，全文只有24个字节：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">PRI * HTTP&#x2F;2.0\r\n\r\nSM\r\n\r\n</span><br></pre></td></tr></table></figure></li>
-<li>在 Wireshark 里，HTTP/2 的连接前言被称为「Magic」，只要服务器收到这个「有魔力的字符串」，就知道客户端在 TLS 上想要的是 HTTP/2 协议，后面就会都使用 HTTP/2 的数据格式</li>
-</ul>
-</li>
-<li>Q:HTTP/2的头部压缩是怎样？<ul>
-<li>确立了连接之后，HTTP/2 就开始准备请求报文</li>
-<li>因为语义上它与 HTTP/1 兼容，所以报文还是由「Header+Body」构成的，但在请求发送前，必须要用「HPACK」算法来压缩头部数据</li>
-<li>「HPACK」算法是专门为压缩 HTTP 头部定制的算法，与 gzip、zlib 等压缩算法不同，它是一个“有状态”的算法，需要客户端和服务器各自维护一份“索引表”，压缩和解压缩就是查表和更新表的操作</li>
-<li>为了方便管理和压缩，HTTP/2 废除了原有的起始行概念，把起始行里面的请求方法、URI、状态码等统一转换成了头字段的形式，即「伪头字段」(pseudo-header fields)。并废除起始行里的版本号和错误原因短语</li>
-<li>伪头字段会在名字前加一个「:」，比如「:authority」、「:method」、「:status」，分别表示的是域名、请求方法和状态码</li>
-<li>现在HTTP报文头全都是「Key-Value」形式的字段，于是 HTTP/2 就为一些最常用的头字段定义了一个只读的静态表（Static Table），如下表，如数字「2」代表「GET」，数字「8」代表状态码200</li>
-<li><img src="https://img.shiqi-lu.tech/20210323144257.png"></li>
-<li>但如果表里只有 Key 没有 Value，或者是自定义字段根本找不到就要用到“动态表”（Dynamic Table），它添加在静态表后面，结构相同，但会在编码解码的时候随时更新</li>
-<li>如第一次发送请求时的「user-agent」字段长是一百多个字节，用哈夫曼压缩编码发送之后，客户端和服务器都更新自己的动态表，添加一个新的索引号「65」。那么下一次发送的时候就不用再重复发那么多字节了，只要用一个字节发送编号就好</li>
-<li><img src="https://img.shiqi-lu.tech/20210323144506.png"></li>
-<li>随着在 HTTP/2 连接上发送的报文越来越多，两边的「字典」也会越来越丰富，最终每次的头部字段都会变成一两个字节的代码，原来上千字节的头用几十个字节就可以表示了，压缩效果比 gzip 要好得多</li>
-</ul>
-</li>
-<li>Q:HTTP/2的二进制帧是怎样<ul>
-<li>头部数据压缩之后，HTTP/2 就要把报文拆成二进制的帧准备发送</li>
-<li>HTTP/2 的帧结构有点类似 TCP 的段或者 TLS 里的记录，但报头很小，只有 9 字节</li>
-<li>二进制的格式也保证了不会有歧义，而且使用位运算能够非常简单高效地解析</li>
-<li><img src="https://img.shiqi-lu.tech/20210323145002.png"></li>
-<li>帧开头是 3 个字节的长度（但不包括头的 9 个字节），默认上限是 2^14，最大是 2^24，也就是说 HTTP/2 的帧通常不超过 16K，最大是 16M</li>
-<li>长度后面的一个字节是帧类型，大致可分为数据帧和控制帧两类，HEADERS帧和DATA帧属于数据帧，存放的HTTP报文，而SETTINGS、PING、PRIORITY等则是用来管理流的控制帧</li>
-<li>HTTP/2 总共定义了 10 种类型的帧，但一个字节可以表示最多 256 种，所以也允许在标准之外定义其他类型实现功能扩展。比如 Google 的 gRPC 就利用了这个特点，定义了几种自用的新帧类型</li>
-<li>第5个字节是帧标志，可以保存8个标志位，携带简单的控制信息。常用的标志位有END_HEADERS表示头数据结束，相当于HTTP/1里头后的空行「\r\0」，END_STREAM表示单方向数据发送接受(EOS，End Of Stream)，相当于HTTP/1里Chunked分块结束标志「\0\r\n\r\n」</li>
-<li>报文投里最后4个字节是流标识符，即帧所属的「流」，接收方使用它就可从乱序的帧里识别出具有相同流ID的帧序列，按顺序组装起来就实现了虚拟的「流」</li>
-<li>流标识符虽然有4个字节，但最高位被保留不用，所以只有31位可使用，即流标识符的上限是2^31，大约21亿</li>
-</ul>
-</li>
-<li>Q:HTTP/2 的流与多路复用是怎样？<ul>
-<li>流是二进制帧的双向传输序列</li>
-<li>在 HTTP/2 连接上，虽然帧是乱序收发的，但只要它们都拥有相同的流 ID，就都属于一个流，而且在这个流里帧不是无序的，而是有着严格的先后顺序</li>
-<li>在概念上，一个 HTTP/2 的流就等同于一个 HTTP/1 里的「请求-应答」。在 HTTP/1 里一个「请求 - 响应」报文来回是一次 HTTP 通信，在 HTTP/2 里一个流也承载了相同的功能</li>
-</ul>
-</li>
-<li>Q:HTTP/2 的流有哪些特点呢<ul>
-<li>1.流是可并发的，一个 HTTP/2 连接上可以同时发出多个流传输数据，也就是并发多请求，实现“多路复用”</li>
-<li>2.客户端和服务器都可以创建流，双方互不干扰</li>
-<li>3.流是双向的，一个流里面客户端和服务器都可以发送或接收数据帧，也就是一个“请求 - 应答”来回</li>
-<li>4.流之间没有固定关系，彼此独立，但流内部的帧是有严格顺序的</li>
-<li>5.流可以设置优先级，让服务器优先处理，比如先传 HTML/CSS，后传图片，优化用户体验</li>
-<li>6.流 ID 不能重用，只能顺序递增，客户端发起的 ID 是奇数，服务器端发起的 ID 是偶数</li>
-<li>7.在流上发送“RST_STREAM”帧可以随时终止流，取消接收或发送</li>
-<li>8.第 0 号流比较特殊，不能关闭，也不能发送数据帧，只能发送控制帧，用于流量控制</li>
-</ul>
-</li>
-<li>Q:连接中无序的帧是如何依据流 ID 重组成流的<ul>
-<li>在 Wireshark 抓包里，就有“0、1、3”一共三个流，实际上就是分配了三个流 ID 号，把这些帧按编号分组，再排一下队，就成了流</li>
-<li><img src="https://img.shiqi-lu.tech/20210324075750.png"></li>
-<li><img src="https://img.shiqi-lu.tech/20210324075756.png"></li>
-<li>HTTP/2 在一个连接上使用多个流收发数据，那么它本身默认就会是长连接，所以永远不需要“Connection”头字段（keepalive 或 close）</li>
-<li>下载大文件的时候想取消接收，在 HTTP/1 里只能断开 TCP 连接重新“三次握手”，成本很高，而在 HTTP/2 里就可以简单地发送一个“RST_STREAM”中断流，而长连接会继续保持</li>
-<li>因为客户端和服务器两端都可以创建流，而流 ID 有奇数偶数和上限的区分，所以大多数的流 ID 都会是奇数，而且客户端在一个连接里最多只能发出 2^30，也就是 10 亿个请求</li>
-<li>ID 用完了可以再发一个控制帧“GOAWAY”，真正关闭 TCP 连接</li>
-</ul>
-</li>
-<li>Q:HTTP/2如何根据帧的标志位实现流状态转换<ul>
-<li><img src="https://img.shiqi-lu.tech/20210324080322.png"></li>
-<li>最开始的时候流都是空闲(idle)状态</li>
-<li>当客户端发送HEADERS帧后，有了流ID，流就进入了「打开」状态，两端都可以收发数据，然后客户端发送一个带「END_STREAM」标志位的帧，流就进入了「半关闭」状态。意味着客户端的请求数据已经发送完了，需要接受响应数据，而服务端也知道请求数据接收完毕，之后就要内部处理，再发送响应数据</li>
-<li>响应数据发完了之后，也要带上「END_STREAM」标志位，表示数据发送完毕，这样流两端就都进入了关闭状态，流就结束了</li>
-<li>流 ID 不能重用，所以流的生命周期就是 HTTP/1 里的一次完整的「请求 - 应答」，流关闭就是一次通信结束</li>
-<li>下一次再发请求就要开一个新流（而不是新连接），流 ID 不断增加，直到到达上限，发送「GOAWAY」帧开一个新的 TCP 连接，流 ID 就又可以重头计数</li>
-<li>因为流可以并发，所以 HTTP/2 就可以实现无阻塞的多路复用</li>
-</ul>
-</li>
-</ul>
-<h1 id="32-未来之路：HTTP-3展望"><a href="#32-未来之路：HTTP-3展望" class="headerlink" title="32 | 未来之路：HTTP/3展望"></a>32 | 未来之路：HTTP/3展望</h1><ul>
-<li>Q:为什么HTTP/2没有完全解决队头阻塞呢？<ul>
-<li>因为 HTTP/2 虽然使用“帧”“流”“多路复用”，没有了“队头阻塞”，但这些手段都是在应用层里，而在下层，也就是 TCP 协议里，还是会发生“队头阻塞”</li>
-<li>从协议栈的角度来仔细看一下。在 HTTP/2 把多个“请求 - 响应”分解成流，交给 TCP 后，TCP 会再拆成更小的包依次发送（其实在 TCP 里应该叫 segment，也就 是“段”）</li>
-<li>在网络良好的情况下，包可以很快送达目的地。但如果网络质量比较差，而 TCP 为了保证可靠传输，有个特别的“丢包重传”机制，丢失的包必须要等待重新传输确认，其他的包即使已经收到了，也只能放在缓冲区里，上层的应用拿不出来，只能等待</li>
-</ul>
-</li>
-<li>Q:不同HTTP协议栈图的对比<ul>
-<li><img src="https://img.shiqi-lu.tech/20210324100732.png"></li>
-</ul>
-</li>
-<li>Q:QUIC有什么特点？<ul>
-<li>基于 UDP，而 UDP 是无连接的，不需要握手和挥手，所以比 TCP 快</li>
-<li>基于 UDP 实现了可靠传输，保证数据一定能够抵达目的地。它还引入了类似 HTTP/2 的“流”和“多路复用”，单个“流”是有序的，可能会因为丢包而阻塞，但其他“流”不会受到影响</li>
-<li>为了防止网络上的中间设备（Middle Box）识别协议的细节，QUIC 全面采用加密通信，可以很好地抵御窜改和“协议僵化”（ossification）</li>
-<li>直接应用了 TLS1.3，也就获得了 0-RTT、1-RTT 连接的好处</li>
-<li>不是建立在 TLS 之上，而是内部“包含”了 TLS。它使用自己的帧“接管”了 TLS 里的“记录”，握手消息、警报消息都不使用 TLS 记录，直接封装成 QUIC 的帧发送，省掉了一次开销</li>
-</ul>
-</li>
-<li>Q:QUIC内部介绍<ul>
-<li>QUIC 的基本数据传输单位是包（packet）和帧（frame），一个包由多个帧组成，包面向的是“连接”，帧面向的是“流”</li>
-<li>QUIC 使用不透明的“连接 ID”来标记通信的两个端点，客户端和服务器可以自行选择一组 ID 来标记自己，这样就解除了 TCP 里连接对“IP 地址 + 端口”（即常说的四元组）的强绑定，支持“连接迁移”（Connection Migration）</li>
-<li><img src="https://img.shiqi-lu.tech/20210324103531.png"></li>
-<li>即当 IP 地址会发生变化，TCP 就必须重新建立连接。而 QUIC 连接里的两端连接 ID 不会变，所以连接在“逻辑上”没有中断，它就可以在新的 IP 地址上继续使用之前的连接，消除重连的成本，实现连接的无缝迁移</li>
-<li>QUIC 的帧里有多种类型，PING、ACK 等帧用于管理连接，而 STREAM 帧专门用来实流</li>
-<li>QUIC 里的流与 HTTP/2 的流非常相似，也是帧的序列，但 HTTP/2 里的流都是双向的，而 QUIC 则分为双向流和单向流</li>
-<li><img src="https://img.shiqi-lu.tech/20210324103702.png"></li>
-<li>QUIC 帧普遍采用变长编码，最少只要 1 个字节，最多有 8 个字节。流 ID 的最大可用位数是 62，数量上比 HTTP/2 的 2^31 大大增加</li>
-<li>流 ID 还保留了最低两位用作标志，第 1 位标记流的发起者，0 表示客户端，1 表示服务器；第 2 位标记流的方向，0 表示双向流，1 表示单向流</li>
-<li>所以 QUIC 流 ID 的奇偶性质和 HTTP/2 刚好相反，客户端的 ID 是偶数，从 0 开始计数</li>
-</ul>
-</li>
-<li>Q:HTTP/3 协议<ul>
-<li>因为 QUIC 本身就已经支持了加密、流和多路复用，所以 HTTP/3 的工作减轻了很多，把流控制都交给 QUIC 去做。调用的不再是 TLS 的安全接口，也不是 Socket API，而是专门的 QUIC 函数</li>
-<li>HTTP/3 里使用QUIC流来发送「请求 - 响应」</li>
-<li>HTTP/3 里的“双向流”可以完全对应到 HTTP/2 的流，而“单向流”在 HTTP/3 里用来实现控制和推送，近似地对应 HTTP/2 的 0 号流</li>
-<li>HTTP/3 里帧的结构变简单了。帧头只有两个字段：类型和长度，而且同样都采用变长编码，最小只需要两个字节</li>
-<li><img src="https://img.shiqi-lu.tech/20210324103944.png"></li>
-<li>HTTP/3 里的帧仍然分成数据帧和控制帧两类，HEADERS 帧和 DATA 帧传输数据，但其他一些帧因为在下层的 QUIC 里有了替代，所以在 HTTP/3 里就都消失了，比如 RST_STREAM、WINDOW_UPDATE、PING 等</li>
-<li>头部压缩算法在 HTTP/3 里升级成了“QPACK”，使用方式上也做了改变。虽然也分成静态表和动态表，但在流上发送 HEADERS 帧时不能更新字段，只能引用，索引表的更新需要在专门的单向流上发送指令来管理，解决了 HPACK 的“队头阻塞”问题</li>
-<li>另外，QPACK 的字典也做了优化，静态表由之前的 61 个增加到了 98 个，而且序号从 0 开始，也就是说“:authority”的编号是 0</li>
-</ul>
-</li>
-<li>Q:HTTP/3 服务发现是怎样的呢<ul>
-<li>用到 HTTP/2 里的“扩展帧”了。浏览器需要先用 HTTP/2 协议连接服务器，然后服务器可以在启动 HTTP/2 连接后发送一个“Alt-Svc”帧，包含一个“h3=host:port”的字符串，告诉浏览器在另一个端点上提供等价的 HTTP/3 服务。浏览器收到“Alt-Svc”帧，会使用 QUIC 异步连接指定的端口，如果连接成功，就会断开 HTTP/2 连接，改用新的 HTTP/3 收发数据</li>
-</ul>
-</li>
-</ul>
-<h1 id="33-我应该迁移到HTTP-2吗？"><a href="#33-我应该迁移到HTTP-2吗？" class="headerlink" title="33 | 我应该迁移到HTTP/2吗？"></a>33 | 我应该迁移到HTTP/2吗？</h1><ul>
-<li>Q:HTTP/2 的优点是什么<ul>
-<li>1.完全保持了与 HTTP/1 的兼容，在语义上没有任何变化</li>
-<li>2.对 HTTPS 在各方面都做了强化。下层的 TLS 至少是 1.2，而且只能用前向安全的密码套件（即 ECDHE），这同时也就默认实现了“TLS False Start”，支持 1-RTT 握手，所以不需要再加额外的配置就可以自动实现 HTTPS 加速</li>
-<li>3.在 HTTP/1 里只能压缩 body，而 HTTP/2 则可以用 HPACK 算法压缩 header，这对高流量的网站非常有价值，有数据表明能节省大概 5%~10% 的流量</li>
-<li>4.HTTP/2 的“多路复用”特性要求对一个域名（或者 IP）只用一个 TCP 连接，所有的数据都在这一个连接上传输，这样不仅节约了客户端、服务器和网络的资源，还可以把带宽跑满</li>
-<li>5.“优先级”可以让客户端告诉服务器，哪个文件更重要，更需要优先传输，服务器就可以调高流的优先级，合理地分配有限的带宽资源，让高优先级的 HTML、图片更快地到达客户端，尽早加载显示</li>
-<li>6.“服务器推送”也是降低延迟的有效手段，它不需要客户端预先请求，服务器直接就发给客户端，这就省去了客户端解析 HTML 再请求的时间</li>
-</ul>
-</li>
-<li>Q:HTTP/2 的缺点是什么<ul>
-<li>在 TCP 级别还是存在“队头阻塞”的问题。所以，如果网络连接质量差，发生丢包，那么 TCP 会等待重传，传输速度就会降低</li>
-<li>在移动网络中发生 IP 地址切换的时候，下层的 TCP 必须重新建连，要再次“握手”，经历“慢启动”，而且之前连接里积累的 HPACK 字典也都消失了，必须重头开始计算，导致带宽浪费和时延</li>
-<li>HTTP/2 对一个域名只开一个连接，所以一旦这个连接出问题，那么整个网站的体验也就变差了</li>
-</ul>
-</li>
-<li>Q:如何配置HTTP/2<ul>
-<li>Nginx 里启用 HTTP/2 只需要在 server 配置里再多加一个参数就可以搞定<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       443 ssl http2;</span><br><span class="line"> </span><br><span class="line">    server_name  www.xxx.net;</span><br><span class="line">    </span><br><span class="line">    ssl_certificate         xxx.crt;</span><br><span class="line">    ssl_certificate_key     xxx.key;</span><br></pre></td></tr></table></figure></li>
-<li>“listen”指令在“ssl”后面多了一个“http2”，这就表示在 443 端口上开启了 SSL 加密，然后再启用 HTTP/2</li>
-<li>配置服务器推送特性可以使用指令“http2_push”和“http2_push_preload”<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http2_push         &#x2F;style&#x2F;xxx.css;</span><br><span class="line">http2_push_preload on;</span><br></pre></td></tr></table></figure></li>
-<li>不过如何合理地配置推送是个难题，如果推送给浏览器不需要的资源，反而浪费了带宽</li>
-<li>优化方面，HTTPS 的一些策略依然适用，比如精简密码套件、ECC 证书、会话复用、HSTS 减少重定向跳转等等</li>
-<li>但还有一些优化手段在 HTTP/2 里是不适用的，而且还会有反效果，比如说常见的精灵图（Spriting）、资源内联（inlining）、域名分片（Sharding）等，至于原因是什么，我把它留给你自己去思考（提示，与缓存有关）</li>
-<li>还要注意一点，HTTP/2 默认启用 header 压缩（HPACK），但并没有默认启用 body 压缩，所以不要忘了在 Nginx 配置文件里加上“gzip”指令，压缩 HTML、JS 等文本数据</li>
-</ul>
-</li>
-<li>Q:HTTP/2 的“服务发现”，浏览器怎么知道服务器支持 HTTP/2 呢<ul>
-<li>在 TLS 的扩展里，使用ALPN（Application Layer Protocol Negotiation）来与服务器就 TLS 上跑的应用协议进行“协商”</li>
-<li>客户端在发起“Client Hello”握手的时候，后面会带上一个“ALPN”扩展，里面按照优先顺序列出客户端支持的应用协议</li>
-<li>如下图，最优先的是“h2”，其次是“http/1.1”，以前还有“spdy”，以后还可能会有“h3”</li>
-<li><img src="https://img.shiqi-lu.tech/20210324110303.png"></li>
-<li>服务器看到 ALPN 扩展以后就可以从列表里选择一种应用协议，在“Server Hello”里也带上“ALPN”扩展，告诉客户端服务器决定使用的是哪一种。因为我们在 Nginx 配置里使用了 HTTP/2 协议，所以在这里它选择的就是“h2”</li>
-<li><img src="https://img.shiqi-lu.tech/20210324110315.png"></li>
-<li>这样在 TLS 握手结束后，客户端和服务器就通过“ALPN”完成了应用层的协议协商，后面就可以使用 HTTP/2 通信了</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>网络</category>
-      </categories>
-      <tags>
-        <tag>HTTP</tag>
-        <tag>网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《透视HTTP协议》安全篇</title>
     <url>/http-perspective-2/</url>
     <content><![CDATA[<h1 id="23-HTTPS是什么？SSL-TLS又是什么？"><a href="#23-HTTPS是什么？SSL-TLS又是什么？" class="headerlink" title="23 | HTTPS是什么？SSL/TLS又是什么？"></a>23 | HTTPS是什么？SSL/TLS又是什么？</h1><ul>
@@ -4850,6 +4842,194 @@
 <li>有了“HSTS”的指示，以后浏览器再访问同样的域名的时候就会自动把 URI 里的“http”改成“https”，直接访问安全的 HTTPS 网站。这样“中间人”就失去了攻击的机会，而且对于客户端来说也免去了一次跳转，加快了连接速度</li>
 <li>在配置文件里用“add_header”指令添加“HSTS”字段：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">add_header Strict-Transport-Security max-age&#x3D;15768000; #182.5days</span><br></pre></td></tr></table></figure></li>
 <li>那么 Chrome 浏览器只会在第一次连接时使用 HTTP 协议，之后就会都走 HTTPS 协议</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>网络</category>
+      </categories>
+      <tags>
+        <tag>HTTP</tag>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《透视HTTP协议》飞翔篇</title>
+    <url>/http-perspective-3/</url>
+    <content><![CDATA[<h1 id="30-时代之风（上）：HTTP-2特性概览"><a href="#30-时代之风（上）：HTTP-2特性概览" class="headerlink" title="30 | 时代之风（上）：HTTP/2特性概览"></a>30 | 时代之风（上）：HTTP/2特性概览</h1><ul>
+<li>Q:HTTP/2怎么做头部压缩？<ul>
+<li>开发了专门的“HPACK”算法，在客户端和服务器两端建立“字典”，用索引号表示重复的字符串，还釆用哈夫曼编码来压缩整数和字符串，可以达到 50%~90% 的高压缩率</li>
+</ul>
+</li>
+<li>Q:HTTP/2怎么使用二进制<ul>
+<li>把TCP协议的部分特性挪到了应用层，把原来的「Header+Body」的消息打散为数个小片的二进制「帧」(Frame)，用「HEADERS」帧存放头数据、「DATA」帧存放实体数据</li>
+</ul>
+</li>
+<li>Q:HTTP/2的流(Stream)是什么？<ul>
+<li>它是二进制帧的双向传输序列，同一个消息往返的帧会分配一个唯一的流ID。在里面的是一串有先后顺序的数据帧，这些数据帧按照次序组装起来就是 HTTP/1 里的请求报文和响应报文</li>
+<li>因为「流」是虚拟的，实际上并不存在，所以 HTTP/2 就可以在一个 TCP 连接上用「流」同时发送多个「碎片化」的消息，这就是常说的“多路复用”（Multiplexing）——多个往返通信都复用一个连接来处理</li>
+<li>在「流」的层面上看，消息是一些有序的「帧」序列，而在「连接」的层面上看，消息是乱序收发的「帧」。多个请求/响应之间没有了顺序关系，不需要排队等待， 也就不会再出现「队头阻塞」问题，降低了延迟，大幅度提高了连接的利用率</li>
+<li><img src="https://img.shiqi-lu.tech/20210323130302.png"></li>
+<li>为了更好地利用连接，加大吞吐量，HTTP/2 还添加了一些控制帧来管理虚拟的「流」，实现了优先级和流量控制，这些特性也和 TCP 协议非常相似</li>
+<li>HTTP/2 还在一定程度上改变了传统的「请求 - 应答」工作模式，服务器不再是完全被动地响应请求，也可以新建「流」主动向客户端发送消息。比如，在浏览器刚请求 HTML 的时候就提前把可能会用到的 JS、CSS 文件发给客户端，减少等待的延迟，这被称为“服务器推送”（Server Push，也叫 Cache Push）</li>
+</ul>
+</li>
+</ul>
+<h1 id="31-时代之风（下）：HTTP-2内核剖析"><a href="#31-时代之风（下）：HTTP-2内核剖析" class="headerlink" title="31 | 时代之风（下）：HTTP/2内核剖析"></a>31 | 时代之风（下）：HTTP/2内核剖析</h1><ul>
+<li>Q:HTTP/2的连接前言(connection preface)是什么<ul>
+<li>由于 HTTP/2是基于 TLS，所以在正式收发数据之前，会有 TCP 握手和 TLS 握手，TLS 握手成功之后，客户端必须要发送一个连接前言用来确认建立 HTTP/2 连接</li>
+<li>这个连接前言是标准的HTTP/1请求报文，使用纯文本的ASCII码格式，请求方法是特别注册的一个关键字「PRI」，全文只有24个字节：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">PRI * HTTP&#x2F;2.0\r\n\r\nSM\r\n\r\n</span><br></pre></td></tr></table></figure></li>
+<li>在 Wireshark 里，HTTP/2 的连接前言被称为「Magic」，只要服务器收到这个「有魔力的字符串」，就知道客户端在 TLS 上想要的是 HTTP/2 协议，后面就会都使用 HTTP/2 的数据格式</li>
+</ul>
+</li>
+<li>Q:HTTP/2的头部压缩是怎样？<ul>
+<li>确立了连接之后，HTTP/2 就开始准备请求报文</li>
+<li>因为语义上它与 HTTP/1 兼容，所以报文还是由「Header+Body」构成的，但在请求发送前，必须要用「HPACK」算法来压缩头部数据</li>
+<li>「HPACK」算法是专门为压缩 HTTP 头部定制的算法，与 gzip、zlib 等压缩算法不同，它是一个“有状态”的算法，需要客户端和服务器各自维护一份“索引表”，压缩和解压缩就是查表和更新表的操作</li>
+<li>为了方便管理和压缩，HTTP/2 废除了原有的起始行概念，把起始行里面的请求方法、URI、状态码等统一转换成了头字段的形式，即「伪头字段」(pseudo-header fields)。并废除起始行里的版本号和错误原因短语</li>
+<li>伪头字段会在名字前加一个「:」，比如「:authority」、「:method」、「:status」，分别表示的是域名、请求方法和状态码</li>
+<li>现在HTTP报文头全都是「Key-Value」形式的字段，于是 HTTP/2 就为一些最常用的头字段定义了一个只读的静态表（Static Table），如下表，如数字「2」代表「GET」，数字「8」代表状态码200</li>
+<li><img src="https://img.shiqi-lu.tech/20210323144257.png"></li>
+<li>但如果表里只有 Key 没有 Value，或者是自定义字段根本找不到就要用到“动态表”（Dynamic Table），它添加在静态表后面，结构相同，但会在编码解码的时候随时更新</li>
+<li>如第一次发送请求时的「user-agent」字段长是一百多个字节，用哈夫曼压缩编码发送之后，客户端和服务器都更新自己的动态表，添加一个新的索引号「65」。那么下一次发送的时候就不用再重复发那么多字节了，只要用一个字节发送编号就好</li>
+<li><img src="https://img.shiqi-lu.tech/20210323144506.png"></li>
+<li>随着在 HTTP/2 连接上发送的报文越来越多，两边的「字典」也会越来越丰富，最终每次的头部字段都会变成一两个字节的代码，原来上千字节的头用几十个字节就可以表示了，压缩效果比 gzip 要好得多</li>
+</ul>
+</li>
+<li>Q:HTTP/2的二进制帧是怎样<ul>
+<li>头部数据压缩之后，HTTP/2 就要把报文拆成二进制的帧准备发送</li>
+<li>HTTP/2 的帧结构有点类似 TCP 的段或者 TLS 里的记录，但报头很小，只有 9 字节</li>
+<li>二进制的格式也保证了不会有歧义，而且使用位运算能够非常简单高效地解析</li>
+<li><img src="https://img.shiqi-lu.tech/20210323145002.png"></li>
+<li>帧开头是 3 个字节的长度（但不包括头的 9 个字节），默认上限是 2^14，最大是 2^24，也就是说 HTTP/2 的帧通常不超过 16K，最大是 16M</li>
+<li>长度后面的一个字节是帧类型，大致可分为数据帧和控制帧两类，HEADERS帧和DATA帧属于数据帧，存放的HTTP报文，而SETTINGS、PING、PRIORITY等则是用来管理流的控制帧</li>
+<li>HTTP/2 总共定义了 10 种类型的帧，但一个字节可以表示最多 256 种，所以也允许在标准之外定义其他类型实现功能扩展。比如 Google 的 gRPC 就利用了这个特点，定义了几种自用的新帧类型</li>
+<li>第5个字节是帧标志，可以保存8个标志位，携带简单的控制信息。常用的标志位有END_HEADERS表示头数据结束，相当于HTTP/1里头后的空行「\r\0」，END_STREAM表示单方向数据发送接受(EOS，End Of Stream)，相当于HTTP/1里Chunked分块结束标志「\0\r\n\r\n」</li>
+<li>报文投里最后4个字节是流标识符，即帧所属的「流」，接收方使用它就可从乱序的帧里识别出具有相同流ID的帧序列，按顺序组装起来就实现了虚拟的「流」</li>
+<li>流标识符虽然有4个字节，但最高位被保留不用，所以只有31位可使用，即流标识符的上限是2^31，大约21亿</li>
+</ul>
+</li>
+<li>Q:HTTP/2 的流与多路复用是怎样？<ul>
+<li>流是二进制帧的双向传输序列</li>
+<li>在 HTTP/2 连接上，虽然帧是乱序收发的，但只要它们都拥有相同的流 ID，就都属于一个流，而且在这个流里帧不是无序的，而是有着严格的先后顺序</li>
+<li>在概念上，一个 HTTP/2 的流就等同于一个 HTTP/1 里的「请求-应答」。在 HTTP/1 里一个「请求 - 响应」报文来回是一次 HTTP 通信，在 HTTP/2 里一个流也承载了相同的功能</li>
+</ul>
+</li>
+<li>Q:HTTP/2 的流有哪些特点呢<ul>
+<li>1.流是可并发的，一个 HTTP/2 连接上可以同时发出多个流传输数据，也就是并发多请求，实现“多路复用”</li>
+<li>2.客户端和服务器都可以创建流，双方互不干扰</li>
+<li>3.流是双向的，一个流里面客户端和服务器都可以发送或接收数据帧，也就是一个“请求 - 应答”来回</li>
+<li>4.流之间没有固定关系，彼此独立，但流内部的帧是有严格顺序的</li>
+<li>5.流可以设置优先级，让服务器优先处理，比如先传 HTML/CSS，后传图片，优化用户体验</li>
+<li>6.流 ID 不能重用，只能顺序递增，客户端发起的 ID 是奇数，服务器端发起的 ID 是偶数</li>
+<li>7.在流上发送“RST_STREAM”帧可以随时终止流，取消接收或发送</li>
+<li>8.第 0 号流比较特殊，不能关闭，也不能发送数据帧，只能发送控制帧，用于流量控制</li>
+</ul>
+</li>
+<li>Q:连接中无序的帧是如何依据流 ID 重组成流的<ul>
+<li>在 Wireshark 抓包里，就有“0、1、3”一共三个流，实际上就是分配了三个流 ID 号，把这些帧按编号分组，再排一下队，就成了流</li>
+<li><img src="https://img.shiqi-lu.tech/20210324075750.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210324075756.png"></li>
+<li>HTTP/2 在一个连接上使用多个流收发数据，那么它本身默认就会是长连接，所以永远不需要“Connection”头字段（keepalive 或 close）</li>
+<li>下载大文件的时候想取消接收，在 HTTP/1 里只能断开 TCP 连接重新“三次握手”，成本很高，而在 HTTP/2 里就可以简单地发送一个“RST_STREAM”中断流，而长连接会继续保持</li>
+<li>因为客户端和服务器两端都可以创建流，而流 ID 有奇数偶数和上限的区分，所以大多数的流 ID 都会是奇数，而且客户端在一个连接里最多只能发出 2^30，也就是 10 亿个请求</li>
+<li>ID 用完了可以再发一个控制帧“GOAWAY”，真正关闭 TCP 连接</li>
+</ul>
+</li>
+<li>Q:HTTP/2如何根据帧的标志位实现流状态转换<ul>
+<li><img src="https://img.shiqi-lu.tech/20210324080322.png"></li>
+<li>最开始的时候流都是空闲(idle)状态</li>
+<li>当客户端发送HEADERS帧后，有了流ID，流就进入了「打开」状态，两端都可以收发数据，然后客户端发送一个带「END_STREAM」标志位的帧，流就进入了「半关闭」状态。意味着客户端的请求数据已经发送完了，需要接受响应数据，而服务端也知道请求数据接收完毕，之后就要内部处理，再发送响应数据</li>
+<li>响应数据发完了之后，也要带上「END_STREAM」标志位，表示数据发送完毕，这样流两端就都进入了关闭状态，流就结束了</li>
+<li>流 ID 不能重用，所以流的生命周期就是 HTTP/1 里的一次完整的「请求 - 应答」，流关闭就是一次通信结束</li>
+<li>下一次再发请求就要开一个新流（而不是新连接），流 ID 不断增加，直到到达上限，发送「GOAWAY」帧开一个新的 TCP 连接，流 ID 就又可以重头计数</li>
+<li>因为流可以并发，所以 HTTP/2 就可以实现无阻塞的多路复用</li>
+</ul>
+</li>
+</ul>
+<h1 id="32-未来之路：HTTP-3展望"><a href="#32-未来之路：HTTP-3展望" class="headerlink" title="32 | 未来之路：HTTP/3展望"></a>32 | 未来之路：HTTP/3展望</h1><ul>
+<li>Q:为什么HTTP/2没有完全解决队头阻塞呢？<ul>
+<li>因为 HTTP/2 虽然使用“帧”“流”“多路复用”，没有了“队头阻塞”，但这些手段都是在应用层里，而在下层，也就是 TCP 协议里，还是会发生“队头阻塞”</li>
+<li>从协议栈的角度来仔细看一下。在 HTTP/2 把多个“请求 - 响应”分解成流，交给 TCP 后，TCP 会再拆成更小的包依次发送（其实在 TCP 里应该叫 segment，也就 是“段”）</li>
+<li>在网络良好的情况下，包可以很快送达目的地。但如果网络质量比较差，而 TCP 为了保证可靠传输，有个特别的“丢包重传”机制，丢失的包必须要等待重新传输确认，其他的包即使已经收到了，也只能放在缓冲区里，上层的应用拿不出来，只能等待</li>
+</ul>
+</li>
+<li>Q:不同HTTP协议栈图的对比<ul>
+<li><img src="https://img.shiqi-lu.tech/20210324100732.png"></li>
+</ul>
+</li>
+<li>Q:QUIC有什么特点？<ul>
+<li>基于 UDP，而 UDP 是无连接的，不需要握手和挥手，所以比 TCP 快</li>
+<li>基于 UDP 实现了可靠传输，保证数据一定能够抵达目的地。它还引入了类似 HTTP/2 的“流”和“多路复用”，单个“流”是有序的，可能会因为丢包而阻塞，但其他“流”不会受到影响</li>
+<li>为了防止网络上的中间设备（Middle Box）识别协议的细节，QUIC 全面采用加密通信，可以很好地抵御窜改和“协议僵化”（ossification）</li>
+<li>直接应用了 TLS1.3，也就获得了 0-RTT、1-RTT 连接的好处</li>
+<li>不是建立在 TLS 之上，而是内部“包含”了 TLS。它使用自己的帧“接管”了 TLS 里的“记录”，握手消息、警报消息都不使用 TLS 记录，直接封装成 QUIC 的帧发送，省掉了一次开销</li>
+</ul>
+</li>
+<li>Q:QUIC内部介绍<ul>
+<li>QUIC 的基本数据传输单位是包（packet）和帧（frame），一个包由多个帧组成，包面向的是“连接”，帧面向的是“流”</li>
+<li>QUIC 使用不透明的“连接 ID”来标记通信的两个端点，客户端和服务器可以自行选择一组 ID 来标记自己，这样就解除了 TCP 里连接对“IP 地址 + 端口”（即常说的四元组）的强绑定，支持“连接迁移”（Connection Migration）</li>
+<li><img src="https://img.shiqi-lu.tech/20210324103531.png"></li>
+<li>即当 IP 地址会发生变化，TCP 就必须重新建立连接。而 QUIC 连接里的两端连接 ID 不会变，所以连接在“逻辑上”没有中断，它就可以在新的 IP 地址上继续使用之前的连接，消除重连的成本，实现连接的无缝迁移</li>
+<li>QUIC 的帧里有多种类型，PING、ACK 等帧用于管理连接，而 STREAM 帧专门用来实流</li>
+<li>QUIC 里的流与 HTTP/2 的流非常相似，也是帧的序列，但 HTTP/2 里的流都是双向的，而 QUIC 则分为双向流和单向流</li>
+<li><img src="https://img.shiqi-lu.tech/20210324103702.png"></li>
+<li>QUIC 帧普遍采用变长编码，最少只要 1 个字节，最多有 8 个字节。流 ID 的最大可用位数是 62，数量上比 HTTP/2 的 2^31 大大增加</li>
+<li>流 ID 还保留了最低两位用作标志，第 1 位标记流的发起者，0 表示客户端，1 表示服务器；第 2 位标记流的方向，0 表示双向流，1 表示单向流</li>
+<li>所以 QUIC 流 ID 的奇偶性质和 HTTP/2 刚好相反，客户端的 ID 是偶数，从 0 开始计数</li>
+</ul>
+</li>
+<li>Q:HTTP/3 协议<ul>
+<li>因为 QUIC 本身就已经支持了加密、流和多路复用，所以 HTTP/3 的工作减轻了很多，把流控制都交给 QUIC 去做。调用的不再是 TLS 的安全接口，也不是 Socket API，而是专门的 QUIC 函数</li>
+<li>HTTP/3 里使用QUIC流来发送「请求 - 响应」</li>
+<li>HTTP/3 里的“双向流”可以完全对应到 HTTP/2 的流，而“单向流”在 HTTP/3 里用来实现控制和推送，近似地对应 HTTP/2 的 0 号流</li>
+<li>HTTP/3 里帧的结构变简单了。帧头只有两个字段：类型和长度，而且同样都采用变长编码，最小只需要两个字节</li>
+<li><img src="https://img.shiqi-lu.tech/20210324103944.png"></li>
+<li>HTTP/3 里的帧仍然分成数据帧和控制帧两类，HEADERS 帧和 DATA 帧传输数据，但其他一些帧因为在下层的 QUIC 里有了替代，所以在 HTTP/3 里就都消失了，比如 RST_STREAM、WINDOW_UPDATE、PING 等</li>
+<li>头部压缩算法在 HTTP/3 里升级成了“QPACK”，使用方式上也做了改变。虽然也分成静态表和动态表，但在流上发送 HEADERS 帧时不能更新字段，只能引用，索引表的更新需要在专门的单向流上发送指令来管理，解决了 HPACK 的“队头阻塞”问题</li>
+<li>另外，QPACK 的字典也做了优化，静态表由之前的 61 个增加到了 98 个，而且序号从 0 开始，也就是说“:authority”的编号是 0</li>
+</ul>
+</li>
+<li>Q:HTTP/3 服务发现是怎样的呢<ul>
+<li>用到 HTTP/2 里的“扩展帧”了。浏览器需要先用 HTTP/2 协议连接服务器，然后服务器可以在启动 HTTP/2 连接后发送一个“Alt-Svc”帧，包含一个“h3=host:port”的字符串，告诉浏览器在另一个端点上提供等价的 HTTP/3 服务。浏览器收到“Alt-Svc”帧，会使用 QUIC 异步连接指定的端口，如果连接成功，就会断开 HTTP/2 连接，改用新的 HTTP/3 收发数据</li>
+</ul>
+</li>
+</ul>
+<h1 id="33-我应该迁移到HTTP-2吗？"><a href="#33-我应该迁移到HTTP-2吗？" class="headerlink" title="33 | 我应该迁移到HTTP/2吗？"></a>33 | 我应该迁移到HTTP/2吗？</h1><ul>
+<li>Q:HTTP/2 的优点是什么<ul>
+<li>1.完全保持了与 HTTP/1 的兼容，在语义上没有任何变化</li>
+<li>2.对 HTTPS 在各方面都做了强化。下层的 TLS 至少是 1.2，而且只能用前向安全的密码套件（即 ECDHE），这同时也就默认实现了“TLS False Start”，支持 1-RTT 握手，所以不需要再加额外的配置就可以自动实现 HTTPS 加速</li>
+<li>3.在 HTTP/1 里只能压缩 body，而 HTTP/2 则可以用 HPACK 算法压缩 header，这对高流量的网站非常有价值，有数据表明能节省大概 5%~10% 的流量</li>
+<li>4.HTTP/2 的“多路复用”特性要求对一个域名（或者 IP）只用一个 TCP 连接，所有的数据都在这一个连接上传输，这样不仅节约了客户端、服务器和网络的资源，还可以把带宽跑满</li>
+<li>5.“优先级”可以让客户端告诉服务器，哪个文件更重要，更需要优先传输，服务器就可以调高流的优先级，合理地分配有限的带宽资源，让高优先级的 HTML、图片更快地到达客户端，尽早加载显示</li>
+<li>6.“服务器推送”也是降低延迟的有效手段，它不需要客户端预先请求，服务器直接就发给客户端，这就省去了客户端解析 HTML 再请求的时间</li>
+</ul>
+</li>
+<li>Q:HTTP/2 的缺点是什么<ul>
+<li>在 TCP 级别还是存在“队头阻塞”的问题。所以，如果网络连接质量差，发生丢包，那么 TCP 会等待重传，传输速度就会降低</li>
+<li>在移动网络中发生 IP 地址切换的时候，下层的 TCP 必须重新建连，要再次“握手”，经历“慢启动”，而且之前连接里积累的 HPACK 字典也都消失了，必须重头开始计算，导致带宽浪费和时延</li>
+<li>HTTP/2 对一个域名只开一个连接，所以一旦这个连接出问题，那么整个网站的体验也就变差了</li>
+</ul>
+</li>
+<li>Q:如何配置HTTP/2<ul>
+<li>Nginx 里启用 HTTP/2 只需要在 server 配置里再多加一个参数就可以搞定<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       443 ssl http2;</span><br><span class="line"> </span><br><span class="line">    server_name  www.xxx.net;</span><br><span class="line">    </span><br><span class="line">    ssl_certificate         xxx.crt;</span><br><span class="line">    ssl_certificate_key     xxx.key;</span><br></pre></td></tr></table></figure></li>
+<li>“listen”指令在“ssl”后面多了一个“http2”，这就表示在 443 端口上开启了 SSL 加密，然后再启用 HTTP/2</li>
+<li>配置服务器推送特性可以使用指令“http2_push”和“http2_push_preload”<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http2_push         &#x2F;style&#x2F;xxx.css;</span><br><span class="line">http2_push_preload on;</span><br></pre></td></tr></table></figure></li>
+<li>不过如何合理地配置推送是个难题，如果推送给浏览器不需要的资源，反而浪费了带宽</li>
+<li>优化方面，HTTPS 的一些策略依然适用，比如精简密码套件、ECC 证书、会话复用、HSTS 减少重定向跳转等等</li>
+<li>但还有一些优化手段在 HTTP/2 里是不适用的，而且还会有反效果，比如说常见的精灵图（Spriting）、资源内联（inlining）、域名分片（Sharding）等，至于原因是什么，我把它留给你自己去思考（提示，与缓存有关）</li>
+<li>还要注意一点，HTTP/2 默认启用 header 压缩（HPACK），但并没有默认启用 body 压缩，所以不要忘了在 Nginx 配置文件里加上“gzip”指令，压缩 HTML、JS 等文本数据</li>
+</ul>
+</li>
+<li>Q:HTTP/2 的“服务发现”，浏览器怎么知道服务器支持 HTTP/2 呢<ul>
+<li>在 TLS 的扩展里，使用ALPN（Application Layer Protocol Negotiation）来与服务器就 TLS 上跑的应用协议进行“协商”</li>
+<li>客户端在发起“Client Hello”握手的时候，后面会带上一个“ALPN”扩展，里面按照优先顺序列出客户端支持的应用协议</li>
+<li>如下图，最优先的是“h2”，其次是“http/1.1”，以前还有“spdy”，以后还可能会有“h3”</li>
+<li><img src="https://img.shiqi-lu.tech/20210324110303.png"></li>
+<li>服务器看到 ALPN 扩展以后就可以从列表里选择一种应用协议，在“Server Hello”里也带上“ALPN”扩展，告诉客户端服务器决定使用的是哪一种。因为我们在 Nginx 配置里使用了 HTTP/2 协议，所以在这里它选择的就是“h2”</li>
+<li><img src="https://img.shiqi-lu.tech/20210324110315.png"></li>
+<li>这样在 TLS 握手结束后，客户端和服务器就通过“ALPN”完成了应用层的协议协商，后面就可以使用 HTTP/2 通信了</li>
 </ul>
 </li>
 </ul>
