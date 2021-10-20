@@ -22,25 +22,41 @@
     var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="roam2anki用来把Roam Research的笔记转成anki进行记忆">
+  <meta name="description" content="包括如下目录学习笔记：2、创业初期，技术如何选型。3、框架组件要不要自研，什么时候自研？4、容量设计：流量高低，对架构究竟有什么影响？5、伪分布式：你以为，多机就是分布式？">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自研小工具roam2anki介绍">
-<meta property="og:url" content="http://shiqi-lu.tech/roam2anki-intro/index.html">
+<meta property="og:title" content="《沈剑架构师训练营》第2章 - 接入层架构">
+<meta property="og:url" content="http://shiqi-lu.tech/arch-sj-2/index.html">
 <meta property="og:site_name" content="每天净瞎搞">
-<meta property="og:description" content="roam2anki用来把Roam Research的笔记转成anki进行记忆">
+<meta property="og:description" content="包括如下目录学习笔记：2、创业初期，技术如何选型。3、框架组件要不要自研，什么时候自研？4、容量设计：流量高低，对架构究竟有什么影响？5、伪分布式：你以为，多机就是分布式？">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210127160319.jpeg">
-<meta property="article:published_time" content="2020-12-12T08:01:50.000Z">
-<meta property="article:modified_time" content="2020-12-12T08:01:50.000Z">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210902211250.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210902211738.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210902213858.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905173449.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905173524.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905174112.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905174223.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905174340.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905174600.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905175525.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905175851.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905222045.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210905222719.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906093657.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906095210.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906095522.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906100812.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906102011.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906102148.png">
+<meta property="article:published_time" content="2021-09-09T12:00:00.000Z">
+<meta property="article:modified_time" content="2021-09-09T12:00:00.000Z">
 <meta property="article:author" content="Shiqi Lu">
-<meta property="article:tag" content="学习">
-<meta property="article:tag" content="Roam Research">
-<meta property="article:tag" content="anki">
+<meta property="article:tag" content="架构">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210127160319.jpeg">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210902211250.png">
 
 
-<link rel="canonical" href="http://shiqi-lu.tech/roam2anki-intro/">
+<link rel="canonical" href="http://shiqi-lu.tech/arch-sj-2/">
 
 
 <script data-pjax class="page-configurations">
@@ -53,7 +69,7 @@
   };
 </script>
 
-  <title>自研小工具roam2anki介绍 | 每天净瞎搞</title>
+  <title>《沈剑架构师训练营》第2章 - 接入层架构 | 每天净瞎搞</title>
   
 
 
@@ -209,7 +225,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#roam2anki"><span class="nav-number">1.</span> <span class="nav-text">roam2anki</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Github"><span class="nav-number">2.</span> <span class="nav-text">Github</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%A8%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8"><span class="nav-number">5.</span> <span class="nav-text">功能列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%90%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">限制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E8%AF%B4%E6%98%8E"><span class="nav-number">7.</span> <span class="nav-text">其它说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">8.</span> <span class="nav-text">依赖</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#6%E3%80%81%E6%8E%A5%E5%85%A5%E5%B1%82%EF%BC%9A%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%8C%E6%88%91%E6%9C%89%E8%AF%9D%E8%A6%81%E8%AF%B4"><span class="nav-text">6、接入层：反向代理，负载均衡，我有话要说</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7%E3%80%81DNS%E8%BD%AE%E8%AF%A2-%E4%BB%A5%E5%8F%8A%E6%8E%A5%E5%85%A5%E5%B1%82%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B"><span class="nav-text">7、DNS轮询,以及接入层架构演进</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8%E3%80%81%E6%8E%A5%E5%85%A5%E5%B1%82%EF%BC%9Asession%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%8C%E8%A6%81%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%EF%BC%9F"><span class="nav-text">8、接入层：session一致性，要如何保证？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9%E3%80%81%E6%8E%A5%E5%85%A5%E5%B1%82%EF%BC%9A%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%B0%B1%E8%BF%91%E8%AE%BF%E9%97%AE%EF%BC%8CCDN%E6%9E%B6%E6%9E%84%E8%B6%A3%E8%B0%88"><span class="nav-text">9、接入层：如何实现就近访问，CDN架构趣谈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10%E3%80%81TCP%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%8C%E8%AF%A5%E6%80%8E%E4%B9%88%E7%8E%A9%EF%BC%9F"><span class="nav-text">10、TCP负载均衡，该怎么玩？</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -295,7 +311,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/roam2anki-intro/">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/arch-sj-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
@@ -311,7 +327,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          自研小工具roam2anki介绍
+          《沈剑架构师训练营》第2章 - 接入层架构
         </h1>
 
         <div class="post-meta-container">
@@ -322,7 +338,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-12-12 16:01:50" itemprop="dateCreated datePublished" datetime="2020-12-12T16:01:50+08:00">2020-12-12</time>
+      <time title="创建时间：2021-09-09 20:00:00" itemprop="dateCreated datePublished" datetime="2021-09-09T20:00:00+08:00">2021-09-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -330,12 +346,12 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%AD%A6%E4%B9%A0%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">学习工具</span></a>
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
         </span>
     </span>
 
   
-    <span id="/roam2anki-intro/" class="post-meta-item leancloud_visitors" data-flag-title="自研小工具roam2anki介绍" title="阅读次数">
+    <span id="/arch-sj-2/" class="post-meta-item leancloud_visitors" data-flag-title="《沈剑架构师训练营》第2章 - 接入层架构" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -350,8 +366,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/roam2anki-intro/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/roam2anki-intro/" itemprop="commentCount"></span>
+    <a title="valine" href="/arch-sj-2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/arch-sj-2/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -363,18 +379,18 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
+      <span>2.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
-            <div class="post-description">roam2anki用来把Roam Research的笔记转成anki进行记忆</div>
+            <div class="post-description">包括如下目录学习笔记：2、创业初期，技术如何选型。3、框架组件要不要自研，什么时候自研？4、容量设计：流量高低，对架构究竟有什么影响？5、伪分布式：你以为，多机就是分布式？</div>
         </div>
       </header>
 
@@ -382,42 +398,223 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="roam2anki"><a href="#roam2anki" class="headerlink" title="roam2anki"></a>roam2anki</h1><p>roam2anki用来把Roam Research的笔记转成anki进行记忆</p>
-<h1 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h1><p><a target="_blank" rel="noopener" href="https://github.com/shiqi-lu/roam2anki">Github</a></p>
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>已经完成所有规划的功能，已支持roam中的所有样式，包括行内、行间公式、代码块、高亮、加粗、图片、超链接等等，其中第一级会解析为问题，第二级和往后级别均解析为第一级的答案</p>
-<h1 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h1><ol>
-<li>下载roam2anki.py和roam2anki模板.apkg</li>
-<li>第一次操作先在anki中导入roam2anki模板.apkg</li>
-<li>新建一个txt文件如example.txt，把要导入的roam字段粘贴到文本中，注意第一级为问题，第二级以下都是答案</li>
-<li>运行python脚本<code>python roam2anki.py example.txt</code>，程序把转换成对应的只有两列的csv文件，问题是第一列，回答是第二列</li>
-<li>把csv导入到anki中，保持默认设置即可。即fields separated by: Tab；勾选上Allow HTML in fields；Field 1为正面；field 2为背面</li>
-</ol>
-<p><img src="https://img.shiqi-lu.tech/20210127160319.jpeg"></p>
-<h1 id="功能列表"><a href="#功能列表" class="headerlink" title="功能列表"></a>功能列表</h1><ul>
-<li><input checked="" disabled="" type="checkbox"> 支持所有样式：加粗、斜体、高亮、删字符、行内代码、超链接</li>
-<li><input checked="" disabled="" type="checkbox"> 支持图片并居中，支持引用图片</li>
-<li><input checked="" disabled="" type="checkbox"> 支持答案里最高10级的缩进</li>
-<li><input checked="" disabled="" type="checkbox"> 问题和答案支持块内多行</li>
-<li><input checked="" disabled="" type="checkbox"> 删除alias和双中括号</li>
-<li><input checked="" disabled="" type="checkbox"> 把同级问题合并成anki同一个问题</li>
-<li><input checked="" disabled="" type="checkbox"> 支持问题和答案的行内公式、引用的行内公式</li>
-<li><input checked="" disabled="" type="checkbox"> 支持多行行间公式，引用的多行行间公式，同时支持块内的新起的多行行间公式，但要注意新起一行，不能续着写</li>
-<li><input checked="" disabled="" type="checkbox"> 支持代码块导入和语法高亮，支持引用代码块，若有必要并可强制选择代码块高亮语言</li>
-<li><input checked="" disabled="" type="checkbox"> 支持标题字号h1到h3</li>
-<li><input checked="" disabled="" type="checkbox"> 涉及到html的&lt;、&gt;、&amp;、”等字符放到anki前进行转义，保证所有字符都能显示</li>
+        <h1 id="6、接入层：反向代理，负载均衡，我有话要说"><a href="#6、接入层：反向代理，负载均衡，我有话要说" class="headerlink" title="6、接入层：反向代理，负载均衡，我有话要说"></a>6、接入层：反向代理，负载均衡，我有话要说</h1><ul>
+<li>no6：代理和反向代理是什么？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210902211250.png"></li>
 </ul>
-<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><ul>
-<li>答案和问题的代码块必须要新起一个块或块内新起一行，且这一行必须以3个反引号开始，即不支持代码块放在一行中间，原因是难以解析，且代码块展示就是会新起一行，就人工新起一行吧，结尾也要新起一行</li>
-<li>只支持无序列表(Bulleted List)，不支持有序列表(Numbered List)和文档(Document)，原因是有序列表难以判断和解析，支持文档模式会和现有的块内多行的判断有歧义</li>
+</li>
+<li>no6：一般用什么做反向代理？<ul>
+<li>软件层面：nginx/apache</li>
+<li>操作系统层面：LVS</li>
+<li>硬件：F5</li>
 </ul>
-<h1 id="其它说明"><a href="#其它说明" class="headerlink" title="其它说明"></a>其它说明</h1><ul>
-<li>roam2anki.py提供了批量转换的方法，第二个选项<code>python roam2anki.py example ...</code>，若example为一个文件夹，会寻找example下的所有以.txt结尾的文件进行转换，后续可接多个文件或文件夹</li>
-<li>roam2anki只支持语法正确时的解析，即保证在roam中能正确解析的，导出anki后也正确解析，不正确的语法，或故意为难解析器的，，我也没办法哇</li>
-<li>roam2anki目前是作者写给自用，若使用过程中发现有解析出来的bug，请提一个issue</li>
+</li>
+<li>no6：反向代理能解决什么问题？带来了什么新的问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210902211738.png"></li>
+<li>解决的问题<ul>
+<li>1.子 web 系统的性能，不再受到单台机器资源限制，可以扩展</li>
+<li>2.子 web 系统，实现了高可用(伪集群 -&gt; 真集群)</li>
 </ul>
-<h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><ul>
-<li>python &gt;= 3.7</li>
-<li>pandas &gt;= 1.0.1</li>
+</li>
+<li>新问题<ul>
+<li>1.多个 web 节点，带来负载均衡问题</li>
+<li>2.反向代理层需要解决 高可用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no6：反向代理如何实施负载均衡？<ul>
+<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
+<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
+</ul>
+</li>
+<li>no6：反向代理如何实现高可用呢？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210902213858.png"></li>
+<li>使用两个节点使用相同的虚 IP，同时使用 keepalived 来检测 nginx 的可用性，由 nginx 把请求转发给后端实际处理的 web-server</li>
+<li>缺点：两个 nginx 实际上只有一台在对外提供服务</li>
+</ul>
+</li>
+</ul>
+<h1 id="7、DNS轮询-以及接入层架构演进"><a href="#7、DNS轮询-以及接入层架构演进" class="headerlink" title="7、DNS轮询,以及接入层架构演进"></a>7、DNS轮询,以及接入层架构演进</h1><ul>
+<li>no7：接入层的单体架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905173449.png"></li>
+</ul>
+</li>
+<li>no7：接入层的单体架构-&gt;DNS 轮询<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905173524.png"></li>
+</ul>
+</li>
+<li>no7：DNS轮询的缺点是？<ul>
+<li>1.系统仍然是非高可用的，只是局部高可用</li>
+<li>2.扩容不是实时的</li>
+<li>3.暴露了太多的外网 IP</li>
+</ul>
+</li>
+<li>no7：接入层的DNS 轮询-&gt;反向代理<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905174112.png"></li>
+</ul>
+</li>
+<li>no7：接入层的反向代理-&gt;高可用反向代理<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905174223.png"></li>
+</ul>
+</li>
+<li>no7：接入层的高可用反向代理-&gt;多层高可用反向代理<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905174340.png"></li>
+<li>反向代理层可使用 lvs 和 f5</li>
+</ul>
+</li>
+<li>no7：接入层的多层高可用反向代理 -&gt; 多层高可用反向代理+DNS 轮询<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905174600.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="8、接入层：session一致性，要如何保证？"><a href="#8、接入层：session一致性，要如何保证？" class="headerlink" title="8、接入层：session一致性，要如何保证？"></a>8、接入层：session一致性，要如何保证？</h1><ul>
+<li>no8：什么是 session？<ul>
+<li>服务器会为每个用户创建一个会话，存储用户的相关信息，以便多次请求，能够定位到同一个上下文</li>
+<li>web 开发中，web-server 可以自动地为同一个浏览器的访问用户自动创建 session，提供数据存储功能</li>
+<li>最常见的，会把用户登录信息，用户信息存储到 session 中，以保持登录状态</li>
+</ul>
+</li>
+<li>no8：什么是 session 一致性问题？<ul>
+<li>只要用户不重启浏览器，用户的每一次 http 短连接都能定位到session，定位到同一台 web-server 以保持会话</li>
+</ul>
+</li>
+<li>no8：解决一致性问题的方案？<ul>
+<li>all in one 架构</li>
+<li>反向代理架构<ul>
+<li>session 同步法</li>
+<li>客户端存储法</li>
+<li>反向代理 hash 一致性</li>
+<li>后端统一存储法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no8：反向代理架构，保证高可用的同时，保证 session 路由的一致性的session 同步法，即站点集群 session 同步<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905175525.png"></li>
+<li>优点<ul>
+<li>由 web-server 支持，应用程序不需要修改任何代码</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>session 的同步需要占用带宽，且数据量受到内存限制，无法进行水平扩展，仅有少量服务器没问题，多台 web-server 性能急剧下降</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no8：反向代理架构，保证高可用的同时，保证 session 路由的一致性的客户端存储法，把 session 存储在客户端，把 session 存储在浏览器的 cookie<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905175851.png"></li>
+<li>优点<ul>
+<li>web-server 不需要存储 sesssion</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>每次 http 请求都需要携带 session，占用外网带宽</li>
+<li>存在泄露、篡改、窃取等的安全隐患</li>
+<li>存储量的大小受到浏览器端上的限制</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no8：反向代理架构，保证高可用的同时，保证 session 路由的一致性的反向代理 hash 一致性(四层，七层)，使用反向代理路由来保障<ul>
+<li>使用 ip_hash 或 session_id hash 等</li>
+<li><img src="https://img.shiqi-lu.tech/20210905222045.png"></li>
+<li>优点<ul>
+<li>仅需要修改 nginx 的配置，不需要修改应用层的代码，负载是均衡的</li>
+<li>能很好支持 web-server 水平扩展</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>一旦 web-server 重启，会丢失一部分 session</li>
+<li>如果 web-server 水平扩展，nginx 会进行重新 hash，session 重新分布，会导致一部分用户路由不到正确的 session</li>
+<li>以上两点等同于 session 失效，也是可以接受的</li>
+</ul>
+</li>
+<li>建议<ul>
+<li>推荐使用四层的 hash，让专业的软件做专业的事情，反向代理负责路由转发，尽量不要引入业务层的业务属性，http 请求中的属性最好不要让 nginx 关注</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no8：反向代理架构，保证高可用的同时，保证 session 路由的一致性的后端统一存储法，不存储在站点，统一存储在后端(数据库，缓存)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210905222719.png"></li>
+<li>优点<ul>
+<li>没有安全隐患，session 不用在外网上传输了</li>
+<li>可实现 web-server 层的任意水平扩展</li>
+<li>当数据量增大时，数据库或缓存进行水平切分即可</li>
+<li>web-server 扩容或重启时，都不会有 session 的丢失</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>增加了一次网络调用</li>
+<li>需要修改应用层的代码</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="9、接入层：如何实现就近访问，CDN架构趣谈"><a href="#9、接入层：如何实现就近访问，CDN架构趣谈" class="headerlink" title="9、接入层：如何实现就近访问，CDN架构趣谈"></a>9、接入层：如何实现就近访问，CDN架构趣谈</h1><ul>
+<li>no9：什么是 CDN(Content Delivery Network)<ul>
+<li>即内容分发网络，它主要依靠部署在各地的服务器，通过内容分发，访问调度等技术，使用户就近获取所需的内容，降低网络阻塞，提高用户的访问速度</li>
+<li>适合静态资源的加速访问(js，css，jpg 等)</li>
+<li>核心是「就近访问」</li>
+</ul>
+</li>
+<li>no9：什么是「智能 DNS」？<ul>
+<li>根据用户的访问 IP 来决定返回的域名 IP</li>
+</ul>
+</li>
+<li>no9：CDN 的架构组成有哪三部分？<ul>
+<li>源：数据库</li>
+<li>镜像：多个「穿透缓存」</li>
+<li>智能 DNS：决定我们访问哪一个</li>
+<li><img src="https://img.shiqi-lu.tech/20210906093657.png"></li>
+</ul>
+</li>
+<li>no9：源里的abc.js更新了，镜像里的abc.js没更新，数据不一致,怎么办?<ul>
+<li>方案一：源更新的时候，过期掉镜像里的abc.js (缓存淘汰)<ul>
+<li>需要在源里维护一个镜像 list 的配置，每次源有静态文件更新的时候需要依次淘汰相关的镜像资源，是一个「反向依赖」的耦合设计，即源依赖了镜像，好的方案应该是源不需要知道镜像的配置</li>
+</ul>
+</li>
+<li>方案二：等待镜像里的abc.js过期(缓存过期)</li>
+<li>方案三：版本号，升级为 abc_v1.2.3.js，就能解决(推荐)</li>
+</ul>
+</li>
+<li>no9：当资源更新，是采用源推送还是镜像拉取的方式？<ul>
+<li>方案一：资源更新的时候，源一次性推送所有镜像(反向耦合设计)</li>
+<li>方案二：发现资源缺失时，镜像主动去源拉取(推荐)</li>
+</ul>
+</li>
+</ul>
+<h1 id="10、TCP负载均衡，该怎么玩？"><a href="#10、TCP负载均衡，该怎么玩？" class="headerlink" title="10、TCP负载均衡，该怎么玩？"></a>10、TCP负载均衡，该怎么玩？</h1><ul>
+<li>no10：TCP负载均衡的单体架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906095210.png"></li>
+<li>优点：可以保证请求的一致性</li>
+<li>缺失：没办法扩展，没办法保证高可用</li>
+</ul>
+</li>
+<li>no10：TCP负载均衡的客户端负载均衡(内置集群配置)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906095522.png"></li>
+<li>客户端内置服务器集群的配置，通过搭建 tcp 集群来保证高可用</li>
+<li>缺点，每次连接前要多一次 DNS 访问，难以预防 DNS 劫持，解决方法是直接把 IP 配置到客户端中，但这样的扩展性比较差</li>
+</ul>
+</li>
+<li>no10：TCP负载均衡的服务端负载均衡(静态 IP 列表)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906100812.png"></li>
+<li>新增一个 http 接口，将客户端的 IP 配置与负载均衡策略放到服务端的 http 接口上，客户端每一次访问 tcp-server 之前，首先调用新增的一个 http 的获取 tcp-server ip 的接口，对于客户端而言，这个 http 接口只返回一个可用的tcp 服务器的 ip</li>
+<li>缺点：如果 tcp-server 挂了，web-server 是无法感知的</li>
+</ul>
+</li>
+<li>no10：TCP负载均衡的服务端负载均衡(服务状态上报)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906102011.png"></li>
+<li>缺点：反向依赖耦合</li>
+</ul>
+</li>
+<li>no10：TCP负载均衡的服务端负载均衡(服务状态拉取)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906102148.png"></li>
+<li>tcp-server就独立与解耦了，只需要专注于自身 tcp-server 业务相关的功能即可，而高可用，负载均衡，扩展性，存活性，都由 web-server 这个子系统去实施</li>
+</ul>
+</li>
 </ul>
 
     </div>
@@ -454,7 +651,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://shiqi-lu.tech/roam2anki-intro/" title="自研小工具roam2anki介绍">http://shiqi-lu.tech/roam2anki-intro/</a>
+      <a href="http://shiqi-lu.tech/arch-sj-2/" title="《沈剑架构师训练营》第2章 - 接入层架构">http://shiqi-lu.tech/arch-sj-2/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -463,23 +660,18 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag"># 学习</a>
-              <a href="/tags/Roam-Research/" rel="tag"># Roam Research</a>
-              <a href="/tags/anki/" rel="tag"># anki</a>
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/gramma13-15/" rel="prev" title="恶魔奶爸语法13-15课">
-                  <i class="fa fa-chevron-left"></i> 恶魔奶爸语法13-15课
+                <a href="/arch-sj-1/" rel="prev" title="《沈剑架构师训练营》第1章 - 技术选型">
+                  <i class="fa fa-chevron-left"></i> 《沈剑架构师训练营》第1章 - 技术选型
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/off-time/" rel="next" title="《OFF学》读书笔记">
-                  《OFF学》读书笔记 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -628,7 +820,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({
       el  : '#valine-comments',
-      path: "/roam2anki-intro/",
+      path: "/arch-sj-2/",
     }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
     ));
   }, window.Valine);
