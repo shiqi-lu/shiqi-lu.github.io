@@ -509,6 +509,194 @@
       </tags>
   </entry>
   <entry>
+    <title>类别不平衡问题的方法汇总</title>
+    <url>/class-imbalance/</url>
+    <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
+<li>指分类任务中不同类别的训练样例数目差别很大的情况</li>
+<li>若不同类别的训练样例数目稍有差别，通常影响不大，但若差别很大，则会对学习过程造成困扰。例如有998个反例，但是正例只有2个，那么学习方法只需要返回一个永远将新样本预测为反例的学习器，就能达到99.8%的精度；然而这样的学习器往往没有价值，因为它不能预测出任何正例</li>
+</ul>
+<h1 id="上采样-过采样-Oversampling"><a href="#上采样-过采样-Oversampling" class="headerlink" title="上采样(过采样, Oversampling)"></a>上采样(过采样, Oversampling)</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>对训练集中的少数类进行“过采样”，即增加一些少数类样本使得正、反例数目接近，然后再进行学习</li>
+</ul>
+<h2 id="Random-Oversampling-随机上采样"><a href="#Random-Oversampling-随机上采样" class="headerlink" title="Random Oversampling(随机上采样)"></a>Random Oversampling(随机上采样)</h2><ul>
+<li>简单复制样本的策略来增加少数类样本，容易产生模型过拟合的问题</li>
+</ul>
+<h2 id="SMOTE"><a href="#SMOTE" class="headerlink" title="SMOTE"></a>SMOTE</h2><ul>
+<li>即合成少数类过采样技术(Synthetic Minority Oversampling Technique)，是基于随机采样算法的一种改进，其基本思想是对少数类样本进行分析并根据少数类样本人工合成新样本添加到数据集中</li>
+</ul>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>1.对于少数类中每一个样本$x_i$，以欧氏距离为标准计算它到少数类样本集$S_{min}$中所有样本的距离，得到其k近邻</li>
+<li>2.根据样本不平衡比例设置一个采样比例以确定采样倍率N，对于每一个少数类样本$x_i$，从其k近邻中随机选择若干个样本，假设选择的近邻为$\tilde{x}$。</li>
+<li>3.对于每一个随机选出的近邻$\tilde{x}$，分别于原样本按照如下的公式构建新的样本</li>
+<li>$$x_{n e w}=x+\operatorname{rand}(0,1) \times |\tilde{x}-x|$$</li>
+<li><img src="https://img.shiqi-lu.tech/20201019195529.png?imageView2/2/h/250"></li>
+</ul>
+<h3 id="SMOTE的问题"><a href="#SMOTE的问题" class="headerlink" title="SMOTE的问题"></a>SMOTE的问题</h3><ul>
+<li>随机选取少数类样本用以合成新样本，而不考虑周边样本的情况<ul>
+<li>1.如果选取的少数类样本周围都是少数类样本，则新合成的样本不会提供太多有用信息。就像SVM中远离margin的点对决策边界影响不大</li>
+<li>2.如果选取的少数类样本周围都是多数类样本，这类的样本可能是噪声，则新合成的样本会与周围的多数类样本产生大部分重叠，导致分类困难</li>
+</ul>
+</li>
+</ul>
+<h2 id="Borderline-SMOTE"><a href="#Borderline-SMOTE" class="headerlink" title="Borderline-SMOTE"></a>Borderline-SMOTE</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
+<li>由于原始SMOTE算法的对所有少数类样本都是一视同仁的，我们希望新合成的少数类样本能处于两个类别的边界附近，因为在实际建模过程中那些处于边界位置的样本更容易被错分，因此利用边界位置的样本信息产生新样本可以给模型带来更大的体征，能提供足够的信息用以分类，即Borderline SMOTE算法做的事情</li>
+</ul>
+<h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>这个算法会先将所有的少数类样本分成三类，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20201019140912.png"></li>
+<li>“noise”：所有的k近邻个样本都属于多数类，可认为是噪声不能生成合成样本</li>
+<li>“danger”：超过一半的k近邻样本属于多数类</li>
+<li>“safe”：超过一半的k近邻样本属于少数类</li>
+<li>borderline smote算法只会从处于”danger”状态的样本中随机选择，然后用SMOTE算法产生新的样本。处于”danger”状态的样本代表靠近”边界”附近的少数类样本往往更容易被误分类。因而Border-line SMOTE只对那些靠近”边界”的少数类样本进行人工合成样本，而SMOTE则对所有少数类样本一视同仁</li>
+</ul>
+<h3 id="危险集的判断流程"><a href="#危险集的判断流程" class="headerlink" title="危险集的判断流程"></a>危险集的判断流程</h3><ul>
+<li>1.对于每个$x_{i} \subset S_{\min }$确定一系列K近邻样本集，称该数据集为$S_{i-kNN}$，且$S_{i-kNN} \subset S$</li>
+<li>2.对每个样本$x_i$，判断出最近邻样本集中属于多数类样本的个数，即$\left|S_{i-k N N} \cap S_{m a j}\right|$</li>
+<li>3.选择满足不等式$\frac{k}{2} \leq\left|S_{i-k N N} \cap S_{m a j}\right| \leq k$，将其加入危险集DANGER</li>
+</ul>
+<h3 id="Borderline-SMOTE分类两种："><a href="#Borderline-SMOTE分类两种：" class="headerlink" title="Borderline SMOTE分类两种："></a>Borderline SMOTE分类两种：</h3><ul>
+<li>Borderline-1 SMOTE：在合成样本时所选的近邻是一个少数类样本</li>
+<li>Borderline-2 SMOTE：在合成样本时所选的近邻是任意一个样本</li>
+</ul>
+<h2 id="ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用"><a href="#ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用" class="headerlink" title="ADASYN(Adaptive Synthetic Sampling，自适应合成采用)"></a>ADASYN(Adaptive Synthetic Sampling，自适应合成采用)</h2><ul>
+<li>根据数据分布情况为不同的少数类样本生成不同数量的新样本</li>
+<li>首先根据最终的平衡程度设定总共需要生成的新少数类样本数量，然后为每个少数类样本x计算分布比例</li>
+</ul>
+<h1 id="下采样-降采样-UnserSampling"><a href="#下采样-降采样-UnserSampling" class="headerlink" title="下采样(降采样, UnserSampling)"></a>下采样(降采样, UnserSampling)</h1><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>对训练集中多数类样本进行“下采样”(undersampling)，即去除一些多数类中的样本使得正例、反例数目接近，然后再学习</li>
+</ul>
+<h2 id="Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection"><a href="#Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection" class="headerlink" title="Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)"></a>Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)</h2><h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><ul>
+<li>从多数类$S_{maj}$中随机选择一些样本组成样本集E。然后将样本集E从$S_{maj}$中移除。新的数据集$S_{n e w-m a j}=S_{m a j}-E$</li>
+<li>通过改变多数类样本比例以达到修改样本分布的目的，从而使样本分布较为均衡</li>
+</ul>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>操作简单，只依赖于样本分布，不依赖任何距离信息，属于非启发式方法</li>
+</ul>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>由于采样的样本集合要少于原来的样本集合，因此会造成一些信息缺失，即将多数类样本删除有可能导致分类器丢失有关多数类的重要信息</li>
+</ul>
+<h2 id="Ensemble-Methods"><a href="#Ensemble-Methods" class="headerlink" title="Ensemble Methods"></a>Ensemble Methods</h2><h3 id="EasyEnsemble"><a href="#EasyEnsemble" class="headerlink" title="EasyEnsemble"></a>EasyEnsemble</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><ul>
+<li>多次随机欠采样，尽可能全面地涵盖所有信息，特点是利用boosting减少偏差(Adaboost)、bagging减少方差(集成分类器)。实际应用的时候可尝试选用不同的分类器来提高分类的效果</li>
+<li><img src="https://img.shiqi-lu.tech/20201020145429.png?imageView2/2/h/350"></li>
+</ul>
+<h4 id="算法流程-2"><a href="#算法流程-2" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
+<li>1.把数据划分为两部分，分别是多数类样本$S_{maj}$和少数类样本$S_{min}$</li>
+<li>2.从多数类$S_{maj}$中有放回的随机采样n次，每次选取与少数类数目相近的样本个数即$|S_{imaj}|=|S_{min}|$，可得到n个样本集合，记作$\{S_{1 m a j}, S_{2 m a j}, \ldots, S_{n m a j}\}$</li>
+<li>3.将每一个多数类样本的子集$S_{imaj}$与少数类样本$S_{min}$合并后训练出Adaboost分类器$H_i$，阈值设置为$\theta_i$，可得到n个模型，即$H_{i}(x)=\operatorname{sgn}\left(\sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i, j}(x)-\theta_{i}\right)$</li>
+<li>4.将这些模型组合形成一个集成学习系统，最终的模型结果是这n个模型的投票值。此处采用加权多数表决的方法，加大分类误差率小的弱分类器的权值，使其在表决中起较大的作用，减小分类误差率小的弱分类器的权值，使其在表决中起较小的作用，即最终分类器为$H(x)=\operatorname{sgn}\left(\sum\limits_{i=1}^{n} \sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i j}(x)-\sum\limits_{i=1}^{n} \theta_{i}\right)$</li>
+</ul>
+<h3 id="BalanceCascade"><a href="#BalanceCascade" class="headerlink" title="BalanceCascade"></a>BalanceCascade</h3><h4 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h4><ul>
+<li>该算法得到的是一个级联分类器，基于Adaboost，将若干个强分类器由简单到复杂排列，只有和少数类样本特征比较接近的才有可能输入到后面的分类器，比如边界点，因此能更充分地利用多数类样本的信息，一定程度上解决随机欠采样的信息丢失问题</li>
+</ul>
+<h4 id="算法流程-3"><a href="#算法流程-3" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
+<li>输入：一个包含少数类阳性样本P和多数类阴性样本集N的训练集D，定义T是从N中抽取的子集个数，$s_i$是训练Adaboost基分类器$H_i$时的循环次数</li>
+<li>输出：一个组合分类器H(x)</li>
+<li>1.$f=\sqrt[(\mathrm{T}-1)]{\left(\frac{|\mathrm{P}|}{|\mathrm{N}|}\right)}$，$f$是每一层级的分类器$H_i$该达到的假阳性率(False Positive Rate)，即把多数类样本误分为少数类的错误率</li>
+<li>for i = 1 to T:<ul>
+<li>从多数类N中随机抽取一个样本子集$N_i$，使得$|N_i| = |P|$</li>
+<li>使用少数类样本集P和样本子集$N_i$训练一个Adaboost分类器$H_i$($H_i$由$s_i$个基分类器$h_{i,j}$及其权重$\alpha_{i,j}$构成，$\theta_i$是$H_i$的调节参数)</li>
+<li>$\mathrm{H}_{\mathrm{i}}(x)=\operatorname{sgn}(\sum\limits_{j=1}^{s_{i}} \alpha_{i, j} h_{i, j}(x)-\theta_{i})$</li>
+<li>调节阈值$\theta_i$令$H_i$的FP率为$f$</li>
+<li>移除多数类样本集N中所有被$H_i$正确分类的样本</li>
+</ul>
+</li>
+<li>输出一个集成分类器</li>
+<li>$\mathrm{H}(\mathrm{x})=\operatorname{sgn}\left(\sum\limits_{i=1}^{T} \sum\limits_{j=1}^{s_{l}} \alpha_{i, j} h_{i, j}(x)-\sum\limits_{i=1}^{T} \theta_{i}\right)$</li>
+</ul>
+<h2 id="NearMiss"><a href="#NearMiss" class="headerlink" title="NearMiss"></a>NearMiss</h2><ul>
+<li>本质上是一种原型选择(prototype selection)方法，即从多数类样本中选取最具代表性的样本用于训练，主要是为了缓解随机欠采样中的信息丢失问题。Nearmiss采用了3中不同的启发式规则来选择样本<ul>
+<li>NearMiss-1：选择到最近的K个少数类样本平均距离最近的多数类样本，考虑的是与最近的k个少数类样本的平均距离，是局部的。该方法得到的多数类样本分布是“不均衡”的，它倾向于在比较集中的少数类附近找到更多的多数类样本，而在孤立的(离群的)少数类附近找到更少的多数类样本，原因是该方法考虑的局部性质和平均距离</li>
+<li>NearMiss-2：选择到最远的K个少数类样本平均距离最近的多数类样本，考虑的是与最远的k个少数类样本的平均距离，是全局的。实验结果表明该方法的不均衡分类性能最优</li>
+<li>NearMiss-3：对于每个少数类样本选择K个最近的多数类样本，目的是保证每个少数类样本都被多数类样本包围，该方法会使每一个少数类样本附近都有足够多的多数类样本，显然这会使得模型的精确度高、召回率低</li>
+</ul>
+</li>
+</ul>
+<h2 id="原型生成-Prototype-generation"><a href="#原型生成-Prototype-generation" class="headerlink" title="原型生成(Prototype generation)"></a>原型生成(Prototype generation)</h2><ul>
+<li>给定数据集S，原型生成算法将生成一个子集S’，其中|S’|&lt;|S|，但是子集并非来自于原始数据，而是由原始数据集生成，方法是聚类成|S’|个类，然后取其中心点</li>
+</ul>
+<h2 id="Data-Cleaning-Techniques"><a href="#Data-Cleaning-Techniques" class="headerlink" title="Data Cleaning Techniques"></a>Data Cleaning Techniques</h2><h3 id="Tomek-Links"><a href="#Tomek-Links" class="headerlink" title="Tomek Links"></a>Tomek Links</h3><h4 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h4><ul>
+<li>给定一个样本对$(x_i, x_j)$，其中$x_{i} \in S_{m a j}, x_{j} \in S_{\min }$，记$d(x_i, x_j)$是样本$x_i$和样本$x_j$之间的距离，如果不存在任何样本$x_k$，使得$d\left(x_{i}, x_{k}\right)&lt;d\left(x_{i}, x_{j}\right)$，那么样本对$(x_i, x_j)$即称为Tomek Links。即Tomek links为相反类最近邻样本之间的一对连接</li>
+<li>不属于Tomek Links的情况有这个少数类样本最近的样本是同一类</li>
+</ul>
+<h4 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h4><ul>
+<li>如果两个样本来自Tomek Links，那么他们中的一个样本要么是噪声，要么它们都在两类的边界上</li>
+</ul>
+<h4 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h4><ul>
+<li><img src="https://img.shiqi-lu.tech/20201021171029.png?imageView2/2/h/300"></li>
+</ul>
+<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><ul>
+<li>欠采样：将Tomek Links中属于是多数类的样本剔除</li>
+<li>数据清洗：将Tomek Links中的两个样本都剔除</li>
+</ul>
+<h3 id="ENN-edited-nearest-neighborhood"><a href="#ENN-edited-nearest-neighborhood" class="headerlink" title="ENN(edited nearest neighborhood)"></a>ENN(edited nearest neighborhood)</h3><ul>
+<li>这种方法应用knn来编辑(edit)数据集，对于每一个要进行下采样的样本，那些绝大多数近邻样本不属于该类的样本会被移除，而绝大多数的近邻样本属于同一类的样本会被保留</li>
+</ul>
+<h1 id="综合采样-Oversampling-Undersampling"><a href="#综合采样-Oversampling-Undersampling" class="headerlink" title="综合采样(Oversampling + Undersampling)"></a>综合采样(Oversampling + Undersampling)</h1><h2 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>先过采样，然后再进行数据的清洗</li>
+</ul>
+<h2 id="SMOTE-Tomek-Links"><a href="#SMOTE-Tomek-Links" class="headerlink" title="SMOTE+Tomek Links"></a>SMOTE+Tomek Links</h2><h3 id="算法流程-4"><a href="#算法流程-4" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
+<li>2.剔除T中的Tomek Links对</li>
+</ul>
+<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>普通的SMOTE方法生成的少数类样本是通过线性插值得到的，在平衡类别分布的同时也扩张了少数类的样本空间，产生的问题是可能原本属于多数类样本的空间被少数类“入侵”，容易造成模型的过拟合</li>
+<li>Tomek Links对寻找的是那种噪声点或者边界点，可以很好地解决“入侵”问题，如图红色加号为SMOTE产生的少数类样本，可以看到红色样本“入侵”到原本属于多数类样本的空间，这种噪声数据问题可以通过Tomek Links很好地解决</li>
+<li><img src="https://img.shiqi-lu.tech/20201021171629.png?imageView2/2/h/150"></li>
+</ul>
+<h2 id="SMOTE-ENN"><a href="#SMOTE-ENN" class="headerlink" title="SMOTE+ENN"></a>SMOTE+ENN</h2><ul>
+<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
+<li>2.对T中的每一个样本使用KNN(一般k取3)方法预测，若预测结果与实际类别标签不符，则剔除该样本</li>
+</ul>
+<h1 id="其它方法"><a href="#其它方法" class="headerlink" title="其它方法"></a>其它方法</h1><h2 id="基于异常检测的方法"><a href="#基于异常检测的方法" class="headerlink" title="基于异常检测的方法"></a>基于异常检测的方法</h2><ul>
+<li>把小类的样本作为异常点(outliers)，因此该问题便转化为异常点检测(anomaly detection)与变化趋势检测问题(change detection)</li>
+</ul>
+<h2 id="分治ensemble"><a href="#分治ensemble" class="headerlink" title="分治ensemble"></a>分治ensemble</h2><ul>
+<li>将大类中样本聚类到L个聚类中，然后训练L个分类器</li>
+<li>每个分类器使用大类中的一个簇与所有的小类样本进行训练得到</li>
+<li>最后对这L个分类器采取少数服从多数的方式对未知类别数据进行分类，如果是连续值，采用平均值</li>
+</ul>
+<h2 id="分层级ensemble"><a href="#分层级ensemble" class="headerlink" title="分层级ensemble"></a>分层级ensemble</h2><ul>
+<li>使用原始数据集训练第一个学习器L1</li>
+<li>将L1错分的数据集作为新的数据集训练L2</li>
+<li>将L1和L2分类结果不一致的数据作为数据集训练L3</li>
+<li>最后测试集上将三个分类器的结果汇总(结合这三个分类器，采用投票的方式来决定分类结果，因此只有当L2与L3都分类为false时，最终结果才为false，否则为true)</li>
+</ul>
+<h2 id="对小类错分进行加权惩罚"><a href="#对小类错分进行加权惩罚" class="headerlink" title="对小类错分进行加权惩罚"></a>对小类错分进行加权惩罚</h2><ul>
+<li>对分类器的小类样本数据增加权值，降低大类样本的权重，从而使得分类器将重点集中在小类样本身上</li>
+<li>一个具体做法是，在训练分类器时，若分类器将小类样本分错时，额外增加分类器一个小类样本分错代价，这个额外的代价可以使得分类器更加“关心”小类样本。如penalized-SVM和penalized-LDA算法</li>
+<li>对小样本进行过采样(例如含L倍重复数据)，其实在计算小样本错分cost functions时会累加L倍的惩罚分数</li>
+</ul>
+<h2 id="尝试其它评价指标"><a href="#尝试其它评价指标" class="headerlink" title="尝试其它评价指标"></a>尝试其它评价指标</h2><ul>
+<li>准确度这个评价指标在类别不均衡的分类任务中不够好，甚至会造成误导。可考虑更有说服力的评价指标。如混淆矩阵、精确度、召回率、F1得分，其中可关注Kappa和ROC曲线</li>
+</ul>
+<h2 id="尝试不同的分类算法"><a href="#尝试不同的分类算法" class="headerlink" title="尝试不同的分类算法"></a>尝试不同的分类算法</h2><ul>
+<li>决策树在类别不均衡数据上表现不错。它使用基于类变量的划分规则去创建分类树，因此可以强制地将不同类别的样本分开</li>
+<li>Lightgbm中有两个参数处理类别不平衡，分别是is_unbalance和scale_pos_weight</li>
+<li>xgboost有一个参数类别不平衡，即scale_pos_weight</li>
+</ul>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
+<li><a href="https://www.jiqizhixin.com/articles/021704">机器学习中如何处理不平衡数据？</a></li>
+<li><a href="https://blog.csdn.net/jiede1/article/details/70215477">SMOTE算法(人工合成数据)</a></li>
+<li><a href="https://www.jianshu.com/p/13fc0f7f5565">SMOTE算法</a></li>
+<li><a href="https://blog.csdn.net/anshuai_aw1/article/details/89177406">分类问题中类别不平衡问题的有效解决方法</a></li>
+<li><a href="http://freewill.top/2017/04/18/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%B3%BB%E5%88%97%EF%BC%8817%EF%BC%89%EF%BC%9A%E9%9D%9E%E5%B9%B3%E8%A1%A1%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">机器学习算法系列（17）：非平衡数据处理</a></li>
+<li><a href="https://blog.csdn.net/weixin_44871660/article/details/90600522">样本不平衡处理</a></li>
+<li><a href="https://imbalanced-learn.readthedocs.io/en/stable/index.html">imbalanced官网</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/36093594">非平衡分类问题 | BalanceCascade方法及其Python实现</a></li>
+<li><a href="https://blog.csdn.net/songhk0209/article/details/71484469">解决样本不平衡问题的奇技淫巧 汇总</a></li>
+<li><a href="https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/">8 Tactics to Combat Imbalanced Classes in Your Machine Learning Dataset</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>特征工程</tag>
+        <tag>数据预处理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《数据库设计那些事》学习笔记</title>
     <url>/db-design-thing/</url>
     <content><![CDATA[<ul>
@@ -780,194 +968,6 @@
       </categories>
       <tags>
         <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>类别不平衡问题的方法汇总</title>
-    <url>/class-imbalance/</url>
-    <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
-<li>指分类任务中不同类别的训练样例数目差别很大的情况</li>
-<li>若不同类别的训练样例数目稍有差别，通常影响不大，但若差别很大，则会对学习过程造成困扰。例如有998个反例，但是正例只有2个，那么学习方法只需要返回一个永远将新样本预测为反例的学习器，就能达到99.8%的精度；然而这样的学习器往往没有价值，因为它不能预测出任何正例</li>
-</ul>
-<h1 id="上采样-过采样-Oversampling"><a href="#上采样-过采样-Oversampling" class="headerlink" title="上采样(过采样, Oversampling)"></a>上采样(过采样, Oversampling)</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>对训练集中的少数类进行“过采样”，即增加一些少数类样本使得正、反例数目接近，然后再进行学习</li>
-</ul>
-<h2 id="Random-Oversampling-随机上采样"><a href="#Random-Oversampling-随机上采样" class="headerlink" title="Random Oversampling(随机上采样)"></a>Random Oversampling(随机上采样)</h2><ul>
-<li>简单复制样本的策略来增加少数类样本，容易产生模型过拟合的问题</li>
-</ul>
-<h2 id="SMOTE"><a href="#SMOTE" class="headerlink" title="SMOTE"></a>SMOTE</h2><ul>
-<li>即合成少数类过采样技术(Synthetic Minority Oversampling Technique)，是基于随机采样算法的一种改进，其基本思想是对少数类样本进行分析并根据少数类样本人工合成新样本添加到数据集中</li>
-</ul>
-<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>1.对于少数类中每一个样本$x_i$，以欧氏距离为标准计算它到少数类样本集$S_{min}$中所有样本的距离，得到其k近邻</li>
-<li>2.根据样本不平衡比例设置一个采样比例以确定采样倍率N，对于每一个少数类样本$x_i$，从其k近邻中随机选择若干个样本，假设选择的近邻为$\tilde{x}$。</li>
-<li>3.对于每一个随机选出的近邻$\tilde{x}$，分别于原样本按照如下的公式构建新的样本</li>
-<li>$$x_{n e w}=x+\operatorname{rand}(0,1) \times |\tilde{x}-x|$$</li>
-<li><img src="https://img.shiqi-lu.tech/20201019195529.png?imageView2/2/h/250"></li>
-</ul>
-<h3 id="SMOTE的问题"><a href="#SMOTE的问题" class="headerlink" title="SMOTE的问题"></a>SMOTE的问题</h3><ul>
-<li>随机选取少数类样本用以合成新样本，而不考虑周边样本的情况<ul>
-<li>1.如果选取的少数类样本周围都是少数类样本，则新合成的样本不会提供太多有用信息。就像SVM中远离margin的点对决策边界影响不大</li>
-<li>2.如果选取的少数类样本周围都是多数类样本，这类的样本可能是噪声，则新合成的样本会与周围的多数类样本产生大部分重叠，导致分类困难</li>
-</ul>
-</li>
-</ul>
-<h2 id="Borderline-SMOTE"><a href="#Borderline-SMOTE" class="headerlink" title="Borderline-SMOTE"></a>Borderline-SMOTE</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
-<li>由于原始SMOTE算法的对所有少数类样本都是一视同仁的，我们希望新合成的少数类样本能处于两个类别的边界附近，因为在实际建模过程中那些处于边界位置的样本更容易被错分，因此利用边界位置的样本信息产生新样本可以给模型带来更大的体征，能提供足够的信息用以分类，即Borderline SMOTE算法做的事情</li>
-</ul>
-<h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>这个算法会先将所有的少数类样本分成三类，如图</li>
-<li><img src="https://img.shiqi-lu.tech/20201019140912.png"></li>
-<li>“noise”：所有的k近邻个样本都属于多数类，可认为是噪声不能生成合成样本</li>
-<li>“danger”：超过一半的k近邻样本属于多数类</li>
-<li>“safe”：超过一半的k近邻样本属于少数类</li>
-<li>borderline smote算法只会从处于”danger”状态的样本中随机选择，然后用SMOTE算法产生新的样本。处于”danger”状态的样本代表靠近”边界”附近的少数类样本往往更容易被误分类。因而Border-line SMOTE只对那些靠近”边界”的少数类样本进行人工合成样本，而SMOTE则对所有少数类样本一视同仁</li>
-</ul>
-<h3 id="危险集的判断流程"><a href="#危险集的判断流程" class="headerlink" title="危险集的判断流程"></a>危险集的判断流程</h3><ul>
-<li>1.对于每个$x_{i} \subset S_{\min }$确定一系列K近邻样本集，称该数据集为$S_{i-kNN}$，且$S_{i-kNN} \subset S$</li>
-<li>2.对每个样本$x_i$，判断出最近邻样本集中属于多数类样本的个数，即$\left|S_{i-k N N} \cap S_{m a j}\right|$</li>
-<li>3.选择满足不等式$\frac{k}{2} \leq\left|S_{i-k N N} \cap S_{m a j}\right| \leq k$，将其加入危险集DANGER</li>
-</ul>
-<h3 id="Borderline-SMOTE分类两种："><a href="#Borderline-SMOTE分类两种：" class="headerlink" title="Borderline SMOTE分类两种："></a>Borderline SMOTE分类两种：</h3><ul>
-<li>Borderline-1 SMOTE：在合成样本时所选的近邻是一个少数类样本</li>
-<li>Borderline-2 SMOTE：在合成样本时所选的近邻是任意一个样本</li>
-</ul>
-<h2 id="ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用"><a href="#ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用" class="headerlink" title="ADASYN(Adaptive Synthetic Sampling，自适应合成采用)"></a>ADASYN(Adaptive Synthetic Sampling，自适应合成采用)</h2><ul>
-<li>根据数据分布情况为不同的少数类样本生成不同数量的新样本</li>
-<li>首先根据最终的平衡程度设定总共需要生成的新少数类样本数量，然后为每个少数类样本x计算分布比例</li>
-</ul>
-<h1 id="下采样-降采样-UnserSampling"><a href="#下采样-降采样-UnserSampling" class="headerlink" title="下采样(降采样, UnserSampling)"></a>下采样(降采样, UnserSampling)</h1><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>对训练集中多数类样本进行“下采样”(undersampling)，即去除一些多数类中的样本使得正例、反例数目接近，然后再学习</li>
-</ul>
-<h2 id="Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection"><a href="#Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection" class="headerlink" title="Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)"></a>Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)</h2><h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><ul>
-<li>从多数类$S_{maj}$中随机选择一些样本组成样本集E。然后将样本集E从$S_{maj}$中移除。新的数据集$S_{n e w-m a j}=S_{m a j}-E$</li>
-<li>通过改变多数类样本比例以达到修改样本分布的目的，从而使样本分布较为均衡</li>
-</ul>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>操作简单，只依赖于样本分布，不依赖任何距离信息，属于非启发式方法</li>
-</ul>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
-<li>由于采样的样本集合要少于原来的样本集合，因此会造成一些信息缺失，即将多数类样本删除有可能导致分类器丢失有关多数类的重要信息</li>
-</ul>
-<h2 id="Ensemble-Methods"><a href="#Ensemble-Methods" class="headerlink" title="Ensemble Methods"></a>Ensemble Methods</h2><h3 id="EasyEnsemble"><a href="#EasyEnsemble" class="headerlink" title="EasyEnsemble"></a>EasyEnsemble</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><ul>
-<li>多次随机欠采样，尽可能全面地涵盖所有信息，特点是利用boosting减少偏差(Adaboost)、bagging减少方差(集成分类器)。实际应用的时候可尝试选用不同的分类器来提高分类的效果</li>
-<li><img src="https://img.shiqi-lu.tech/20201020145429.png?imageView2/2/h/350"></li>
-</ul>
-<h4 id="算法流程-2"><a href="#算法流程-2" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
-<li>1.把数据划分为两部分，分别是多数类样本$S_{maj}$和少数类样本$S_{min}$</li>
-<li>2.从多数类$S_{maj}$中有放回的随机采样n次，每次选取与少数类数目相近的样本个数即$|S_{imaj}|=|S_{min}|$，可得到n个样本集合，记作$\{S_{1 m a j}, S_{2 m a j}, \ldots, S_{n m a j}\}$</li>
-<li>3.将每一个多数类样本的子集$S_{imaj}$与少数类样本$S_{min}$合并后训练出Adaboost分类器$H_i$，阈值设置为$\theta_i$，可得到n个模型，即$H_{i}(x)=\operatorname{sgn}\left(\sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i, j}(x)-\theta_{i}\right)$</li>
-<li>4.将这些模型组合形成一个集成学习系统，最终的模型结果是这n个模型的投票值。此处采用加权多数表决的方法，加大分类误差率小的弱分类器的权值，使其在表决中起较大的作用，减小分类误差率小的弱分类器的权值，使其在表决中起较小的作用，即最终分类器为$H(x)=\operatorname{sgn}\left(\sum\limits_{i=1}^{n} \sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i j}(x)-\sum\limits_{i=1}^{n} \theta_{i}\right)$</li>
-</ul>
-<h3 id="BalanceCascade"><a href="#BalanceCascade" class="headerlink" title="BalanceCascade"></a>BalanceCascade</h3><h4 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h4><ul>
-<li>该算法得到的是一个级联分类器，基于Adaboost，将若干个强分类器由简单到复杂排列，只有和少数类样本特征比较接近的才有可能输入到后面的分类器，比如边界点，因此能更充分地利用多数类样本的信息，一定程度上解决随机欠采样的信息丢失问题</li>
-</ul>
-<h4 id="算法流程-3"><a href="#算法流程-3" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
-<li>输入：一个包含少数类阳性样本P和多数类阴性样本集N的训练集D，定义T是从N中抽取的子集个数，$s_i$是训练Adaboost基分类器$H_i$时的循环次数</li>
-<li>输出：一个组合分类器H(x)</li>
-<li>1.$f=\sqrt[(\mathrm{T}-1)]{\left(\frac{|\mathrm{P}|}{|\mathrm{N}|}\right)}$，$f$是每一层级的分类器$H_i$该达到的假阳性率(False Positive Rate)，即把多数类样本误分为少数类的错误率</li>
-<li>for i = 1 to T:<ul>
-<li>从多数类N中随机抽取一个样本子集$N_i$，使得$|N_i| = |P|$</li>
-<li>使用少数类样本集P和样本子集$N_i$训练一个Adaboost分类器$H_i$($H_i$由$s_i$个基分类器$h_{i,j}$及其权重$\alpha_{i,j}$构成，$\theta_i$是$H_i$的调节参数)</li>
-<li>$\mathrm{H}_{\mathrm{i}}(x)=\operatorname{sgn}(\sum\limits_{j=1}^{s_{i}} \alpha_{i, j} h_{i, j}(x)-\theta_{i})$</li>
-<li>调节阈值$\theta_i$令$H_i$的FP率为$f$</li>
-<li>移除多数类样本集N中所有被$H_i$正确分类的样本</li>
-</ul>
-</li>
-<li>输出一个集成分类器</li>
-<li>$\mathrm{H}(\mathrm{x})=\operatorname{sgn}\left(\sum\limits_{i=1}^{T} \sum\limits_{j=1}^{s_{l}} \alpha_{i, j} h_{i, j}(x)-\sum\limits_{i=1}^{T} \theta_{i}\right)$</li>
-</ul>
-<h2 id="NearMiss"><a href="#NearMiss" class="headerlink" title="NearMiss"></a>NearMiss</h2><ul>
-<li>本质上是一种原型选择(prototype selection)方法，即从多数类样本中选取最具代表性的样本用于训练，主要是为了缓解随机欠采样中的信息丢失问题。Nearmiss采用了3中不同的启发式规则来选择样本<ul>
-<li>NearMiss-1：选择到最近的K个少数类样本平均距离最近的多数类样本，考虑的是与最近的k个少数类样本的平均距离，是局部的。该方法得到的多数类样本分布是“不均衡”的，它倾向于在比较集中的少数类附近找到更多的多数类样本，而在孤立的(离群的)少数类附近找到更少的多数类样本，原因是该方法考虑的局部性质和平均距离</li>
-<li>NearMiss-2：选择到最远的K个少数类样本平均距离最近的多数类样本，考虑的是与最远的k个少数类样本的平均距离，是全局的。实验结果表明该方法的不均衡分类性能最优</li>
-<li>NearMiss-3：对于每个少数类样本选择K个最近的多数类样本，目的是保证每个少数类样本都被多数类样本包围，该方法会使每一个少数类样本附近都有足够多的多数类样本，显然这会使得模型的精确度高、召回率低</li>
-</ul>
-</li>
-</ul>
-<h2 id="原型生成-Prototype-generation"><a href="#原型生成-Prototype-generation" class="headerlink" title="原型生成(Prototype generation)"></a>原型生成(Prototype generation)</h2><ul>
-<li>给定数据集S，原型生成算法将生成一个子集S’，其中|S’|&lt;|S|，但是子集并非来自于原始数据，而是由原始数据集生成，方法是聚类成|S’|个类，然后取其中心点</li>
-</ul>
-<h2 id="Data-Cleaning-Techniques"><a href="#Data-Cleaning-Techniques" class="headerlink" title="Data Cleaning Techniques"></a>Data Cleaning Techniques</h2><h3 id="Tomek-Links"><a href="#Tomek-Links" class="headerlink" title="Tomek Links"></a>Tomek Links</h3><h4 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h4><ul>
-<li>给定一个样本对$(x_i, x_j)$，其中$x_{i} \in S_{m a j}, x_{j} \in S_{\min }$，记$d(x_i, x_j)$是样本$x_i$和样本$x_j$之间的距离，如果不存在任何样本$x_k$，使得$d\left(x_{i}, x_{k}\right)&lt;d\left(x_{i}, x_{j}\right)$，那么样本对$(x_i, x_j)$即称为Tomek Links。即Tomek links为相反类最近邻样本之间的一对连接</li>
-<li>不属于Tomek Links的情况有这个少数类样本最近的样本是同一类</li>
-</ul>
-<h4 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h4><ul>
-<li>如果两个样本来自Tomek Links，那么他们中的一个样本要么是噪声，要么它们都在两类的边界上</li>
-</ul>
-<h4 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h4><ul>
-<li><img src="https://img.shiqi-lu.tech/20201021171029.png?imageView2/2/h/300"></li>
-</ul>
-<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><ul>
-<li>欠采样：将Tomek Links中属于是多数类的样本剔除</li>
-<li>数据清洗：将Tomek Links中的两个样本都剔除</li>
-</ul>
-<h3 id="ENN-edited-nearest-neighborhood"><a href="#ENN-edited-nearest-neighborhood" class="headerlink" title="ENN(edited nearest neighborhood)"></a>ENN(edited nearest neighborhood)</h3><ul>
-<li>这种方法应用knn来编辑(edit)数据集，对于每一个要进行下采样的样本，那些绝大多数近邻样本不属于该类的样本会被移除，而绝大多数的近邻样本属于同一类的样本会被保留</li>
-</ul>
-<h1 id="综合采样-Oversampling-Undersampling"><a href="#综合采样-Oversampling-Undersampling" class="headerlink" title="综合采样(Oversampling + Undersampling)"></a>综合采样(Oversampling + Undersampling)</h1><h2 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>先过采样，然后再进行数据的清洗</li>
-</ul>
-<h2 id="SMOTE-Tomek-Links"><a href="#SMOTE-Tomek-Links" class="headerlink" title="SMOTE+Tomek Links"></a>SMOTE+Tomek Links</h2><h3 id="算法流程-4"><a href="#算法流程-4" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
-<li>2.剔除T中的Tomek Links对</li>
-</ul>
-<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>普通的SMOTE方法生成的少数类样本是通过线性插值得到的，在平衡类别分布的同时也扩张了少数类的样本空间，产生的问题是可能原本属于多数类样本的空间被少数类“入侵”，容易造成模型的过拟合</li>
-<li>Tomek Links对寻找的是那种噪声点或者边界点，可以很好地解决“入侵”问题，如图红色加号为SMOTE产生的少数类样本，可以看到红色样本“入侵”到原本属于多数类样本的空间，这种噪声数据问题可以通过Tomek Links很好地解决</li>
-<li><img src="https://img.shiqi-lu.tech/20201021171629.png?imageView2/2/h/150"></li>
-</ul>
-<h2 id="SMOTE-ENN"><a href="#SMOTE-ENN" class="headerlink" title="SMOTE+ENN"></a>SMOTE+ENN</h2><ul>
-<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
-<li>2.对T中的每一个样本使用KNN(一般k取3)方法预测，若预测结果与实际类别标签不符，则剔除该样本</li>
-</ul>
-<h1 id="其它方法"><a href="#其它方法" class="headerlink" title="其它方法"></a>其它方法</h1><h2 id="基于异常检测的方法"><a href="#基于异常检测的方法" class="headerlink" title="基于异常检测的方法"></a>基于异常检测的方法</h2><ul>
-<li>把小类的样本作为异常点(outliers)，因此该问题便转化为异常点检测(anomaly detection)与变化趋势检测问题(change detection)</li>
-</ul>
-<h2 id="分治ensemble"><a href="#分治ensemble" class="headerlink" title="分治ensemble"></a>分治ensemble</h2><ul>
-<li>将大类中样本聚类到L个聚类中，然后训练L个分类器</li>
-<li>每个分类器使用大类中的一个簇与所有的小类样本进行训练得到</li>
-<li>最后对这L个分类器采取少数服从多数的方式对未知类别数据进行分类，如果是连续值，采用平均值</li>
-</ul>
-<h2 id="分层级ensemble"><a href="#分层级ensemble" class="headerlink" title="分层级ensemble"></a>分层级ensemble</h2><ul>
-<li>使用原始数据集训练第一个学习器L1</li>
-<li>将L1错分的数据集作为新的数据集训练L2</li>
-<li>将L1和L2分类结果不一致的数据作为数据集训练L3</li>
-<li>最后测试集上将三个分类器的结果汇总(结合这三个分类器，采用投票的方式来决定分类结果，因此只有当L2与L3都分类为false时，最终结果才为false，否则为true)</li>
-</ul>
-<h2 id="对小类错分进行加权惩罚"><a href="#对小类错分进行加权惩罚" class="headerlink" title="对小类错分进行加权惩罚"></a>对小类错分进行加权惩罚</h2><ul>
-<li>对分类器的小类样本数据增加权值，降低大类样本的权重，从而使得分类器将重点集中在小类样本身上</li>
-<li>一个具体做法是，在训练分类器时，若分类器将小类样本分错时，额外增加分类器一个小类样本分错代价，这个额外的代价可以使得分类器更加“关心”小类样本。如penalized-SVM和penalized-LDA算法</li>
-<li>对小样本进行过采样(例如含L倍重复数据)，其实在计算小样本错分cost functions时会累加L倍的惩罚分数</li>
-</ul>
-<h2 id="尝试其它评价指标"><a href="#尝试其它评价指标" class="headerlink" title="尝试其它评价指标"></a>尝试其它评价指标</h2><ul>
-<li>准确度这个评价指标在类别不均衡的分类任务中不够好，甚至会造成误导。可考虑更有说服力的评价指标。如混淆矩阵、精确度、召回率、F1得分，其中可关注Kappa和ROC曲线</li>
-</ul>
-<h2 id="尝试不同的分类算法"><a href="#尝试不同的分类算法" class="headerlink" title="尝试不同的分类算法"></a>尝试不同的分类算法</h2><ul>
-<li>决策树在类别不均衡数据上表现不错。它使用基于类变量的划分规则去创建分类树，因此可以强制地将不同类别的样本分开</li>
-<li>Lightgbm中有两个参数处理类别不平衡，分别是is_unbalance和scale_pos_weight</li>
-<li>xgboost有一个参数类别不平衡，即scale_pos_weight</li>
-</ul>
-<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
-<li><a href="https://www.jiqizhixin.com/articles/021704">机器学习中如何处理不平衡数据？</a></li>
-<li><a href="https://blog.csdn.net/jiede1/article/details/70215477">SMOTE算法(人工合成数据)</a></li>
-<li><a href="https://www.jianshu.com/p/13fc0f7f5565">SMOTE算法</a></li>
-<li><a href="https://blog.csdn.net/anshuai_aw1/article/details/89177406">分类问题中类别不平衡问题的有效解决方法</a></li>
-<li><a href="http://freewill.top/2017/04/18/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%B3%BB%E5%88%97%EF%BC%8817%EF%BC%89%EF%BC%9A%E9%9D%9E%E5%B9%B3%E8%A1%A1%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">机器学习算法系列（17）：非平衡数据处理</a></li>
-<li><a href="https://blog.csdn.net/weixin_44871660/article/details/90600522">样本不平衡处理</a></li>
-<li><a href="https://imbalanced-learn.readthedocs.io/en/stable/index.html">imbalanced官网</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/36093594">非平衡分类问题 | BalanceCascade方法及其Python实现</a></li>
-<li><a href="https://blog.csdn.net/songhk0209/article/details/71484469">解决样本不平衡问题的奇技淫巧 汇总</a></li>
-<li><a href="https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/">8 Tactics to Combat Imbalanced Classes in Your Machine Learning Dataset</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>机器学习</category>
-      </categories>
-      <tags>
-        <tag>机器学习</tag>
-        <tag>特征工程</tag>
-        <tag>数据预处理</tag>
       </tags>
   </entry>
   <entry>
@@ -1877,6 +1877,138 @@
       </tags>
   </entry>
   <entry>
+    <title>海量数据处理</title>
+    <url>/mass-data-processing/</url>
+    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
+<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
+<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
+<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
+<li>3.堆/快排：排序得到频率最高的IP</li>
+</ul>
+</li>
+<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
+<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
+<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
+<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
+<li>也可用trie树</li>
+</ul>
+</li>
+<li>堆排找topK过程<ul>
+<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
+</ul>
+</li>
+<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
+<li>如果同一个数据元素只出现在某一台机器中<ul>
+<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
+<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
+</ul>
+</li>
+<li>如果同一个数据元素出现在不同机器中<ul>
+<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
+<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
+<li>解法一<ul>
+<li>1.散列映射</li>
+<li>2.hash_map统计</li>
+<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
+</ul>
+</li>
+<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
+</ul>
+</li>
+<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
+<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
+<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
+<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
+<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
+<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
+<li>2.不同的区域再利用位图进行统计</li>
+</ul>
+</li>
+<li>寻找中位数：找出5亿个int型数的中位数<ul>
+<li>1.将这5亿个int型数划分为2^{16}个区域</li>
+<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
+<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
+</ul>
+</li>
+</ul>
+<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
+<li>外排序介绍<ul>
+<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
+</ul>
+</li>
+<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
+<li>1.位图<ul>
+<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
+<li>能采用位图方案的原因<ul>
+<li>输入数据限制在相对较小的范围内</li>
+<li>数据没有重复</li>
+<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.多路归并<ul>
+<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
+<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
+<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
+</ul>
+</li>
+<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
+<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
+<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
+<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
+</ul>
+</li>
+<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
+<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
+<li>读入40亿个数，设置相应的位</li>
+<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
+<li>原理<ul>
+<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
+<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
+<li>但会有误判的可能</li>
+</ul>
+</li>
+</ul>
+<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
+<li>设计一个比较两篇文档相似度的算法<ul>
+<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
+<li>simhash算法</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
+- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>海量数据</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s培训第8课 集群调度</title>
     <url>/k8s-8/</url>
     <content><![CDATA[<ul>
@@ -2092,138 +2224,6 @@
       </categories>
       <tags>
         <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>海量数据处理</title>
-    <url>/mass-data-processing/</url>
-    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
-<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
-<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
-<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
-<li>3.堆/快排：排序得到频率最高的IP</li>
-</ul>
-</li>
-<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
-<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
-<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
-<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
-<li>也可用trie树</li>
-</ul>
-</li>
-<li>堆排找topK过程<ul>
-<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
-</ul>
-</li>
-<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
-<li>如果同一个数据元素只出现在某一台机器中<ul>
-<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
-<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
-</ul>
-</li>
-<li>如果同一个数据元素出现在不同机器中<ul>
-<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
-<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
-<li>解法一<ul>
-<li>1.散列映射</li>
-<li>2.hash_map统计</li>
-<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
-</ul>
-</li>
-<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
-</ul>
-</li>
-<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
-<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
-<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
-<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
-<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
-<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
-<li>2.不同的区域再利用位图进行统计</li>
-</ul>
-</li>
-<li>寻找中位数：找出5亿个int型数的中位数<ul>
-<li>1.将这5亿个int型数划分为2^{16}个区域</li>
-<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
-<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
-</ul>
-</li>
-</ul>
-<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
-<li>外排序介绍<ul>
-<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
-</ul>
-</li>
-<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
-<li>1.位图<ul>
-<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
-<li>能采用位图方案的原因<ul>
-<li>输入数据限制在相对较小的范围内</li>
-<li>数据没有重复</li>
-<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>2.多路归并<ul>
-<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
-<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
-<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
-</ul>
-</li>
-<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
-<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
-<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
-<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
-</ul>
-</li>
-<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
-<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
-<li>读入40亿个数，设置相应的位</li>
-<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
-<li>原理<ul>
-<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
-<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
-<li>但会有误判的可能</li>
-</ul>
-</li>
-</ul>
-<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
-<li>设计一个比较两篇文档相似度的算法<ul>
-<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
-<li>simhash算法</li>
-</ul>
-</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
-- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>海量数据</tag>
       </tags>
   </entry>
   <entry>
@@ -2727,88 +2727,6 @@
       </tags>
   </entry>
   <entry>
-    <title>pytorch学习笔记</title>
-    <url>/pytorch-learning/</url>
-    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
-</ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
-</ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
-</ul>
-]]></content>
-      <categories>
-        <category>pytorch学习笔记</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-        <tag>深度学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《OFF学》读书笔记</title>
     <url>/off-time/</url>
     <content><![CDATA[<ul>
@@ -3057,6 +2975,88 @@
       </categories>
       <tags>
         <tag>休闲</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pytorch学习笔记</title>
+    <url>/pytorch-learning/</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
+<ul>
+<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
+<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
+<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
+<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
+<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+</ul>
+<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
+<ul>
+<li>Pytorch简介及环境配置</li>
+<li>Pytorch基础数据结构——张量</li>
+<li>张量操作与线性回归</li>
+<li>计算图与动态图机制</li>
+<li>autograd与逻辑回归</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
+<ul>
+<li>数据读取机制DataLoader与Dataset</li>
+<li>数据预处理transforms模块机制</li>
+<li>二十二种transforms数据预处理方法</li>
+<li>学会自定义transforms方法</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
+<ul>
+<li>nn.Module与网络模型构建步骤</li>
+<li>模型容器与AlexNet构建</li>
+<li>网络层中的卷积层</li>
+<li>网络层中的池化层、全连接层和激活函数层</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
+<ul>
+<li>权值初始化</li>
+<li>损失函数（一）</li>
+<li>Pytorch的14种损失函数</li>
+<li>优化器optimizer的概念</li>
+<li>torch.optim.SGD</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
+<ul>
+<li>学习率调整</li>
+<li>TensorBoard简介与安装</li>
+<li>TensorBoard使用（一）</li>
+<li>TensorBoard使用（二）</li>
+<li>hook函数与CAM</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
+<ul>
+<li>weight_decay</li>
+<li>dropout</li>
+<li>Batch Normalization</li>
+<li>Layer Normalization、Instance</li>
+<li>Normalization和Group Normalization</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
+<ul>
+<li>模型保存与加载</li>
+<li>Finetune</li>
+<li>GPU的使用</li>
+<li>Pytorch中常见报错</li>
+</ul>
+<p>Week8、9 PyTorch深度体验</p>
+<ul>
+<li>图像分类一瞥</li>
+<li>图像分割一瞥</li>
+<li>目标检测一瞥（上）</li>
+<li>目标检测一瞥（下）</li>
+<li>对抗生成网络一瞥</li>
+<li>循环神经网络一瞥</li>
+</ul>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -3456,6 +3456,509 @@
       </categories>
       <tags>
         <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>恶魔奶爸语法4-6课</title>
+    <url>/gramma4-6/</url>
+    <content><![CDATA[<h1 id="4-被动语态的重难点——不完全及物动词和授予动词补充"><a href="#4-被动语态的重难点——不完全及物动词和授予动词补充" class="headerlink" title="4.被动语态的重难点——不完全及物动词和授予动词补充"></a>4.被动语态的重难点——不完全及物动词和授予动词补充</h1><ul>
+<li>第四大句型，主谓宾补，其实就是“让某人做某事”<ul>
+<li>My mother made me wash the car.</li>
+<li>宾语是“我”，宾补是“洗车”，也就是说，宾语和宾补放在一起，逻辑上可以构成一个句子“我洗车”。</li>
+<li>宾语和宾补之间的关系是被动语态呢?</li>
+<li>他让这个任务完成了。</li>
+<li>如果按照造句规律，应该是: He made this task be finished.或者He get this task to be finished.</li>
+<li>宾补中，出现的be或者to be，通常要省略！所以，这句话应该说成: He made this task finished.</li>
+</ul>
+</li>
+<li>英语中还有什么时候会出现be动词呢?<ul>
+<li>除了被动语态(过去分词作表语)之外，还有主系表句型(be动词后面的名词作表语，形容词作表语，地点副词作表语)</li>
+</ul>
+</li>
+<li>使役动词+宾语+过去分词（补语）<ul>
+<li>Now a group of students will have the plane restored.一群学生计划修复这架飞机。</li>
+<li>Officials have the clock checked twice a day.官员们每天两次派人检查此钟。</li>
+</ul>
+</li>
+<li>使役动词+宾语+名词、形容词或地点副词<ul>
+<li>使役动词也可加名词、形容词或地点副词等作补语，其原因是前面省略了不定式be或to be。<ul>
+<li>His teacher made him a good student. (名词作宾补)他的老师使他成为好学生。</li>
+<li>The trip made him happy.(形容词作宾补)这次旅行使他很愉快。</li>
+<li>He let me in. (地点副词作宾补)他让我进来。</li>
+<li>Get him out of here. (介词短语，相当于地点副词)把他弄出去!</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>各种不完全及物动词：接上宾语后意思仍然不完整<ul>
+<li>让某人做某事，只能接不定时作宾语补语：ask、encourage、tell、push、expect、want、drive/force/oblige/compel、order、cause/urge<ul>
+<li>The postman <code>wanted</code> me to sign for a letter!邮递员要我签收一封挂号信!</li>
+<li>Last week at a dinner-party, the hostess <code>asked</code> me to sit next to Mrs. Rumbold.在上星期的一次宴会上，女主人安排我坐在兰伯尔德夫人的身旁。</li>
+<li>Byrd at once <code>ordered</code> his men to throw out two heavy food sacks.伯德马上命令他的助手们把两个沉重的食物袋扔掉。</li>
+<li>My dentist had <code>told</code> me to rest for a while.我的牙科医生叫我休息一会儿。</li>
+<li>My old friend Brian <code>urged</code> me to accept a cigarette.我的老朋友布赖恩极力劝我接受一枝香烟。</li>
+</ul>
+</li>
+<li>知觉动词（5看，2听，1感觉）：感觉：feel，听：hear, listen to，看：see, observe, watch, look at, notice<ul>
+<li>表事实：此类动词+宾语+动词原形(补语)，译为”……..了。”<ul>
+<li>I <code>saw</code> him dance.我看见他跳舞了。</li>
+<li>I <code>heard</code> him sing.我听见他唱歌了。</li>
+</ul>
+</li>
+<li>表进行状态：此类动词+宾语+现在分词(补语)，译为”…..正在……”<ul>
+<li>Early next morning, she <code>heard</code> planes passing overhead. 第二天一大早，她听到头顶上飞机正在盘旋。</li>
+<li>The pilot <code>saw</code> one of the men taking photographs.当气球飞临基地上空时，飞行员看见有一个人在拍照。</li>
+</ul>
+</li>
+<li>表被动状态：此类动词+宾语+过去分词(补语)，译为”…..被…..”<ul>
+<li>I <code>saw</code> him killed.我看见他被杀了。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>认定动词：视…为…；认为…是…：动词 + 宾语 + 介词as + 名词或形容词(补语)<ul>
+<li>regard<ul>
+<li>In spite of this, the Italians <code>regarded</code> him <code>as</code> a sort of hero.尽管如此，意大利人还是把他视作某种英雄。</li>
+</ul>
+</li>
+<li>look upon<ul>
+<li>His students all <code>look upon</code> him <code>as</code> a friend.他的学生都把他看成是朋友。</li>
+</ul>
+</li>
+<li>think of<ul>
+<li>They <code>think of</code> themselves <code>as</code> the salt of the earth.他们自认为是社会中坚。</li>
+</ul>
+</li>
+<li>see<ul>
+<li>I’d like to <code>see</code> Europe <code>as</code> a nuclear-free zone.我希望欧洲成为无核区。</li>
+</ul>
+</li>
+<li>view<ul>
+<li>We <code>view</code> every customer <code>as</code> a partner.我们将每一位客户视为合作伙伴。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>认定动词：视…为…；认为…是…：动词 + 宾语 + (to be) + 名词或形容词(补语)：consider, deem, think, find, believe<ul>
+<li>He is <code>finding</code> his new work far more exciting.他发觉自己的新工作令人兴奋得多。</li>
+<li>I <code>found</code> his advice really useful.我发现他的建议非常有用。</li>
+<li>People <code>think</code> this problem determination.人们认为这个问题解决了。</li>
+</ul>
+</li>
+<li>转变动词：使…变成…：change/turn + 宾语 + into + 名词(补语)<ul>
+<li>I need to change my dollars into francs.我需要把美金换成法郎。</li>
+<li>The experience turned him into a good student.这个经验使他变成了好学生。</li>
+</ul>
+</li>
+<li>call/name + 宾语 + 名词(补语)<ul>
+<li>‘Do you call that a hat?’ I said to my wife.“你把那个叫帽子吗?”我对妻子说。</li>
+<li>You can name your pet dog Doctor.你可以把你的狗狗取名为博士。</li>
+</ul>
+</li>
+<li>help后接不定式(to可省略) 作宾语补语。<ul>
+<li>A short while ago, my sister helped me to carry my old bookcases up the stairs.几分钟前，我妹妹帮我把我的旧书橱抬上了楼。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.店员看见这个衣着很好的妇女正在偷东西。<ul>
+<li>1.The shop assistant saw the well-dressed woman stealing something.</li>
+</ul>
+</li>
+<li>2.你能帮我洗衣服吗?<ul>
+<li>2.Can you help me to wash clothes?</li>
+</ul>
+</li>
+<li>3.作为老师，你应该鼓励你的学生努力学习。<ul>
+<li>3.As a teacher, you should encourage your students to study hard.</li>
+</ul>
+</li>
+<li>4.父母不应该期望他们的孩子做任何事都成功。<ul>
+<li>4.The parents should not expect their children to succeed in doing everything.</li>
+</ul>
+</li>
+<li>5.你应该命令这个计划在一个月内完成。(order)<ul>
+<li>5.You should order this project to finished within a month.</li>
+</ul>
+</li>
+<li>6.我发现我们的老师被警察逮捕了。<ul>
+<li>6.I found our teacher arrested by the police.</li>
+</ul>
+</li>
+<li>7.工人们明天将把墙刷成绿色。<ul>
+<li>7.The workers will paint the wall green.</li>
+</ul>
+</li>
+<li>8.女主人邀请我们进去。<ul>
+<li>8.The hostess invited us in.</li>
+</ul>
+</li>
+<li>9.我们认为这个男人处于危险中。<ul>
+<li>9.We considered the man in danger.</li>
+</ul>
+</li>
+<li>10.大部分人把他当作英雄。<ul>
+<li>10.Most people regarded him as a hero.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>特殊的授予动词<ul>
+<li>间接宾语与直接宾语位置可以倒置，此时需要加介词to, for, of。<ul>
+<li>表“给予”的概念，要用to<ul>
+<li>My holidays passed quickly, but I did not send any cards <code>to</code> my friends.假期过得真快，可我还没有给我的朋友们寄过一张明信片。</li>
+</ul>
+</li>
+<li>表“代劳”的概念(buy等) ，要用for<ul>
+<li>I bought a book <code>for</code> him.我为他买了一本书</li>
+</ul>
+</li>
+<li>ask要用of<ul>
+<li>I asked a question <code>of</code> him.我问了他一个问题。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>下列授予动词与of连用<ul>
+<li>1.rob 抢夺<ul>
+<li>He robbed me of my money.他抢了我的钱。</li>
+<li>注:中式思维容易说成He robbed my money. (X) 这是绝对错误的!</li>
+</ul>
+</li>
+<li>2.deprive 剥夺(权利)<ul>
+<li>This law will deprive us of our most basic rights.这条法律将剥夺我们最基本的权利。</li>
+</ul>
+</li>
+<li>3.cure 治愈<ul>
+<li>The teacher cured him of bad habits.老师纠正了他的坏习惯。</li>
+</ul>
+</li>
+<li>4.relieve 减轻<ul>
+<li>It will relieve her of a tremendous burden. 这将给她解决一个巨大的负担。</li>
+</ul>
+</li>
+<li>5.remind 提醒<ul>
+<li>I continually have to remind him of his responsibilities.我得一再提醒他记住他的责任。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>表“提供”概念的授予动词provide, furnish, supply必须与介词with连用。(但双宾语倒置的时候任然用to，for)<ul>
+<li>He provided me with a lot of money.他提供给我很多钱。</li>
+<li>The present conflict may provide fresh impetus for peace talk.目前的冲突可能会给和谈提供新的推动力。</li>
+<li>The school doesn’t furnish students with lunch.学校不供给学生午饭。</li>
+<li>The gas station usually supplies its nearby communities with gas.这个加油站通常为附近的社区提供汽油。</li>
+<li>We supply power to the three nearby towns.我们对附近的三个城镇提供电力。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.这个著名的歌手给我们演唱了一首流行歌曲。<ul>
+<li>1.The famous singer sang us a popular song.</li>
+</ul>
+</li>
+<li>2.这座新桥带给当地人极大的方便。<ul>
+<li>2.The new bridge brings the local people the great convenience.</li>
+</ul>
+</li>
+<li>3.你不能剥夺她的权利。<ul>
+<li>3.You can’t deprive her of her rights.</li>
+</ul>
+</li>
+<li>4.这张照片使我想起了我们在夏令营度过的日子。<ul>
+<li>4.The photo reminds me of the days which spent in the summer camp.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>第四大句型:主语+不完全及物动词+宾语+宾语补语，变成被动语态时，原句的宾语补语，在被动语态中的名称为“主语补语”<ul>
+<li>My father was shocked. Now we are not allowed to touch it. 我父亲大为吃惊，不许我们再动它。</li>
+<li>The Games will be held just outside the capital and the whole area will be called ‘Olympic City’. 奥运会就在首都市郊举办，整个地区将被称作奥林匹克城”。</li>
+<li>The man was ordered to pay 43,545 for the cost of the trip. 此人被责令交付旅费3,500英镑.</li>
+</ul>
+</li>
+<li>make, have, let, get 这4个使役动词，只有make可以用于被动语态。这类句型在被动语态句里边，主语补语必须加上to!<ul>
+<li>They made me repeat the story. / I was made to repeat the story.他们让我又把那事讲了一遍。</li>
+</ul>
+</li>
+<li>能用动词原形作宾语补语的不完全(及物)动词有<ul>
+<li>5看：see, observe, watch, look at, notice<ul>
+<li>I saw him dance. / He was seen to dance. 我看见他跳舞了。</li>
+</ul>
+</li>
+<li>1使：make</li>
+<li>2听：hear, listen to</li>
+<li>1感：feel</li>
+</ul>
+</li>
+<li>第五大句型变成被动语态时，两个宾语都可以成为被动句的主语。但由于间接宾语是人，通常更常变成主语。<ul>
+<li>I give him a book. = He was given a book by me. = A book was given to him by me.</li>
+</ul>
+</li>
+</ul>
+<h1 id="5-最简单的长句——并列句"><a href="#5-最简单的长句——并列句" class="headerlink" title="5.最简单的长句——并列句"></a>5.最简单的长句——并列句</h1><h2 id="简单句、复合句、并列句"><a href="#简单句、复合句、并列句" class="headerlink" title="简单句、复合句、并列句"></a>简单句、复合句、并列句</h2><ul>
+<li>简单句：是只有一个主干的句子</li>
+<li>复合句：是除主句外还包含一个或一个以上从句的句子</li>
+<li>并列句：由并列连词连接两个或两个以上简单句而成的句子。</li>
+<li>注意：汉语可以用逗号分隔两个完整的句子，英语绝对不可以！而是必须有连词连接，或者把其中一个句子，化简为分词短语或不定时短语</li>
+</ul>
+<h2 id="连接主句和从句的连词有三种"><a href="#连接主句和从句的连词有三种" class="headerlink" title="连接主句和从句的连词有三种"></a>连接主句和从句的连词有三种</h2><ul>
+<li>引导词，连接名词性从句</li>
+<li>副词连词，连接状语从句</li>
+<li>关系词，连接定语从句</li>
+</ul>
+<h2 id="单一连接词：and-or-but"><a href="#单一连接词：and-or-but" class="headerlink" title="单一连接词：and, or, but"></a>单一连接词：and, or, but</h2><ul>
+<li>连接对等的句子<ul>
+<li>I had just lost $50 <code>and</code> I felt very upset. 我刚刚丢了50英镑，感到非常烦恼。(and连接不用加逗号)</li>
+<li>The police had a difficult time, <code>but</code> they were most amused. 警察虽然吃了苦头，但他们还是感到很有趣。(but连接要加逗号)</li>
+<li>注：or连接句子的时候，通常用于祈使句后面，翻译为“否则”</li>
+<li>Obey your boss <code>or</code> you will be fired. 服从你的上司，否则你会被解雇。</li>
+<li>Don’t cheat at exams <code>or</code> others will despise you. 考试不要作弊，否则别人会瞧不起你。</li>
+<li>Give me liberty <code>or</code> give me death. 不自由，毋宁死。</li>
+</ul>
+</li>
+<li>连接句子中任何对等的成分<ul>
+<li>连接主语<ul>
+<li>A young man <code>and</code> a young woman were sitting behind me.</li>
+<li>一青年男子与一青年女子坐在我的身后。</li>
+</ul>
+</li>
+<li>连接谓语：相当于是连接两个句子，省略了第二个句子的主语<ul>
+<li>I visited museums <code>and</code> sat in public gardens. 我参观了博物馆，还去了公园。</li>
+<li>I entered the hotel manager’s office <code>and</code> sat down. 我走进饭店经理的办公室，坐了下来</li>
+<li>注：连接谓语的时候，只要助动词相同，即可省略助动词<ul>
+<li>After taking off, we were flying low over the city <code>and</code> (were) slowly gaining height, when the plane suddenly turned round and flew back to the airport. 起飞之后，我们在城市上空低低地飞行，然后慢慢爬高。这时飞机突然调转头来，飞回了 机场。(括号里的助动词were可省略)</li>
+</ul>
+</li>
+<li>谓语动词相同的，也可以省略。<ul>
+<li>Mary is very happy <code>but</code> John (is) very miserable. 玛丽很幸福，但是约翰很悲惨。</li>
+<li>Experience is the father of wisdom, <code>and</code> memory (is) the mother. 经验乃智慧之父，记忆为智慧之母。</li>
+<li>Reading makes a full man; conference a ready man; <code>and</code> writing an exact man.读书使人渊博，交谈使人机敏，写作使人严谨。(conference和writing后省略了makes)- Francis Bacon(弗朗西斯培根)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>连接宾语<ul>
+<li>I looked at the man <code>and</code> the woman angrily. 我回过头去怒视着那一男一女。</li>
+<li>He asked me for a meal <code>and</code> a glass of beer. 他问我要一顿饭和一杯啤酒。(连接介词for的两个宾语)</li>
+</ul>
+</li>
+<li>连接表语<ul>
+<li>The railway station was big, black <code>and</code> dark. 火车站很大，又黑又暗。</li>
+<li>The explanation was simple <code>but</code> very unusual. 解释很简单，却异乎寻常</li>
+</ul>
+</li>
+<li>连接宾语补语<ul>
+<li>He saw two thieves rush out of a shop <code>and</code> run towards a waiting car. 他看到有两个小偷从一家商店里冲出来，奔向等在那里的一辆汽车。</li>
+</ul>
+</li>
+<li>连接定语<ul>
+<li>Pupils of the school, old <code>and</code> new, will be sending him a present to mark the occasion.为了纪念这个日子，学校的学生——无论老同学还是新同学——将送他一件礼物。</li>
+</ul>
+</li>
+<li>连接状语<ul>
+<li>We shall all remember Mr. Page for his patience <code>and</code> understanding and for the kindly encouragement.我们不会忘记佩奇先生对我们既有耐心又充满理解，还有亲切鼓励。</li>
+</ul>
+</li>
+<li>注：or连接对等成分的时候，通常翻译为“或者”<ul>
+<li>They will go to the zoo <code>or</code> play volleyball. 他们要去动物园或打排球</li>
+<li>I want to have a talk with Mr. Jones <code>or</code> Mr. Smith. 我想和琼斯先生或者史密斯先生谈谈。</li>
+</ul>
+</li>
+<li>And也可表示“然后”，“但是”，”那么，则”的意思<ul>
+<li>Cease to struggle and you cease to live. 停止奋斗，则终止了生命。</li>
+<li>Idleness is sweet, and its consequences are cruel.  懒惰是甜蜜的，但其结果是残酷的。</li>
+<li>I will set my goal and work toward it. 我要确定目标，然后为此努力。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="由单一连词衍生的连接词"><a href="#由单一连词衍生的连接词" class="headerlink" title="由单一连词衍生的连接词"></a>由单一连词衍生的连接词</h2><ul>
+<li>要么…要么…：either…or…(连接2者以上的结构)<ul>
+<li>In answer to these questions I <code>either</code> nodded <code>or</code> made strange noises. 作为对这些问题的回答，我不是点头，就是发出奇怪的声音。</li>
+<li><code>Either</code> Bob <code>or</code> Jim or Sam will be the new vice president of the company. 不是鲍勃就是吉姆或者是山姆会成为这家公司的新副总裁。</li>
+</ul>
+</li>
+<li>既不是…也不是…：neither…nor…，也可用其它否定词代替neither<ul>
+<li>He answered me, but he spoke <code>neither</code> slowly <code>nor</code> clearly. 他回答了，但他讲得既不慢也不清楚。</li>
+<li>We are worried about Mary. She <code>neither</code> eats <code>nor</code> drinks <code>nor</code> talks. 我们替玛丽担心。她不吃不喝也不说话</li>
+<li>The story is <code>not</code> interesting <code>nor</code> instructive. 这个故事没有味道，也没有教育意义。</li>
+<li>I have <code>never</code> spoken <code>nor</code> written to her. 我跟她从来没说过话，也没写过信。</li>
+</ul>
+</li>
+<li>不是…而是…：not…but…<ul>
+<li>I went to the concert <code>not</code> with my brother <code>but</code> with my friend. 我不是和我哥哥去音乐会，而是和我朋友去的。(只能省略动词，不能省略介词)</li>
+<li>We choose to go to the moon in this decade and do the other things, <code>not</code> because they are easy, <code>but</code> because they are hard. 我们选择10年内登月以及另外一些事情，不是因为它们容易，而是因为它们困难。(肯尼迪总统在阿波罗登月计划动员会上的讲话)</li>
+<li>“Listen, my dear, we must hold on to hope,” my father calm but insistently replied.“<code>Not</code> because hope is real, but because we have to live up to nobility.” “听着，亲爱的，我们必须抱有希望，”我爸爸平静但坚定地回答。“这并不是因为希望真的存在，而是因为我们要做高贵的人。” 《The wandering earth》Liu Cixin (刘慈欣《流浪地球》)</li>
+</ul>
+</li>
+<li>不仅…而且…：not only…but(also)…/not only…but…as well<ul>
+<li>He answered all the question <code>not only</code> quickly <code>but (also)</code> accurately. 他回答所有问题时不仅快，而且准确。</li>
+<li>The Big Ben is <code>not only</code> of immense size, <code>but</code> is extremely accurate <code>as well.</code> 此钟不仅外型巨大，而且走时也非常准确。</li>
+<li>英国英语常用not only… but… as well,</li>
+<li>美国英语常用not only… but also…(also可省略)</li>
+<li>I <code>not only</code> spoke English very carefully, <code>but</code> very clearly <code>as well</code>.(英)</li>
+<li>I <code>not only</code> spoke English very carefully, <code>but (also)</code> very clearly. (美)我的英语讲得不但非常认真，而且咬字也非常清楚。</li>
+</ul>
+</li>
+<li>注：上述并列连词连接的并列名词作主语时，谓语动词的单复数与靠后面的名词一致<ul>
+<li>Either Thomas or I <code>am</code> going to call you tomorrow about the job.不是托马斯就是我明天会打电话给你谈工作的事。</li>
+</ul>
+</li>
+<li>…和…两者都：both…and…<ul>
+<li>To go far, you need <code>both</code> a dream <code>and</code> a positive attitude.要成功，你需要梦想和积极的态度。</li>
+<li>注：本并列连接的并列名词作主语时，谓语动词一律用复数</li>
+<li>Both my mother and my sister <code>work</code> at the grocery store. 我妈妈和我姐姐都在这个杂货店工作。</li>
+</ul>
+</li>
+<li>既是…又是…：… as well as …<ul>
+<li>Nursing is a vocation <code>as well as</code> a profession. 护理工作既是职业又是救死扶伤的责任。</li>
+<li>He shared in my sorrows <code>as well as</code> in my joys. 他分担我的快乐也分享我的悲伤。</li>
+<li>注：…as well as…的意思和not only…but (also)…相近，但是前者强调前面的名词，谓语动词与强调的名词一致。<ul>
+<li>The bedrooms, as well as the kitchen, <code>need</code> to be repaired if we rent the house. 如果我们要租这个房子，卧室和厨房都需要维修。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>是…而不是…：…rather than…<ul>
+<li>These are political <code>rather than</code> social matters.这是政治问题而不是社会问题。</li>
+</ul>
+</li>
+</ul>
+<h2 id="造句练习"><a href="#造句练习" class="headerlink" title="造句练习"></a>造句练习</h2><ul>
+<li>1.中国和印度的人口都超过了10亿。<ul>
+<li>1.Both China and India have a population of over one billion.</li>
+</ul>
+</li>
+<li>2.我们应该要么把电脑送修要么买台新的。<ul>
+<li>2.We should either get the computer fixed or buy a new one.</li>
+</ul>
+</li>
+<li>3.冰箱里既没有牛奶也没有蔬菜。<ul>
+<li>3.Neither milk nor vegetables is in the refrigerator.</li>
+</ul>
+</li>
+<li>4.无论下雪、下雨或者高温天气都不能阻止这些邮递员完成他们的投递工作。<ul>
+<li>4.Neither snow nor rain nor hot weather prevents these postmen from completing their deliveries.</li>
+</ul>
+</li>
+<li>5.不是公司董事长而是我将出席明天早上的商务会议。<ul>
+<li>5.Not the company’s president but I am going to the business meeting tomorrow morning.</li>
+</ul>
+</li>
+<li>6.我们都喜欢张小姐，不是因为她是我们老师，而是因为她是美女。<ul>
+<li>6.We all like Miss Zhang not because she is our teacher but because she is very beautiful.</li>
+</ul>
+</li>
+<li>7.恶心和呕吐都是食物中毒的症状。<ul>
+<li>7.Both nausea and vomiting are signs of food poisoning.</li>
+</ul>
+</li>
+<li>8.他不但英语说得非常好，而且还会说法语。<ul>
+<li>8.He can not only speak English very well but also French.</li>
+</ul>
+</li>
+<li>9.这名女子听到这个消息的时候是高兴而不是悲伤。<ul>
+<li>9.The woman was happy rather than sad when she heard the news</li>
+</ul>
+</li>
+</ul>
+<h1 id="6-把句子套进另一个句子里，变身“大名词”"><a href="#6-把句子套进另一个句子里，变身“大名词”" class="headerlink" title="6.把句子套进另一个句子里，变身“大名词”"></a>6.把句子套进另一个句子里，变身“大名词”</h1><ul>
+<li>从句是什么<ul>
+<li>就是一个句子在另外一个句子里边做句子成分</li>
+</ul>
+</li>
+<li>名词从句<ul>
+<li>一个句子，在另外一个句子里边当名词使用</li>
+<li>4种用法：主语、宾语、同位语、表语</li>
+<li>名词从句需要有引导词：<code>That</code> he doesn’t like to study makes me angry.</li>
+</ul>
+</li>
+<li>that从句：任何一个陈述句，前面加上引导词that，构成that从句。（作宾语/表语时，that可省略）<ul>
+<li><code>That</code> everyone may receive a moderate education is an object of vital importance. 每个人能够接受适当的教育似乎是一个至关重要的目标。(主语从句)</li>
+<li>Many people pretend <code>that</code> they understand modern art. 有很多人装成很懂现代艺术的样子。(宾语从句)</li>
+<li>The most surprising thing about it, however, is <code>that</code> it can land anywhere: on snow, water, or even on a ploughed field. 然而，最令人惊奇的是它能够在任何地方降落:雪地，水面，甚至刚耕过的田里。(表语从句)</li>
+<li>No one could account for the fact <code>that</code> one of the boxes was extremely heavy.其中有只箱子特别重，可谁也弄不清是怎么回事。(同位语从句)</li>
+</ul>
+</li>
+<li>that从句作主语时，为了使主干更紧凑，通常可用it作行驶时主语，而将真正的主语后置<ul>
+<li>It was obvious <code>that</code> he was very embarrassed. 显然他感到很尴尬。</li>
+<li>It is a curious coincidence <code>that</code> Mr. Page will have been teaching for a total of forty years. 佩奇先生执教满总共40年，这真是奇妙的巧合。</li>
+</ul>
+</li>
+<li>consider, deem, think, find, believe五个动词是宾补动词，构成第四大句型，表示“认为…是…”<ul>
+<li>我认为健康是非常重要的</li>
+<li>I think health very important.其中health是宾语，important是补语</li>
+<li>我认为我们每天说英语是重要的</li>
+<li>I think that we should speak English important. X</li>
+<li>I think it important that we should speak English.√</li>
+<li>I think it necessary that you do it at once.我认为你必须立刻做那件事。</li>
+<li>We find it necessary that we practice spoken English every day. 我们发现每天练习英语口语很有必要。</li>
+</ul>
+</li>
+<li>whether/if从句：任何一个一般疑问句，前面加上引导词whether或if，构成whether从句，但主语与be动词或助动词的位置还原。如果助动词为do, does, did, 还原后将do, does, did去掉，后面的动词根据人称和时态变化<ul>
+<li><code>Whether</code> they would support us was a problem. 他们是否会支持我们还是一个问题。(主语从句) </li>
+<li>He asked <code>if</code> Mr Gilbert’s operation had been successful and the doctor told him that it had been. 他问吉尔伯特先生的手术中否成功，医生告诉他手术很成功。(宾语从句)</li>
+<li>On the way home, he asked Jenny <code>if</code> she had enjoyed the speech. 在回家的路上，他问珍妮是否喜欢他的祝词。(宾语从句， 直接宾语)</li>
+</ul>
+</li>
+<li>介词后及or not结构中，通常用whether<ul>
+<li>My sister is only seven, but she always tells me <code>whether</code> my pictures are good <code>or not</code>. 我的妹妹只有7岁，但她总能说出我的画是好还是坏。</li>
+<li>I worry about <code>whether</code> I hurt his feeling. 我担心是否伤害了他的感情</li>
+</ul>
+</li>
+<li>疑问词从句：构成方法与whether从句一样，只是将whether换成疑问词而已，句子必须改为陈述句语序<ul>
+<li>He then asked <code>when</code> Mr Gilbert would be allowed to go home and the doctor told him that he would have to stay in hospital for another two weeks.然后他又问吉尔伯特先生什么时候可以回家，医生说他在医院还必须再住上两个星期。(宾语从句，其中when作从句中的状语)</li>
+<li>The doctors have not yes decided <code>how</code> the woman died. 医生们至今还未确定这位妇女的死因。</li>
+<li>I have no idea <code>what</code> has happened to him. 我不知道他发生了什么事?</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.谁将负责这项工程还没有(被)决定。(be in charge of)<ul>
+<li>1.Who will be in charge of the project hasn’t been decided yet.</li>
+</ul>
+</li>
+<li>2.他要来参加这个会议(已经)使得我们每个人激动了。<ul>
+<li>2.That he will come to the conference has excited every one of us.</li>
+</ul>
+</li>
+<li>3.他告诉我他们会帮助我们完成整个工作的。<ul>
+<li>3.He told me that they would help us finish the whole work.</li>
+</ul>
+</li>
+<li>4.我不知道(wonder)您是否能小声点。<ul>
+<li>4.I wonder whether/if you would mind making less noise.</li>
+</ul>
+</li>
+<li>5.我认为每天多喝水是有必要的。<ul>
+<li>5.I think it necessary that we (should) take plenty of water every day.</li>
+</ul>
+</li>
+<li>6.我不知道(have no idea)他们什么时候回来定居。<ul>
+<li>6.I have no idea when they will be back and settle down.</li>
+</ul>
+</li>
+<li>7.我(已经)发现所有的票都(已经)卖光了。<ul>
+<li>7.I have found that all the tickets had been sold out.</li>
+</ul>
+</li>
+<li>8.问题是这部电视剧是否值得一看。<ul>
+<li>8.The question is whether the TV play is worth watching.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>英语</category>
+      </categories>
+      <tags>
+        <tag>英语</tag>
+        <tag>语法</tag>
       </tags>
   </entry>
   <entry>
@@ -3979,762 +4482,6 @@
       </tags>
   </entry>
   <entry>
-    <title>恶魔奶爸语法4-6课</title>
-    <url>/gramma4-6/</url>
-    <content><![CDATA[<h1 id="4-被动语态的重难点——不完全及物动词和授予动词补充"><a href="#4-被动语态的重难点——不完全及物动词和授予动词补充" class="headerlink" title="4.被动语态的重难点——不完全及物动词和授予动词补充"></a>4.被动语态的重难点——不完全及物动词和授予动词补充</h1><ul>
-<li>第四大句型，主谓宾补，其实就是“让某人做某事”<ul>
-<li>My mother made me wash the car.</li>
-<li>宾语是“我”，宾补是“洗车”，也就是说，宾语和宾补放在一起，逻辑上可以构成一个句子“我洗车”。</li>
-<li>宾语和宾补之间的关系是被动语态呢?</li>
-<li>他让这个任务完成了。</li>
-<li>如果按照造句规律，应该是: He made this task be finished.或者He get this task to be finished.</li>
-<li>宾补中，出现的be或者to be，通常要省略！所以，这句话应该说成: He made this task finished.</li>
-</ul>
-</li>
-<li>英语中还有什么时候会出现be动词呢?<ul>
-<li>除了被动语态(过去分词作表语)之外，还有主系表句型(be动词后面的名词作表语，形容词作表语，地点副词作表语)</li>
-</ul>
-</li>
-<li>使役动词+宾语+过去分词（补语）<ul>
-<li>Now a group of students will have the plane restored.一群学生计划修复这架飞机。</li>
-<li>Officials have the clock checked twice a day.官员们每天两次派人检查此钟。</li>
-</ul>
-</li>
-<li>使役动词+宾语+名词、形容词或地点副词<ul>
-<li>使役动词也可加名词、形容词或地点副词等作补语，其原因是前面省略了不定式be或to be。<ul>
-<li>His teacher made him a good student. (名词作宾补)他的老师使他成为好学生。</li>
-<li>The trip made him happy.(形容词作宾补)这次旅行使他很愉快。</li>
-<li>He let me in. (地点副词作宾补)他让我进来。</li>
-<li>Get him out of here. (介词短语，相当于地点副词)把他弄出去!</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>各种不完全及物动词：接上宾语后意思仍然不完整<ul>
-<li>让某人做某事，只能接不定时作宾语补语：ask、encourage、tell、push、expect、want、drive/force/oblige/compel、order、cause/urge<ul>
-<li>The postman <code>wanted</code> me to sign for a letter!邮递员要我签收一封挂号信!</li>
-<li>Last week at a dinner-party, the hostess <code>asked</code> me to sit next to Mrs. Rumbold.在上星期的一次宴会上，女主人安排我坐在兰伯尔德夫人的身旁。</li>
-<li>Byrd at once <code>ordered</code> his men to throw out two heavy food sacks.伯德马上命令他的助手们把两个沉重的食物袋扔掉。</li>
-<li>My dentist had <code>told</code> me to rest for a while.我的牙科医生叫我休息一会儿。</li>
-<li>My old friend Brian <code>urged</code> me to accept a cigarette.我的老朋友布赖恩极力劝我接受一枝香烟。</li>
-</ul>
-</li>
-<li>知觉动词（5看，2听，1感觉）：感觉：feel，听：hear, listen to，看：see, observe, watch, look at, notice<ul>
-<li>表事实：此类动词+宾语+动词原形(补语)，译为”……..了。”<ul>
-<li>I <code>saw</code> him dance.我看见他跳舞了。</li>
-<li>I <code>heard</code> him sing.我听见他唱歌了。</li>
-</ul>
-</li>
-<li>表进行状态：此类动词+宾语+现在分词(补语)，译为”…..正在……”<ul>
-<li>Early next morning, she <code>heard</code> planes passing overhead. 第二天一大早，她听到头顶上飞机正在盘旋。</li>
-<li>The pilot <code>saw</code> one of the men taking photographs.当气球飞临基地上空时，飞行员看见有一个人在拍照。</li>
-</ul>
-</li>
-<li>表被动状态：此类动词+宾语+过去分词(补语)，译为”…..被…..”<ul>
-<li>I <code>saw</code> him killed.我看见他被杀了。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>认定动词：视…为…；认为…是…：动词 + 宾语 + 介词as + 名词或形容词(补语)<ul>
-<li>regard<ul>
-<li>In spite of this, the Italians <code>regarded</code> him <code>as</code> a sort of hero.尽管如此，意大利人还是把他视作某种英雄。</li>
-</ul>
-</li>
-<li>look upon<ul>
-<li>His students all <code>look upon</code> him <code>as</code> a friend.他的学生都把他看成是朋友。</li>
-</ul>
-</li>
-<li>think of<ul>
-<li>They <code>think of</code> themselves <code>as</code> the salt of the earth.他们自认为是社会中坚。</li>
-</ul>
-</li>
-<li>see<ul>
-<li>I’d like to <code>see</code> Europe <code>as</code> a nuclear-free zone.我希望欧洲成为无核区。</li>
-</ul>
-</li>
-<li>view<ul>
-<li>We <code>view</code> every customer <code>as</code> a partner.我们将每一位客户视为合作伙伴。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>认定动词：视…为…；认为…是…：动词 + 宾语 + (to be) + 名词或形容词(补语)：consider, deem, think, find, believe<ul>
-<li>He is <code>finding</code> his new work far more exciting.他发觉自己的新工作令人兴奋得多。</li>
-<li>I <code>found</code> his advice really useful.我发现他的建议非常有用。</li>
-<li>People <code>think</code> this problem determination.人们认为这个问题解决了。</li>
-</ul>
-</li>
-<li>转变动词：使…变成…：change/turn + 宾语 + into + 名词(补语)<ul>
-<li>I need to change my dollars into francs.我需要把美金换成法郎。</li>
-<li>The experience turned him into a good student.这个经验使他变成了好学生。</li>
-</ul>
-</li>
-<li>call/name + 宾语 + 名词(补语)<ul>
-<li>‘Do you call that a hat?’ I said to my wife.“你把那个叫帽子吗?”我对妻子说。</li>
-<li>You can name your pet dog Doctor.你可以把你的狗狗取名为博士。</li>
-</ul>
-</li>
-<li>help后接不定式(to可省略) 作宾语补语。<ul>
-<li>A short while ago, my sister helped me to carry my old bookcases up the stairs.几分钟前，我妹妹帮我把我的旧书橱抬上了楼。</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.店员看见这个衣着很好的妇女正在偷东西。<ul>
-<li>1.The shop assistant saw the well-dressed woman stealing something.</li>
-</ul>
-</li>
-<li>2.你能帮我洗衣服吗?<ul>
-<li>2.Can you help me to wash clothes?</li>
-</ul>
-</li>
-<li>3.作为老师，你应该鼓励你的学生努力学习。<ul>
-<li>3.As a teacher, you should encourage your students to study hard.</li>
-</ul>
-</li>
-<li>4.父母不应该期望他们的孩子做任何事都成功。<ul>
-<li>4.The parents should not expect their children to succeed in doing everything.</li>
-</ul>
-</li>
-<li>5.你应该命令这个计划在一个月内完成。(order)<ul>
-<li>5.You should order this project to finished within a month.</li>
-</ul>
-</li>
-<li>6.我发现我们的老师被警察逮捕了。<ul>
-<li>6.I found our teacher arrested by the police.</li>
-</ul>
-</li>
-<li>7.工人们明天将把墙刷成绿色。<ul>
-<li>7.The workers will paint the wall green.</li>
-</ul>
-</li>
-<li>8.女主人邀请我们进去。<ul>
-<li>8.The hostess invited us in.</li>
-</ul>
-</li>
-<li>9.我们认为这个男人处于危险中。<ul>
-<li>9.We considered the man in danger.</li>
-</ul>
-</li>
-<li>10.大部分人把他当作英雄。<ul>
-<li>10.Most people regarded him as a hero.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>特殊的授予动词<ul>
-<li>间接宾语与直接宾语位置可以倒置，此时需要加介词to, for, of。<ul>
-<li>表“给予”的概念，要用to<ul>
-<li>My holidays passed quickly, but I did not send any cards <code>to</code> my friends.假期过得真快，可我还没有给我的朋友们寄过一张明信片。</li>
-</ul>
-</li>
-<li>表“代劳”的概念(buy等) ，要用for<ul>
-<li>I bought a book <code>for</code> him.我为他买了一本书</li>
-</ul>
-</li>
-<li>ask要用of<ul>
-<li>I asked a question <code>of</code> him.我问了他一个问题。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>下列授予动词与of连用<ul>
-<li>1.rob 抢夺<ul>
-<li>He robbed me of my money.他抢了我的钱。</li>
-<li>注:中式思维容易说成He robbed my money. (X) 这是绝对错误的!</li>
-</ul>
-</li>
-<li>2.deprive 剥夺(权利)<ul>
-<li>This law will deprive us of our most basic rights.这条法律将剥夺我们最基本的权利。</li>
-</ul>
-</li>
-<li>3.cure 治愈<ul>
-<li>The teacher cured him of bad habits.老师纠正了他的坏习惯。</li>
-</ul>
-</li>
-<li>4.relieve 减轻<ul>
-<li>It will relieve her of a tremendous burden. 这将给她解决一个巨大的负担。</li>
-</ul>
-</li>
-<li>5.remind 提醒<ul>
-<li>I continually have to remind him of his responsibilities.我得一再提醒他记住他的责任。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>表“提供”概念的授予动词provide, furnish, supply必须与介词with连用。(但双宾语倒置的时候任然用to，for)<ul>
-<li>He provided me with a lot of money.他提供给我很多钱。</li>
-<li>The present conflict may provide fresh impetus for peace talk.目前的冲突可能会给和谈提供新的推动力。</li>
-<li>The school doesn’t furnish students with lunch.学校不供给学生午饭。</li>
-<li>The gas station usually supplies its nearby communities with gas.这个加油站通常为附近的社区提供汽油。</li>
-<li>We supply power to the three nearby towns.我们对附近的三个城镇提供电力。</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.这个著名的歌手给我们演唱了一首流行歌曲。<ul>
-<li>1.The famous singer sang us a popular song.</li>
-</ul>
-</li>
-<li>2.这座新桥带给当地人极大的方便。<ul>
-<li>2.The new bridge brings the local people the great convenience.</li>
-</ul>
-</li>
-<li>3.你不能剥夺她的权利。<ul>
-<li>3.You can’t deprive her of her rights.</li>
-</ul>
-</li>
-<li>4.这张照片使我想起了我们在夏令营度过的日子。<ul>
-<li>4.The photo reminds me of the days which spent in the summer camp.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>第四大句型:主语+不完全及物动词+宾语+宾语补语，变成被动语态时，原句的宾语补语，在被动语态中的名称为“主语补语”<ul>
-<li>My father was shocked. Now we are not allowed to touch it. 我父亲大为吃惊，不许我们再动它。</li>
-<li>The Games will be held just outside the capital and the whole area will be called ‘Olympic City’. 奥运会就在首都市郊举办，整个地区将被称作奥林匹克城”。</li>
-<li>The man was ordered to pay 43,545 for the cost of the trip. 此人被责令交付旅费3,500英镑.</li>
-</ul>
-</li>
-<li>make, have, let, get 这4个使役动词，只有make可以用于被动语态。这类句型在被动语态句里边，主语补语必须加上to!<ul>
-<li>They made me repeat the story. / I was made to repeat the story.他们让我又把那事讲了一遍。</li>
-</ul>
-</li>
-<li>能用动词原形作宾语补语的不完全(及物)动词有<ul>
-<li>5看：see, observe, watch, look at, notice<ul>
-<li>I saw him dance. / He was seen to dance. 我看见他跳舞了。</li>
-</ul>
-</li>
-<li>1使：make</li>
-<li>2听：hear, listen to</li>
-<li>1感：feel</li>
-</ul>
-</li>
-<li>第五大句型变成被动语态时，两个宾语都可以成为被动句的主语。但由于间接宾语是人，通常更常变成主语。<ul>
-<li>I give him a book. = He was given a book by me. = A book was given to him by me.</li>
-</ul>
-</li>
-</ul>
-<h1 id="5-最简单的长句——并列句"><a href="#5-最简单的长句——并列句" class="headerlink" title="5.最简单的长句——并列句"></a>5.最简单的长句——并列句</h1><h2 id="简单句、复合句、并列句"><a href="#简单句、复合句、并列句" class="headerlink" title="简单句、复合句、并列句"></a>简单句、复合句、并列句</h2><ul>
-<li>简单句：是只有一个主干的句子</li>
-<li>复合句：是除主句外还包含一个或一个以上从句的句子</li>
-<li>并列句：由并列连词连接两个或两个以上简单句而成的句子。</li>
-<li>注意：汉语可以用逗号分隔两个完整的句子，英语绝对不可以！而是必须有连词连接，或者把其中一个句子，化简为分词短语或不定时短语</li>
-</ul>
-<h2 id="连接主句和从句的连词有三种"><a href="#连接主句和从句的连词有三种" class="headerlink" title="连接主句和从句的连词有三种"></a>连接主句和从句的连词有三种</h2><ul>
-<li>引导词，连接名词性从句</li>
-<li>副词连词，连接状语从句</li>
-<li>关系词，连接定语从句</li>
-</ul>
-<h2 id="单一连接词：and-or-but"><a href="#单一连接词：and-or-but" class="headerlink" title="单一连接词：and, or, but"></a>单一连接词：and, or, but</h2><ul>
-<li>连接对等的句子<ul>
-<li>I had just lost $50 <code>and</code> I felt very upset. 我刚刚丢了50英镑，感到非常烦恼。(and连接不用加逗号)</li>
-<li>The police had a difficult time, <code>but</code> they were most amused. 警察虽然吃了苦头，但他们还是感到很有趣。(but连接要加逗号)</li>
-<li>注：or连接句子的时候，通常用于祈使句后面，翻译为“否则”</li>
-<li>Obey your boss <code>or</code> you will be fired. 服从你的上司，否则你会被解雇。</li>
-<li>Don’t cheat at exams <code>or</code> others will despise you. 考试不要作弊，否则别人会瞧不起你。</li>
-<li>Give me liberty <code>or</code> give me death. 不自由，毋宁死。</li>
-</ul>
-</li>
-<li>连接句子中任何对等的成分<ul>
-<li>连接主语<ul>
-<li>A young man <code>and</code> a young woman were sitting behind me.</li>
-<li>一青年男子与一青年女子坐在我的身后。</li>
-</ul>
-</li>
-<li>连接谓语：相当于是连接两个句子，省略了第二个句子的主语<ul>
-<li>I visited museums <code>and</code> sat in public gardens. 我参观了博物馆，还去了公园。</li>
-<li>I entered the hotel manager’s office <code>and</code> sat down. 我走进饭店经理的办公室，坐了下来</li>
-<li>注：连接谓语的时候，只要助动词相同，即可省略助动词<ul>
-<li>After taking off, we were flying low over the city <code>and</code> (were) slowly gaining height, when the plane suddenly turned round and flew back to the airport. 起飞之后，我们在城市上空低低地飞行，然后慢慢爬高。这时飞机突然调转头来，飞回了 机场。(括号里的助动词were可省略)</li>
-</ul>
-</li>
-<li>谓语动词相同的，也可以省略。<ul>
-<li>Mary is very happy <code>but</code> John (is) very miserable. 玛丽很幸福，但是约翰很悲惨。</li>
-<li>Experience is the father of wisdom, <code>and</code> memory (is) the mother. 经验乃智慧之父，记忆为智慧之母。</li>
-<li>Reading makes a full man; conference a ready man; <code>and</code> writing an exact man.读书使人渊博，交谈使人机敏，写作使人严谨。(conference和writing后省略了makes)- Francis Bacon(弗朗西斯培根)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>连接宾语<ul>
-<li>I looked at the man <code>and</code> the woman angrily. 我回过头去怒视着那一男一女。</li>
-<li>He asked me for a meal <code>and</code> a glass of beer. 他问我要一顿饭和一杯啤酒。(连接介词for的两个宾语)</li>
-</ul>
-</li>
-<li>连接表语<ul>
-<li>The railway station was big, black <code>and</code> dark. 火车站很大，又黑又暗。</li>
-<li>The explanation was simple <code>but</code> very unusual. 解释很简单，却异乎寻常</li>
-</ul>
-</li>
-<li>连接宾语补语<ul>
-<li>He saw two thieves rush out of a shop <code>and</code> run towards a waiting car. 他看到有两个小偷从一家商店里冲出来，奔向等在那里的一辆汽车。</li>
-</ul>
-</li>
-<li>连接定语<ul>
-<li>Pupils of the school, old <code>and</code> new, will be sending him a present to mark the occasion.为了纪念这个日子，学校的学生——无论老同学还是新同学——将送他一件礼物。</li>
-</ul>
-</li>
-<li>连接状语<ul>
-<li>We shall all remember Mr. Page for his patience <code>and</code> understanding and for the kindly encouragement.我们不会忘记佩奇先生对我们既有耐心又充满理解，还有亲切鼓励。</li>
-</ul>
-</li>
-<li>注：or连接对等成分的时候，通常翻译为“或者”<ul>
-<li>They will go to the zoo <code>or</code> play volleyball. 他们要去动物园或打排球</li>
-<li>I want to have a talk with Mr. Jones <code>or</code> Mr. Smith. 我想和琼斯先生或者史密斯先生谈谈。</li>
-</ul>
-</li>
-<li>And也可表示“然后”，“但是”，”那么，则”的意思<ul>
-<li>Cease to struggle and you cease to live. 停止奋斗，则终止了生命。</li>
-<li>Idleness is sweet, and its consequences are cruel.  懒惰是甜蜜的，但其结果是残酷的。</li>
-<li>I will set my goal and work toward it. 我要确定目标，然后为此努力。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="由单一连词衍生的连接词"><a href="#由单一连词衍生的连接词" class="headerlink" title="由单一连词衍生的连接词"></a>由单一连词衍生的连接词</h2><ul>
-<li>要么…要么…：either…or…(连接2者以上的结构)<ul>
-<li>In answer to these questions I <code>either</code> nodded <code>or</code> made strange noises. 作为对这些问题的回答，我不是点头，就是发出奇怪的声音。</li>
-<li><code>Either</code> Bob <code>or</code> Jim or Sam will be the new vice president of the company. 不是鲍勃就是吉姆或者是山姆会成为这家公司的新副总裁。</li>
-</ul>
-</li>
-<li>既不是…也不是…：neither…nor…，也可用其它否定词代替neither<ul>
-<li>He answered me, but he spoke <code>neither</code> slowly <code>nor</code> clearly. 他回答了，但他讲得既不慢也不清楚。</li>
-<li>We are worried about Mary. She <code>neither</code> eats <code>nor</code> drinks <code>nor</code> talks. 我们替玛丽担心。她不吃不喝也不说话</li>
-<li>The story is <code>not</code> interesting <code>nor</code> instructive. 这个故事没有味道，也没有教育意义。</li>
-<li>I have <code>never</code> spoken <code>nor</code> written to her. 我跟她从来没说过话，也没写过信。</li>
-</ul>
-</li>
-<li>不是…而是…：not…but…<ul>
-<li>I went to the concert <code>not</code> with my brother <code>but</code> with my friend. 我不是和我哥哥去音乐会，而是和我朋友去的。(只能省略动词，不能省略介词)</li>
-<li>We choose to go to the moon in this decade and do the other things, <code>not</code> because they are easy, <code>but</code> because they are hard. 我们选择10年内登月以及另外一些事情，不是因为它们容易，而是因为它们困难。(肯尼迪总统在阿波罗登月计划动员会上的讲话)</li>
-<li>“Listen, my dear, we must hold on to hope,” my father calm but insistently replied.“<code>Not</code> because hope is real, but because we have to live up to nobility.” “听着，亲爱的，我们必须抱有希望，”我爸爸平静但坚定地回答。“这并不是因为希望真的存在，而是因为我们要做高贵的人。” 《The wandering earth》Liu Cixin (刘慈欣《流浪地球》)</li>
-</ul>
-</li>
-<li>不仅…而且…：not only…but(also)…/not only…but…as well<ul>
-<li>He answered all the question <code>not only</code> quickly <code>but (also)</code> accurately. 他回答所有问题时不仅快，而且准确。</li>
-<li>The Big Ben is <code>not only</code> of immense size, <code>but</code> is extremely accurate <code>as well.</code> 此钟不仅外型巨大，而且走时也非常准确。</li>
-<li>英国英语常用not only… but… as well,</li>
-<li>美国英语常用not only… but also…(also可省略)</li>
-<li>I <code>not only</code> spoke English very carefully, <code>but</code> very clearly <code>as well</code>.(英)</li>
-<li>I <code>not only</code> spoke English very carefully, <code>but (also)</code> very clearly. (美)我的英语讲得不但非常认真，而且咬字也非常清楚。</li>
-</ul>
-</li>
-<li>注：上述并列连词连接的并列名词作主语时，谓语动词的单复数与靠后面的名词一致<ul>
-<li>Either Thomas or I <code>am</code> going to call you tomorrow about the job.不是托马斯就是我明天会打电话给你谈工作的事。</li>
-</ul>
-</li>
-<li>…和…两者都：both…and…<ul>
-<li>To go far, you need <code>both</code> a dream <code>and</code> a positive attitude.要成功，你需要梦想和积极的态度。</li>
-<li>注：本并列连接的并列名词作主语时，谓语动词一律用复数</li>
-<li>Both my mother and my sister <code>work</code> at the grocery store. 我妈妈和我姐姐都在这个杂货店工作。</li>
-</ul>
-</li>
-<li>既是…又是…：… as well as …<ul>
-<li>Nursing is a vocation <code>as well as</code> a profession. 护理工作既是职业又是救死扶伤的责任。</li>
-<li>He shared in my sorrows <code>as well as</code> in my joys. 他分担我的快乐也分享我的悲伤。</li>
-<li>注：…as well as…的意思和not only…but (also)…相近，但是前者强调前面的名词，谓语动词与强调的名词一致。<ul>
-<li>The bedrooms, as well as the kitchen, <code>need</code> to be repaired if we rent the house. 如果我们要租这个房子，卧室和厨房都需要维修。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>是…而不是…：…rather than…<ul>
-<li>These are political <code>rather than</code> social matters.这是政治问题而不是社会问题。</li>
-</ul>
-</li>
-</ul>
-<h2 id="造句练习"><a href="#造句练习" class="headerlink" title="造句练习"></a>造句练习</h2><ul>
-<li>1.中国和印度的人口都超过了10亿。<ul>
-<li>1.Both China and India have a population of over one billion.</li>
-</ul>
-</li>
-<li>2.我们应该要么把电脑送修要么买台新的。<ul>
-<li>2.We should either get the computer fixed or buy a new one.</li>
-</ul>
-</li>
-<li>3.冰箱里既没有牛奶也没有蔬菜。<ul>
-<li>3.Neither milk nor vegetables is in the refrigerator.</li>
-</ul>
-</li>
-<li>4.无论下雪、下雨或者高温天气都不能阻止这些邮递员完成他们的投递工作。<ul>
-<li>4.Neither snow nor rain nor hot weather prevents these postmen from completing their deliveries.</li>
-</ul>
-</li>
-<li>5.不是公司董事长而是我将出席明天早上的商务会议。<ul>
-<li>5.Not the company’s president but I am going to the business meeting tomorrow morning.</li>
-</ul>
-</li>
-<li>6.我们都喜欢张小姐，不是因为她是我们老师，而是因为她是美女。<ul>
-<li>6.We all like Miss Zhang not because she is our teacher but because she is very beautiful.</li>
-</ul>
-</li>
-<li>7.恶心和呕吐都是食物中毒的症状。<ul>
-<li>7.Both nausea and vomiting are signs of food poisoning.</li>
-</ul>
-</li>
-<li>8.他不但英语说得非常好，而且还会说法语。<ul>
-<li>8.He can not only speak English very well but also French.</li>
-</ul>
-</li>
-<li>9.这名女子听到这个消息的时候是高兴而不是悲伤。<ul>
-<li>9.The woman was happy rather than sad when she heard the news</li>
-</ul>
-</li>
-</ul>
-<h1 id="6-把句子套进另一个句子里，变身“大名词”"><a href="#6-把句子套进另一个句子里，变身“大名词”" class="headerlink" title="6.把句子套进另一个句子里，变身“大名词”"></a>6.把句子套进另一个句子里，变身“大名词”</h1><ul>
-<li>从句是什么<ul>
-<li>就是一个句子在另外一个句子里边做句子成分</li>
-</ul>
-</li>
-<li>名词从句<ul>
-<li>一个句子，在另外一个句子里边当名词使用</li>
-<li>4种用法：主语、宾语、同位语、表语</li>
-<li>名词从句需要有引导词：<code>That</code> he doesn’t like to study makes me angry.</li>
-</ul>
-</li>
-<li>that从句：任何一个陈述句，前面加上引导词that，构成that从句。（作宾语/表语时，that可省略）<ul>
-<li><code>That</code> everyone may receive a moderate education is an object of vital importance. 每个人能够接受适当的教育似乎是一个至关重要的目标。(主语从句)</li>
-<li>Many people pretend <code>that</code> they understand modern art. 有很多人装成很懂现代艺术的样子。(宾语从句)</li>
-<li>The most surprising thing about it, however, is <code>that</code> it can land anywhere: on snow, water, or even on a ploughed field. 然而，最令人惊奇的是它能够在任何地方降落:雪地，水面，甚至刚耕过的田里。(表语从句)</li>
-<li>No one could account for the fact <code>that</code> one of the boxes was extremely heavy.其中有只箱子特别重，可谁也弄不清是怎么回事。(同位语从句)</li>
-</ul>
-</li>
-<li>that从句作主语时，为了使主干更紧凑，通常可用it作行驶时主语，而将真正的主语后置<ul>
-<li>It was obvious <code>that</code> he was very embarrassed. 显然他感到很尴尬。</li>
-<li>It is a curious coincidence <code>that</code> Mr. Page will have been teaching for a total of forty years. 佩奇先生执教满总共40年，这真是奇妙的巧合。</li>
-</ul>
-</li>
-<li>consider, deem, think, find, believe五个动词是宾补动词，构成第四大句型，表示“认为…是…”<ul>
-<li>我认为健康是非常重要的</li>
-<li>I think health very important.其中health是宾语，important是补语</li>
-<li>我认为我们每天说英语是重要的</li>
-<li>I think that we should speak English important. X</li>
-<li>I think it important that we should speak English.√</li>
-<li>I think it necessary that you do it at once.我认为你必须立刻做那件事。</li>
-<li>We find it necessary that we practice spoken English every day. 我们发现每天练习英语口语很有必要。</li>
-</ul>
-</li>
-<li>whether/if从句：任何一个一般疑问句，前面加上引导词whether或if，构成whether从句，但主语与be动词或助动词的位置还原。如果助动词为do, does, did, 还原后将do, does, did去掉，后面的动词根据人称和时态变化<ul>
-<li><code>Whether</code> they would support us was a problem. 他们是否会支持我们还是一个问题。(主语从句) </li>
-<li>He asked <code>if</code> Mr Gilbert’s operation had been successful and the doctor told him that it had been. 他问吉尔伯特先生的手术中否成功，医生告诉他手术很成功。(宾语从句)</li>
-<li>On the way home, he asked Jenny <code>if</code> she had enjoyed the speech. 在回家的路上，他问珍妮是否喜欢他的祝词。(宾语从句， 直接宾语)</li>
-</ul>
-</li>
-<li>介词后及or not结构中，通常用whether<ul>
-<li>My sister is only seven, but she always tells me <code>whether</code> my pictures are good <code>or not</code>. 我的妹妹只有7岁，但她总能说出我的画是好还是坏。</li>
-<li>I worry about <code>whether</code> I hurt his feeling. 我担心是否伤害了他的感情</li>
-</ul>
-</li>
-<li>疑问词从句：构成方法与whether从句一样，只是将whether换成疑问词而已，句子必须改为陈述句语序<ul>
-<li>He then asked <code>when</code> Mr Gilbert would be allowed to go home and the doctor told him that he would have to stay in hospital for another two weeks.然后他又问吉尔伯特先生什么时候可以回家，医生说他在医院还必须再住上两个星期。(宾语从句，其中when作从句中的状语)</li>
-<li>The doctors have not yes decided <code>how</code> the woman died. 医生们至今还未确定这位妇女的死因。</li>
-<li>I have no idea <code>what</code> has happened to him. 我不知道他发生了什么事?</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.谁将负责这项工程还没有(被)决定。(be in charge of)<ul>
-<li>1.Who will be in charge of the project hasn’t been decided yet.</li>
-</ul>
-</li>
-<li>2.他要来参加这个会议(已经)使得我们每个人激动了。<ul>
-<li>2.That he will come to the conference has excited every one of us.</li>
-</ul>
-</li>
-<li>3.他告诉我他们会帮助我们完成整个工作的。<ul>
-<li>3.He told me that they would help us finish the whole work.</li>
-</ul>
-</li>
-<li>4.我不知道(wonder)您是否能小声点。<ul>
-<li>4.I wonder whether/if you would mind making less noise.</li>
-</ul>
-</li>
-<li>5.我认为每天多喝水是有必要的。<ul>
-<li>5.I think it necessary that we (should) take plenty of water every day.</li>
-</ul>
-</li>
-<li>6.我不知道(have no idea)他们什么时候回来定居。<ul>
-<li>6.I have no idea when they will be back and settle down.</li>
-</ul>
-</li>
-<li>7.我(已经)发现所有的票都(已经)卖光了。<ul>
-<li>7.I have found that all the tickets had been sold out.</li>
-</ul>
-</li>
-<li>8.问题是这部电视剧是否值得一看。<ul>
-<li>8.The question is whether the TV play is worth watching.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>英语</category>
-      </categories>
-      <tags>
-        <tag>英语</tag>
-        <tag>语法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《透视HTTP协议》安全篇</title>
-    <url>/http-perspective-2/</url>
-    <content><![CDATA[<h1 id="23-HTTPS是什么？SSL-TLS又是什么？"><a href="#23-HTTPS是什么？SSL-TLS又是什么？" class="headerlink" title="23 | HTTPS是什么？SSL/TLS又是什么？"></a>23 | HTTPS是什么？SSL/TLS又是什么？</h1><ul>
-<li>Q:具备哪4给特性的通信过程才是安全的?<ul>
-<li>机密性(Secrecy/Confidentiality)：对数据的“保密”，只能由可信的人访问，对其他人是不可见的“秘密”，简单来说就是不能让不相关的人看到不该看的东西</li>
-<li>完整性(Integrity，也叫一致性)：指数据在传输过程中没有被窜改</li>
-<li>身份认证(Authentication)：确认对方的真实身份，保证消息只能发送给可信的人</li>
-<li>不可否认(Non-repudiation/Undeniable，也叫不可抵赖)，不能否认已经发生过的行为</li>
-</ul>
-</li>
-</ul>
-<h1 id="24-固若金汤的根本（上）：对称加密与非对称加密"><a href="#24-固若金汤的根本（上）：对称加密与非对称加密" class="headerlink" title="24 | 固若金汤的根本（上）：对称加密与非对称加密"></a>24 | 固若金汤的根本（上）：对称加密与非对称加密</h1><ul>
-<li>Q:对称加密是什么？<ul>
-<li>指加密和解密时使用的密钥都是同一个，只要保证了密钥的安全，那整个通信过程就可以说具有了机密性</li>
-</ul>
-</li>
-<li>Q:目前常用的对称加密算法有哪两个<ul>
-<li>AES：高级加密标准（Advanced Encryption Standard），密钥长度可以是 128、192 或 256。它是 DES 算法的替代者，安全强度很高，性能也很好，而且有的硬件 还会做特殊优化，所以非常流行，是应用最广泛的对称加密算法</li>
-<li>ChaCha20：Google 设计的另一种加密算法，密钥长度固定为 256 位，纯软件运行性能 要超过 AES，曾经在移动客户端上比较流行，但 ARMv8 之后也加入了 AES 硬件优化，所 以现在不再具有明显的优势，但仍然算得上是一个不错算法</li>
-</ul>
-</li>
-<li>Q:加密分组模式是什么？<ul>
-<li>让算法用固定长度的密钥加密任意长度的明文，把密钥转化为密文</li>
-<li>最新的分组模式被称为 AEAD（Authenticated Encryption with Associated Data），在加密的同时增加了认证的功能，常用的是 GCM、CCM 和 Poly1305</li>
-</ul>
-</li>
-<li>Q:非对称加密是什么？<ul>
-<li>它有两个密钥，一个叫“公钥”（public key），一个叫“私钥”（private key）。两个密钥是不同的，公钥可以公开给任何人使用，而私钥必须严格保密</li>
-<li>公钥和私钥有个特别的“单向”性，虽然都可以用来加密解密，但公钥加密后只能用私钥解密，反过来，私钥加密后也只能用公钥解密</li>
-</ul>
-</li>
-<li>Q:有哪些非对称加密算法<ul>
-<li>RSA：它的安全性基于“整数分解”的数学难题，使用两个超大素数的乘积作为生成密钥的材料，想要从公钥推算出私钥是非常困难的</li>
-<li>ECC（Elliptic Curve Cryptography）：它基于“椭圆曲线离散对数”的数学难题，使用特定的曲线方程和基点生成公钥和私钥，子算法 ECDHE 用于密钥交换，ECDSA 用于数字签名</li>
-<li>目前比较常用的两个曲线是 P-256（secp256r1，在 OpenSSL 称为 prime256v1）和 x25519。P-256 是 NIST（美国国家标准技术研究所）和 NSA（美国国家安全局）推荐使用的曲线，而 x25519 被认为是最安全、最快速的曲线</li>
-</ul>
-</li>
-<li>Q:TLS里使用的混合加密是怎样呢？<ul>
-<li>在通信刚开始的时候使用非对称算法，如RSA、ECDHE，首先解决密钥交换的问题</li>
-<li>用随机数产生对称算法使用的「会话密钥」(session key)，再用公钥加密。因为会话密钥很短，通常只有16字节或32字节，所以慢一点也无所谓</li>
-<li>对方拿到密文后用私钥解密，取出会话密钥。这样，双方就实现了对称密钥的安全交换，后续就不再使用非对称加密，全都使用对称加密</li>
-</ul>
-</li>
-</ul>
-<h1 id="25-固若金汤的根本（下）：数字签名与证书"><a href="#25-固若金汤的根本（下）：数字签名与证书" class="headerlink" title="25 | 固若金汤的根本（下）：数字签名与证书"></a>25 | 固若金汤的根本（下）：数字签名与证书</h1><ul>
-<li>Q:目前推荐使用的摘要算法是什么<ul>
-<li>SHA-2：一系列摘要算法的统称，总共有 6 种，常用的有 SHA224、SHA256、 SHA384，分别能够生成 28 字节、32 字节、48 字节的摘要</li>
-</ul>
-</li>
-<li>Q:如何保证数据完整性<ul>
-<li>真正的完整性必须要建立在机密性之上，在混合加密系统里用会话密钥加密消息和摘要</li>
-</ul>
-</li>
-<li>Q:数字签名的原理是什么？<ul>
-<li>把公钥私钥的用法反过来，之前是公钥加密、私钥解密， 现在是私钥加密、公钥解密</li>
-<li>因为非对称加密效率太低，所以私钥只加密原文的摘要，这样运算量就小的多，而且得到的数字签名也很小，方便保管和传输</li>
-<li>签名和公钥一样完全公开，任何人都可以获取。但这个签名只有用私钥对应的公钥才能解开，拿到摘要后，再比对原文验证完整性，就可以像签署文件一样证明消息确实是你发的</li>
-</ul>
-</li>
-<li>Q:CA是什么<ul>
-<li>证书认证机构(Certificate Authority)，具有极高的可信度，由它来给各个公钥签名，用自 身的信誉来保证公钥无法伪造，是可信的</li>
-<li>CA 对公钥的签名认证是有格式的，包含序列号、用途、颁发者、有效时间等等，把这些打成一个包再签名，完整地证明公钥关联的各种信息，形成“数字证书”（Certificate）</li>
-</ul>
-</li>
-<li>Q:CA签发的三种证书DV、OV、EV的区别是<ul>
-<li>区别在于可信程度</li>
-<li>DV 是最低的，只是域名级别的可信，背后是谁不知道。EV 是最高的，经过了法律和审计的严格核查，可以证明网站拥有者的身份（在浏览器地址栏会显示出公司的名字，例如 Apple、GitHub 的网站）</li>
-</ul>
-</li>
-<li>Q:CA 怎么证明自己呢<ul>
-<li>这是信任链的问题。小一点的 CA 可以让大 CA 签名认证，但链条的最后，也就是Root CA，就只能自己证明自己了，这个就叫“自签名证书”（Self-Signed Certificate）或者“根证书”（Root Certificate）。你必须相信，否则整个证书信任链就走不下去了</li>
-<li><img src="https://img.shiqi-lu.tech/20210321183737.png"></li>
-<li>有了这个证书体系，操作系统和浏览器都内置了各大 CA 的根证书，上网的时候只要服务器发过来它的证书，就可以验证证书里的签名，顺着证书链（Certificate Chain）一层层地验证，直到找到根证书，就能够确定证书是可信的，从而里面的公钥也是可信的</li>
-</ul>
-</li>
-</ul>
-<h1 id="26-信任始于握手：TLS1-2连接过程解析"><a href="#26-信任始于握手：TLS1-2连接过程解析" class="headerlink" title="26 | 信任始于握手：TLS1.2连接过程解析"></a>26 | 信任始于握手：TLS1.2连接过程解析</h1><ul>
-<li>Q:TLS协议由哪几个子协议组成呢？<ul>
-<li>记录协议(Record Protocol)：规定了TLS收发数据的基本单位：记录(record)。它有点像是TCP里的segment，所有的其它子协议都需要通过记录协议发出。但多个记录数据可以在一个TCP包里一次性发出，也不需要像TCP那样返回ACK</li>
-<li>警报协议(Alert Protocol)：向对方发出警报信息，类似HTTP协议里的状态码。如，protocol_version是不支持旧版本，bad_certificate是证书有问题，收到警报后另一方可以选择继续，也可以立即终止连接</li>
-<li>握手协议(Handshake Protocol)：浏览器和服务器会在握手过程中协商TLS版本号、随机数、密码套件等信息，然后交换证书和密钥参数，最终双方协商会得到会话密钥，用于后续的混合加密系统</li>
-<li>变更密码规范协议(Change Cipher Spec Protocol)：就是一个「通知」，告诉对方，后续的数据都将使用加密保护。在它之前，数据都是明文的</li>
-</ul>
-</li>
-<li>Q:TLS的握手过程<ul>
-<li><img src="https://img.shiqi-lu.tech/20210321192338.png"></li>
-<li>其中每一个“框”都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议</li>
-<li><img src="https://img.shiqi-lu.tech/20210322090801.png"></li>
-<li>1.在TCP建立连接后，浏览器会首先发一个「Client Hello」消息。里面有客户端的版本号、支持的密码套件，还有一个随机数(Client Random)，用于后续生成会话密钥</li>
-<li>2.服务器收到「Client Hello」后，会返回一个「Server Hello」消息。把版本号对一下，也给出一个随机数(Server Random)，然后从客户端列表里选一个作为本次通信使用的密码套件</li>
-<li>然后服务器为了证明自己的身份，就把证书也发给了客户端(Server Certificate)</li>
-<li>接下来因为服务器选择了ECDHE算法，所以它会在证书后发送「Server Key Exchange」消息，里面是椭圆曲线的公钥(Server Params)，用来实现密钥交换，再加上自己的私钥签名认证</li>
-<li>然后是「Server Hello Done」消息，表示所有信息就这些</li>
-<li>这样第一个消息往返就结束了（两个 TCP 包），结果是客户端和服务器通过明文共享了三个信息：Client Random、Server Random 和 Server Params</li>
-<li>3.客户端拿到服务器的证书后，开始走证书链逐级验证，确认证书的真实性，再用证书公钥签名，确认服务器的身份</li>
-<li>然后，客户端按照密码套件的要求，也生成一个椭圆曲线的公钥(Client Params)，用「Client Key Exchange」消息发给服务器</li>
-<li>现在客户端和服务器手里都难倒了密钥交换算法的两个参数(Client Params、Server Params)，就用ECDHE算法算出「Pre-Master」，也是一个随机数</li>
-<li>现在客户端和服务器手里有了三个随机数：Client Random、Server Random 和 Pre-Master。用这三个作为原始材料，就可以生成用于加密会话的主密钥，叫「Master Secret」。而黑客因为拿不到「Pre-Master」，所以也就得不到主密钥</li>
-<li>用三个随机数是因为保证真正的「完全随机」</li>
-<li>主密钥有 48 字节，但它也不是最终用于通信的会话密钥，还会再用 PRF (伪随机数函数)扩展出更多的密钥，比如客户端发送用的会话密钥（client_write_key）、服务器发送用的会话密钥（server_write_key）等等，避免只用一个密钥带来的安全隐患</li>
-<li>4.有了主密钥和派生的会话密钥，客户端发一个「Change Cipher Spec」，然后再发一个「Finished」消息，把之前所有发送的数据做个摘要，再加密一下，让服务器做个验证</li>
-<li>服务器同样发「Change Cipher Spec」和「Finished」消息，双方都验证加密解密OK，握手正式结束，后面就收发被加密的 HTTP 请求和响应了</li>
-</ul>
-</li>
-<li>Q:主流的TLS握手过程和传统的RSA握手过程的区别是什么？<ul>
-<li>1.使用ECDHE实现密钥交换，而不是RSA，所以会在服务器端发出「Server Key Exchange」消息</li>
-<li>2.因为使用了ECDHE，客户端可以不用等到服务器发回「Finished」确认握手完毕，，立即就发出 HTTP 报文，省去了一个消息往返的时间浪费。这个叫「TLS False Start」，意思就是「抢跑」，和「TCP Fast Open」有点像，都是不等连接完全建立就提前发应用数据，提高传输的效率</li>
-<li><img src="https://img.shiqi-lu.tech/20210322152509.png"></li>
-<li>大体的流程没有变，只是「Pre-Master」不再需要用算法生成，而是客户端直接生成随机数，然后用服务器的公钥加密，通过「Client Key Exchange」消息发给服务器。服务器再用私钥解密，这样双方也实现了共享三个随机数，就可以生成主密钥</li>
-</ul>
-</li>
-<li>Q:双向认证是什么？<ul>
-<li>TLS握手是「单向认证」的握手过程，只认证了服务器的身份，而没有认证客户端的身份。这是因为通常单向认证通过后已经建立了安全通信，用账号、密码等简单的手段就能够确认用户的真实身份</li>
-<li>双向认证的流程也没有太多变化，只是在「Server Hello Done」之后，「Client Key Exchange」之前，客户端要发送「Client Certificate」消息，服务器收到后也把证书链走一遍，验证客户端的身份</li>
-</ul>
-</li>
-</ul>
-<h1 id="27-更好更快的握手：TLS1-3特性解析"><a href="#27-更好更快的握手：TLS1-3特性解析" class="headerlink" title="27 | 更好更快的握手：TLS1.3特性解析"></a>27 | 更好更快的握手：TLS1.3特性解析</h1><ul>
-<li>Q:TLS1.3的主要改进是什么？<ul>
-<li>最大化兼容性<ul>
-<li>TLS1.3 保持现有的记录格式不变，通过“伪装”来实现兼容TLS1.2，即不变更记录头字段里的版本号</li>
-<li>使用一个新的扩展协议（Extension Protocol），通过在记录末尾添加一系列的「扩展字段」来增加新的功能，老版本的 TLS 不认识它可以直接忽略，这就实现了「后向兼容」</li>
-<li>在记录头的 Version 字段被兼容性“固定”的情况下，只要是 TLS1.3 协议，握手的“Hello”消息后面就必须有“supported_versions”扩展，它标记了 TLS 的版本号， 使用它就能区分新旧协议</li>
-</ul>
-</li>
-<li>强化安全<ul>
-<li>精简算法，废除不安全的算法</li>
-</ul>
-</li>
-<li>提升性能<ul>
-<li>HTTPS 建立连接时除了要做 TCP 握手，还要做 TLS 握手，在 1.2 中会多花两个消息往返（2-RTT），可能导致几十毫秒甚至上百毫秒的延迟，在移动网络中延迟还会更严重</li>
-<li>现在因为密码套件大幅度简化，也就没有必要再像以前那样走复杂的协商流程了。TLS1.3 压缩了以前的「Hello」协商过程，删除了「Key Exchange」消息，把握手时间减少到了1-RTT，效率提高了一倍</li>
-<li>具体的做法是利用扩展。客户端在「Client Hello」消息里直接 用「supported_groups」带上支持的曲线，比如 P-256、x25519，用「key_share」带上曲线对应的客户端公钥参数，用「signature_algorithms」带上签名算法</li>
-<li>服务器收到后在这些扩展里选定一个曲线和参数，再用「key_share」扩展返回服务器这边的公钥参数，就实现了双方的密钥交换，后面的流程就和 1.2 基本一样了</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:TLS1.3的握手过程<ul>
-<li><img src="https://img.shiqi-lu.tech/20210322162027.png"></li>
-<li><img src="https://img.shiqi-lu.tech/20210322162054.png"></li>
-<li>在 TCP 建立连接之后，浏览器首先还是发一个「Client Hello」</li>
-<li>因为 1.3 的消息兼容 1.2，所以开头的版本号、支持的密码套件和随机数（Client Random）结构都是一样的（不过这时的随机数是 32 个字节）</li>
-<li>注意「Client Hello」里的扩展，「supported_versions」表示这是 TLS1.3，「supported_groups」是支持的曲线，「key_share」是曲线对应的参数</li>
-<li>服务器收到「Client Hello」同样返回「Server Hello」消息，还是要给出一个随机数(Server Random)和选定密码套件，表面上看和 TLS1.2 是一样的，重点是后面的扩展。「supported_versions」里确认使用的是 TLS1.3，然后在「key_share」扩展带上曲线和对应的公钥参数</li>
-<li>这时只交换了两条消息，客户端和服务器就拿到了四个共享信息：Client Random和 Server Random、Client Params和Server Params，两边就可以各自用 ECDHE 算出「Pre-Master」，再用 HKDF 生成主密钥「Master Secret」，效率比 TLS1.2 提高了一大截</li>
-<li>在算出主密钥后，服务器立刻发出「Change Cipher Spec」消息，比 TLS1.2 提早进入加密通信，后面的证书等就都是加密的了，减少了握手时的明文信息泄露</li>
-<li>这里 TLS1.3 还有一个安全强化措施，多了个「Certificate Verify」消息，用服务器的私钥把前面的曲线、套件、参数等握手数据加了签名，作用和「Finished」消息差不多。但由于是私钥签名，所以强化了身份认证和和防窜改</li>
-<li>这两个「Hello」消息之后，客户端验证服务器证书，再发「Finished」消息，就正式完成了握手，开始收发 HTTP 报文</li>
-</ul>
-</li>
-</ul>
-<h1 id="28-连接太慢该怎么办：HTTPS的优化"><a href="#28-连接太慢该怎么办：HTTPS的优化" class="headerlink" title="28 | 连接太慢该怎么办：HTTPS的优化"></a>28 | 连接太慢该怎么办：HTTPS的优化</h1><ul>
-<li>Q:TLS握手过程中影响性能的部分有哪些呢<ul>
-<li><img src="https://img.shiqi-lu.tech/20210322163414.png"></li>
-</ul>
-</li>
-<li>Q:如何使用硬件优化的方式优化HTTPS<ul>
-<li>1.选择更快的 CPU，最好还内建 AES 优化，这样即可以加速握手，也可以加速传输</li>
-<li>2.选择“SSL 加速卡”，加解密时调用它的 API，让专门的硬件来做非对称加解密，分担 CPU 的计算压力</li>
-<li>3.SSL 加速服务器，用专门的服务器集群来彻底“卸载”TLS 握手时的加密解密计算，性能自然要比单纯的“加速卡”要强大的多</li>
-</ul>
-</li>
-<li>Q:如何使用软件优化的方式优化HTTPS<ul>
-<li>1.软件升级：把现在正在使用的软件尽量升级到最新版本，由于这些软件在更新版本的时候都会做性能优化、修复错误，只要运维能够主动配合，这种软件优化是最容易做的，也是最容易达成优化效果的</li>
-<li>2.协议优化：尽量采用 TLS1.3，它大幅度简化了握手的过程，完全握手只要 1-RTT，而且更加安全</li>
-<li>如果暂时不能升级到 1.3，只能用 1.2，那么握手时使用的密钥交换协议应当尽量选用椭圆曲线的 ECDHE 算法。它不仅运算速度快，安全性高，还支持“False Start”，能够把握手的消息往返由 2-RTT 减少到 1-RTT，达到与 TLS1.3 类似的效果</li>
-<li>椭圆曲线也要选择高性能的曲线，最好是 x25519，次优选择是 P-256。对称加密算法方面，也可以选用“AES_128_GCM”，它能比“AES_256_GCM”略快一点点</li>
-<li>在 Nginx 里可以用“ssl_ciphers”“ssl_ecdh_curve”等指令配置服务器使用的密码套件和椭圆曲线，把优先使用的放在前面<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_ciphers TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:EECDH+CHACHA20;</span><br><span class="line">ssl_ecdh_curve X25519:P-256;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:如何进行证书优化<ul>
-<li>1.证书传输<ul>
-<li>服务器的证书可以选择椭圆曲线（ECDSA）证书而不是 RSA 证书，因为 224 位的 ECC 相当于 2048 位的 RSA，所以椭圆曲线证书的“个头”要比 RSA 小很多，即能够节约带宽也能减少客户端的运算量</li>
-</ul>
-</li>
-<li>2.证书验证<ul>
-<li>客户端的证书验证其实是个很复杂的操作，除了要公钥解密验证多个证书签名外，因为证书还有可能会被撤销失效，客户端有时还会再去访问 CA，下载 CRL 或者 OCSP 数据，这又会产生 DNS 查询、建立连接、收发数据等一系列网络通信，增加好几个 RTT</li>
-<li>CRL（Certificate revocation list，证书吊销列表）由 CA 定期发布，里面是所有被撤销信任的证书序号，查询这个列表就可以知道证书是否有效。</li>
-<li>但 CRL 因为是“定期”发布，就有“时间窗口”的安全隐患，而且随着吊销证书的增多，列表会越来越大，一个 CRL 经常会上 MB。想象一下，每次需要预先下载几 M 的“无用数据”才能连接网站，实用性实在是太低了</li>
-<li>所以，现在 CRL 基本上不用了，取而代之的是 OCSP（在线证书状态协议，Online Certificate Status Protocol），向 CA 发送查询请求，让 CA 返回证书的有效状态</li>
-<li>但 OCSP 也要多出一次网络请求的消耗，而且还依赖于 CA 服务器，如果 CA 服务器很忙，那响应延迟也是等不起的</li>
-<li>于是又出来了一个“补丁”，叫“OCSP Stapling”（OCSP 装订），它可以让服务器预先访问 CA 获取 OCSP 响应，然后在握手时随着证书一起发给客户端，免去了客户端连接 CA 服务器查询的时间</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:如何进行会话复用（TLS session resumption）的「Session ID」<ul>
-<li>客户端和服务器首次连接后各自保存一个会话的 ID 号，内存里存储主密钥和其他相关的信息。当客户端再次连接时发一个 ID 过来，服务器就在内存里找，找到就直接用主密钥恢复会话状态，跳过证书验证和密钥交换，只用一个消息往返就可以建立安全通信</li>
-<li>服务器在“ServerHello”消息后直接发送了“Change Cipher Spec”和“Finished”消息，复用会话完成了握手</li>
-<li><img src="https://img.shiqi-lu.tech/20210322164911.png"></li>
-<li>「Session ID」是最早出现的会话复用技术，也是应用最广的，但它也有缺点，服务器必须保存每一个客户端的会话数据，对于拥有百万、千万级别用户的网站来说存储量就成了大问题，加重了服务器的负担</li>
-</ul>
-</li>
-<li>Q:如何进行会话复用（TLS session resumption）的「Session Ticket」即会话票证<ul>
-<li>有点类似 HTTP 的 Cookie，存储的责任由服务器转移到了客户端，服务器加密会话信息，用“New Session Ticket”消息发给客户端，让客户端保存</li>
-<li>重连的时候，客户端使用扩展“session_ticket”发送“Ticket”而不是“Session ID”，服务器解密后验证有效期，就可以恢复会话，开始加密通信</li>
-<li>不过“Session Ticket”方案需要使用一个固定的密钥文件（ticket_key）来加密 Ticket，为了防止密钥被破解，保证“前向安全”，密钥文件需要定期轮换，比如设置为一小时或者一天</li>
-</ul>
-</li>
-<li>Q:如何进行预共享密钥<ul>
-<li>“False Start”“Session ID”“Session Ticket”等方式只能实现 1-RTT，而 TLS1.3 更进一步实现了“0-RTT”，原理和“Session Ticket”差不多，但在发送 Ticket 的同时会带上应用数据（Early Data），免去了 1.2 里的服务器确认步骤，这种方式叫“Pre-shared Key”，简称为“PSK”</li>
-<li><img src="https://img.shiqi-lu.tech/20210322165457.png"></li>
-<li>但“PSK”也不是完美的，它为了追求效率而牺牲了一点安全性，容易受到“重放攻击”（Replay attack）的威胁。黑客可以截获“PSK”的数据，像复读机那样反复向服务器发送</li>
-<li>解决的办法是只允许安全的 GET/HEAD 方法，在消息里加入时间戳、“nonce”验证，或者“一次性票证”限制重放</li>
-</ul>
-</li>
-</ul>
-<h1 id="29-我应该迁移到HTTPS吗？"><a href="#29-我应该迁移到HTTPS吗？" class="headerlink" title="29 | 我应该迁移到HTTPS吗？"></a>29 | 我应该迁移到HTTPS吗？</h1><ul>
-<li>Q:如何申请证书<ul>
-<li>“Let’s Encrypt”一直在推动证书的自动化部署，为此还实现了专门的 ACME 协议（RFC8555）。有很多的客户端软件可以完成申请、验证、下载、更新的“一条龙”操作，比如 Certbot、acme.sh 等等</li>
-<li>注意：</li>
-<li>第一，申请证书时应当同时申请 RSA 和 ECDSA 两种证书，在 Nginx 里配置成双证书验证，这样服务器可以自动选择快速的椭圆曲线证书，同时也兼容只支持 RSA 的客户端</li>
-<li>第二，如果申请 RSA 证书，私钥至少要 2048 位，摘要算法应该选用 SHA-2，例如 SHA256、SHA384 等</li>
-<li>第三，出于安全的考虑，“Let’s Encrypt”证书的有效期很短，只有 90 天，时间一到就会过期失效，所以必须要定期更新。你可以在 crontab 里加个每周或每月任务，发送更新请求，不过很多 ACME 客户端会自动添加这样的定期任务，完全不用你操心</li>
-</ul>
-</li>
-<li>Q:如何配置HTTPS<ul>
-<li>在 Nginx 上非常简单，只要在“listen”指令后面加上参数“ssl”，再配上刚才的证书文件就可以实现最基本的 HTTPS<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">listen                443 ssl;</span><br><span class="line"> </span><br><span class="line">ssl_certificate       xxx_rsa.crt;  #rsa2048 cert</span><br><span class="line">ssl_certificate_key   xxx_rsa.key;  #rsa2048 private key</span><br><span class="line"> </span><br><span class="line">ssl_certificate       xxx_ecc.crt;  #ecdsa cert</span><br><span class="line">ssl_certificate_key   xxx_ecc.key;  #ecdsa private ke</span><br></pre></td></tr></table></figure></li>
-<li>为了提高 HTTPS 的安全系数和性能，你还可以强制 Nginx 只支持 TLS1.2 以上的协议，打开“Session Ticket”会话复用<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_protocols               TLSv1.2 TLSv1.3;</span><br><span class="line"> </span><br><span class="line">ssl_session_timeout         5m;</span><br><span class="line">ssl_session_tickets         on;</span><br><span class="line">ssl_session_ticket_key      ticket.key;</span><br></pre></td></tr></table></figure></li>
-<li>密码套件的选择方面，我给你的建议是以服务器的套件优先。这样可以避免恶意客户端故意选择较弱的套件、降低安全等级，然后密码套件向 TLS1.3“看齐”，只使用 ECDHE、AES 和 ChaCha20，支持“False Start”<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_prefer_server_ciphers   on;</span><br><span class="line"></span><br><span class="line">ssl_ciphers   ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-CHACHA20-POLY1305:ECDHE+AES128:!MD5:!SHA1;</span><br></pre></td></tr></table></figure></li>
-<li>如果你的服务器上使用了 OpenSSL 的分支 BorringSSL，那么还可以使用一个特殊的“等价密码组”（Equal preference cipher groups）特性，它可以让服务器配置一组“等价”的密码套件，在这些套件里允许客户端优先选择，比如这么配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_ciphers </span><br><span class="line">[ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305];</span><br></pre></td></tr></table></figure></li>
-<li>如果客户端硬件没有 AES 优化，服务器就会顺着客户端的意思，优先选择与 AES“等价”的 ChaCha20 算法，让客户端能够快一点</li>
-<li>全部配置完成后，你可以访问“<a href="https://www.ssllabs.com/">SSLLabs</a>”网站，测试网站的安全程度，它会模拟多种客户端发起测试，打出一个综合的评分</li>
-</ul>
-</li>
-<li>Q:服务器名称指示是怎样？<ul>
-<li>在 HTTP 协议里，多个域名可以同时在一个 IP 地址上运行，这就是“虚拟主机”，Web 服务器会使用请求头里的 Host 字段来选择</li>
-<li>但在 HTTPS 里，因为请求头只有在 TLS 握手之后才能发送，在握手时就必须选择“虚拟主机”对应的证书，TLS 无法得知域名的信息，就只能用 IP 地址来区分。所以，最早的时候每个 HTTPS 域名必须使用独立的 IP 地址，非常不方便</li>
-<li>这得用到 TLS 的“扩展”，给协议加个SNI（Server Name Indication）的“补充条款”。它的作用和 Host 字段差不多，客户端会在“Client Hello”时带上域名信息，这样服务器就可以根据名字而不是 IP 地址来选择证书</li>
-</ul>
-</li>
-<li>Q:如何把原有的HTTP重定向到HTTPS服务<ul>
-<li>可用「重定向跳转」技术，把不安全的 HTTP 网址用 301 或 302“重定向”到新的 HTTPS 网站，这在 Nginx 里也很容易做到，使用“return”或“rewrite”都可以<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">return 301 https:&#x2F;&#x2F;$host$request_uri;             # 永久重定向</span><br><span class="line">rewrite ^  https:&#x2F;&#x2F;$host$request_uri permanent;   # 永久重定向</span><br></pre></td></tr></table></figure></li>
-<li>但这种方式有两个问题。一个是重定向增加了网络成本，多出了一次请求；另一个是存在安全隐患，重定向的响应可能会被“中间人”窜改，实现“会话劫持”，跳转到恶意网站</li>
-<li>可使用HSTS（HTTP 严格传输安全，HTTP Strict Transport Security）的技术可以消除这种安全隐患。HTTPS 服务器需要在发出的响应头里添加一个「Strict-Transport-Security」的字段，再设定一个有效期，例如：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Strict-Transport-Security: max-age&#x3D;15768000; includeSubDomains</span><br></pre></td></tr></table></figure></li>
-<li>相当于告诉浏览器：我这个网站必须严格使用 HTTPS 协议，在半年之内（182.5 天）都不允许用 HTTP，你以后就自己做转换吧，不要再来麻烦我了</li>
-<li>有了“HSTS”的指示，以后浏览器再访问同样的域名的时候就会自动把 URI 里的“http”改成“https”，直接访问安全的 HTTPS 网站。这样“中间人”就失去了攻击的机会，而且对于客户端来说也免去了一次跳转，加快了连接速度</li>
-<li>在配置文件里用“add_header”指令添加“HSTS”字段：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">add_header Strict-Transport-Security max-age&#x3D;15768000; #182.5days</span><br></pre></td></tr></table></figure></li>
-<li>那么 Chrome 浏览器只会在第一次连接时使用 HTTP 协议，之后就会都走 HTTPS 协议</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>网络</category>
-      </categories>
-      <tags>
-        <tag>HTTP</tag>
-        <tag>网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《透视HTTP协议》基础篇+进阶篇</title>
     <url>/http-perspective-1/</url>
     <content><![CDATA[<h1 id="10-应该如何理解请求方法？"><a href="#10-应该如何理解请求方法？" class="headerlink" title="10 | 应该如何理解请求方法？"></a>10 | 应该如何理解请求方法？</h1><ul>
@@ -5068,6 +4815,259 @@
 <li>max-stale：如果代理上的缓存过期了也可以接受，但不能过期太多，超过 x 秒也会不要</li>
 <li>min-fresh：缓存必须有效，而且必须在 x 秒后依然有效，即必须处于过期前 x 秒</li>
 <li>only-if-cached：只接受代理缓存的数据，不接受源服务器的响应。如果代理上没有缓存或者缓存过期，就应该给客户端返回一个504(Gateway Timeout)</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>网络</category>
+      </categories>
+      <tags>
+        <tag>HTTP</tag>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《透视HTTP协议》安全篇</title>
+    <url>/http-perspective-2/</url>
+    <content><![CDATA[<h1 id="23-HTTPS是什么？SSL-TLS又是什么？"><a href="#23-HTTPS是什么？SSL-TLS又是什么？" class="headerlink" title="23 | HTTPS是什么？SSL/TLS又是什么？"></a>23 | HTTPS是什么？SSL/TLS又是什么？</h1><ul>
+<li>Q:具备哪4给特性的通信过程才是安全的?<ul>
+<li>机密性(Secrecy/Confidentiality)：对数据的“保密”，只能由可信的人访问，对其他人是不可见的“秘密”，简单来说就是不能让不相关的人看到不该看的东西</li>
+<li>完整性(Integrity，也叫一致性)：指数据在传输过程中没有被窜改</li>
+<li>身份认证(Authentication)：确认对方的真实身份，保证消息只能发送给可信的人</li>
+<li>不可否认(Non-repudiation/Undeniable，也叫不可抵赖)，不能否认已经发生过的行为</li>
+</ul>
+</li>
+</ul>
+<h1 id="24-固若金汤的根本（上）：对称加密与非对称加密"><a href="#24-固若金汤的根本（上）：对称加密与非对称加密" class="headerlink" title="24 | 固若金汤的根本（上）：对称加密与非对称加密"></a>24 | 固若金汤的根本（上）：对称加密与非对称加密</h1><ul>
+<li>Q:对称加密是什么？<ul>
+<li>指加密和解密时使用的密钥都是同一个，只要保证了密钥的安全，那整个通信过程就可以说具有了机密性</li>
+</ul>
+</li>
+<li>Q:目前常用的对称加密算法有哪两个<ul>
+<li>AES：高级加密标准（Advanced Encryption Standard），密钥长度可以是 128、192 或 256。它是 DES 算法的替代者，安全强度很高，性能也很好，而且有的硬件 还会做特殊优化，所以非常流行，是应用最广泛的对称加密算法</li>
+<li>ChaCha20：Google 设计的另一种加密算法，密钥长度固定为 256 位，纯软件运行性能 要超过 AES，曾经在移动客户端上比较流行，但 ARMv8 之后也加入了 AES 硬件优化，所 以现在不再具有明显的优势，但仍然算得上是一个不错算法</li>
+</ul>
+</li>
+<li>Q:加密分组模式是什么？<ul>
+<li>让算法用固定长度的密钥加密任意长度的明文，把密钥转化为密文</li>
+<li>最新的分组模式被称为 AEAD（Authenticated Encryption with Associated Data），在加密的同时增加了认证的功能，常用的是 GCM、CCM 和 Poly1305</li>
+</ul>
+</li>
+<li>Q:非对称加密是什么？<ul>
+<li>它有两个密钥，一个叫“公钥”（public key），一个叫“私钥”（private key）。两个密钥是不同的，公钥可以公开给任何人使用，而私钥必须严格保密</li>
+<li>公钥和私钥有个特别的“单向”性，虽然都可以用来加密解密，但公钥加密后只能用私钥解密，反过来，私钥加密后也只能用公钥解密</li>
+</ul>
+</li>
+<li>Q:有哪些非对称加密算法<ul>
+<li>RSA：它的安全性基于“整数分解”的数学难题，使用两个超大素数的乘积作为生成密钥的材料，想要从公钥推算出私钥是非常困难的</li>
+<li>ECC（Elliptic Curve Cryptography）：它基于“椭圆曲线离散对数”的数学难题，使用特定的曲线方程和基点生成公钥和私钥，子算法 ECDHE 用于密钥交换，ECDSA 用于数字签名</li>
+<li>目前比较常用的两个曲线是 P-256（secp256r1，在 OpenSSL 称为 prime256v1）和 x25519。P-256 是 NIST（美国国家标准技术研究所）和 NSA（美国国家安全局）推荐使用的曲线，而 x25519 被认为是最安全、最快速的曲线</li>
+</ul>
+</li>
+<li>Q:TLS里使用的混合加密是怎样呢？<ul>
+<li>在通信刚开始的时候使用非对称算法，如RSA、ECDHE，首先解决密钥交换的问题</li>
+<li>用随机数产生对称算法使用的「会话密钥」(session key)，再用公钥加密。因为会话密钥很短，通常只有16字节或32字节，所以慢一点也无所谓</li>
+<li>对方拿到密文后用私钥解密，取出会话密钥。这样，双方就实现了对称密钥的安全交换，后续就不再使用非对称加密，全都使用对称加密</li>
+</ul>
+</li>
+</ul>
+<h1 id="25-固若金汤的根本（下）：数字签名与证书"><a href="#25-固若金汤的根本（下）：数字签名与证书" class="headerlink" title="25 | 固若金汤的根本（下）：数字签名与证书"></a>25 | 固若金汤的根本（下）：数字签名与证书</h1><ul>
+<li>Q:目前推荐使用的摘要算法是什么<ul>
+<li>SHA-2：一系列摘要算法的统称，总共有 6 种，常用的有 SHA224、SHA256、 SHA384，分别能够生成 28 字节、32 字节、48 字节的摘要</li>
+</ul>
+</li>
+<li>Q:如何保证数据完整性<ul>
+<li>真正的完整性必须要建立在机密性之上，在混合加密系统里用会话密钥加密消息和摘要</li>
+</ul>
+</li>
+<li>Q:数字签名的原理是什么？<ul>
+<li>把公钥私钥的用法反过来，之前是公钥加密、私钥解密， 现在是私钥加密、公钥解密</li>
+<li>因为非对称加密效率太低，所以私钥只加密原文的摘要，这样运算量就小的多，而且得到的数字签名也很小，方便保管和传输</li>
+<li>签名和公钥一样完全公开，任何人都可以获取。但这个签名只有用私钥对应的公钥才能解开，拿到摘要后，再比对原文验证完整性，就可以像签署文件一样证明消息确实是你发的</li>
+</ul>
+</li>
+<li>Q:CA是什么<ul>
+<li>证书认证机构(Certificate Authority)，具有极高的可信度，由它来给各个公钥签名，用自 身的信誉来保证公钥无法伪造，是可信的</li>
+<li>CA 对公钥的签名认证是有格式的，包含序列号、用途、颁发者、有效时间等等，把这些打成一个包再签名，完整地证明公钥关联的各种信息，形成“数字证书”（Certificate）</li>
+</ul>
+</li>
+<li>Q:CA签发的三种证书DV、OV、EV的区别是<ul>
+<li>区别在于可信程度</li>
+<li>DV 是最低的，只是域名级别的可信，背后是谁不知道。EV 是最高的，经过了法律和审计的严格核查，可以证明网站拥有者的身份（在浏览器地址栏会显示出公司的名字，例如 Apple、GitHub 的网站）</li>
+</ul>
+</li>
+<li>Q:CA 怎么证明自己呢<ul>
+<li>这是信任链的问题。小一点的 CA 可以让大 CA 签名认证，但链条的最后，也就是Root CA，就只能自己证明自己了，这个就叫“自签名证书”（Self-Signed Certificate）或者“根证书”（Root Certificate）。你必须相信，否则整个证书信任链就走不下去了</li>
+<li><img src="https://img.shiqi-lu.tech/20210321183737.png"></li>
+<li>有了这个证书体系，操作系统和浏览器都内置了各大 CA 的根证书，上网的时候只要服务器发过来它的证书，就可以验证证书里的签名，顺着证书链（Certificate Chain）一层层地验证，直到找到根证书，就能够确定证书是可信的，从而里面的公钥也是可信的</li>
+</ul>
+</li>
+</ul>
+<h1 id="26-信任始于握手：TLS1-2连接过程解析"><a href="#26-信任始于握手：TLS1-2连接过程解析" class="headerlink" title="26 | 信任始于握手：TLS1.2连接过程解析"></a>26 | 信任始于握手：TLS1.2连接过程解析</h1><ul>
+<li>Q:TLS协议由哪几个子协议组成呢？<ul>
+<li>记录协议(Record Protocol)：规定了TLS收发数据的基本单位：记录(record)。它有点像是TCP里的segment，所有的其它子协议都需要通过记录协议发出。但多个记录数据可以在一个TCP包里一次性发出，也不需要像TCP那样返回ACK</li>
+<li>警报协议(Alert Protocol)：向对方发出警报信息，类似HTTP协议里的状态码。如，protocol_version是不支持旧版本，bad_certificate是证书有问题，收到警报后另一方可以选择继续，也可以立即终止连接</li>
+<li>握手协议(Handshake Protocol)：浏览器和服务器会在握手过程中协商TLS版本号、随机数、密码套件等信息，然后交换证书和密钥参数，最终双方协商会得到会话密钥，用于后续的混合加密系统</li>
+<li>变更密码规范协议(Change Cipher Spec Protocol)：就是一个「通知」，告诉对方，后续的数据都将使用加密保护。在它之前，数据都是明文的</li>
+</ul>
+</li>
+<li>Q:TLS的握手过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210321192338.png"></li>
+<li>其中每一个“框”都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议</li>
+<li><img src="https://img.shiqi-lu.tech/20210322090801.png"></li>
+<li>1.在TCP建立连接后，浏览器会首先发一个「Client Hello」消息。里面有客户端的版本号、支持的密码套件，还有一个随机数(Client Random)，用于后续生成会话密钥</li>
+<li>2.服务器收到「Client Hello」后，会返回一个「Server Hello」消息。把版本号对一下，也给出一个随机数(Server Random)，然后从客户端列表里选一个作为本次通信使用的密码套件</li>
+<li>然后服务器为了证明自己的身份，就把证书也发给了客户端(Server Certificate)</li>
+<li>接下来因为服务器选择了ECDHE算法，所以它会在证书后发送「Server Key Exchange」消息，里面是椭圆曲线的公钥(Server Params)，用来实现密钥交换，再加上自己的私钥签名认证</li>
+<li>然后是「Server Hello Done」消息，表示所有信息就这些</li>
+<li>这样第一个消息往返就结束了（两个 TCP 包），结果是客户端和服务器通过明文共享了三个信息：Client Random、Server Random 和 Server Params</li>
+<li>3.客户端拿到服务器的证书后，开始走证书链逐级验证，确认证书的真实性，再用证书公钥签名，确认服务器的身份</li>
+<li>然后，客户端按照密码套件的要求，也生成一个椭圆曲线的公钥(Client Params)，用「Client Key Exchange」消息发给服务器</li>
+<li>现在客户端和服务器手里都难倒了密钥交换算法的两个参数(Client Params、Server Params)，就用ECDHE算法算出「Pre-Master」，也是一个随机数</li>
+<li>现在客户端和服务器手里有了三个随机数：Client Random、Server Random 和 Pre-Master。用这三个作为原始材料，就可以生成用于加密会话的主密钥，叫「Master Secret」。而黑客因为拿不到「Pre-Master」，所以也就得不到主密钥</li>
+<li>用三个随机数是因为保证真正的「完全随机」</li>
+<li>主密钥有 48 字节，但它也不是最终用于通信的会话密钥，还会再用 PRF (伪随机数函数)扩展出更多的密钥，比如客户端发送用的会话密钥（client_write_key）、服务器发送用的会话密钥（server_write_key）等等，避免只用一个密钥带来的安全隐患</li>
+<li>4.有了主密钥和派生的会话密钥，客户端发一个「Change Cipher Spec」，然后再发一个「Finished」消息，把之前所有发送的数据做个摘要，再加密一下，让服务器做个验证</li>
+<li>服务器同样发「Change Cipher Spec」和「Finished」消息，双方都验证加密解密OK，握手正式结束，后面就收发被加密的 HTTP 请求和响应了</li>
+</ul>
+</li>
+<li>Q:主流的TLS握手过程和传统的RSA握手过程的区别是什么？<ul>
+<li>1.使用ECDHE实现密钥交换，而不是RSA，所以会在服务器端发出「Server Key Exchange」消息</li>
+<li>2.因为使用了ECDHE，客户端可以不用等到服务器发回「Finished」确认握手完毕，，立即就发出 HTTP 报文，省去了一个消息往返的时间浪费。这个叫「TLS False Start」，意思就是「抢跑」，和「TCP Fast Open」有点像，都是不等连接完全建立就提前发应用数据，提高传输的效率</li>
+<li><img src="https://img.shiqi-lu.tech/20210322152509.png"></li>
+<li>大体的流程没有变，只是「Pre-Master」不再需要用算法生成，而是客户端直接生成随机数，然后用服务器的公钥加密，通过「Client Key Exchange」消息发给服务器。服务器再用私钥解密，这样双方也实现了共享三个随机数，就可以生成主密钥</li>
+</ul>
+</li>
+<li>Q:双向认证是什么？<ul>
+<li>TLS握手是「单向认证」的握手过程，只认证了服务器的身份，而没有认证客户端的身份。这是因为通常单向认证通过后已经建立了安全通信，用账号、密码等简单的手段就能够确认用户的真实身份</li>
+<li>双向认证的流程也没有太多变化，只是在「Server Hello Done」之后，「Client Key Exchange」之前，客户端要发送「Client Certificate」消息，服务器收到后也把证书链走一遍，验证客户端的身份</li>
+</ul>
+</li>
+</ul>
+<h1 id="27-更好更快的握手：TLS1-3特性解析"><a href="#27-更好更快的握手：TLS1-3特性解析" class="headerlink" title="27 | 更好更快的握手：TLS1.3特性解析"></a>27 | 更好更快的握手：TLS1.3特性解析</h1><ul>
+<li>Q:TLS1.3的主要改进是什么？<ul>
+<li>最大化兼容性<ul>
+<li>TLS1.3 保持现有的记录格式不变，通过“伪装”来实现兼容TLS1.2，即不变更记录头字段里的版本号</li>
+<li>使用一个新的扩展协议（Extension Protocol），通过在记录末尾添加一系列的「扩展字段」来增加新的功能，老版本的 TLS 不认识它可以直接忽略，这就实现了「后向兼容」</li>
+<li>在记录头的 Version 字段被兼容性“固定”的情况下，只要是 TLS1.3 协议，握手的“Hello”消息后面就必须有“supported_versions”扩展，它标记了 TLS 的版本号， 使用它就能区分新旧协议</li>
+</ul>
+</li>
+<li>强化安全<ul>
+<li>精简算法，废除不安全的算法</li>
+</ul>
+</li>
+<li>提升性能<ul>
+<li>HTTPS 建立连接时除了要做 TCP 握手，还要做 TLS 握手，在 1.2 中会多花两个消息往返（2-RTT），可能导致几十毫秒甚至上百毫秒的延迟，在移动网络中延迟还会更严重</li>
+<li>现在因为密码套件大幅度简化，也就没有必要再像以前那样走复杂的协商流程了。TLS1.3 压缩了以前的「Hello」协商过程，删除了「Key Exchange」消息，把握手时间减少到了1-RTT，效率提高了一倍</li>
+<li>具体的做法是利用扩展。客户端在「Client Hello」消息里直接 用「supported_groups」带上支持的曲线，比如 P-256、x25519，用「key_share」带上曲线对应的客户端公钥参数，用「signature_algorithms」带上签名算法</li>
+<li>服务器收到后在这些扩展里选定一个曲线和参数，再用「key_share」扩展返回服务器这边的公钥参数，就实现了双方的密钥交换，后面的流程就和 1.2 基本一样了</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:TLS1.3的握手过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210322162027.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322162054.png"></li>
+<li>在 TCP 建立连接之后，浏览器首先还是发一个「Client Hello」</li>
+<li>因为 1.3 的消息兼容 1.2，所以开头的版本号、支持的密码套件和随机数（Client Random）结构都是一样的（不过这时的随机数是 32 个字节）</li>
+<li>注意「Client Hello」里的扩展，「supported_versions」表示这是 TLS1.3，「supported_groups」是支持的曲线，「key_share」是曲线对应的参数</li>
+<li>服务器收到「Client Hello」同样返回「Server Hello」消息，还是要给出一个随机数(Server Random)和选定密码套件，表面上看和 TLS1.2 是一样的，重点是后面的扩展。「supported_versions」里确认使用的是 TLS1.3，然后在「key_share」扩展带上曲线和对应的公钥参数</li>
+<li>这时只交换了两条消息，客户端和服务器就拿到了四个共享信息：Client Random和 Server Random、Client Params和Server Params，两边就可以各自用 ECDHE 算出「Pre-Master」，再用 HKDF 生成主密钥「Master Secret」，效率比 TLS1.2 提高了一大截</li>
+<li>在算出主密钥后，服务器立刻发出「Change Cipher Spec」消息，比 TLS1.2 提早进入加密通信，后面的证书等就都是加密的了，减少了握手时的明文信息泄露</li>
+<li>这里 TLS1.3 还有一个安全强化措施，多了个「Certificate Verify」消息，用服务器的私钥把前面的曲线、套件、参数等握手数据加了签名，作用和「Finished」消息差不多。但由于是私钥签名，所以强化了身份认证和和防窜改</li>
+<li>这两个「Hello」消息之后，客户端验证服务器证书，再发「Finished」消息，就正式完成了握手，开始收发 HTTP 报文</li>
+</ul>
+</li>
+</ul>
+<h1 id="28-连接太慢该怎么办：HTTPS的优化"><a href="#28-连接太慢该怎么办：HTTPS的优化" class="headerlink" title="28 | 连接太慢该怎么办：HTTPS的优化"></a>28 | 连接太慢该怎么办：HTTPS的优化</h1><ul>
+<li>Q:TLS握手过程中影响性能的部分有哪些呢<ul>
+<li><img src="https://img.shiqi-lu.tech/20210322163414.png"></li>
+</ul>
+</li>
+<li>Q:如何使用硬件优化的方式优化HTTPS<ul>
+<li>1.选择更快的 CPU，最好还内建 AES 优化，这样即可以加速握手，也可以加速传输</li>
+<li>2.选择“SSL 加速卡”，加解密时调用它的 API，让专门的硬件来做非对称加解密，分担 CPU 的计算压力</li>
+<li>3.SSL 加速服务器，用专门的服务器集群来彻底“卸载”TLS 握手时的加密解密计算，性能自然要比单纯的“加速卡”要强大的多</li>
+</ul>
+</li>
+<li>Q:如何使用软件优化的方式优化HTTPS<ul>
+<li>1.软件升级：把现在正在使用的软件尽量升级到最新版本，由于这些软件在更新版本的时候都会做性能优化、修复错误，只要运维能够主动配合，这种软件优化是最容易做的，也是最容易达成优化效果的</li>
+<li>2.协议优化：尽量采用 TLS1.3，它大幅度简化了握手的过程，完全握手只要 1-RTT，而且更加安全</li>
+<li>如果暂时不能升级到 1.3，只能用 1.2，那么握手时使用的密钥交换协议应当尽量选用椭圆曲线的 ECDHE 算法。它不仅运算速度快，安全性高，还支持“False Start”，能够把握手的消息往返由 2-RTT 减少到 1-RTT，达到与 TLS1.3 类似的效果</li>
+<li>椭圆曲线也要选择高性能的曲线，最好是 x25519，次优选择是 P-256。对称加密算法方面，也可以选用“AES_128_GCM”，它能比“AES_256_GCM”略快一点点</li>
+<li>在 Nginx 里可以用“ssl_ciphers”“ssl_ecdh_curve”等指令配置服务器使用的密码套件和椭圆曲线，把优先使用的放在前面<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_ciphers TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:EECDH+CHACHA20;</span><br><span class="line">ssl_ecdh_curve X25519:P-256;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:如何进行证书优化<ul>
+<li>1.证书传输<ul>
+<li>服务器的证书可以选择椭圆曲线（ECDSA）证书而不是 RSA 证书，因为 224 位的 ECC 相当于 2048 位的 RSA，所以椭圆曲线证书的“个头”要比 RSA 小很多，即能够节约带宽也能减少客户端的运算量</li>
+</ul>
+</li>
+<li>2.证书验证<ul>
+<li>客户端的证书验证其实是个很复杂的操作，除了要公钥解密验证多个证书签名外，因为证书还有可能会被撤销失效，客户端有时还会再去访问 CA，下载 CRL 或者 OCSP 数据，这又会产生 DNS 查询、建立连接、收发数据等一系列网络通信，增加好几个 RTT</li>
+<li>CRL（Certificate revocation list，证书吊销列表）由 CA 定期发布，里面是所有被撤销信任的证书序号，查询这个列表就可以知道证书是否有效。</li>
+<li>但 CRL 因为是“定期”发布，就有“时间窗口”的安全隐患，而且随着吊销证书的增多，列表会越来越大，一个 CRL 经常会上 MB。想象一下，每次需要预先下载几 M 的“无用数据”才能连接网站，实用性实在是太低了</li>
+<li>所以，现在 CRL 基本上不用了，取而代之的是 OCSP（在线证书状态协议，Online Certificate Status Protocol），向 CA 发送查询请求，让 CA 返回证书的有效状态</li>
+<li>但 OCSP 也要多出一次网络请求的消耗，而且还依赖于 CA 服务器，如果 CA 服务器很忙，那响应延迟也是等不起的</li>
+<li>于是又出来了一个“补丁”，叫“OCSP Stapling”（OCSP 装订），它可以让服务器预先访问 CA 获取 OCSP 响应，然后在握手时随着证书一起发给客户端，免去了客户端连接 CA 服务器查询的时间</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:如何进行会话复用（TLS session resumption）的「Session ID」<ul>
+<li>客户端和服务器首次连接后各自保存一个会话的 ID 号，内存里存储主密钥和其他相关的信息。当客户端再次连接时发一个 ID 过来，服务器就在内存里找，找到就直接用主密钥恢复会话状态，跳过证书验证和密钥交换，只用一个消息往返就可以建立安全通信</li>
+<li>服务器在“ServerHello”消息后直接发送了“Change Cipher Spec”和“Finished”消息，复用会话完成了握手</li>
+<li><img src="https://img.shiqi-lu.tech/20210322164911.png"></li>
+<li>「Session ID」是最早出现的会话复用技术，也是应用最广的，但它也有缺点，服务器必须保存每一个客户端的会话数据，对于拥有百万、千万级别用户的网站来说存储量就成了大问题，加重了服务器的负担</li>
+</ul>
+</li>
+<li>Q:如何进行会话复用（TLS session resumption）的「Session Ticket」即会话票证<ul>
+<li>有点类似 HTTP 的 Cookie，存储的责任由服务器转移到了客户端，服务器加密会话信息，用“New Session Ticket”消息发给客户端，让客户端保存</li>
+<li>重连的时候，客户端使用扩展“session_ticket”发送“Ticket”而不是“Session ID”，服务器解密后验证有效期，就可以恢复会话，开始加密通信</li>
+<li>不过“Session Ticket”方案需要使用一个固定的密钥文件（ticket_key）来加密 Ticket，为了防止密钥被破解，保证“前向安全”，密钥文件需要定期轮换，比如设置为一小时或者一天</li>
+</ul>
+</li>
+<li>Q:如何进行预共享密钥<ul>
+<li>“False Start”“Session ID”“Session Ticket”等方式只能实现 1-RTT，而 TLS1.3 更进一步实现了“0-RTT”，原理和“Session Ticket”差不多，但在发送 Ticket 的同时会带上应用数据（Early Data），免去了 1.2 里的服务器确认步骤，这种方式叫“Pre-shared Key”，简称为“PSK”</li>
+<li><img src="https://img.shiqi-lu.tech/20210322165457.png"></li>
+<li>但“PSK”也不是完美的，它为了追求效率而牺牲了一点安全性，容易受到“重放攻击”（Replay attack）的威胁。黑客可以截获“PSK”的数据，像复读机那样反复向服务器发送</li>
+<li>解决的办法是只允许安全的 GET/HEAD 方法，在消息里加入时间戳、“nonce”验证，或者“一次性票证”限制重放</li>
+</ul>
+</li>
+</ul>
+<h1 id="29-我应该迁移到HTTPS吗？"><a href="#29-我应该迁移到HTTPS吗？" class="headerlink" title="29 | 我应该迁移到HTTPS吗？"></a>29 | 我应该迁移到HTTPS吗？</h1><ul>
+<li>Q:如何申请证书<ul>
+<li>“Let’s Encrypt”一直在推动证书的自动化部署，为此还实现了专门的 ACME 协议（RFC8555）。有很多的客户端软件可以完成申请、验证、下载、更新的“一条龙”操作，比如 Certbot、acme.sh 等等</li>
+<li>注意：</li>
+<li>第一，申请证书时应当同时申请 RSA 和 ECDSA 两种证书，在 Nginx 里配置成双证书验证，这样服务器可以自动选择快速的椭圆曲线证书，同时也兼容只支持 RSA 的客户端</li>
+<li>第二，如果申请 RSA 证书，私钥至少要 2048 位，摘要算法应该选用 SHA-2，例如 SHA256、SHA384 等</li>
+<li>第三，出于安全的考虑，“Let’s Encrypt”证书的有效期很短，只有 90 天，时间一到就会过期失效，所以必须要定期更新。你可以在 crontab 里加个每周或每月任务，发送更新请求，不过很多 ACME 客户端会自动添加这样的定期任务，完全不用你操心</li>
+</ul>
+</li>
+<li>Q:如何配置HTTPS<ul>
+<li>在 Nginx 上非常简单，只要在“listen”指令后面加上参数“ssl”，再配上刚才的证书文件就可以实现最基本的 HTTPS<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">listen                443 ssl;</span><br><span class="line"> </span><br><span class="line">ssl_certificate       xxx_rsa.crt;  #rsa2048 cert</span><br><span class="line">ssl_certificate_key   xxx_rsa.key;  #rsa2048 private key</span><br><span class="line"> </span><br><span class="line">ssl_certificate       xxx_ecc.crt;  #ecdsa cert</span><br><span class="line">ssl_certificate_key   xxx_ecc.key;  #ecdsa private ke</span><br></pre></td></tr></table></figure></li>
+<li>为了提高 HTTPS 的安全系数和性能，你还可以强制 Nginx 只支持 TLS1.2 以上的协议，打开“Session Ticket”会话复用<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_protocols               TLSv1.2 TLSv1.3;</span><br><span class="line"> </span><br><span class="line">ssl_session_timeout         5m;</span><br><span class="line">ssl_session_tickets         on;</span><br><span class="line">ssl_session_ticket_key      ticket.key;</span><br></pre></td></tr></table></figure></li>
+<li>密码套件的选择方面，我给你的建议是以服务器的套件优先。这样可以避免恶意客户端故意选择较弱的套件、降低安全等级，然后密码套件向 TLS1.3“看齐”，只使用 ECDHE、AES 和 ChaCha20，支持“False Start”<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_prefer_server_ciphers   on;</span><br><span class="line"></span><br><span class="line">ssl_ciphers   ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-CHACHA20-POLY1305:ECDHE+AES128:!MD5:!SHA1;</span><br></pre></td></tr></table></figure></li>
+<li>如果你的服务器上使用了 OpenSSL 的分支 BorringSSL，那么还可以使用一个特殊的“等价密码组”（Equal preference cipher groups）特性，它可以让服务器配置一组“等价”的密码套件，在这些套件里允许客户端优先选择，比如这么配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_ciphers </span><br><span class="line">[ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305];</span><br></pre></td></tr></table></figure></li>
+<li>如果客户端硬件没有 AES 优化，服务器就会顺着客户端的意思，优先选择与 AES“等价”的 ChaCha20 算法，让客户端能够快一点</li>
+<li>全部配置完成后，你可以访问“<a href="https://www.ssllabs.com/">SSLLabs</a>”网站，测试网站的安全程度，它会模拟多种客户端发起测试，打出一个综合的评分</li>
+</ul>
+</li>
+<li>Q:服务器名称指示是怎样？<ul>
+<li>在 HTTP 协议里，多个域名可以同时在一个 IP 地址上运行，这就是“虚拟主机”，Web 服务器会使用请求头里的 Host 字段来选择</li>
+<li>但在 HTTPS 里，因为请求头只有在 TLS 握手之后才能发送，在握手时就必须选择“虚拟主机”对应的证书，TLS 无法得知域名的信息，就只能用 IP 地址来区分。所以，最早的时候每个 HTTPS 域名必须使用独立的 IP 地址，非常不方便</li>
+<li>这得用到 TLS 的“扩展”，给协议加个SNI（Server Name Indication）的“补充条款”。它的作用和 Host 字段差不多，客户端会在“Client Hello”时带上域名信息，这样服务器就可以根据名字而不是 IP 地址来选择证书</li>
+</ul>
+</li>
+<li>Q:如何把原有的HTTP重定向到HTTPS服务<ul>
+<li>可用「重定向跳转」技术，把不安全的 HTTP 网址用 301 或 302“重定向”到新的 HTTPS 网站，这在 Nginx 里也很容易做到，使用“return”或“rewrite”都可以<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">return 301 https:&#x2F;&#x2F;$host$request_uri;             # 永久重定向</span><br><span class="line">rewrite ^  https:&#x2F;&#x2F;$host$request_uri permanent;   # 永久重定向</span><br></pre></td></tr></table></figure></li>
+<li>但这种方式有两个问题。一个是重定向增加了网络成本，多出了一次请求；另一个是存在安全隐患，重定向的响应可能会被“中间人”窜改，实现“会话劫持”，跳转到恶意网站</li>
+<li>可使用HSTS（HTTP 严格传输安全，HTTP Strict Transport Security）的技术可以消除这种安全隐患。HTTPS 服务器需要在发出的响应头里添加一个「Strict-Transport-Security」的字段，再设定一个有效期，例如：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Strict-Transport-Security: max-age&#x3D;15768000; includeSubDomains</span><br></pre></td></tr></table></figure></li>
+<li>相当于告诉浏览器：我这个网站必须严格使用 HTTPS 协议，在半年之内（182.5 天）都不允许用 HTTP，你以后就自己做转换吧，不要再来麻烦我了</li>
+<li>有了“HSTS”的指示，以后浏览器再访问同样的域名的时候就会自动把 URI 里的“http”改成“https”，直接访问安全的 HTTPS 网站。这样“中间人”就失去了攻击的机会，而且对于客户端来说也免去了一次跳转，加快了连接速度</li>
+<li>在配置文件里用“add_header”指令添加“HSTS”字段：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">add_header Strict-Transport-Security max-age&#x3D;15768000; #182.5days</span><br></pre></td></tr></table></figure></li>
+<li>那么 Chrome 浏览器只会在第一次连接时使用 HTTP 协议，之后就会都走 HTTPS 协议</li>
 </ul>
 </li>
 </ul>
