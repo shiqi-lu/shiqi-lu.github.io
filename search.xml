@@ -1,6 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>《沈剑架构师训练营》第1章 - 技术选型</title>
+    <url>/arch-sj-1/</url>
+    <content><![CDATA[<h1 id="2、技术选型：创业初期，技术如何选型"><a href="#2、技术选型：创业初期，技术如何选型" class="headerlink" title="2、技术选型：创业初期，技术如何选型"></a>2、技术选型：创业初期，技术如何选型</h1><ul>
+<li>no2：创业初期架构特点、选型依据、选型建议是什么？<ul>
+<li>特点：<ul>
+<li>1.单机系统(All in one)</li>
+<li>2.程序耦合(All in one)</li>
+<li>3.逻辑核心是 CURD</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20210823205116.png"></li>
+<li>主要依据：选择技术合伙人会的，熟悉的，是早期技术选型的</li>
+<li>选型建议：<ul>
+<li>PHP体系：Linux、Apache、MySQL、PHP</li>
+<li>Java 体系：Linux、Tomcat、MySQL、Java</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no2：创业初期工程师的主要矛盾是什么？如何解决？<ul>
+<li>矛盾：业务开发效率与质量低，CURD 频繁出错</li>
+<li>解决：尽早引入 DAO/ORM 技术</li>
+<li>DAO(Data Access Object)：像对象一样访问数据</li>
+<li>ORM(Object Relation Mapping)：简化数据库查询过程</li>
+<li><img src="https://img.shiqi-lu.tech/20210823205532.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="3、技术选型：框架组件要不要自研，什么时候自研？"><a href="#3、技术选型：框架组件要不要自研，什么时候自研？" class="headerlink" title="3、技术选型：框架组件要不要自研，什么时候自研？"></a>3、技术选型：框架组件要不要自研，什么时候自研？</h1><ul>
+<li>no3：框架组件要不要自研，什么时候自研？有哪 4 个观点？<ul>
+<li>1.早期不要自研，后期适当自定义</li>
+<li>2.随着规模的扩大，要控制技术栈</li>
+<li>3.建议浅浅的封装一层</li>
+<li>4.随着业务规模，研发团队进一步扩大，适当造一些轮子</li>
+</ul>
+</li>
+<li>no3：为什么说早期不建议自研？<ul>
+<li>1.早期的业务以快速迭代为最高优先级，快速实现功能，让公司活下来最重要</li>
+<li>2.技术栈选择技术合伙人最熟悉的<ul>
+<li>研发语言：熟PHP选PHP，熟Java选Java</li>
+<li>数据库：熟MySQL选MySQL，熟SQL-server选SQL-server</li>
+<li>框架组件：熟Ruby on Rails选ROR，熟ThinkPHP选ThinkPHP，熟SSH选SSH</li>
+</ul>
+</li>
+<li>3.此时技术栈的选择对合伙人的技术视野有要求，能在未来少踩坑</li>
+</ul>
+</li>
+<li>no3：为什么要控制技术栈？<ul>
+<li>1.绝对不能每个人想用什么就用什么，否则会造成混乱</li>
+<li>2.即使用开源，技术栈也尽量统一</li>
+</ul>
+</li>
+<li>no3：什么叫「浅浅封装一层」？好处是什么？<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">String <span class="title">Memcache::get</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::set</span><span class="params">(String key, String value)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::del</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function">String 58<span class="title">DaojiaKV::get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    String result = Memcache::get(key);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>好处<ul>
+<li>对调用方屏蔽底层实现细节</li>
+<li>当底层变化的时候，调用方改动很小</li>
+<li>能很方便实现统一的功能，如时间统计等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no3：为什么说随着业务规模和研发团队的扩大可以适当造一些轮子？而不能全部使用开源？<ul>
+<li>不同技术团队，痛点是相似的</li>
+<li>开源解决不了全部个性化需求<ul>
+<li>有站点，监控服务的可用性，处理时间监控需求</li>
+<li>有告警需求</li>
+<li>有自动化发布，自动化运维需求</li>
+<li>有服务治理，服务自动发现需求</li>
+<li>有调用链跟踪需求</li>
+<li>有SQL监控需求</li>
+<li>有系统层面数据收集与可视化展现的需求</li>
+</ul>
+</li>
+<li>自研解决痛点，更贴合团队实际情况<ul>
+<li>开源框架/组件太重了，我们需要的可能只是一个轻量级的框架/组件</li>
+<li>开源框架/组件，只能满足我们的一部分需求</li>
+<li>不了解开源框架/组件的设计理念，要二次开发成本更高</li>
+<li>有些通用的需求是和业务紧密结合的，开源框架/组件可能满足不了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="4、容量设计：流量高低，对架构究竟有什么影响？"><a href="#4、容量设计：流量高低，对架构究竟有什么影响？" class="headerlink" title="4、容量设计：流量高低，对架构究竟有什么影响？"></a>4、容量设计：流量高低，对架构究竟有什么影响？</h1><ul>
+<li>no4：什么时候要进行容量评估？<ul>
+<li>1.容量有质变性增长</li>
+<li>2.临时运营活动</li>
+<li>3.新系统上线</li>
+</ul>
+</li>
+<li>no4：哪些指标要进行容量预估？<ul>
+<li>看具体业务，对应到系统侧的主要矛盾是什么，如：</li>
+<li>1.数据量</li>
+<li>2.并发量，吞吐量</li>
+<li>3.带宽</li>
+<li>4.CPU/MEM/DISK 等</li>
+</ul>
+</li>
+<li>no4：如何进行容量评估(以吞吐量为例)<ul>
+<li>1.评估总访问量：询问产品、运营</li>
+<li>2.评估平均访问量：总量除以总时间，一天可算 4w 秒</li>
+<li>3.评估高峰 QPS：可根据业务曲线图来</li>
+<li>4.评估系统、单机极限 QPS：使用压测</li>
+<li>5.根据线上冗余度做决策：计算需求和线上冗余度差值</li>
+</ul>
+</li>
+</ul>
+<h1 id="5、伪分布式：你以为，多机就是分布式？"><a href="#5、伪分布式：你以为，多机就是分布式？" class="headerlink" title="5、伪分布式：你以为，多机就是分布式？"></a>5、伪分布式：你以为，多机就是分布式？</h1><ul>
+<li>no5：随着流量的提升，早期系统最先遇到的两大问题是什么？如何分析系统特点与瓶颈？<ul>
+<li>现象：人多的时候会卡(即慢，性能下降)，压力会导致宕机(即一挂全挂，耦合严重)</li>
+<li>瓶颈分析：网络带宽、内存、CPU 计算、磁盘 IO</li>
+<li>初步结论：ALL in one 导致单机资源称为瓶颈</li>
+</ul>
+</li>
+<li>no5：架构早期最快速地解决「单机资源瓶颈」问题的思路？做法？原因？<ul>
+<li>思路：<ul>
+<li>增加硬件资源(时间短)，避免大规模代码重构(时间长)</li>
+</ul>
+</li>
+<li>做法：<ul>
+<li>把「单机」变「多机」，用最小的成本，扩展资源</li>
+</ul>
+</li>
+<li>原因：<ul>
+<li>此时最大的成本，是时间成本</li>
+<li>能用“钱”解决的系统问题，往往不是问题</li>
+<li>老板最不愿见到的，是解决一个系统问题， 花很长的时间(市场和投资人等不起)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no5：「单机」变「多机」的伪分布式的「三大分离」应该怎么做？设计思路？没解决的问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823225351.png"></li>
+<li>三大分离<ul>
+<li>1.读写分离(引发读写延时新问题)：将数据库的读写请求分散到不同的数据库机器上</li>
+<li>2.动静分离：将静态文件(css、jpg、静态页面)和动态生成的站点分离</li>
+<li>3.前台后台分离：前台即用户访问的系统，后台即运营使用的系统</li>
+</ul>
+</li>
+<li>设计思路：用最快的速度，增加硬件资源，提升系统性能，增加访问速度</li>
+<li>没解决的问题：<ul>
+<li>1.耦合问题：一个子系统挂了，仍然是全站挂</li>
+<li>2.主从延时新问题：读写分离只能提升读写性能，无法降低单库数据量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no5：如何解决「三大分离」的耦合问题和读写延时问题？设计思路？如何操作？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
+<li>方案：业务垂直拆分，解耦</li>
+<li>操作：<ul>
+<li>1.业务垂直拆分</li>
+<li>2.代码垂直拆分(子系统耦合)</li>
+<li>3.数据库垂直拆分(数据量降低，延时缓解)</li>
+<li>4.研发团队垂直拆分(专业化，效率提升)</li>
+</ul>
+</li>
+<li>设计思路：用最快的速度，增加硬件资源，解耦</li>
+<li>垂直拆分，会随着业务越来越复杂，不断持续地进行</li>
+<li>存在问题<ul>
+<li>1.对同一个垂直站点子系统，仍然是一个「单体架构」，每一个业务都并不是高可用的，子系统的性能仍然受到单机资源的限制无法扩展</li>
+<li>2.子系统不是高可用的，只能保证一个挂了，另一个不受影响</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《沈剑架构师训练营》第2章 - 接入层架构</title>
     <url>/arch-sj-2/</url>
     <content><![CDATA[<h1 id="6、接入层：反向代理，负载均衡，我有话要说"><a href="#6、接入层：反向代理，负载均衡，我有话要说" class="headerlink" title="6、接入层：反向代理，负载均衡，我有话要说"></a>6、接入层：反向代理，负载均衡，我有话要说</h1><ul>
@@ -230,183 +407,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《沈剑架构师训练营》第1章 - 技术选型</title>
-    <url>/arch-sj-1/</url>
-    <content><![CDATA[<h1 id="2、技术选型：创业初期，技术如何选型"><a href="#2、技术选型：创业初期，技术如何选型" class="headerlink" title="2、技术选型：创业初期，技术如何选型"></a>2、技术选型：创业初期，技术如何选型</h1><ul>
-<li>no2：创业初期架构特点、选型依据、选型建议是什么？<ul>
-<li>特点：<ul>
-<li>1.单机系统(All in one)</li>
-<li>2.程序耦合(All in one)</li>
-<li>3.逻辑核心是 CURD</li>
-</ul>
-</li>
-<li><img src="https://img.shiqi-lu.tech/20210823205116.png"></li>
-<li>主要依据：选择技术合伙人会的，熟悉的，是早期技术选型的</li>
-<li>选型建议：<ul>
-<li>PHP体系：Linux、Apache、MySQL、PHP</li>
-<li>Java 体系：Linux、Tomcat、MySQL、Java</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no2：创业初期工程师的主要矛盾是什么？如何解决？<ul>
-<li>矛盾：业务开发效率与质量低，CURD 频繁出错</li>
-<li>解决：尽早引入 DAO/ORM 技术</li>
-<li>DAO(Data Access Object)：像对象一样访问数据</li>
-<li>ORM(Object Relation Mapping)：简化数据库查询过程</li>
-<li><img src="https://img.shiqi-lu.tech/20210823205532.png"></li>
-</ul>
-</li>
-</ul>
-<h1 id="3、技术选型：框架组件要不要自研，什么时候自研？"><a href="#3、技术选型：框架组件要不要自研，什么时候自研？" class="headerlink" title="3、技术选型：框架组件要不要自研，什么时候自研？"></a>3、技术选型：框架组件要不要自研，什么时候自研？</h1><ul>
-<li>no3：框架组件要不要自研，什么时候自研？有哪 4 个观点？<ul>
-<li>1.早期不要自研，后期适当自定义</li>
-<li>2.随着规模的扩大，要控制技术栈</li>
-<li>3.建议浅浅的封装一层</li>
-<li>4.随着业务规模，研发团队进一步扩大，适当造一些轮子</li>
-</ul>
-</li>
-<li>no3：为什么说早期不建议自研？<ul>
-<li>1.早期的业务以快速迭代为最高优先级，快速实现功能，让公司活下来最重要</li>
-<li>2.技术栈选择技术合伙人最熟悉的<ul>
-<li>研发语言：熟PHP选PHP，熟Java选Java</li>
-<li>数据库：熟MySQL选MySQL，熟SQL-server选SQL-server</li>
-<li>框架组件：熟Ruby on Rails选ROR，熟ThinkPHP选ThinkPHP，熟SSH选SSH</li>
-</ul>
-</li>
-<li>3.此时技术栈的选择对合伙人的技术视野有要求，能在未来少踩坑</li>
-</ul>
-</li>
-<li>no3：为什么要控制技术栈？<ul>
-<li>1.绝对不能每个人想用什么就用什么，否则会造成混乱</li>
-<li>2.即使用开源，技术栈也尽量统一</li>
-</ul>
-</li>
-<li>no3：什么叫「浅浅封装一层」？好处是什么？<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">String <span class="title">Memcache::get</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::set</span><span class="params">(String key, String value)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::del</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function">String 58<span class="title">DaojiaKV::get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    String result = Memcache::get(key);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>好处<ul>
-<li>对调用方屏蔽底层实现细节</li>
-<li>当底层变化的时候，调用方改动很小</li>
-<li>能很方便实现统一的功能，如时间统计等</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no3：为什么说随着业务规模和研发团队的扩大可以适当造一些轮子？而不能全部使用开源？<ul>
-<li>不同技术团队，痛点是相似的</li>
-<li>开源解决不了全部个性化需求<ul>
-<li>有站点，监控服务的可用性，处理时间监控需求</li>
-<li>有告警需求</li>
-<li>有自动化发布，自动化运维需求</li>
-<li>有服务治理，服务自动发现需求</li>
-<li>有调用链跟踪需求</li>
-<li>有SQL监控需求</li>
-<li>有系统层面数据收集与可视化展现的需求</li>
-</ul>
-</li>
-<li>自研解决痛点，更贴合团队实际情况<ul>
-<li>开源框架/组件太重了，我们需要的可能只是一个轻量级的框架/组件</li>
-<li>开源框架/组件，只能满足我们的一部分需求</li>
-<li>不了解开源框架/组件的设计理念，要二次开发成本更高</li>
-<li>有些通用的需求是和业务紧密结合的，开源框架/组件可能满足不了</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="4、容量设计：流量高低，对架构究竟有什么影响？"><a href="#4、容量设计：流量高低，对架构究竟有什么影响？" class="headerlink" title="4、容量设计：流量高低，对架构究竟有什么影响？"></a>4、容量设计：流量高低，对架构究竟有什么影响？</h1><ul>
-<li>no4：什么时候要进行容量评估？<ul>
-<li>1.容量有质变性增长</li>
-<li>2.临时运营活动</li>
-<li>3.新系统上线</li>
-</ul>
-</li>
-<li>no4：哪些指标要进行容量预估？<ul>
-<li>看具体业务，对应到系统侧的主要矛盾是什么，如：</li>
-<li>1.数据量</li>
-<li>2.并发量，吞吐量</li>
-<li>3.带宽</li>
-<li>4.CPU/MEM/DISK 等</li>
-</ul>
-</li>
-<li>no4：如何进行容量评估(以吞吐量为例)<ul>
-<li>1.评估总访问量：询问产品、运营</li>
-<li>2.评估平均访问量：总量除以总时间，一天可算 4w 秒</li>
-<li>3.评估高峰 QPS：可根据业务曲线图来</li>
-<li>4.评估系统、单机极限 QPS：使用压测</li>
-<li>5.根据线上冗余度做决策：计算需求和线上冗余度差值</li>
-</ul>
-</li>
-</ul>
-<h1 id="5、伪分布式：你以为，多机就是分布式？"><a href="#5、伪分布式：你以为，多机就是分布式？" class="headerlink" title="5、伪分布式：你以为，多机就是分布式？"></a>5、伪分布式：你以为，多机就是分布式？</h1><ul>
-<li>no5：随着流量的提升，早期系统最先遇到的两大问题是什么？如何分析系统特点与瓶颈？<ul>
-<li>现象：人多的时候会卡(即慢，性能下降)，压力会导致宕机(即一挂全挂，耦合严重)</li>
-<li>瓶颈分析：网络带宽、内存、CPU 计算、磁盘 IO</li>
-<li>初步结论：ALL in one 导致单机资源称为瓶颈</li>
-</ul>
-</li>
-<li>no5：架构早期最快速地解决「单机资源瓶颈」问题的思路？做法？原因？<ul>
-<li>思路：<ul>
-<li>增加硬件资源(时间短)，避免大规模代码重构(时间长)</li>
-</ul>
-</li>
-<li>做法：<ul>
-<li>把「单机」变「多机」，用最小的成本，扩展资源</li>
-</ul>
-</li>
-<li>原因：<ul>
-<li>此时最大的成本，是时间成本</li>
-<li>能用“钱”解决的系统问题，往往不是问题</li>
-<li>老板最不愿见到的，是解决一个系统问题， 花很长的时间(市场和投资人等不起)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no5：「单机」变「多机」的伪分布式的「三大分离」应该怎么做？设计思路？没解决的问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210823225351.png"></li>
-<li>三大分离<ul>
-<li>1.读写分离(引发读写延时新问题)：将数据库的读写请求分散到不同的数据库机器上</li>
-<li>2.动静分离：将静态文件(css、jpg、静态页面)和动态生成的站点分离</li>
-<li>3.前台后台分离：前台即用户访问的系统，后台即运营使用的系统</li>
-</ul>
-</li>
-<li>设计思路：用最快的速度，增加硬件资源，提升系统性能，增加访问速度</li>
-<li>没解决的问题：<ul>
-<li>1.耦合问题：一个子系统挂了，仍然是全站挂</li>
-<li>2.主从延时新问题：读写分离只能提升读写性能，无法降低单库数据量</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no5：如何解决「三大分离」的耦合问题和读写延时问题？设计思路？如何操作？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
-<li>方案：业务垂直拆分，解耦</li>
-<li>操作：<ul>
-<li>1.业务垂直拆分</li>
-<li>2.代码垂直拆分(子系统耦合)</li>
-<li>3.数据库垂直拆分(数据量降低，延时缓解)</li>
-<li>4.研发团队垂直拆分(专业化，效率提升)</li>
-</ul>
-</li>
-<li>设计思路：用最快的速度，增加硬件资源，解耦</li>
-<li>垂直拆分，会随着业务越来越复杂，不断持续地进行</li>
-<li>存在问题<ul>
-<li>1.对同一个垂直站点子系统，仍然是一个「单体架构」，每一个业务都并不是高可用的，子系统的性能仍然受到单机资源的限制无法扩展</li>
-<li>2.子系统不是高可用的，只能保证一个挂了，另一个不受影响</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>六种不同的二分查找全总结</title>
     <url>/binary-search/</url>
     <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -506,194 +506,6 @@
         <tag>数据结构</tag>
         <tag>算法</tag>
         <tag>二分查找</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>类别不平衡问题的方法汇总</title>
-    <url>/class-imbalance/</url>
-    <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
-<li>指分类任务中不同类别的训练样例数目差别很大的情况</li>
-<li>若不同类别的训练样例数目稍有差别，通常影响不大，但若差别很大，则会对学习过程造成困扰。例如有998个反例，但是正例只有2个，那么学习方法只需要返回一个永远将新样本预测为反例的学习器，就能达到99.8%的精度；然而这样的学习器往往没有价值，因为它不能预测出任何正例</li>
-</ul>
-<h1 id="上采样-过采样-Oversampling"><a href="#上采样-过采样-Oversampling" class="headerlink" title="上采样(过采样, Oversampling)"></a>上采样(过采样, Oversampling)</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>对训练集中的少数类进行“过采样”，即增加一些少数类样本使得正、反例数目接近，然后再进行学习</li>
-</ul>
-<h2 id="Random-Oversampling-随机上采样"><a href="#Random-Oversampling-随机上采样" class="headerlink" title="Random Oversampling(随机上采样)"></a>Random Oversampling(随机上采样)</h2><ul>
-<li>简单复制样本的策略来增加少数类样本，容易产生模型过拟合的问题</li>
-</ul>
-<h2 id="SMOTE"><a href="#SMOTE" class="headerlink" title="SMOTE"></a>SMOTE</h2><ul>
-<li>即合成少数类过采样技术(Synthetic Minority Oversampling Technique)，是基于随机采样算法的一种改进，其基本思想是对少数类样本进行分析并根据少数类样本人工合成新样本添加到数据集中</li>
-</ul>
-<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>1.对于少数类中每一个样本$x_i$，以欧氏距离为标准计算它到少数类样本集$S_{min}$中所有样本的距离，得到其k近邻</li>
-<li>2.根据样本不平衡比例设置一个采样比例以确定采样倍率N，对于每一个少数类样本$x_i$，从其k近邻中随机选择若干个样本，假设选择的近邻为$\tilde{x}$。</li>
-<li>3.对于每一个随机选出的近邻$\tilde{x}$，分别于原样本按照如下的公式构建新的样本</li>
-<li>$$x_{n e w}=x+\operatorname{rand}(0,1) \times |\tilde{x}-x|$$</li>
-<li><img src="https://img.shiqi-lu.tech/20201019195529.png?imageView2/2/h/250"></li>
-</ul>
-<h3 id="SMOTE的问题"><a href="#SMOTE的问题" class="headerlink" title="SMOTE的问题"></a>SMOTE的问题</h3><ul>
-<li>随机选取少数类样本用以合成新样本，而不考虑周边样本的情况<ul>
-<li>1.如果选取的少数类样本周围都是少数类样本，则新合成的样本不会提供太多有用信息。就像SVM中远离margin的点对决策边界影响不大</li>
-<li>2.如果选取的少数类样本周围都是多数类样本，这类的样本可能是噪声，则新合成的样本会与周围的多数类样本产生大部分重叠，导致分类困难</li>
-</ul>
-</li>
-</ul>
-<h2 id="Borderline-SMOTE"><a href="#Borderline-SMOTE" class="headerlink" title="Borderline-SMOTE"></a>Borderline-SMOTE</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
-<li>由于原始SMOTE算法的对所有少数类样本都是一视同仁的，我们希望新合成的少数类样本能处于两个类别的边界附近，因为在实际建模过程中那些处于边界位置的样本更容易被错分，因此利用边界位置的样本信息产生新样本可以给模型带来更大的体征，能提供足够的信息用以分类，即Borderline SMOTE算法做的事情</li>
-</ul>
-<h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>这个算法会先将所有的少数类样本分成三类，如图</li>
-<li><img src="https://img.shiqi-lu.tech/20201019140912.png"></li>
-<li>“noise”：所有的k近邻个样本都属于多数类，可认为是噪声不能生成合成样本</li>
-<li>“danger”：超过一半的k近邻样本属于多数类</li>
-<li>“safe”：超过一半的k近邻样本属于少数类</li>
-<li>borderline smote算法只会从处于”danger”状态的样本中随机选择，然后用SMOTE算法产生新的样本。处于”danger”状态的样本代表靠近”边界”附近的少数类样本往往更容易被误分类。因而Border-line SMOTE只对那些靠近”边界”的少数类样本进行人工合成样本，而SMOTE则对所有少数类样本一视同仁</li>
-</ul>
-<h3 id="危险集的判断流程"><a href="#危险集的判断流程" class="headerlink" title="危险集的判断流程"></a>危险集的判断流程</h3><ul>
-<li>1.对于每个$x_{i} \subset S_{\min }$确定一系列K近邻样本集，称该数据集为$S_{i-kNN}$，且$S_{i-kNN} \subset S$</li>
-<li>2.对每个样本$x_i$，判断出最近邻样本集中属于多数类样本的个数，即$\left|S_{i-k N N} \cap S_{m a j}\right|$</li>
-<li>3.选择满足不等式$\frac{k}{2} \leq\left|S_{i-k N N} \cap S_{m a j}\right| \leq k$，将其加入危险集DANGER</li>
-</ul>
-<h3 id="Borderline-SMOTE分类两种："><a href="#Borderline-SMOTE分类两种：" class="headerlink" title="Borderline SMOTE分类两种："></a>Borderline SMOTE分类两种：</h3><ul>
-<li>Borderline-1 SMOTE：在合成样本时所选的近邻是一个少数类样本</li>
-<li>Borderline-2 SMOTE：在合成样本时所选的近邻是任意一个样本</li>
-</ul>
-<h2 id="ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用"><a href="#ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用" class="headerlink" title="ADASYN(Adaptive Synthetic Sampling，自适应合成采用)"></a>ADASYN(Adaptive Synthetic Sampling，自适应合成采用)</h2><ul>
-<li>根据数据分布情况为不同的少数类样本生成不同数量的新样本</li>
-<li>首先根据最终的平衡程度设定总共需要生成的新少数类样本数量，然后为每个少数类样本x计算分布比例</li>
-</ul>
-<h1 id="下采样-降采样-UnserSampling"><a href="#下采样-降采样-UnserSampling" class="headerlink" title="下采样(降采样, UnserSampling)"></a>下采样(降采样, UnserSampling)</h1><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>对训练集中多数类样本进行“下采样”(undersampling)，即去除一些多数类中的样本使得正例、反例数目接近，然后再学习</li>
-</ul>
-<h2 id="Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection"><a href="#Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection" class="headerlink" title="Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)"></a>Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)</h2><h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><ul>
-<li>从多数类$S_{maj}$中随机选择一些样本组成样本集E。然后将样本集E从$S_{maj}$中移除。新的数据集$S_{n e w-m a j}=S_{m a j}-E$</li>
-<li>通过改变多数类样本比例以达到修改样本分布的目的，从而使样本分布较为均衡</li>
-</ul>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>操作简单，只依赖于样本分布，不依赖任何距离信息，属于非启发式方法</li>
-</ul>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
-<li>由于采样的样本集合要少于原来的样本集合，因此会造成一些信息缺失，即将多数类样本删除有可能导致分类器丢失有关多数类的重要信息</li>
-</ul>
-<h2 id="Ensemble-Methods"><a href="#Ensemble-Methods" class="headerlink" title="Ensemble Methods"></a>Ensemble Methods</h2><h3 id="EasyEnsemble"><a href="#EasyEnsemble" class="headerlink" title="EasyEnsemble"></a>EasyEnsemble</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><ul>
-<li>多次随机欠采样，尽可能全面地涵盖所有信息，特点是利用boosting减少偏差(Adaboost)、bagging减少方差(集成分类器)。实际应用的时候可尝试选用不同的分类器来提高分类的效果</li>
-<li><img src="https://img.shiqi-lu.tech/20201020145429.png?imageView2/2/h/350"></li>
-</ul>
-<h4 id="算法流程-2"><a href="#算法流程-2" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
-<li>1.把数据划分为两部分，分别是多数类样本$S_{maj}$和少数类样本$S_{min}$</li>
-<li>2.从多数类$S_{maj}$中有放回的随机采样n次，每次选取与少数类数目相近的样本个数即$|S_{imaj}|=|S_{min}|$，可得到n个样本集合，记作$\{S_{1 m a j}, S_{2 m a j}, \ldots, S_{n m a j}\}$</li>
-<li>3.将每一个多数类样本的子集$S_{imaj}$与少数类样本$S_{min}$合并后训练出Adaboost分类器$H_i$，阈值设置为$\theta_i$，可得到n个模型，即$H_{i}(x)=\operatorname{sgn}\left(\sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i, j}(x)-\theta_{i}\right)$</li>
-<li>4.将这些模型组合形成一个集成学习系统，最终的模型结果是这n个模型的投票值。此处采用加权多数表决的方法，加大分类误差率小的弱分类器的权值，使其在表决中起较大的作用，减小分类误差率小的弱分类器的权值，使其在表决中起较小的作用，即最终分类器为$H(x)=\operatorname{sgn}\left(\sum\limits_{i=1}^{n} \sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i j}(x)-\sum\limits_{i=1}^{n} \theta_{i}\right)$</li>
-</ul>
-<h3 id="BalanceCascade"><a href="#BalanceCascade" class="headerlink" title="BalanceCascade"></a>BalanceCascade</h3><h4 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h4><ul>
-<li>该算法得到的是一个级联分类器，基于Adaboost，将若干个强分类器由简单到复杂排列，只有和少数类样本特征比较接近的才有可能输入到后面的分类器，比如边界点，因此能更充分地利用多数类样本的信息，一定程度上解决随机欠采样的信息丢失问题</li>
-</ul>
-<h4 id="算法流程-3"><a href="#算法流程-3" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
-<li>输入：一个包含少数类阳性样本P和多数类阴性样本集N的训练集D，定义T是从N中抽取的子集个数，$s_i$是训练Adaboost基分类器$H_i$时的循环次数</li>
-<li>输出：一个组合分类器H(x)</li>
-<li>1.$f=\sqrt[(\mathrm{T}-1)]{\left(\frac{|\mathrm{P}|}{|\mathrm{N}|}\right)}$，$f$是每一层级的分类器$H_i$该达到的假阳性率(False Positive Rate)，即把多数类样本误分为少数类的错误率</li>
-<li>for i = 1 to T:<ul>
-<li>从多数类N中随机抽取一个样本子集$N_i$，使得$|N_i| = |P|$</li>
-<li>使用少数类样本集P和样本子集$N_i$训练一个Adaboost分类器$H_i$($H_i$由$s_i$个基分类器$h_{i,j}$及其权重$\alpha_{i,j}$构成，$\theta_i$是$H_i$的调节参数)</li>
-<li>$\mathrm{H}_{\mathrm{i}}(x)=\operatorname{sgn}(\sum\limits_{j=1}^{s_{i}} \alpha_{i, j} h_{i, j}(x)-\theta_{i})$</li>
-<li>调节阈值$\theta_i$令$H_i$的FP率为$f$</li>
-<li>移除多数类样本集N中所有被$H_i$正确分类的样本</li>
-</ul>
-</li>
-<li>输出一个集成分类器</li>
-<li>$\mathrm{H}(\mathrm{x})=\operatorname{sgn}\left(\sum\limits_{i=1}^{T} \sum\limits_{j=1}^{s_{l}} \alpha_{i, j} h_{i, j}(x)-\sum\limits_{i=1}^{T} \theta_{i}\right)$</li>
-</ul>
-<h2 id="NearMiss"><a href="#NearMiss" class="headerlink" title="NearMiss"></a>NearMiss</h2><ul>
-<li>本质上是一种原型选择(prototype selection)方法，即从多数类样本中选取最具代表性的样本用于训练，主要是为了缓解随机欠采样中的信息丢失问题。Nearmiss采用了3中不同的启发式规则来选择样本<ul>
-<li>NearMiss-1：选择到最近的K个少数类样本平均距离最近的多数类样本，考虑的是与最近的k个少数类样本的平均距离，是局部的。该方法得到的多数类样本分布是“不均衡”的，它倾向于在比较集中的少数类附近找到更多的多数类样本，而在孤立的(离群的)少数类附近找到更少的多数类样本，原因是该方法考虑的局部性质和平均距离</li>
-<li>NearMiss-2：选择到最远的K个少数类样本平均距离最近的多数类样本，考虑的是与最远的k个少数类样本的平均距离，是全局的。实验结果表明该方法的不均衡分类性能最优</li>
-<li>NearMiss-3：对于每个少数类样本选择K个最近的多数类样本，目的是保证每个少数类样本都被多数类样本包围，该方法会使每一个少数类样本附近都有足够多的多数类样本，显然这会使得模型的精确度高、召回率低</li>
-</ul>
-</li>
-</ul>
-<h2 id="原型生成-Prototype-generation"><a href="#原型生成-Prototype-generation" class="headerlink" title="原型生成(Prototype generation)"></a>原型生成(Prototype generation)</h2><ul>
-<li>给定数据集S，原型生成算法将生成一个子集S’，其中|S’|&lt;|S|，但是子集并非来自于原始数据，而是由原始数据集生成，方法是聚类成|S’|个类，然后取其中心点</li>
-</ul>
-<h2 id="Data-Cleaning-Techniques"><a href="#Data-Cleaning-Techniques" class="headerlink" title="Data Cleaning Techniques"></a>Data Cleaning Techniques</h2><h3 id="Tomek-Links"><a href="#Tomek-Links" class="headerlink" title="Tomek Links"></a>Tomek Links</h3><h4 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h4><ul>
-<li>给定一个样本对$(x_i, x_j)$，其中$x_{i} \in S_{m a j}, x_{j} \in S_{\min }$，记$d(x_i, x_j)$是样本$x_i$和样本$x_j$之间的距离，如果不存在任何样本$x_k$，使得$d\left(x_{i}, x_{k}\right)&lt;d\left(x_{i}, x_{j}\right)$，那么样本对$(x_i, x_j)$即称为Tomek Links。即Tomek links为相反类最近邻样本之间的一对连接</li>
-<li>不属于Tomek Links的情况有这个少数类样本最近的样本是同一类</li>
-</ul>
-<h4 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h4><ul>
-<li>如果两个样本来自Tomek Links，那么他们中的一个样本要么是噪声，要么它们都在两类的边界上</li>
-</ul>
-<h4 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h4><ul>
-<li><img src="https://img.shiqi-lu.tech/20201021171029.png?imageView2/2/h/300"></li>
-</ul>
-<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><ul>
-<li>欠采样：将Tomek Links中属于是多数类的样本剔除</li>
-<li>数据清洗：将Tomek Links中的两个样本都剔除</li>
-</ul>
-<h3 id="ENN-edited-nearest-neighborhood"><a href="#ENN-edited-nearest-neighborhood" class="headerlink" title="ENN(edited nearest neighborhood)"></a>ENN(edited nearest neighborhood)</h3><ul>
-<li>这种方法应用knn来编辑(edit)数据集，对于每一个要进行下采样的样本，那些绝大多数近邻样本不属于该类的样本会被移除，而绝大多数的近邻样本属于同一类的样本会被保留</li>
-</ul>
-<h1 id="综合采样-Oversampling-Undersampling"><a href="#综合采样-Oversampling-Undersampling" class="headerlink" title="综合采样(Oversampling + Undersampling)"></a>综合采样(Oversampling + Undersampling)</h1><h2 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h2><ul>
-<li>先过采样，然后再进行数据的清洗</li>
-</ul>
-<h2 id="SMOTE-Tomek-Links"><a href="#SMOTE-Tomek-Links" class="headerlink" title="SMOTE+Tomek Links"></a>SMOTE+Tomek Links</h2><h3 id="算法流程-4"><a href="#算法流程-4" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
-<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
-<li>2.剔除T中的Tomek Links对</li>
-</ul>
-<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>普通的SMOTE方法生成的少数类样本是通过线性插值得到的，在平衡类别分布的同时也扩张了少数类的样本空间，产生的问题是可能原本属于多数类样本的空间被少数类“入侵”，容易造成模型的过拟合</li>
-<li>Tomek Links对寻找的是那种噪声点或者边界点，可以很好地解决“入侵”问题，如图红色加号为SMOTE产生的少数类样本，可以看到红色样本“入侵”到原本属于多数类样本的空间，这种噪声数据问题可以通过Tomek Links很好地解决</li>
-<li><img src="https://img.shiqi-lu.tech/20201021171629.png?imageView2/2/h/150"></li>
-</ul>
-<h2 id="SMOTE-ENN"><a href="#SMOTE-ENN" class="headerlink" title="SMOTE+ENN"></a>SMOTE+ENN</h2><ul>
-<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
-<li>2.对T中的每一个样本使用KNN(一般k取3)方法预测，若预测结果与实际类别标签不符，则剔除该样本</li>
-</ul>
-<h1 id="其它方法"><a href="#其它方法" class="headerlink" title="其它方法"></a>其它方法</h1><h2 id="基于异常检测的方法"><a href="#基于异常检测的方法" class="headerlink" title="基于异常检测的方法"></a>基于异常检测的方法</h2><ul>
-<li>把小类的样本作为异常点(outliers)，因此该问题便转化为异常点检测(anomaly detection)与变化趋势检测问题(change detection)</li>
-</ul>
-<h2 id="分治ensemble"><a href="#分治ensemble" class="headerlink" title="分治ensemble"></a>分治ensemble</h2><ul>
-<li>将大类中样本聚类到L个聚类中，然后训练L个分类器</li>
-<li>每个分类器使用大类中的一个簇与所有的小类样本进行训练得到</li>
-<li>最后对这L个分类器采取少数服从多数的方式对未知类别数据进行分类，如果是连续值，采用平均值</li>
-</ul>
-<h2 id="分层级ensemble"><a href="#分层级ensemble" class="headerlink" title="分层级ensemble"></a>分层级ensemble</h2><ul>
-<li>使用原始数据集训练第一个学习器L1</li>
-<li>将L1错分的数据集作为新的数据集训练L2</li>
-<li>将L1和L2分类结果不一致的数据作为数据集训练L3</li>
-<li>最后测试集上将三个分类器的结果汇总(结合这三个分类器，采用投票的方式来决定分类结果，因此只有当L2与L3都分类为false时，最终结果才为false，否则为true)</li>
-</ul>
-<h2 id="对小类错分进行加权惩罚"><a href="#对小类错分进行加权惩罚" class="headerlink" title="对小类错分进行加权惩罚"></a>对小类错分进行加权惩罚</h2><ul>
-<li>对分类器的小类样本数据增加权值，降低大类样本的权重，从而使得分类器将重点集中在小类样本身上</li>
-<li>一个具体做法是，在训练分类器时，若分类器将小类样本分错时，额外增加分类器一个小类样本分错代价，这个额外的代价可以使得分类器更加“关心”小类样本。如penalized-SVM和penalized-LDA算法</li>
-<li>对小样本进行过采样(例如含L倍重复数据)，其实在计算小样本错分cost functions时会累加L倍的惩罚分数</li>
-</ul>
-<h2 id="尝试其它评价指标"><a href="#尝试其它评价指标" class="headerlink" title="尝试其它评价指标"></a>尝试其它评价指标</h2><ul>
-<li>准确度这个评价指标在类别不均衡的分类任务中不够好，甚至会造成误导。可考虑更有说服力的评价指标。如混淆矩阵、精确度、召回率、F1得分，其中可关注Kappa和ROC曲线</li>
-</ul>
-<h2 id="尝试不同的分类算法"><a href="#尝试不同的分类算法" class="headerlink" title="尝试不同的分类算法"></a>尝试不同的分类算法</h2><ul>
-<li>决策树在类别不均衡数据上表现不错。它使用基于类变量的划分规则去创建分类树，因此可以强制地将不同类别的样本分开</li>
-<li>Lightgbm中有两个参数处理类别不平衡，分别是is_unbalance和scale_pos_weight</li>
-<li>xgboost有一个参数类别不平衡，即scale_pos_weight</li>
-</ul>
-<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
-<li><a href="https://www.jiqizhixin.com/articles/021704">机器学习中如何处理不平衡数据？</a></li>
-<li><a href="https://blog.csdn.net/jiede1/article/details/70215477">SMOTE算法(人工合成数据)</a></li>
-<li><a href="https://www.jianshu.com/p/13fc0f7f5565">SMOTE算法</a></li>
-<li><a href="https://blog.csdn.net/anshuai_aw1/article/details/89177406">分类问题中类别不平衡问题的有效解决方法</a></li>
-<li><a href="http://freewill.top/2017/04/18/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%B3%BB%E5%88%97%EF%BC%8817%EF%BC%89%EF%BC%9A%E9%9D%9E%E5%B9%B3%E8%A1%A1%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">机器学习算法系列（17）：非平衡数据处理</a></li>
-<li><a href="https://blog.csdn.net/weixin_44871660/article/details/90600522">样本不平衡处理</a></li>
-<li><a href="https://imbalanced-learn.readthedocs.io/en/stable/index.html">imbalanced官网</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/36093594">非平衡分类问题 | BalanceCascade方法及其Python实现</a></li>
-<li><a href="https://blog.csdn.net/songhk0209/article/details/71484469">解决样本不平衡问题的奇技淫巧 汇总</a></li>
-<li><a href="https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/">8 Tactics to Combat Imbalanced Classes in Your Machine Learning Dataset</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>机器学习</category>
-      </categories>
-      <tags>
-        <tag>机器学习</tag>
-        <tag>特征工程</tag>
-        <tag>数据预处理</tag>
       </tags>
   </entry>
   <entry>
@@ -968,6 +780,194 @@
       </categories>
       <tags>
         <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>类别不平衡问题的方法汇总</title>
+    <url>/class-imbalance/</url>
+    <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
+<li>指分类任务中不同类别的训练样例数目差别很大的情况</li>
+<li>若不同类别的训练样例数目稍有差别，通常影响不大，但若差别很大，则会对学习过程造成困扰。例如有998个反例，但是正例只有2个，那么学习方法只需要返回一个永远将新样本预测为反例的学习器，就能达到99.8%的精度；然而这样的学习器往往没有价值，因为它不能预测出任何正例</li>
+</ul>
+<h1 id="上采样-过采样-Oversampling"><a href="#上采样-过采样-Oversampling" class="headerlink" title="上采样(过采样, Oversampling)"></a>上采样(过采样, Oversampling)</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>对训练集中的少数类进行“过采样”，即增加一些少数类样本使得正、反例数目接近，然后再进行学习</li>
+</ul>
+<h2 id="Random-Oversampling-随机上采样"><a href="#Random-Oversampling-随机上采样" class="headerlink" title="Random Oversampling(随机上采样)"></a>Random Oversampling(随机上采样)</h2><ul>
+<li>简单复制样本的策略来增加少数类样本，容易产生模型过拟合的问题</li>
+</ul>
+<h2 id="SMOTE"><a href="#SMOTE" class="headerlink" title="SMOTE"></a>SMOTE</h2><ul>
+<li>即合成少数类过采样技术(Synthetic Minority Oversampling Technique)，是基于随机采样算法的一种改进，其基本思想是对少数类样本进行分析并根据少数类样本人工合成新样本添加到数据集中</li>
+</ul>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>1.对于少数类中每一个样本$x_i$，以欧氏距离为标准计算它到少数类样本集$S_{min}$中所有样本的距离，得到其k近邻</li>
+<li>2.根据样本不平衡比例设置一个采样比例以确定采样倍率N，对于每一个少数类样本$x_i$，从其k近邻中随机选择若干个样本，假设选择的近邻为$\tilde{x}$。</li>
+<li>3.对于每一个随机选出的近邻$\tilde{x}$，分别于原样本按照如下的公式构建新的样本</li>
+<li>$$x_{n e w}=x+\operatorname{rand}(0,1) \times |\tilde{x}-x|$$</li>
+<li><img src="https://img.shiqi-lu.tech/20201019195529.png?imageView2/2/h/250"></li>
+</ul>
+<h3 id="SMOTE的问题"><a href="#SMOTE的问题" class="headerlink" title="SMOTE的问题"></a>SMOTE的问题</h3><ul>
+<li>随机选取少数类样本用以合成新样本，而不考虑周边样本的情况<ul>
+<li>1.如果选取的少数类样本周围都是少数类样本，则新合成的样本不会提供太多有用信息。就像SVM中远离margin的点对决策边界影响不大</li>
+<li>2.如果选取的少数类样本周围都是多数类样本，这类的样本可能是噪声，则新合成的样本会与周围的多数类样本产生大部分重叠，导致分类困难</li>
+</ul>
+</li>
+</ul>
+<h2 id="Borderline-SMOTE"><a href="#Borderline-SMOTE" class="headerlink" title="Borderline-SMOTE"></a>Borderline-SMOTE</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
+<li>由于原始SMOTE算法的对所有少数类样本都是一视同仁的，我们希望新合成的少数类样本能处于两个类别的边界附近，因为在实际建模过程中那些处于边界位置的样本更容易被错分，因此利用边界位置的样本信息产生新样本可以给模型带来更大的体征，能提供足够的信息用以分类，即Borderline SMOTE算法做的事情</li>
+</ul>
+<h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>这个算法会先将所有的少数类样本分成三类，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20201019140912.png"></li>
+<li>“noise”：所有的k近邻个样本都属于多数类，可认为是噪声不能生成合成样本</li>
+<li>“danger”：超过一半的k近邻样本属于多数类</li>
+<li>“safe”：超过一半的k近邻样本属于少数类</li>
+<li>borderline smote算法只会从处于”danger”状态的样本中随机选择，然后用SMOTE算法产生新的样本。处于”danger”状态的样本代表靠近”边界”附近的少数类样本往往更容易被误分类。因而Border-line SMOTE只对那些靠近”边界”的少数类样本进行人工合成样本，而SMOTE则对所有少数类样本一视同仁</li>
+</ul>
+<h3 id="危险集的判断流程"><a href="#危险集的判断流程" class="headerlink" title="危险集的判断流程"></a>危险集的判断流程</h3><ul>
+<li>1.对于每个$x_{i} \subset S_{\min }$确定一系列K近邻样本集，称该数据集为$S_{i-kNN}$，且$S_{i-kNN} \subset S$</li>
+<li>2.对每个样本$x_i$，判断出最近邻样本集中属于多数类样本的个数，即$\left|S_{i-k N N} \cap S_{m a j}\right|$</li>
+<li>3.选择满足不等式$\frac{k}{2} \leq\left|S_{i-k N N} \cap S_{m a j}\right| \leq k$，将其加入危险集DANGER</li>
+</ul>
+<h3 id="Borderline-SMOTE分类两种："><a href="#Borderline-SMOTE分类两种：" class="headerlink" title="Borderline SMOTE分类两种："></a>Borderline SMOTE分类两种：</h3><ul>
+<li>Borderline-1 SMOTE：在合成样本时所选的近邻是一个少数类样本</li>
+<li>Borderline-2 SMOTE：在合成样本时所选的近邻是任意一个样本</li>
+</ul>
+<h2 id="ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用"><a href="#ADASYN-Adaptive-Synthetic-Sampling，自适应合成采用" class="headerlink" title="ADASYN(Adaptive Synthetic Sampling，自适应合成采用)"></a>ADASYN(Adaptive Synthetic Sampling，自适应合成采用)</h2><ul>
+<li>根据数据分布情况为不同的少数类样本生成不同数量的新样本</li>
+<li>首先根据最终的平衡程度设定总共需要生成的新少数类样本数量，然后为每个少数类样本x计算分布比例</li>
+</ul>
+<h1 id="下采样-降采样-UnserSampling"><a href="#下采样-降采样-UnserSampling" class="headerlink" title="下采样(降采样, UnserSampling)"></a>下采样(降采样, UnserSampling)</h1><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>对训练集中多数类样本进行“下采样”(undersampling)，即去除一些多数类中的样本使得正例、反例数目接近，然后再学习</li>
+</ul>
+<h2 id="Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection"><a href="#Random-Undersampling-随机下采样-或-原型选择-Prototype-Selection" class="headerlink" title="Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)"></a>Random Undersampling(随机下采样) 或 原型选择(Prototype Selection)</h2><h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><ul>
+<li>从多数类$S_{maj}$中随机选择一些样本组成样本集E。然后将样本集E从$S_{maj}$中移除。新的数据集$S_{n e w-m a j}=S_{m a j}-E$</li>
+<li>通过改变多数类样本比例以达到修改样本分布的目的，从而使样本分布较为均衡</li>
+</ul>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>操作简单，只依赖于样本分布，不依赖任何距离信息，属于非启发式方法</li>
+</ul>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>由于采样的样本集合要少于原来的样本集合，因此会造成一些信息缺失，即将多数类样本删除有可能导致分类器丢失有关多数类的重要信息</li>
+</ul>
+<h2 id="Ensemble-Methods"><a href="#Ensemble-Methods" class="headerlink" title="Ensemble Methods"></a>Ensemble Methods</h2><h3 id="EasyEnsemble"><a href="#EasyEnsemble" class="headerlink" title="EasyEnsemble"></a>EasyEnsemble</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><ul>
+<li>多次随机欠采样，尽可能全面地涵盖所有信息，特点是利用boosting减少偏差(Adaboost)、bagging减少方差(集成分类器)。实际应用的时候可尝试选用不同的分类器来提高分类的效果</li>
+<li><img src="https://img.shiqi-lu.tech/20201020145429.png?imageView2/2/h/350"></li>
+</ul>
+<h4 id="算法流程-2"><a href="#算法流程-2" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
+<li>1.把数据划分为两部分，分别是多数类样本$S_{maj}$和少数类样本$S_{min}$</li>
+<li>2.从多数类$S_{maj}$中有放回的随机采样n次，每次选取与少数类数目相近的样本个数即$|S_{imaj}|=|S_{min}|$，可得到n个样本集合，记作$\{S_{1 m a j}, S_{2 m a j}, \ldots, S_{n m a j}\}$</li>
+<li>3.将每一个多数类样本的子集$S_{imaj}$与少数类样本$S_{min}$合并后训练出Adaboost分类器$H_i$，阈值设置为$\theta_i$，可得到n个模型，即$H_{i}(x)=\operatorname{sgn}\left(\sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i, j}(x)-\theta_{i}\right)$</li>
+<li>4.将这些模型组合形成一个集成学习系统，最终的模型结果是这n个模型的投票值。此处采用加权多数表决的方法，加大分类误差率小的弱分类器的权值，使其在表决中起较大的作用，减小分类误差率小的弱分类器的权值，使其在表决中起较小的作用，即最终分类器为$H(x)=\operatorname{sgn}\left(\sum\limits_{i=1}^{n} \sum\limits_{j=1}^{s_{i}} \alpha_{i j} h_{i j}(x)-\sum\limits_{i=1}^{n} \theta_{i}\right)$</li>
+</ul>
+<h3 id="BalanceCascade"><a href="#BalanceCascade" class="headerlink" title="BalanceCascade"></a>BalanceCascade</h3><h4 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h4><ul>
+<li>该算法得到的是一个级联分类器，基于Adaboost，将若干个强分类器由简单到复杂排列，只有和少数类样本特征比较接近的才有可能输入到后面的分类器，比如边界点，因此能更充分地利用多数类样本的信息，一定程度上解决随机欠采样的信息丢失问题</li>
+</ul>
+<h4 id="算法流程-3"><a href="#算法流程-3" class="headerlink" title="算法流程"></a>算法流程</h4><ul>
+<li>输入：一个包含少数类阳性样本P和多数类阴性样本集N的训练集D，定义T是从N中抽取的子集个数，$s_i$是训练Adaboost基分类器$H_i$时的循环次数</li>
+<li>输出：一个组合分类器H(x)</li>
+<li>1.$f=\sqrt[(\mathrm{T}-1)]{\left(\frac{|\mathrm{P}|}{|\mathrm{N}|}\right)}$，$f$是每一层级的分类器$H_i$该达到的假阳性率(False Positive Rate)，即把多数类样本误分为少数类的错误率</li>
+<li>for i = 1 to T:<ul>
+<li>从多数类N中随机抽取一个样本子集$N_i$，使得$|N_i| = |P|$</li>
+<li>使用少数类样本集P和样本子集$N_i$训练一个Adaboost分类器$H_i$($H_i$由$s_i$个基分类器$h_{i,j}$及其权重$\alpha_{i,j}$构成，$\theta_i$是$H_i$的调节参数)</li>
+<li>$\mathrm{H}_{\mathrm{i}}(x)=\operatorname{sgn}(\sum\limits_{j=1}^{s_{i}} \alpha_{i, j} h_{i, j}(x)-\theta_{i})$</li>
+<li>调节阈值$\theta_i$令$H_i$的FP率为$f$</li>
+<li>移除多数类样本集N中所有被$H_i$正确分类的样本</li>
+</ul>
+</li>
+<li>输出一个集成分类器</li>
+<li>$\mathrm{H}(\mathrm{x})=\operatorname{sgn}\left(\sum\limits_{i=1}^{T} \sum\limits_{j=1}^{s_{l}} \alpha_{i, j} h_{i, j}(x)-\sum\limits_{i=1}^{T} \theta_{i}\right)$</li>
+</ul>
+<h2 id="NearMiss"><a href="#NearMiss" class="headerlink" title="NearMiss"></a>NearMiss</h2><ul>
+<li>本质上是一种原型选择(prototype selection)方法，即从多数类样本中选取最具代表性的样本用于训练，主要是为了缓解随机欠采样中的信息丢失问题。Nearmiss采用了3中不同的启发式规则来选择样本<ul>
+<li>NearMiss-1：选择到最近的K个少数类样本平均距离最近的多数类样本，考虑的是与最近的k个少数类样本的平均距离，是局部的。该方法得到的多数类样本分布是“不均衡”的，它倾向于在比较集中的少数类附近找到更多的多数类样本，而在孤立的(离群的)少数类附近找到更少的多数类样本，原因是该方法考虑的局部性质和平均距离</li>
+<li>NearMiss-2：选择到最远的K个少数类样本平均距离最近的多数类样本，考虑的是与最远的k个少数类样本的平均距离，是全局的。实验结果表明该方法的不均衡分类性能最优</li>
+<li>NearMiss-3：对于每个少数类样本选择K个最近的多数类样本，目的是保证每个少数类样本都被多数类样本包围，该方法会使每一个少数类样本附近都有足够多的多数类样本，显然这会使得模型的精确度高、召回率低</li>
+</ul>
+</li>
+</ul>
+<h2 id="原型生成-Prototype-generation"><a href="#原型生成-Prototype-generation" class="headerlink" title="原型生成(Prototype generation)"></a>原型生成(Prototype generation)</h2><ul>
+<li>给定数据集S，原型生成算法将生成一个子集S’，其中|S’|&lt;|S|，但是子集并非来自于原始数据，而是由原始数据集生成，方法是聚类成|S’|个类，然后取其中心点</li>
+</ul>
+<h2 id="Data-Cleaning-Techniques"><a href="#Data-Cleaning-Techniques" class="headerlink" title="Data Cleaning Techniques"></a>Data Cleaning Techniques</h2><h3 id="Tomek-Links"><a href="#Tomek-Links" class="headerlink" title="Tomek Links"></a>Tomek Links</h3><h4 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h4><ul>
+<li>给定一个样本对$(x_i, x_j)$，其中$x_{i} \in S_{m a j}, x_{j} \in S_{\min }$，记$d(x_i, x_j)$是样本$x_i$和样本$x_j$之间的距离，如果不存在任何样本$x_k$，使得$d\left(x_{i}, x_{k}\right)&lt;d\left(x_{i}, x_{j}\right)$，那么样本对$(x_i, x_j)$即称为Tomek Links。即Tomek links为相反类最近邻样本之间的一对连接</li>
+<li>不属于Tomek Links的情况有这个少数类样本最近的样本是同一类</li>
+</ul>
+<h4 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h4><ul>
+<li>如果两个样本来自Tomek Links，那么他们中的一个样本要么是噪声，要么它们都在两类的边界上</li>
+</ul>
+<h4 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h4><ul>
+<li><img src="https://img.shiqi-lu.tech/20201021171029.png?imageView2/2/h/300"></li>
+</ul>
+<h4 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h4><ul>
+<li>欠采样：将Tomek Links中属于是多数类的样本剔除</li>
+<li>数据清洗：将Tomek Links中的两个样本都剔除</li>
+</ul>
+<h3 id="ENN-edited-nearest-neighborhood"><a href="#ENN-edited-nearest-neighborhood" class="headerlink" title="ENN(edited nearest neighborhood)"></a>ENN(edited nearest neighborhood)</h3><ul>
+<li>这种方法应用knn来编辑(edit)数据集，对于每一个要进行下采样的样本，那些绝大多数近邻样本不属于该类的样本会被移除，而绝大多数的近邻样本属于同一类的样本会被保留</li>
+</ul>
+<h1 id="综合采样-Oversampling-Undersampling"><a href="#综合采样-Oversampling-Undersampling" class="headerlink" title="综合采样(Oversampling + Undersampling)"></a>综合采样(Oversampling + Undersampling)</h1><h2 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>先过采样，然后再进行数据的清洗</li>
+</ul>
+<h2 id="SMOTE-Tomek-Links"><a href="#SMOTE-Tomek-Links" class="headerlink" title="SMOTE+Tomek Links"></a>SMOTE+Tomek Links</h2><h3 id="算法流程-4"><a href="#算法流程-4" class="headerlink" title="算法流程"></a>算法流程</h3><ul>
+<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
+<li>2.剔除T中的Tomek Links对</li>
+</ul>
+<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>普通的SMOTE方法生成的少数类样本是通过线性插值得到的，在平衡类别分布的同时也扩张了少数类的样本空间，产生的问题是可能原本属于多数类样本的空间被少数类“入侵”，容易造成模型的过拟合</li>
+<li>Tomek Links对寻找的是那种噪声点或者边界点，可以很好地解决“入侵”问题，如图红色加号为SMOTE产生的少数类样本，可以看到红色样本“入侵”到原本属于多数类样本的空间，这种噪声数据问题可以通过Tomek Links很好地解决</li>
+<li><img src="https://img.shiqi-lu.tech/20201021171629.png?imageView2/2/h/150"></li>
+</ul>
+<h2 id="SMOTE-ENN"><a href="#SMOTE-ENN" class="headerlink" title="SMOTE+ENN"></a>SMOTE+ENN</h2><ul>
+<li>1.利用SMOTE方法生成新的少数类样本，得到扩充后的数据集T</li>
+<li>2.对T中的每一个样本使用KNN(一般k取3)方法预测，若预测结果与实际类别标签不符，则剔除该样本</li>
+</ul>
+<h1 id="其它方法"><a href="#其它方法" class="headerlink" title="其它方法"></a>其它方法</h1><h2 id="基于异常检测的方法"><a href="#基于异常检测的方法" class="headerlink" title="基于异常检测的方法"></a>基于异常检测的方法</h2><ul>
+<li>把小类的样本作为异常点(outliers)，因此该问题便转化为异常点检测(anomaly detection)与变化趋势检测问题(change detection)</li>
+</ul>
+<h2 id="分治ensemble"><a href="#分治ensemble" class="headerlink" title="分治ensemble"></a>分治ensemble</h2><ul>
+<li>将大类中样本聚类到L个聚类中，然后训练L个分类器</li>
+<li>每个分类器使用大类中的一个簇与所有的小类样本进行训练得到</li>
+<li>最后对这L个分类器采取少数服从多数的方式对未知类别数据进行分类，如果是连续值，采用平均值</li>
+</ul>
+<h2 id="分层级ensemble"><a href="#分层级ensemble" class="headerlink" title="分层级ensemble"></a>分层级ensemble</h2><ul>
+<li>使用原始数据集训练第一个学习器L1</li>
+<li>将L1错分的数据集作为新的数据集训练L2</li>
+<li>将L1和L2分类结果不一致的数据作为数据集训练L3</li>
+<li>最后测试集上将三个分类器的结果汇总(结合这三个分类器，采用投票的方式来决定分类结果，因此只有当L2与L3都分类为false时，最终结果才为false，否则为true)</li>
+</ul>
+<h2 id="对小类错分进行加权惩罚"><a href="#对小类错分进行加权惩罚" class="headerlink" title="对小类错分进行加权惩罚"></a>对小类错分进行加权惩罚</h2><ul>
+<li>对分类器的小类样本数据增加权值，降低大类样本的权重，从而使得分类器将重点集中在小类样本身上</li>
+<li>一个具体做法是，在训练分类器时，若分类器将小类样本分错时，额外增加分类器一个小类样本分错代价，这个额外的代价可以使得分类器更加“关心”小类样本。如penalized-SVM和penalized-LDA算法</li>
+<li>对小样本进行过采样(例如含L倍重复数据)，其实在计算小样本错分cost functions时会累加L倍的惩罚分数</li>
+</ul>
+<h2 id="尝试其它评价指标"><a href="#尝试其它评价指标" class="headerlink" title="尝试其它评价指标"></a>尝试其它评价指标</h2><ul>
+<li>准确度这个评价指标在类别不均衡的分类任务中不够好，甚至会造成误导。可考虑更有说服力的评价指标。如混淆矩阵、精确度、召回率、F1得分，其中可关注Kappa和ROC曲线</li>
+</ul>
+<h2 id="尝试不同的分类算法"><a href="#尝试不同的分类算法" class="headerlink" title="尝试不同的分类算法"></a>尝试不同的分类算法</h2><ul>
+<li>决策树在类别不均衡数据上表现不错。它使用基于类变量的划分规则去创建分类树，因此可以强制地将不同类别的样本分开</li>
+<li>Lightgbm中有两个参数处理类别不平衡，分别是is_unbalance和scale_pos_weight</li>
+<li>xgboost有一个参数类别不平衡，即scale_pos_weight</li>
+</ul>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
+<li><a href="https://www.jiqizhixin.com/articles/021704">机器学习中如何处理不平衡数据？</a></li>
+<li><a href="https://blog.csdn.net/jiede1/article/details/70215477">SMOTE算法(人工合成数据)</a></li>
+<li><a href="https://www.jianshu.com/p/13fc0f7f5565">SMOTE算法</a></li>
+<li><a href="https://blog.csdn.net/anshuai_aw1/article/details/89177406">分类问题中类别不平衡问题的有效解决方法</a></li>
+<li><a href="http://freewill.top/2017/04/18/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E7%B3%BB%E5%88%97%EF%BC%8817%EF%BC%89%EF%BC%9A%E9%9D%9E%E5%B9%B3%E8%A1%A1%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">机器学习算法系列（17）：非平衡数据处理</a></li>
+<li><a href="https://blog.csdn.net/weixin_44871660/article/details/90600522">样本不平衡处理</a></li>
+<li><a href="https://imbalanced-learn.readthedocs.io/en/stable/index.html">imbalanced官网</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/36093594">非平衡分类问题 | BalanceCascade方法及其Python实现</a></li>
+<li><a href="https://blog.csdn.net/songhk0209/article/details/71484469">解决样本不平衡问题的奇技淫巧 汇总</a></li>
+<li><a href="https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/">8 Tactics to Combat Imbalanced Classes in Your Machine Learning Dataset</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>特征工程</tag>
+        <tag>数据预处理</tag>
       </tags>
   </entry>
   <entry>
@@ -1877,6 +1877,90 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s培训第8课 集群调度</title>
+    <url>/k8s-8/</url>
+    <content><![CDATA[<ul>
+<li>Q:Scheduler是什么？<ul>
+<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
+<li>公平：如何保证每个节点都能被分配资源</li>
+<li>资源高效利用：集群所有资源最大化被使用</li>
+<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
+<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
+</ul>
+</li>
+<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
+</ul>
+</li>
+<li>Q: k8s的调度过程是怎样<ul>
+<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
+<li>Predicate 有一系列的算法可以使用：<ul>
+<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
+<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
+<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
+<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
+<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
+</ul>
+</li>
+<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
+<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
+<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
+<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
+<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
+</ul>
+</li>
+<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
+</ul>
+</li>
+<li>Q:结点亲和性<ul>
+<li>pod.spec.nodeAﬃnity<ul>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
+</ul>
+</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>键值运算关系<ul>
+<li>In：label 的值在某个列表中</li>
+<li>NotIn：label 的值不在某个列表中</li>
+<li>Gt：label 的值大于某个值</li>
+<li>Lt：label 的值小于某个值</li>
+<li>Exists：某个 label 存在</li>
+<li>DoesNotExist：某个 label 不存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Pod亲和性<ul>
+<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:亲和性/反亲和性调度策略比较<ul>
+<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
+</ul>
+</li>
+<li>Q:给节点打标签<ul>
+<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
+</ul>
+</li>
+<li>Q:k8s指定调度节点<ul>
+<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
+<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s培训第7课 存储</title>
     <url>/k8s-7/</url>
     <content><![CDATA[<ul>
@@ -2000,90 +2084,6 @@
 <li>Q:如何安装nfs服务器<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nfs-common nfs-utils rpcbind</span><br><span class="line">mkdir /nfsdata</span><br><span class="line">chmod 666 /nfsdata</span><br><span class="line">chown nfsnobody /nfsdata</span><br><span class="line">cat /etc/exports</span><br><span class="line">      /nfsdata *(rw,no_root_squash,no_all_squash,sync)</span><br><span class="line">systemctl start rpcbind</span><br><span class="line">systemctl start nfs</span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载</span></span><br><span class="line">showmount -e xxx.xxx.xxx.xxx</span><br><span class="line">mount -t nfs xxx.xxx.xxx.xxx:/nfs /test</span><br><span class="line">umount /test</span><br></pre></td></tr></table></figure></li>
 <li>Q:部署PV<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfspv1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfs</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">10.66</span><span class="number">.66</span><span class="number">.10</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl create -f pv.yaml</span><br><span class="line">kubectl get pv```</span><br><span class="line">- Q:创建服务并使用pvc</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    name: web</span><br><span class="line">  clusterIP: None</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: web</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  serviceName: &quot;nginx&quot;</span><br><span class="line">  replicas: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: wangyanglinux/myapp:v2</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: web</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: www</span><br><span class="line">          mountPath: /usr/share/nginx/html</span><br><span class="line">  volumeClaimTemplates:</span><br><span class="line">  - metadata:</span><br><span class="line">      name: www</span><br><span class="line">    spec:</span><br><span class="line">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span><br><span class="line">      storageClassName: &quot;nfs&quot;</span><br><span class="line">      resources:</span><br><span class="line">        requests:</span><br><span class="line">          storage: 1Gi</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>k8s培训第8课 集群调度</title>
-    <url>/k8s-8/</url>
-    <content><![CDATA[<ul>
-<li>Q:Scheduler是什么？<ul>
-<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
-<li>公平：如何保证每个节点都能被分配资源</li>
-<li>资源高效利用：集群所有资源最大化被使用</li>
-<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
-<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
-</ul>
-</li>
-<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
-</ul>
-</li>
-<li>Q: k8s的调度过程是怎样<ul>
-<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
-<li>Predicate 有一系列的算法可以使用：<ul>
-<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
-<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
-<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
-<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
-<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
-</ul>
-</li>
-<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
-<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
-<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
-<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
-<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
-</ul>
-</li>
-<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
-</ul>
-</li>
-<li>Q:结点亲和性<ul>
-<li>pod.spec.nodeAﬃnity<ul>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
-</ul>
-</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>键值运算关系<ul>
-<li>In：label 的值在某个列表中</li>
-<li>NotIn：label 的值不在某个列表中</li>
-<li>Gt：label 的值大于某个值</li>
-<li>Lt：label 的值小于某个值</li>
-<li>Exists：某个 label 存在</li>
-<li>DoesNotExist：某个 label 不存在</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:Pod亲和性<ul>
-<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:亲和性/反亲和性调度策略比较<ul>
-<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
-</ul>
-</li>
-<li>Q:给节点打标签<ul>
-<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
-</ul>
-</li>
-<li>Q:k8s指定调度节点<ul>
-<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
-<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
 </li>
 </ul>
 ]]></content>
@@ -2727,6 +2727,88 @@
       </tags>
   </entry>
   <entry>
+    <title>pytorch学习笔记</title>
+    <url>/pytorch-learning/</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
+<ul>
+<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
+<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
+<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
+<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
+<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+</ul>
+<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
+<ul>
+<li>Pytorch简介及环境配置</li>
+<li>Pytorch基础数据结构——张量</li>
+<li>张量操作与线性回归</li>
+<li>计算图与动态图机制</li>
+<li>autograd与逻辑回归</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
+<ul>
+<li>数据读取机制DataLoader与Dataset</li>
+<li>数据预处理transforms模块机制</li>
+<li>二十二种transforms数据预处理方法</li>
+<li>学会自定义transforms方法</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
+<ul>
+<li>nn.Module与网络模型构建步骤</li>
+<li>模型容器与AlexNet构建</li>
+<li>网络层中的卷积层</li>
+<li>网络层中的池化层、全连接层和激活函数层</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
+<ul>
+<li>权值初始化</li>
+<li>损失函数（一）</li>
+<li>Pytorch的14种损失函数</li>
+<li>优化器optimizer的概念</li>
+<li>torch.optim.SGD</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
+<ul>
+<li>学习率调整</li>
+<li>TensorBoard简介与安装</li>
+<li>TensorBoard使用（一）</li>
+<li>TensorBoard使用（二）</li>
+<li>hook函数与CAM</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
+<ul>
+<li>weight_decay</li>
+<li>dropout</li>
+<li>Batch Normalization</li>
+<li>Layer Normalization、Instance</li>
+<li>Normalization和Group Normalization</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
+<ul>
+<li>模型保存与加载</li>
+<li>Finetune</li>
+<li>GPU的使用</li>
+<li>Pytorch中常见报错</li>
+</ul>
+<p>Week8、9 PyTorch深度体验</p>
+<ul>
+<li>图像分类一瞥</li>
+<li>图像分割一瞥</li>
+<li>目标检测一瞥（上）</li>
+<li>目标检测一瞥（下）</li>
+<li>对抗生成网络一瞥</li>
+<li>循环神经网络一瞥</li>
+</ul>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《OFF学》读书笔记</title>
     <url>/off-time/</url>
     <content><![CDATA[<ul>
@@ -2975,88 +3057,6 @@
       </categories>
       <tags>
         <tag>休闲</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pytorch学习笔记</title>
-    <url>/pytorch-learning/</url>
-    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
-</ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
-</ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
-</ul>
-]]></content>
-      <categories>
-        <category>pytorch学习笔记</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -4482,6 +4482,259 @@
       </tags>
   </entry>
   <entry>
+    <title>《透视HTTP协议》安全篇</title>
+    <url>/http-perspective-2/</url>
+    <content><![CDATA[<h1 id="23-HTTPS是什么？SSL-TLS又是什么？"><a href="#23-HTTPS是什么？SSL-TLS又是什么？" class="headerlink" title="23 | HTTPS是什么？SSL/TLS又是什么？"></a>23 | HTTPS是什么？SSL/TLS又是什么？</h1><ul>
+<li>Q:具备哪4给特性的通信过程才是安全的?<ul>
+<li>机密性(Secrecy/Confidentiality)：对数据的“保密”，只能由可信的人访问，对其他人是不可见的“秘密”，简单来说就是不能让不相关的人看到不该看的东西</li>
+<li>完整性(Integrity，也叫一致性)：指数据在传输过程中没有被窜改</li>
+<li>身份认证(Authentication)：确认对方的真实身份，保证消息只能发送给可信的人</li>
+<li>不可否认(Non-repudiation/Undeniable，也叫不可抵赖)，不能否认已经发生过的行为</li>
+</ul>
+</li>
+</ul>
+<h1 id="24-固若金汤的根本（上）：对称加密与非对称加密"><a href="#24-固若金汤的根本（上）：对称加密与非对称加密" class="headerlink" title="24 | 固若金汤的根本（上）：对称加密与非对称加密"></a>24 | 固若金汤的根本（上）：对称加密与非对称加密</h1><ul>
+<li>Q:对称加密是什么？<ul>
+<li>指加密和解密时使用的密钥都是同一个，只要保证了密钥的安全，那整个通信过程就可以说具有了机密性</li>
+</ul>
+</li>
+<li>Q:目前常用的对称加密算法有哪两个<ul>
+<li>AES：高级加密标准（Advanced Encryption Standard），密钥长度可以是 128、192 或 256。它是 DES 算法的替代者，安全强度很高，性能也很好，而且有的硬件 还会做特殊优化，所以非常流行，是应用最广泛的对称加密算法</li>
+<li>ChaCha20：Google 设计的另一种加密算法，密钥长度固定为 256 位，纯软件运行性能 要超过 AES，曾经在移动客户端上比较流行，但 ARMv8 之后也加入了 AES 硬件优化，所 以现在不再具有明显的优势，但仍然算得上是一个不错算法</li>
+</ul>
+</li>
+<li>Q:加密分组模式是什么？<ul>
+<li>让算法用固定长度的密钥加密任意长度的明文，把密钥转化为密文</li>
+<li>最新的分组模式被称为 AEAD（Authenticated Encryption with Associated Data），在加密的同时增加了认证的功能，常用的是 GCM、CCM 和 Poly1305</li>
+</ul>
+</li>
+<li>Q:非对称加密是什么？<ul>
+<li>它有两个密钥，一个叫“公钥”（public key），一个叫“私钥”（private key）。两个密钥是不同的，公钥可以公开给任何人使用，而私钥必须严格保密</li>
+<li>公钥和私钥有个特别的“单向”性，虽然都可以用来加密解密，但公钥加密后只能用私钥解密，反过来，私钥加密后也只能用公钥解密</li>
+</ul>
+</li>
+<li>Q:有哪些非对称加密算法<ul>
+<li>RSA：它的安全性基于“整数分解”的数学难题，使用两个超大素数的乘积作为生成密钥的材料，想要从公钥推算出私钥是非常困难的</li>
+<li>ECC（Elliptic Curve Cryptography）：它基于“椭圆曲线离散对数”的数学难题，使用特定的曲线方程和基点生成公钥和私钥，子算法 ECDHE 用于密钥交换，ECDSA 用于数字签名</li>
+<li>目前比较常用的两个曲线是 P-256（secp256r1，在 OpenSSL 称为 prime256v1）和 x25519。P-256 是 NIST（美国国家标准技术研究所）和 NSA（美国国家安全局）推荐使用的曲线，而 x25519 被认为是最安全、最快速的曲线</li>
+</ul>
+</li>
+<li>Q:TLS里使用的混合加密是怎样呢？<ul>
+<li>在通信刚开始的时候使用非对称算法，如RSA、ECDHE，首先解决密钥交换的问题</li>
+<li>用随机数产生对称算法使用的「会话密钥」(session key)，再用公钥加密。因为会话密钥很短，通常只有16字节或32字节，所以慢一点也无所谓</li>
+<li>对方拿到密文后用私钥解密，取出会话密钥。这样，双方就实现了对称密钥的安全交换，后续就不再使用非对称加密，全都使用对称加密</li>
+</ul>
+</li>
+</ul>
+<h1 id="25-固若金汤的根本（下）：数字签名与证书"><a href="#25-固若金汤的根本（下）：数字签名与证书" class="headerlink" title="25 | 固若金汤的根本（下）：数字签名与证书"></a>25 | 固若金汤的根本（下）：数字签名与证书</h1><ul>
+<li>Q:目前推荐使用的摘要算法是什么<ul>
+<li>SHA-2：一系列摘要算法的统称，总共有 6 种，常用的有 SHA224、SHA256、 SHA384，分别能够生成 28 字节、32 字节、48 字节的摘要</li>
+</ul>
+</li>
+<li>Q:如何保证数据完整性<ul>
+<li>真正的完整性必须要建立在机密性之上，在混合加密系统里用会话密钥加密消息和摘要</li>
+</ul>
+</li>
+<li>Q:数字签名的原理是什么？<ul>
+<li>把公钥私钥的用法反过来，之前是公钥加密、私钥解密， 现在是私钥加密、公钥解密</li>
+<li>因为非对称加密效率太低，所以私钥只加密原文的摘要，这样运算量就小的多，而且得到的数字签名也很小，方便保管和传输</li>
+<li>签名和公钥一样完全公开，任何人都可以获取。但这个签名只有用私钥对应的公钥才能解开，拿到摘要后，再比对原文验证完整性，就可以像签署文件一样证明消息确实是你发的</li>
+</ul>
+</li>
+<li>Q:CA是什么<ul>
+<li>证书认证机构(Certificate Authority)，具有极高的可信度，由它来给各个公钥签名，用自 身的信誉来保证公钥无法伪造，是可信的</li>
+<li>CA 对公钥的签名认证是有格式的，包含序列号、用途、颁发者、有效时间等等，把这些打成一个包再签名，完整地证明公钥关联的各种信息，形成“数字证书”（Certificate）</li>
+</ul>
+</li>
+<li>Q:CA签发的三种证书DV、OV、EV的区别是<ul>
+<li>区别在于可信程度</li>
+<li>DV 是最低的，只是域名级别的可信，背后是谁不知道。EV 是最高的，经过了法律和审计的严格核查，可以证明网站拥有者的身份（在浏览器地址栏会显示出公司的名字，例如 Apple、GitHub 的网站）</li>
+</ul>
+</li>
+<li>Q:CA 怎么证明自己呢<ul>
+<li>这是信任链的问题。小一点的 CA 可以让大 CA 签名认证，但链条的最后，也就是Root CA，就只能自己证明自己了，这个就叫“自签名证书”（Self-Signed Certificate）或者“根证书”（Root Certificate）。你必须相信，否则整个证书信任链就走不下去了</li>
+<li><img src="https://img.shiqi-lu.tech/20210321183737.png"></li>
+<li>有了这个证书体系，操作系统和浏览器都内置了各大 CA 的根证书，上网的时候只要服务器发过来它的证书，就可以验证证书里的签名，顺着证书链（Certificate Chain）一层层地验证，直到找到根证书，就能够确定证书是可信的，从而里面的公钥也是可信的</li>
+</ul>
+</li>
+</ul>
+<h1 id="26-信任始于握手：TLS1-2连接过程解析"><a href="#26-信任始于握手：TLS1-2连接过程解析" class="headerlink" title="26 | 信任始于握手：TLS1.2连接过程解析"></a>26 | 信任始于握手：TLS1.2连接过程解析</h1><ul>
+<li>Q:TLS协议由哪几个子协议组成呢？<ul>
+<li>记录协议(Record Protocol)：规定了TLS收发数据的基本单位：记录(record)。它有点像是TCP里的segment，所有的其它子协议都需要通过记录协议发出。但多个记录数据可以在一个TCP包里一次性发出，也不需要像TCP那样返回ACK</li>
+<li>警报协议(Alert Protocol)：向对方发出警报信息，类似HTTP协议里的状态码。如，protocol_version是不支持旧版本，bad_certificate是证书有问题，收到警报后另一方可以选择继续，也可以立即终止连接</li>
+<li>握手协议(Handshake Protocol)：浏览器和服务器会在握手过程中协商TLS版本号、随机数、密码套件等信息，然后交换证书和密钥参数，最终双方协商会得到会话密钥，用于后续的混合加密系统</li>
+<li>变更密码规范协议(Change Cipher Spec Protocol)：就是一个「通知」，告诉对方，后续的数据都将使用加密保护。在它之前，数据都是明文的</li>
+</ul>
+</li>
+<li>Q:TLS的握手过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210321192338.png"></li>
+<li>其中每一个“框”都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议</li>
+<li><img src="https://img.shiqi-lu.tech/20210322090801.png"></li>
+<li>1.在TCP建立连接后，浏览器会首先发一个「Client Hello」消息。里面有客户端的版本号、支持的密码套件，还有一个随机数(Client Random)，用于后续生成会话密钥</li>
+<li>2.服务器收到「Client Hello」后，会返回一个「Server Hello」消息。把版本号对一下，也给出一个随机数(Server Random)，然后从客户端列表里选一个作为本次通信使用的密码套件</li>
+<li>然后服务器为了证明自己的身份，就把证书也发给了客户端(Server Certificate)</li>
+<li>接下来因为服务器选择了ECDHE算法，所以它会在证书后发送「Server Key Exchange」消息，里面是椭圆曲线的公钥(Server Params)，用来实现密钥交换，再加上自己的私钥签名认证</li>
+<li>然后是「Server Hello Done」消息，表示所有信息就这些</li>
+<li>这样第一个消息往返就结束了（两个 TCP 包），结果是客户端和服务器通过明文共享了三个信息：Client Random、Server Random 和 Server Params</li>
+<li>3.客户端拿到服务器的证书后，开始走证书链逐级验证，确认证书的真实性，再用证书公钥签名，确认服务器的身份</li>
+<li>然后，客户端按照密码套件的要求，也生成一个椭圆曲线的公钥(Client Params)，用「Client Key Exchange」消息发给服务器</li>
+<li>现在客户端和服务器手里都难倒了密钥交换算法的两个参数(Client Params、Server Params)，就用ECDHE算法算出「Pre-Master」，也是一个随机数</li>
+<li>现在客户端和服务器手里有了三个随机数：Client Random、Server Random 和 Pre-Master。用这三个作为原始材料，就可以生成用于加密会话的主密钥，叫「Master Secret」。而黑客因为拿不到「Pre-Master」，所以也就得不到主密钥</li>
+<li>用三个随机数是因为保证真正的「完全随机」</li>
+<li>主密钥有 48 字节，但它也不是最终用于通信的会话密钥，还会再用 PRF (伪随机数函数)扩展出更多的密钥，比如客户端发送用的会话密钥（client_write_key）、服务器发送用的会话密钥（server_write_key）等等，避免只用一个密钥带来的安全隐患</li>
+<li>4.有了主密钥和派生的会话密钥，客户端发一个「Change Cipher Spec」，然后再发一个「Finished」消息，把之前所有发送的数据做个摘要，再加密一下，让服务器做个验证</li>
+<li>服务器同样发「Change Cipher Spec」和「Finished」消息，双方都验证加密解密OK，握手正式结束，后面就收发被加密的 HTTP 请求和响应了</li>
+</ul>
+</li>
+<li>Q:主流的TLS握手过程和传统的RSA握手过程的区别是什么？<ul>
+<li>1.使用ECDHE实现密钥交换，而不是RSA，所以会在服务器端发出「Server Key Exchange」消息</li>
+<li>2.因为使用了ECDHE，客户端可以不用等到服务器发回「Finished」确认握手完毕，，立即就发出 HTTP 报文，省去了一个消息往返的时间浪费。这个叫「TLS False Start」，意思就是「抢跑」，和「TCP Fast Open」有点像，都是不等连接完全建立就提前发应用数据，提高传输的效率</li>
+<li><img src="https://img.shiqi-lu.tech/20210322152509.png"></li>
+<li>大体的流程没有变，只是「Pre-Master」不再需要用算法生成，而是客户端直接生成随机数，然后用服务器的公钥加密，通过「Client Key Exchange」消息发给服务器。服务器再用私钥解密，这样双方也实现了共享三个随机数，就可以生成主密钥</li>
+</ul>
+</li>
+<li>Q:双向认证是什么？<ul>
+<li>TLS握手是「单向认证」的握手过程，只认证了服务器的身份，而没有认证客户端的身份。这是因为通常单向认证通过后已经建立了安全通信，用账号、密码等简单的手段就能够确认用户的真实身份</li>
+<li>双向认证的流程也没有太多变化，只是在「Server Hello Done」之后，「Client Key Exchange」之前，客户端要发送「Client Certificate」消息，服务器收到后也把证书链走一遍，验证客户端的身份</li>
+</ul>
+</li>
+</ul>
+<h1 id="27-更好更快的握手：TLS1-3特性解析"><a href="#27-更好更快的握手：TLS1-3特性解析" class="headerlink" title="27 | 更好更快的握手：TLS1.3特性解析"></a>27 | 更好更快的握手：TLS1.3特性解析</h1><ul>
+<li>Q:TLS1.3的主要改进是什么？<ul>
+<li>最大化兼容性<ul>
+<li>TLS1.3 保持现有的记录格式不变，通过“伪装”来实现兼容TLS1.2，即不变更记录头字段里的版本号</li>
+<li>使用一个新的扩展协议（Extension Protocol），通过在记录末尾添加一系列的「扩展字段」来增加新的功能，老版本的 TLS 不认识它可以直接忽略，这就实现了「后向兼容」</li>
+<li>在记录头的 Version 字段被兼容性“固定”的情况下，只要是 TLS1.3 协议，握手的“Hello”消息后面就必须有“supported_versions”扩展，它标记了 TLS 的版本号， 使用它就能区分新旧协议</li>
+</ul>
+</li>
+<li>强化安全<ul>
+<li>精简算法，废除不安全的算法</li>
+</ul>
+</li>
+<li>提升性能<ul>
+<li>HTTPS 建立连接时除了要做 TCP 握手，还要做 TLS 握手，在 1.2 中会多花两个消息往返（2-RTT），可能导致几十毫秒甚至上百毫秒的延迟，在移动网络中延迟还会更严重</li>
+<li>现在因为密码套件大幅度简化，也就没有必要再像以前那样走复杂的协商流程了。TLS1.3 压缩了以前的「Hello」协商过程，删除了「Key Exchange」消息，把握手时间减少到了1-RTT，效率提高了一倍</li>
+<li>具体的做法是利用扩展。客户端在「Client Hello」消息里直接 用「supported_groups」带上支持的曲线，比如 P-256、x25519，用「key_share」带上曲线对应的客户端公钥参数，用「signature_algorithms」带上签名算法</li>
+<li>服务器收到后在这些扩展里选定一个曲线和参数，再用「key_share」扩展返回服务器这边的公钥参数，就实现了双方的密钥交换，后面的流程就和 1.2 基本一样了</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:TLS1.3的握手过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210322162027.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210322162054.png"></li>
+<li>在 TCP 建立连接之后，浏览器首先还是发一个「Client Hello」</li>
+<li>因为 1.3 的消息兼容 1.2，所以开头的版本号、支持的密码套件和随机数（Client Random）结构都是一样的（不过这时的随机数是 32 个字节）</li>
+<li>注意「Client Hello」里的扩展，「supported_versions」表示这是 TLS1.3，「supported_groups」是支持的曲线，「key_share」是曲线对应的参数</li>
+<li>服务器收到「Client Hello」同样返回「Server Hello」消息，还是要给出一个随机数(Server Random)和选定密码套件，表面上看和 TLS1.2 是一样的，重点是后面的扩展。「supported_versions」里确认使用的是 TLS1.3，然后在「key_share」扩展带上曲线和对应的公钥参数</li>
+<li>这时只交换了两条消息，客户端和服务器就拿到了四个共享信息：Client Random和 Server Random、Client Params和Server Params，两边就可以各自用 ECDHE 算出「Pre-Master」，再用 HKDF 生成主密钥「Master Secret」，效率比 TLS1.2 提高了一大截</li>
+<li>在算出主密钥后，服务器立刻发出「Change Cipher Spec」消息，比 TLS1.2 提早进入加密通信，后面的证书等就都是加密的了，减少了握手时的明文信息泄露</li>
+<li>这里 TLS1.3 还有一个安全强化措施，多了个「Certificate Verify」消息，用服务器的私钥把前面的曲线、套件、参数等握手数据加了签名，作用和「Finished」消息差不多。但由于是私钥签名，所以强化了身份认证和和防窜改</li>
+<li>这两个「Hello」消息之后，客户端验证服务器证书，再发「Finished」消息，就正式完成了握手，开始收发 HTTP 报文</li>
+</ul>
+</li>
+</ul>
+<h1 id="28-连接太慢该怎么办：HTTPS的优化"><a href="#28-连接太慢该怎么办：HTTPS的优化" class="headerlink" title="28 | 连接太慢该怎么办：HTTPS的优化"></a>28 | 连接太慢该怎么办：HTTPS的优化</h1><ul>
+<li>Q:TLS握手过程中影响性能的部分有哪些呢<ul>
+<li><img src="https://img.shiqi-lu.tech/20210322163414.png"></li>
+</ul>
+</li>
+<li>Q:如何使用硬件优化的方式优化HTTPS<ul>
+<li>1.选择更快的 CPU，最好还内建 AES 优化，这样即可以加速握手，也可以加速传输</li>
+<li>2.选择“SSL 加速卡”，加解密时调用它的 API，让专门的硬件来做非对称加解密，分担 CPU 的计算压力</li>
+<li>3.SSL 加速服务器，用专门的服务器集群来彻底“卸载”TLS 握手时的加密解密计算，性能自然要比单纯的“加速卡”要强大的多</li>
+</ul>
+</li>
+<li>Q:如何使用软件优化的方式优化HTTPS<ul>
+<li>1.软件升级：把现在正在使用的软件尽量升级到最新版本，由于这些软件在更新版本的时候都会做性能优化、修复错误，只要运维能够主动配合，这种软件优化是最容易做的，也是最容易达成优化效果的</li>
+<li>2.协议优化：尽量采用 TLS1.3，它大幅度简化了握手的过程，完全握手只要 1-RTT，而且更加安全</li>
+<li>如果暂时不能升级到 1.3，只能用 1.2，那么握手时使用的密钥交换协议应当尽量选用椭圆曲线的 ECDHE 算法。它不仅运算速度快，安全性高，还支持“False Start”，能够把握手的消息往返由 2-RTT 减少到 1-RTT，达到与 TLS1.3 类似的效果</li>
+<li>椭圆曲线也要选择高性能的曲线，最好是 x25519，次优选择是 P-256。对称加密算法方面，也可以选用“AES_128_GCM”，它能比“AES_256_GCM”略快一点点</li>
+<li>在 Nginx 里可以用“ssl_ciphers”“ssl_ecdh_curve”等指令配置服务器使用的密码套件和椭圆曲线，把优先使用的放在前面<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_ciphers TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:EECDH+CHACHA20;</span><br><span class="line">ssl_ecdh_curve X25519:P-256;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:如何进行证书优化<ul>
+<li>1.证书传输<ul>
+<li>服务器的证书可以选择椭圆曲线（ECDSA）证书而不是 RSA 证书，因为 224 位的 ECC 相当于 2048 位的 RSA，所以椭圆曲线证书的“个头”要比 RSA 小很多，即能够节约带宽也能减少客户端的运算量</li>
+</ul>
+</li>
+<li>2.证书验证<ul>
+<li>客户端的证书验证其实是个很复杂的操作，除了要公钥解密验证多个证书签名外，因为证书还有可能会被撤销失效，客户端有时还会再去访问 CA，下载 CRL 或者 OCSP 数据，这又会产生 DNS 查询、建立连接、收发数据等一系列网络通信，增加好几个 RTT</li>
+<li>CRL（Certificate revocation list，证书吊销列表）由 CA 定期发布，里面是所有被撤销信任的证书序号，查询这个列表就可以知道证书是否有效。</li>
+<li>但 CRL 因为是“定期”发布，就有“时间窗口”的安全隐患，而且随着吊销证书的增多，列表会越来越大，一个 CRL 经常会上 MB。想象一下，每次需要预先下载几 M 的“无用数据”才能连接网站，实用性实在是太低了</li>
+<li>所以，现在 CRL 基本上不用了，取而代之的是 OCSP（在线证书状态协议，Online Certificate Status Protocol），向 CA 发送查询请求，让 CA 返回证书的有效状态</li>
+<li>但 OCSP 也要多出一次网络请求的消耗，而且还依赖于 CA 服务器，如果 CA 服务器很忙，那响应延迟也是等不起的</li>
+<li>于是又出来了一个“补丁”，叫“OCSP Stapling”（OCSP 装订），它可以让服务器预先访问 CA 获取 OCSP 响应，然后在握手时随着证书一起发给客户端，免去了客户端连接 CA 服务器查询的时间</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:如何进行会话复用（TLS session resumption）的「Session ID」<ul>
+<li>客户端和服务器首次连接后各自保存一个会话的 ID 号，内存里存储主密钥和其他相关的信息。当客户端再次连接时发一个 ID 过来，服务器就在内存里找，找到就直接用主密钥恢复会话状态，跳过证书验证和密钥交换，只用一个消息往返就可以建立安全通信</li>
+<li>服务器在“ServerHello”消息后直接发送了“Change Cipher Spec”和“Finished”消息，复用会话完成了握手</li>
+<li><img src="https://img.shiqi-lu.tech/20210322164911.png"></li>
+<li>「Session ID」是最早出现的会话复用技术，也是应用最广的，但它也有缺点，服务器必须保存每一个客户端的会话数据，对于拥有百万、千万级别用户的网站来说存储量就成了大问题，加重了服务器的负担</li>
+</ul>
+</li>
+<li>Q:如何进行会话复用（TLS session resumption）的「Session Ticket」即会话票证<ul>
+<li>有点类似 HTTP 的 Cookie，存储的责任由服务器转移到了客户端，服务器加密会话信息，用“New Session Ticket”消息发给客户端，让客户端保存</li>
+<li>重连的时候，客户端使用扩展“session_ticket”发送“Ticket”而不是“Session ID”，服务器解密后验证有效期，就可以恢复会话，开始加密通信</li>
+<li>不过“Session Ticket”方案需要使用一个固定的密钥文件（ticket_key）来加密 Ticket，为了防止密钥被破解，保证“前向安全”，密钥文件需要定期轮换，比如设置为一小时或者一天</li>
+</ul>
+</li>
+<li>Q:如何进行预共享密钥<ul>
+<li>“False Start”“Session ID”“Session Ticket”等方式只能实现 1-RTT，而 TLS1.3 更进一步实现了“0-RTT”，原理和“Session Ticket”差不多，但在发送 Ticket 的同时会带上应用数据（Early Data），免去了 1.2 里的服务器确认步骤，这种方式叫“Pre-shared Key”，简称为“PSK”</li>
+<li><img src="https://img.shiqi-lu.tech/20210322165457.png"></li>
+<li>但“PSK”也不是完美的，它为了追求效率而牺牲了一点安全性，容易受到“重放攻击”（Replay attack）的威胁。黑客可以截获“PSK”的数据，像复读机那样反复向服务器发送</li>
+<li>解决的办法是只允许安全的 GET/HEAD 方法，在消息里加入时间戳、“nonce”验证，或者“一次性票证”限制重放</li>
+</ul>
+</li>
+</ul>
+<h1 id="29-我应该迁移到HTTPS吗？"><a href="#29-我应该迁移到HTTPS吗？" class="headerlink" title="29 | 我应该迁移到HTTPS吗？"></a>29 | 我应该迁移到HTTPS吗？</h1><ul>
+<li>Q:如何申请证书<ul>
+<li>“Let’s Encrypt”一直在推动证书的自动化部署，为此还实现了专门的 ACME 协议（RFC8555）。有很多的客户端软件可以完成申请、验证、下载、更新的“一条龙”操作，比如 Certbot、acme.sh 等等</li>
+<li>注意：</li>
+<li>第一，申请证书时应当同时申请 RSA 和 ECDSA 两种证书，在 Nginx 里配置成双证书验证，这样服务器可以自动选择快速的椭圆曲线证书，同时也兼容只支持 RSA 的客户端</li>
+<li>第二，如果申请 RSA 证书，私钥至少要 2048 位，摘要算法应该选用 SHA-2，例如 SHA256、SHA384 等</li>
+<li>第三，出于安全的考虑，“Let’s Encrypt”证书的有效期很短，只有 90 天，时间一到就会过期失效，所以必须要定期更新。你可以在 crontab 里加个每周或每月任务，发送更新请求，不过很多 ACME 客户端会自动添加这样的定期任务，完全不用你操心</li>
+</ul>
+</li>
+<li>Q:如何配置HTTPS<ul>
+<li>在 Nginx 上非常简单，只要在“listen”指令后面加上参数“ssl”，再配上刚才的证书文件就可以实现最基本的 HTTPS<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">listen                443 ssl;</span><br><span class="line"> </span><br><span class="line">ssl_certificate       xxx_rsa.crt;  #rsa2048 cert</span><br><span class="line">ssl_certificate_key   xxx_rsa.key;  #rsa2048 private key</span><br><span class="line"> </span><br><span class="line">ssl_certificate       xxx_ecc.crt;  #ecdsa cert</span><br><span class="line">ssl_certificate_key   xxx_ecc.key;  #ecdsa private ke</span><br></pre></td></tr></table></figure></li>
+<li>为了提高 HTTPS 的安全系数和性能，你还可以强制 Nginx 只支持 TLS1.2 以上的协议，打开“Session Ticket”会话复用<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_protocols               TLSv1.2 TLSv1.3;</span><br><span class="line"> </span><br><span class="line">ssl_session_timeout         5m;</span><br><span class="line">ssl_session_tickets         on;</span><br><span class="line">ssl_session_ticket_key      ticket.key;</span><br></pre></td></tr></table></figure></li>
+<li>密码套件的选择方面，我给你的建议是以服务器的套件优先。这样可以避免恶意客户端故意选择较弱的套件、降低安全等级，然后密码套件向 TLS1.3“看齐”，只使用 ECDHE、AES 和 ChaCha20，支持“False Start”<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_prefer_server_ciphers   on;</span><br><span class="line"></span><br><span class="line">ssl_ciphers   ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-CHACHA20-POLY1305:ECDHE+AES128:!MD5:!SHA1;</span><br></pre></td></tr></table></figure></li>
+<li>如果你的服务器上使用了 OpenSSL 的分支 BorringSSL，那么还可以使用一个特殊的“等价密码组”（Equal preference cipher groups）特性，它可以让服务器配置一组“等价”的密码套件，在这些套件里允许客户端优先选择，比如这么配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_ciphers </span><br><span class="line">[ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305];</span><br></pre></td></tr></table></figure></li>
+<li>如果客户端硬件没有 AES 优化，服务器就会顺着客户端的意思，优先选择与 AES“等价”的 ChaCha20 算法，让客户端能够快一点</li>
+<li>全部配置完成后，你可以访问“<a href="https://www.ssllabs.com/">SSLLabs</a>”网站，测试网站的安全程度，它会模拟多种客户端发起测试，打出一个综合的评分</li>
+</ul>
+</li>
+<li>Q:服务器名称指示是怎样？<ul>
+<li>在 HTTP 协议里，多个域名可以同时在一个 IP 地址上运行，这就是“虚拟主机”，Web 服务器会使用请求头里的 Host 字段来选择</li>
+<li>但在 HTTPS 里，因为请求头只有在 TLS 握手之后才能发送，在握手时就必须选择“虚拟主机”对应的证书，TLS 无法得知域名的信息，就只能用 IP 地址来区分。所以，最早的时候每个 HTTPS 域名必须使用独立的 IP 地址，非常不方便</li>
+<li>这得用到 TLS 的“扩展”，给协议加个SNI（Server Name Indication）的“补充条款”。它的作用和 Host 字段差不多，客户端会在“Client Hello”时带上域名信息，这样服务器就可以根据名字而不是 IP 地址来选择证书</li>
+</ul>
+</li>
+<li>Q:如何把原有的HTTP重定向到HTTPS服务<ul>
+<li>可用「重定向跳转」技术，把不安全的 HTTP 网址用 301 或 302“重定向”到新的 HTTPS 网站，这在 Nginx 里也很容易做到，使用“return”或“rewrite”都可以<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">return 301 https:&#x2F;&#x2F;$host$request_uri;             # 永久重定向</span><br><span class="line">rewrite ^  https:&#x2F;&#x2F;$host$request_uri permanent;   # 永久重定向</span><br></pre></td></tr></table></figure></li>
+<li>但这种方式有两个问题。一个是重定向增加了网络成本，多出了一次请求；另一个是存在安全隐患，重定向的响应可能会被“中间人”窜改，实现“会话劫持”，跳转到恶意网站</li>
+<li>可使用HSTS（HTTP 严格传输安全，HTTP Strict Transport Security）的技术可以消除这种安全隐患。HTTPS 服务器需要在发出的响应头里添加一个「Strict-Transport-Security」的字段，再设定一个有效期，例如：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Strict-Transport-Security: max-age&#x3D;15768000; includeSubDomains</span><br></pre></td></tr></table></figure></li>
+<li>相当于告诉浏览器：我这个网站必须严格使用 HTTPS 协议，在半年之内（182.5 天）都不允许用 HTTP，你以后就自己做转换吧，不要再来麻烦我了</li>
+<li>有了“HSTS”的指示，以后浏览器再访问同样的域名的时候就会自动把 URI 里的“http”改成“https”，直接访问安全的 HTTPS 网站。这样“中间人”就失去了攻击的机会，而且对于客户端来说也免去了一次跳转，加快了连接速度</li>
+<li>在配置文件里用“add_header”指令添加“HSTS”字段：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">add_header Strict-Transport-Security max-age&#x3D;15768000; #182.5days</span><br></pre></td></tr></table></figure></li>
+<li>那么 Chrome 浏览器只会在第一次连接时使用 HTTP 协议，之后就会都走 HTTPS 协议</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>网络</category>
+      </categories>
+      <tags>
+        <tag>HTTP</tag>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《透视HTTP协议》基础篇+进阶篇</title>
     <url>/http-perspective-1/</url>
     <content><![CDATA[<h1 id="10-应该如何理解请求方法？"><a href="#10-应该如何理解请求方法？" class="headerlink" title="10 | 应该如何理解请求方法？"></a>10 | 应该如何理解请求方法？</h1><ul>
@@ -5003,259 +5256,6 @@
 <li>服务器看到 ALPN 扩展以后就可以从列表里选择一种应用协议，在“Server Hello”里也带上“ALPN”扩展，告诉客户端服务器决定使用的是哪一种。因为我们在 Nginx 配置里使用了 HTTP/2 协议，所以在这里它选择的就是“h2”</li>
 <li><img src="https://img.shiqi-lu.tech/20210324110315.png"></li>
 <li>这样在 TLS 握手结束后，客户端和服务器就通过“ALPN”完成了应用层的协议协商，后面就可以使用 HTTP/2 通信了</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>网络</category>
-      </categories>
-      <tags>
-        <tag>HTTP</tag>
-        <tag>网络</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《透视HTTP协议》安全篇</title>
-    <url>/http-perspective-2/</url>
-    <content><![CDATA[<h1 id="23-HTTPS是什么？SSL-TLS又是什么？"><a href="#23-HTTPS是什么？SSL-TLS又是什么？" class="headerlink" title="23 | HTTPS是什么？SSL/TLS又是什么？"></a>23 | HTTPS是什么？SSL/TLS又是什么？</h1><ul>
-<li>Q:具备哪4给特性的通信过程才是安全的?<ul>
-<li>机密性(Secrecy/Confidentiality)：对数据的“保密”，只能由可信的人访问，对其他人是不可见的“秘密”，简单来说就是不能让不相关的人看到不该看的东西</li>
-<li>完整性(Integrity，也叫一致性)：指数据在传输过程中没有被窜改</li>
-<li>身份认证(Authentication)：确认对方的真实身份，保证消息只能发送给可信的人</li>
-<li>不可否认(Non-repudiation/Undeniable，也叫不可抵赖)，不能否认已经发生过的行为</li>
-</ul>
-</li>
-</ul>
-<h1 id="24-固若金汤的根本（上）：对称加密与非对称加密"><a href="#24-固若金汤的根本（上）：对称加密与非对称加密" class="headerlink" title="24 | 固若金汤的根本（上）：对称加密与非对称加密"></a>24 | 固若金汤的根本（上）：对称加密与非对称加密</h1><ul>
-<li>Q:对称加密是什么？<ul>
-<li>指加密和解密时使用的密钥都是同一个，只要保证了密钥的安全，那整个通信过程就可以说具有了机密性</li>
-</ul>
-</li>
-<li>Q:目前常用的对称加密算法有哪两个<ul>
-<li>AES：高级加密标准（Advanced Encryption Standard），密钥长度可以是 128、192 或 256。它是 DES 算法的替代者，安全强度很高，性能也很好，而且有的硬件 还会做特殊优化，所以非常流行，是应用最广泛的对称加密算法</li>
-<li>ChaCha20：Google 设计的另一种加密算法，密钥长度固定为 256 位，纯软件运行性能 要超过 AES，曾经在移动客户端上比较流行，但 ARMv8 之后也加入了 AES 硬件优化，所 以现在不再具有明显的优势，但仍然算得上是一个不错算法</li>
-</ul>
-</li>
-<li>Q:加密分组模式是什么？<ul>
-<li>让算法用固定长度的密钥加密任意长度的明文，把密钥转化为密文</li>
-<li>最新的分组模式被称为 AEAD（Authenticated Encryption with Associated Data），在加密的同时增加了认证的功能，常用的是 GCM、CCM 和 Poly1305</li>
-</ul>
-</li>
-<li>Q:非对称加密是什么？<ul>
-<li>它有两个密钥，一个叫“公钥”（public key），一个叫“私钥”（private key）。两个密钥是不同的，公钥可以公开给任何人使用，而私钥必须严格保密</li>
-<li>公钥和私钥有个特别的“单向”性，虽然都可以用来加密解密，但公钥加密后只能用私钥解密，反过来，私钥加密后也只能用公钥解密</li>
-</ul>
-</li>
-<li>Q:有哪些非对称加密算法<ul>
-<li>RSA：它的安全性基于“整数分解”的数学难题，使用两个超大素数的乘积作为生成密钥的材料，想要从公钥推算出私钥是非常困难的</li>
-<li>ECC（Elliptic Curve Cryptography）：它基于“椭圆曲线离散对数”的数学难题，使用特定的曲线方程和基点生成公钥和私钥，子算法 ECDHE 用于密钥交换，ECDSA 用于数字签名</li>
-<li>目前比较常用的两个曲线是 P-256（secp256r1，在 OpenSSL 称为 prime256v1）和 x25519。P-256 是 NIST（美国国家标准技术研究所）和 NSA（美国国家安全局）推荐使用的曲线，而 x25519 被认为是最安全、最快速的曲线</li>
-</ul>
-</li>
-<li>Q:TLS里使用的混合加密是怎样呢？<ul>
-<li>在通信刚开始的时候使用非对称算法，如RSA、ECDHE，首先解决密钥交换的问题</li>
-<li>用随机数产生对称算法使用的「会话密钥」(session key)，再用公钥加密。因为会话密钥很短，通常只有16字节或32字节，所以慢一点也无所谓</li>
-<li>对方拿到密文后用私钥解密，取出会话密钥。这样，双方就实现了对称密钥的安全交换，后续就不再使用非对称加密，全都使用对称加密</li>
-</ul>
-</li>
-</ul>
-<h1 id="25-固若金汤的根本（下）：数字签名与证书"><a href="#25-固若金汤的根本（下）：数字签名与证书" class="headerlink" title="25 | 固若金汤的根本（下）：数字签名与证书"></a>25 | 固若金汤的根本（下）：数字签名与证书</h1><ul>
-<li>Q:目前推荐使用的摘要算法是什么<ul>
-<li>SHA-2：一系列摘要算法的统称，总共有 6 种，常用的有 SHA224、SHA256、 SHA384，分别能够生成 28 字节、32 字节、48 字节的摘要</li>
-</ul>
-</li>
-<li>Q:如何保证数据完整性<ul>
-<li>真正的完整性必须要建立在机密性之上，在混合加密系统里用会话密钥加密消息和摘要</li>
-</ul>
-</li>
-<li>Q:数字签名的原理是什么？<ul>
-<li>把公钥私钥的用法反过来，之前是公钥加密、私钥解密， 现在是私钥加密、公钥解密</li>
-<li>因为非对称加密效率太低，所以私钥只加密原文的摘要，这样运算量就小的多，而且得到的数字签名也很小，方便保管和传输</li>
-<li>签名和公钥一样完全公开，任何人都可以获取。但这个签名只有用私钥对应的公钥才能解开，拿到摘要后，再比对原文验证完整性，就可以像签署文件一样证明消息确实是你发的</li>
-</ul>
-</li>
-<li>Q:CA是什么<ul>
-<li>证书认证机构(Certificate Authority)，具有极高的可信度，由它来给各个公钥签名，用自 身的信誉来保证公钥无法伪造，是可信的</li>
-<li>CA 对公钥的签名认证是有格式的，包含序列号、用途、颁发者、有效时间等等，把这些打成一个包再签名，完整地证明公钥关联的各种信息，形成“数字证书”（Certificate）</li>
-</ul>
-</li>
-<li>Q:CA签发的三种证书DV、OV、EV的区别是<ul>
-<li>区别在于可信程度</li>
-<li>DV 是最低的，只是域名级别的可信，背后是谁不知道。EV 是最高的，经过了法律和审计的严格核查，可以证明网站拥有者的身份（在浏览器地址栏会显示出公司的名字，例如 Apple、GitHub 的网站）</li>
-</ul>
-</li>
-<li>Q:CA 怎么证明自己呢<ul>
-<li>这是信任链的问题。小一点的 CA 可以让大 CA 签名认证，但链条的最后，也就是Root CA，就只能自己证明自己了，这个就叫“自签名证书”（Self-Signed Certificate）或者“根证书”（Root Certificate）。你必须相信，否则整个证书信任链就走不下去了</li>
-<li><img src="https://img.shiqi-lu.tech/20210321183737.png"></li>
-<li>有了这个证书体系，操作系统和浏览器都内置了各大 CA 的根证书，上网的时候只要服务器发过来它的证书，就可以验证证书里的签名，顺着证书链（Certificate Chain）一层层地验证，直到找到根证书，就能够确定证书是可信的，从而里面的公钥也是可信的</li>
-</ul>
-</li>
-</ul>
-<h1 id="26-信任始于握手：TLS1-2连接过程解析"><a href="#26-信任始于握手：TLS1-2连接过程解析" class="headerlink" title="26 | 信任始于握手：TLS1.2连接过程解析"></a>26 | 信任始于握手：TLS1.2连接过程解析</h1><ul>
-<li>Q:TLS协议由哪几个子协议组成呢？<ul>
-<li>记录协议(Record Protocol)：规定了TLS收发数据的基本单位：记录(record)。它有点像是TCP里的segment，所有的其它子协议都需要通过记录协议发出。但多个记录数据可以在一个TCP包里一次性发出，也不需要像TCP那样返回ACK</li>
-<li>警报协议(Alert Protocol)：向对方发出警报信息，类似HTTP协议里的状态码。如，protocol_version是不支持旧版本，bad_certificate是证书有问题，收到警报后另一方可以选择继续，也可以立即终止连接</li>
-<li>握手协议(Handshake Protocol)：浏览器和服务器会在握手过程中协商TLS版本号、随机数、密码套件等信息，然后交换证书和密钥参数，最终双方协商会得到会话密钥，用于后续的混合加密系统</li>
-<li>变更密码规范协议(Change Cipher Spec Protocol)：就是一个「通知」，告诉对方，后续的数据都将使用加密保护。在它之前，数据都是明文的</li>
-</ul>
-</li>
-<li>Q:TLS的握手过程<ul>
-<li><img src="https://img.shiqi-lu.tech/20210321192338.png"></li>
-<li>其中每一个“框”都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议</li>
-<li><img src="https://img.shiqi-lu.tech/20210322090801.png"></li>
-<li>1.在TCP建立连接后，浏览器会首先发一个「Client Hello」消息。里面有客户端的版本号、支持的密码套件，还有一个随机数(Client Random)，用于后续生成会话密钥</li>
-<li>2.服务器收到「Client Hello」后，会返回一个「Server Hello」消息。把版本号对一下，也给出一个随机数(Server Random)，然后从客户端列表里选一个作为本次通信使用的密码套件</li>
-<li>然后服务器为了证明自己的身份，就把证书也发给了客户端(Server Certificate)</li>
-<li>接下来因为服务器选择了ECDHE算法，所以它会在证书后发送「Server Key Exchange」消息，里面是椭圆曲线的公钥(Server Params)，用来实现密钥交换，再加上自己的私钥签名认证</li>
-<li>然后是「Server Hello Done」消息，表示所有信息就这些</li>
-<li>这样第一个消息往返就结束了（两个 TCP 包），结果是客户端和服务器通过明文共享了三个信息：Client Random、Server Random 和 Server Params</li>
-<li>3.客户端拿到服务器的证书后，开始走证书链逐级验证，确认证书的真实性，再用证书公钥签名，确认服务器的身份</li>
-<li>然后，客户端按照密码套件的要求，也生成一个椭圆曲线的公钥(Client Params)，用「Client Key Exchange」消息发给服务器</li>
-<li>现在客户端和服务器手里都难倒了密钥交换算法的两个参数(Client Params、Server Params)，就用ECDHE算法算出「Pre-Master」，也是一个随机数</li>
-<li>现在客户端和服务器手里有了三个随机数：Client Random、Server Random 和 Pre-Master。用这三个作为原始材料，就可以生成用于加密会话的主密钥，叫「Master Secret」。而黑客因为拿不到「Pre-Master」，所以也就得不到主密钥</li>
-<li>用三个随机数是因为保证真正的「完全随机」</li>
-<li>主密钥有 48 字节，但它也不是最终用于通信的会话密钥，还会再用 PRF (伪随机数函数)扩展出更多的密钥，比如客户端发送用的会话密钥（client_write_key）、服务器发送用的会话密钥（server_write_key）等等，避免只用一个密钥带来的安全隐患</li>
-<li>4.有了主密钥和派生的会话密钥，客户端发一个「Change Cipher Spec」，然后再发一个「Finished」消息，把之前所有发送的数据做个摘要，再加密一下，让服务器做个验证</li>
-<li>服务器同样发「Change Cipher Spec」和「Finished」消息，双方都验证加密解密OK，握手正式结束，后面就收发被加密的 HTTP 请求和响应了</li>
-</ul>
-</li>
-<li>Q:主流的TLS握手过程和传统的RSA握手过程的区别是什么？<ul>
-<li>1.使用ECDHE实现密钥交换，而不是RSA，所以会在服务器端发出「Server Key Exchange」消息</li>
-<li>2.因为使用了ECDHE，客户端可以不用等到服务器发回「Finished」确认握手完毕，，立即就发出 HTTP 报文，省去了一个消息往返的时间浪费。这个叫「TLS False Start」，意思就是「抢跑」，和「TCP Fast Open」有点像，都是不等连接完全建立就提前发应用数据，提高传输的效率</li>
-<li><img src="https://img.shiqi-lu.tech/20210322152509.png"></li>
-<li>大体的流程没有变，只是「Pre-Master」不再需要用算法生成，而是客户端直接生成随机数，然后用服务器的公钥加密，通过「Client Key Exchange」消息发给服务器。服务器再用私钥解密，这样双方也实现了共享三个随机数，就可以生成主密钥</li>
-</ul>
-</li>
-<li>Q:双向认证是什么？<ul>
-<li>TLS握手是「单向认证」的握手过程，只认证了服务器的身份，而没有认证客户端的身份。这是因为通常单向认证通过后已经建立了安全通信，用账号、密码等简单的手段就能够确认用户的真实身份</li>
-<li>双向认证的流程也没有太多变化，只是在「Server Hello Done」之后，「Client Key Exchange」之前，客户端要发送「Client Certificate」消息，服务器收到后也把证书链走一遍，验证客户端的身份</li>
-</ul>
-</li>
-</ul>
-<h1 id="27-更好更快的握手：TLS1-3特性解析"><a href="#27-更好更快的握手：TLS1-3特性解析" class="headerlink" title="27 | 更好更快的握手：TLS1.3特性解析"></a>27 | 更好更快的握手：TLS1.3特性解析</h1><ul>
-<li>Q:TLS1.3的主要改进是什么？<ul>
-<li>最大化兼容性<ul>
-<li>TLS1.3 保持现有的记录格式不变，通过“伪装”来实现兼容TLS1.2，即不变更记录头字段里的版本号</li>
-<li>使用一个新的扩展协议（Extension Protocol），通过在记录末尾添加一系列的「扩展字段」来增加新的功能，老版本的 TLS 不认识它可以直接忽略，这就实现了「后向兼容」</li>
-<li>在记录头的 Version 字段被兼容性“固定”的情况下，只要是 TLS1.3 协议，握手的“Hello”消息后面就必须有“supported_versions”扩展，它标记了 TLS 的版本号， 使用它就能区分新旧协议</li>
-</ul>
-</li>
-<li>强化安全<ul>
-<li>精简算法，废除不安全的算法</li>
-</ul>
-</li>
-<li>提升性能<ul>
-<li>HTTPS 建立连接时除了要做 TCP 握手，还要做 TLS 握手，在 1.2 中会多花两个消息往返（2-RTT），可能导致几十毫秒甚至上百毫秒的延迟，在移动网络中延迟还会更严重</li>
-<li>现在因为密码套件大幅度简化，也就没有必要再像以前那样走复杂的协商流程了。TLS1.3 压缩了以前的「Hello」协商过程，删除了「Key Exchange」消息，把握手时间减少到了1-RTT，效率提高了一倍</li>
-<li>具体的做法是利用扩展。客户端在「Client Hello」消息里直接 用「supported_groups」带上支持的曲线，比如 P-256、x25519，用「key_share」带上曲线对应的客户端公钥参数，用「signature_algorithms」带上签名算法</li>
-<li>服务器收到后在这些扩展里选定一个曲线和参数，再用「key_share」扩展返回服务器这边的公钥参数，就实现了双方的密钥交换，后面的流程就和 1.2 基本一样了</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:TLS1.3的握手过程<ul>
-<li><img src="https://img.shiqi-lu.tech/20210322162027.png"></li>
-<li><img src="https://img.shiqi-lu.tech/20210322162054.png"></li>
-<li>在 TCP 建立连接之后，浏览器首先还是发一个「Client Hello」</li>
-<li>因为 1.3 的消息兼容 1.2，所以开头的版本号、支持的密码套件和随机数（Client Random）结构都是一样的（不过这时的随机数是 32 个字节）</li>
-<li>注意「Client Hello」里的扩展，「supported_versions」表示这是 TLS1.3，「supported_groups」是支持的曲线，「key_share」是曲线对应的参数</li>
-<li>服务器收到「Client Hello」同样返回「Server Hello」消息，还是要给出一个随机数(Server Random)和选定密码套件，表面上看和 TLS1.2 是一样的，重点是后面的扩展。「supported_versions」里确认使用的是 TLS1.3，然后在「key_share」扩展带上曲线和对应的公钥参数</li>
-<li>这时只交换了两条消息，客户端和服务器就拿到了四个共享信息：Client Random和 Server Random、Client Params和Server Params，两边就可以各自用 ECDHE 算出「Pre-Master」，再用 HKDF 生成主密钥「Master Secret」，效率比 TLS1.2 提高了一大截</li>
-<li>在算出主密钥后，服务器立刻发出「Change Cipher Spec」消息，比 TLS1.2 提早进入加密通信，后面的证书等就都是加密的了，减少了握手时的明文信息泄露</li>
-<li>这里 TLS1.3 还有一个安全强化措施，多了个「Certificate Verify」消息，用服务器的私钥把前面的曲线、套件、参数等握手数据加了签名，作用和「Finished」消息差不多。但由于是私钥签名，所以强化了身份认证和和防窜改</li>
-<li>这两个「Hello」消息之后，客户端验证服务器证书，再发「Finished」消息，就正式完成了握手，开始收发 HTTP 报文</li>
-</ul>
-</li>
-</ul>
-<h1 id="28-连接太慢该怎么办：HTTPS的优化"><a href="#28-连接太慢该怎么办：HTTPS的优化" class="headerlink" title="28 | 连接太慢该怎么办：HTTPS的优化"></a>28 | 连接太慢该怎么办：HTTPS的优化</h1><ul>
-<li>Q:TLS握手过程中影响性能的部分有哪些呢<ul>
-<li><img src="https://img.shiqi-lu.tech/20210322163414.png"></li>
-</ul>
-</li>
-<li>Q:如何使用硬件优化的方式优化HTTPS<ul>
-<li>1.选择更快的 CPU，最好还内建 AES 优化，这样即可以加速握手，也可以加速传输</li>
-<li>2.选择“SSL 加速卡”，加解密时调用它的 API，让专门的硬件来做非对称加解密，分担 CPU 的计算压力</li>
-<li>3.SSL 加速服务器，用专门的服务器集群来彻底“卸载”TLS 握手时的加密解密计算，性能自然要比单纯的“加速卡”要强大的多</li>
-</ul>
-</li>
-<li>Q:如何使用软件优化的方式优化HTTPS<ul>
-<li>1.软件升级：把现在正在使用的软件尽量升级到最新版本，由于这些软件在更新版本的时候都会做性能优化、修复错误，只要运维能够主动配合，这种软件优化是最容易做的，也是最容易达成优化效果的</li>
-<li>2.协议优化：尽量采用 TLS1.3，它大幅度简化了握手的过程，完全握手只要 1-RTT，而且更加安全</li>
-<li>如果暂时不能升级到 1.3，只能用 1.2，那么握手时使用的密钥交换协议应当尽量选用椭圆曲线的 ECDHE 算法。它不仅运算速度快，安全性高，还支持“False Start”，能够把握手的消息往返由 2-RTT 减少到 1-RTT，达到与 TLS1.3 类似的效果</li>
-<li>椭圆曲线也要选择高性能的曲线，最好是 x25519，次优选择是 P-256。对称加密算法方面，也可以选用“AES_128_GCM”，它能比“AES_256_GCM”略快一点点</li>
-<li>在 Nginx 里可以用“ssl_ciphers”“ssl_ecdh_curve”等指令配置服务器使用的密码套件和椭圆曲线，把优先使用的放在前面<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_ciphers TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:EECDH+CHACHA20;</span><br><span class="line">ssl_ecdh_curve X25519:P-256;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:如何进行证书优化<ul>
-<li>1.证书传输<ul>
-<li>服务器的证书可以选择椭圆曲线（ECDSA）证书而不是 RSA 证书，因为 224 位的 ECC 相当于 2048 位的 RSA，所以椭圆曲线证书的“个头”要比 RSA 小很多，即能够节约带宽也能减少客户端的运算量</li>
-</ul>
-</li>
-<li>2.证书验证<ul>
-<li>客户端的证书验证其实是个很复杂的操作，除了要公钥解密验证多个证书签名外，因为证书还有可能会被撤销失效，客户端有时还会再去访问 CA，下载 CRL 或者 OCSP 数据，这又会产生 DNS 查询、建立连接、收发数据等一系列网络通信，增加好几个 RTT</li>
-<li>CRL（Certificate revocation list，证书吊销列表）由 CA 定期发布，里面是所有被撤销信任的证书序号，查询这个列表就可以知道证书是否有效。</li>
-<li>但 CRL 因为是“定期”发布，就有“时间窗口”的安全隐患，而且随着吊销证书的增多，列表会越来越大，一个 CRL 经常会上 MB。想象一下，每次需要预先下载几 M 的“无用数据”才能连接网站，实用性实在是太低了</li>
-<li>所以，现在 CRL 基本上不用了，取而代之的是 OCSP（在线证书状态协议，Online Certificate Status Protocol），向 CA 发送查询请求，让 CA 返回证书的有效状态</li>
-<li>但 OCSP 也要多出一次网络请求的消耗，而且还依赖于 CA 服务器，如果 CA 服务器很忙，那响应延迟也是等不起的</li>
-<li>于是又出来了一个“补丁”，叫“OCSP Stapling”（OCSP 装订），它可以让服务器预先访问 CA 获取 OCSP 响应，然后在握手时随着证书一起发给客户端，免去了客户端连接 CA 服务器查询的时间</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:如何进行会话复用（TLS session resumption）的「Session ID」<ul>
-<li>客户端和服务器首次连接后各自保存一个会话的 ID 号，内存里存储主密钥和其他相关的信息。当客户端再次连接时发一个 ID 过来，服务器就在内存里找，找到就直接用主密钥恢复会话状态，跳过证书验证和密钥交换，只用一个消息往返就可以建立安全通信</li>
-<li>服务器在“ServerHello”消息后直接发送了“Change Cipher Spec”和“Finished”消息，复用会话完成了握手</li>
-<li><img src="https://img.shiqi-lu.tech/20210322164911.png"></li>
-<li>「Session ID」是最早出现的会话复用技术，也是应用最广的，但它也有缺点，服务器必须保存每一个客户端的会话数据，对于拥有百万、千万级别用户的网站来说存储量就成了大问题，加重了服务器的负担</li>
-</ul>
-</li>
-<li>Q:如何进行会话复用（TLS session resumption）的「Session Ticket」即会话票证<ul>
-<li>有点类似 HTTP 的 Cookie，存储的责任由服务器转移到了客户端，服务器加密会话信息，用“New Session Ticket”消息发给客户端，让客户端保存</li>
-<li>重连的时候，客户端使用扩展“session_ticket”发送“Ticket”而不是“Session ID”，服务器解密后验证有效期，就可以恢复会话，开始加密通信</li>
-<li>不过“Session Ticket”方案需要使用一个固定的密钥文件（ticket_key）来加密 Ticket，为了防止密钥被破解，保证“前向安全”，密钥文件需要定期轮换，比如设置为一小时或者一天</li>
-</ul>
-</li>
-<li>Q:如何进行预共享密钥<ul>
-<li>“False Start”“Session ID”“Session Ticket”等方式只能实现 1-RTT，而 TLS1.3 更进一步实现了“0-RTT”，原理和“Session Ticket”差不多，但在发送 Ticket 的同时会带上应用数据（Early Data），免去了 1.2 里的服务器确认步骤，这种方式叫“Pre-shared Key”，简称为“PSK”</li>
-<li><img src="https://img.shiqi-lu.tech/20210322165457.png"></li>
-<li>但“PSK”也不是完美的，它为了追求效率而牺牲了一点安全性，容易受到“重放攻击”（Replay attack）的威胁。黑客可以截获“PSK”的数据，像复读机那样反复向服务器发送</li>
-<li>解决的办法是只允许安全的 GET/HEAD 方法，在消息里加入时间戳、“nonce”验证，或者“一次性票证”限制重放</li>
-</ul>
-</li>
-</ul>
-<h1 id="29-我应该迁移到HTTPS吗？"><a href="#29-我应该迁移到HTTPS吗？" class="headerlink" title="29 | 我应该迁移到HTTPS吗？"></a>29 | 我应该迁移到HTTPS吗？</h1><ul>
-<li>Q:如何申请证书<ul>
-<li>“Let’s Encrypt”一直在推动证书的自动化部署，为此还实现了专门的 ACME 协议（RFC8555）。有很多的客户端软件可以完成申请、验证、下载、更新的“一条龙”操作，比如 Certbot、acme.sh 等等</li>
-<li>注意：</li>
-<li>第一，申请证书时应当同时申请 RSA 和 ECDSA 两种证书，在 Nginx 里配置成双证书验证，这样服务器可以自动选择快速的椭圆曲线证书，同时也兼容只支持 RSA 的客户端</li>
-<li>第二，如果申请 RSA 证书，私钥至少要 2048 位，摘要算法应该选用 SHA-2，例如 SHA256、SHA384 等</li>
-<li>第三，出于安全的考虑，“Let’s Encrypt”证书的有效期很短，只有 90 天，时间一到就会过期失效，所以必须要定期更新。你可以在 crontab 里加个每周或每月任务，发送更新请求，不过很多 ACME 客户端会自动添加这样的定期任务，完全不用你操心</li>
-</ul>
-</li>
-<li>Q:如何配置HTTPS<ul>
-<li>在 Nginx 上非常简单，只要在“listen”指令后面加上参数“ssl”，再配上刚才的证书文件就可以实现最基本的 HTTPS<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">listen                443 ssl;</span><br><span class="line"> </span><br><span class="line">ssl_certificate       xxx_rsa.crt;  #rsa2048 cert</span><br><span class="line">ssl_certificate_key   xxx_rsa.key;  #rsa2048 private key</span><br><span class="line"> </span><br><span class="line">ssl_certificate       xxx_ecc.crt;  #ecdsa cert</span><br><span class="line">ssl_certificate_key   xxx_ecc.key;  #ecdsa private ke</span><br></pre></td></tr></table></figure></li>
-<li>为了提高 HTTPS 的安全系数和性能，你还可以强制 Nginx 只支持 TLS1.2 以上的协议，打开“Session Ticket”会话复用<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_protocols               TLSv1.2 TLSv1.3;</span><br><span class="line"> </span><br><span class="line">ssl_session_timeout         5m;</span><br><span class="line">ssl_session_tickets         on;</span><br><span class="line">ssl_session_ticket_key      ticket.key;</span><br></pre></td></tr></table></figure></li>
-<li>密码套件的选择方面，我给你的建议是以服务器的套件优先。这样可以避免恶意客户端故意选择较弱的套件、降低安全等级，然后密码套件向 TLS1.3“看齐”，只使用 ECDHE、AES 和 ChaCha20，支持“False Start”<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_prefer_server_ciphers   on;</span><br><span class="line"></span><br><span class="line">ssl_ciphers   ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-CHACHA20-POLY1305:ECDHE+AES128:!MD5:!SHA1;</span><br></pre></td></tr></table></figure></li>
-<li>如果你的服务器上使用了 OpenSSL 的分支 BorringSSL，那么还可以使用一个特殊的“等价密码组”（Equal preference cipher groups）特性，它可以让服务器配置一组“等价”的密码套件，在这些套件里允许客户端优先选择，比如这么配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssl_ciphers </span><br><span class="line">[ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305];</span><br></pre></td></tr></table></figure></li>
-<li>如果客户端硬件没有 AES 优化，服务器就会顺着客户端的意思，优先选择与 AES“等价”的 ChaCha20 算法，让客户端能够快一点</li>
-<li>全部配置完成后，你可以访问“<a href="https://www.ssllabs.com/">SSLLabs</a>”网站，测试网站的安全程度，它会模拟多种客户端发起测试，打出一个综合的评分</li>
-</ul>
-</li>
-<li>Q:服务器名称指示是怎样？<ul>
-<li>在 HTTP 协议里，多个域名可以同时在一个 IP 地址上运行，这就是“虚拟主机”，Web 服务器会使用请求头里的 Host 字段来选择</li>
-<li>但在 HTTPS 里，因为请求头只有在 TLS 握手之后才能发送，在握手时就必须选择“虚拟主机”对应的证书，TLS 无法得知域名的信息，就只能用 IP 地址来区分。所以，最早的时候每个 HTTPS 域名必须使用独立的 IP 地址，非常不方便</li>
-<li>这得用到 TLS 的“扩展”，给协议加个SNI（Server Name Indication）的“补充条款”。它的作用和 Host 字段差不多，客户端会在“Client Hello”时带上域名信息，这样服务器就可以根据名字而不是 IP 地址来选择证书</li>
-</ul>
-</li>
-<li>Q:如何把原有的HTTP重定向到HTTPS服务<ul>
-<li>可用「重定向跳转」技术，把不安全的 HTTP 网址用 301 或 302“重定向”到新的 HTTPS 网站，这在 Nginx 里也很容易做到，使用“return”或“rewrite”都可以<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">return 301 https:&#x2F;&#x2F;$host$request_uri;             # 永久重定向</span><br><span class="line">rewrite ^  https:&#x2F;&#x2F;$host$request_uri permanent;   # 永久重定向</span><br></pre></td></tr></table></figure></li>
-<li>但这种方式有两个问题。一个是重定向增加了网络成本，多出了一次请求；另一个是存在安全隐患，重定向的响应可能会被“中间人”窜改，实现“会话劫持”，跳转到恶意网站</li>
-<li>可使用HSTS（HTTP 严格传输安全，HTTP Strict Transport Security）的技术可以消除这种安全隐患。HTTPS 服务器需要在发出的响应头里添加一个「Strict-Transport-Security」的字段，再设定一个有效期，例如：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Strict-Transport-Security: max-age&#x3D;15768000; includeSubDomains</span><br></pre></td></tr></table></figure></li>
-<li>相当于告诉浏览器：我这个网站必须严格使用 HTTPS 协议，在半年之内（182.5 天）都不允许用 HTTP，你以后就自己做转换吧，不要再来麻烦我了</li>
-<li>有了“HSTS”的指示，以后浏览器再访问同样的域名的时候就会自动把 URI 里的“http”改成“https”，直接访问安全的 HTTPS 网站。这样“中间人”就失去了攻击的机会，而且对于客户端来说也免去了一次跳转，加快了连接速度</li>
-<li>在配置文件里用“add_header”指令添加“HSTS”字段：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">add_header Strict-Transport-Security max-age&#x3D;15768000; #182.5days</span><br></pre></td></tr></table></figure></li>
-<li>那么 Chrome 浏览器只会在第一次连接时使用 HTTP 协议，之后就会都走 HTTPS 协议</li>
 </ul>
 </li>
 </ul>
