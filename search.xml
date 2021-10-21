@@ -407,6 +407,143 @@
       </tags>
   </entry>
   <entry>
+    <title>《沈剑架构师训练营》第3章 - 快速性能优化</title>
+    <url>/arch-sj-3/</url>
+    <content><![CDATA[<h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
+<li>no11：与静态页面、动态页面匹配的加速技术有哪些？<ul>
+<li>静态页面<ul>
+<li>CDN</li>
+<li>nginx</li>
+<li>squid/varnish</li>
+</ul>
+</li>
+<li>动态页面<ul>
+<li>分层架构</li>
+<li>服务化架构</li>
+<li>数据库，缓存架构</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no11：动静分离是什么？<ul>
+<li>静态页面与动态页面分开不同的系统访问的架构设计方法</li>
+<li><img src="https://img.shiqi-lu.tech/20210906113515.png"></li>
+<li>静态页面，几毫秒返回</li>
+<li>动态页面，几百毫秒返回</li>
+</ul>
+</li>
+<li>no11：「页面静态化」是什么？如何实施？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906113737.png"></li>
+<li>把网页内容提前生成相关的 html，用静态页面相关的加速技术来进行加速</li>
+<li>适合场景：返回页面结果集有限</li>
+<li>不适合场景：返回页面结果集数据量过大，如帖子，搜索等</li>
+</ul>
+</li>
+</ul>
+<h1 id="12、性能优化：读写分离，前台与后台分离"><a href="#12、性能优化：读写分离，前台与后台分离" class="headerlink" title="12、性能优化：读写分离，前台与后台分离"></a>12、性能优化：读写分离，前台与后台分离</h1><ul>
+<li>no12：什么是读写分离？能解决什么问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908205424.png"></li>
+<li>一主多从，读写分离，主从同步，是一种常见的数据库架构</li>
+<li>一般来说，主库，提供数据库的写服务，从库，提供数据库的读服务，主从之间通过某种机制来实现数据库的同步，如 MySQL 的 binlog，一个主从同步集群通常被称为一个「分组」</li>
+<li>能解决什么问题？<ul>
+<li>主要可以线性提升读的性能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no12：什么是水平切分？能解决什么问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908205943.png"></li>
+<li>数据库水平切分后，数据库之间没有数据的重合，不需要同步</li>
+<li>能解决什么问题？<ul>
+<li>数据库存储容量提升</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no12：什么是前台？什么是后台？<ul>
+<li>前台，用户访问的对外系统</li>
+<li>后台，运营访问的对内系统</li>
+</ul>
+</li>
+</ul>
+<h1 id="13、本章小结：百万流量，这些技术够用了"><a href="#13、本章小结：百万流量，这些技术够用了" class="headerlink" title="13、本章小结：百万流量，这些技术够用了"></a>13、本章小结：百万流量，这些技术够用了</h1><ul>
+<li>no13：早期单体 ALL in one 架构，遇到什么问题？这阶段的优化思路是什么？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908211227.png"></li>
+<li>性能问题：访问人数多的时候，希望系统快一点</li>
+<li>耦合问题：当出现问题的时候，系统不要全部挂掉</li>
+<li>思路：<ul>
+<li>1.技术不炫技，以解决业务问题为导向</li>
+<li>2.系统改造尽可能小的架构方案</li>
+<li>3.以最快的速度，提升系统的性能，解决遇到的问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no13：单体架构演进：伪分布式，提升性能<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908211506.png"></li>
+<li>三大分离<ul>
+<li>动静分离</li>
+<li>读写分离(引发读写延时新问题)</li>
+<li>前台后台分离</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no13：单体架构演进：垂直拆分，解耦<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
+<li>业务垂直划分</li>
+<li>代码垂直划分(子系统解耦)</li>
+<li>数据库垂直划分(数据量降低,延时缓解)</li>
+<li>研发团队垂直拆分(专业化，效率提升)</li>
+</ul>
+</li>
+<li>no13：如何保证垂直拆分后，子系统的高可用？<ul>
+<li>使用反向代理</li>
+<li>子web系统的性能，不再受到单台机器资源限制，可以扩展</li>
+<li>子web系统，实现了高可用(伪集群-&gt;真集群) </li>
+<li><img src="https://img.shiqi-lu.tech/20210908212034.png"></li>
+</ul>
+</li>
+<li>no13：真集群后，反向代理如何做负载均衡？<ul>
+<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
+<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
+</ul>
+</li>
+<li>no13：反向代理，如何保证高可用？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908212221.png"></li>
+</ul>
+</li>
+<li>no13：反向代理技术出现之前，接入层如何扩展？<ul>
+<li>DNS 轮询</li>
+<li><img src="https://img.shiqi-lu.tech/20210908212329.png"></li>
+</ul>
+</li>
+<li>no13：使用多层反向代理后，如何做到继续提升性能？<ul>
+<li>DNS 轮询</li>
+<li><img src="https://img.shiqi-lu.tech/20210908212439.png"></li>
+</ul>
+</li>
+<li>no13：session 一致性如何保障？<ul>
+<li>session 同步法</li>
+<li>客户端存储法</li>
+<li>反向代理 hash 一致性</li>
+<li>后端统一存储法</li>
+</ul>
+</li>
+<li>no13：如何加速静态资源？<ul>
+<li>CDN</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>六种不同的二分查找全总结</title>
     <url>/binary-search/</url>
     <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -697,6 +834,109 @@
       </tags>
   </entry>
   <entry>
+    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
+    <url>/distrib-principal-algo-1/</url>
+    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
+<li>Q：分布式技术涉及内容<ul>
+<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
+<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
+<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
+<li>Q:分布式的三个演进模式是什么？<ul>
+<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
+<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
+<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
+</ul>
+</li>
+<li>Q:分布式是什么？<ul>
+<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
+</ul>
+</li>
+<li>Q:判断采取数据并行还是任务并行的方式：<ul>
+<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
+<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
+</ul>
+</li>
+</ul>
+<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
+<li>Q:分布式系统的目的是什么？<ul>
+<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
+</ul>
+</li>
+<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
+<li>一个系统处理各种任务的能力</li>
+</ul>
+</li>
+<li>Q:分布式的3个性能指标是什么？<ul>
+<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
+</ul>
+</li>
+<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
+<li>系统在一定时间内可以处理的任务数</li>
+<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
+</ul>
+</li>
+<li>Q:QPS是什么？<ul>
+<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
+</ul>
+</li>
+<li>Q:TPS是什么？<ul>
+<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
+</ul>
+</li>
+<li>Q:BPS是什么？<ul>
+<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
+</ul>
+</li>
+<li>Q:响应时间是什么？<ul>
+<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
+</ul>
+</li>
+<li>Q:完成时间是什么？<ul>
+<li>系统真正完成一个请求或处理需要花费的时间</li>
+</ul>
+</li>
+<li>Q:资源占用是什么？<ul>
+<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
+</ul>
+</li>
+<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
+<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
+<li>满载资源占用：一个系统满额负载时的资源占用</li>
+</ul>
+</li>
+<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
+<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
+<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
+</ul>
+</li>
+<li>Q:系统可用性的两个指标是什么？<ul>
+<li>1.系统停止服务的时间与总的时间之比</li>
+<li>2.某功能的失败次数与总的请求次数之比</li>
+</ul>
+</li>
+<li>Q:可扩展性(Scalability)是什么?<ul>
+<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
+</ul>
+</li>
+<li>Q:有哪两种扩展系统的方法？<ul>
+<li>垂直/纵向扩展：增加单机的硬件能力</li>
+<li>水平/横向扩展：增加计算机数量</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《数据库设计那些事》学习笔记</title>
     <url>/db-design-thing/</url>
     <content><![CDATA[<ul>
@@ -968,109 +1208,6 @@
       </categories>
       <tags>
         <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
-    <url>/distrib-principal-algo-1/</url>
-    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
-<li>Q：分布式技术涉及内容<ul>
-<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
-<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
-<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
-</ul>
-</li>
-</ul>
-<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
-<li>Q:分布式的三个演进模式是什么？<ul>
-<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
-<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
-<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
-</ul>
-</li>
-<li>Q:分布式是什么？<ul>
-<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
-</ul>
-</li>
-<li>Q:判断采取数据并行还是任务并行的方式：<ul>
-<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
-<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
-</ul>
-</li>
-</ul>
-<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
-<li>Q:分布式系统的目的是什么？<ul>
-<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
-</ul>
-</li>
-<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
-<li>一个系统处理各种任务的能力</li>
-</ul>
-</li>
-<li>Q:分布式的3个性能指标是什么？<ul>
-<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
-</ul>
-</li>
-<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
-<li>系统在一定时间内可以处理的任务数</li>
-<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
-</ul>
-</li>
-<li>Q:QPS是什么？<ul>
-<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
-</ul>
-</li>
-<li>Q:TPS是什么？<ul>
-<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
-</ul>
-</li>
-<li>Q:BPS是什么？<ul>
-<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
-</ul>
-</li>
-<li>Q:响应时间是什么？<ul>
-<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
-</ul>
-</li>
-<li>Q:完成时间是什么？<ul>
-<li>系统真正完成一个请求或处理需要花费的时间</li>
-</ul>
-</li>
-<li>Q:资源占用是什么？<ul>
-<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
-</ul>
-</li>
-<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
-<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
-<li>满载资源占用：一个系统满额负载时的资源占用</li>
-</ul>
-</li>
-<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
-<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
-<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
-</ul>
-</li>
-<li>Q:系统可用性的两个指标是什么？<ul>
-<li>1.系统停止服务的时间与总的时间之比</li>
-<li>2.某功能的失败次数与总的请求次数之比</li>
-</ul>
-</li>
-<li>Q:可扩展性(Scalability)是什么?<ul>
-<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
-</ul>
-</li>
-<li>Q:有哪两种扩展系统的方法？<ul>
-<li>垂直/纵向扩展：增加单机的硬件能力</li>
-<li>水平/横向扩展：增加计算机数量</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>分布式</category>
-      </categories>
-      <tags>
-        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
@@ -1527,68 +1664,6 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s培训第4课 资源清单</title>
-    <url>/k8s-4/</url>
-    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
-<ul>
-<li>Q:集群资源有哪些分类？<ul>
-<li>名称空间级别<ul>
-<li>工作负载型资源(workload): Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
-<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress</li>
-<li>配置与存储型资源：Volume(存储卷)、CSI(容器存储接口，可扩展各种第三方存储卷)</li>
-<li>特殊类型的存储卷：ConfigMap(当配置中心来使用的资源类型)、Secret(保存敏感数据)、DownwardAPI(把外部环境中的信息输出给容器)</li>
-</ul>
-</li>
-<li>集群级别：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
-<li>元数据级别：HPA、PodTemplate、LimitRange</li>
-</ul>
-</li>
-<li>Q:容器报错后如何处理？<ul>
-<li><code>kubectl describe pod myapp-pod</code></li>
-<li>若有多个容器需要用-c指定，查看日志</li>
-<li><code>kubectl log myapp-pod -c test</code></li>
-</ul>
-</li>
-<li>Q:initContainer模板是什么？<ul>
-<li>initContainers里面会按照顺序依次往下执行</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup mydb; do echo waiting for mydb; sleep 2; done;&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-就绪检测模板？readinessProbe-httpget</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-exec</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;touch /tmp/live ; sleep 60; rm -rf /tmp/live; sleep 3600&quot;</span>]</span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;test&quot;</span>,<span class="string">&quot;-e&quot;</span>,<span class="string">&quot;/tmp/live&quot;</span>]</span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-httpget</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-tcp</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:启动、退出动作pod模板</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">postStart:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the postStart handler &gt; /usr/share/message&quot;</span>]</span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the poststop handler &gt; /usr/share/message&quot;</span>]</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>k8s培训第5课 资源管理器</title>
     <url>/k8s-5/</url>
     <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
@@ -1779,6 +1854,68 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s培训第4课 资源清单</title>
+    <url>/k8s-4/</url>
+    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
+<ul>
+<li>Q:集群资源有哪些分类？<ul>
+<li>名称空间级别<ul>
+<li>工作负载型资源(workload): Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
+<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress</li>
+<li>配置与存储型资源：Volume(存储卷)、CSI(容器存储接口，可扩展各种第三方存储卷)</li>
+<li>特殊类型的存储卷：ConfigMap(当配置中心来使用的资源类型)、Secret(保存敏感数据)、DownwardAPI(把外部环境中的信息输出给容器)</li>
+</ul>
+</li>
+<li>集群级别：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
+<li>元数据级别：HPA、PodTemplate、LimitRange</li>
+</ul>
+</li>
+<li>Q:容器报错后如何处理？<ul>
+<li><code>kubectl describe pod myapp-pod</code></li>
+<li>若有多个容器需要用-c指定，查看日志</li>
+<li><code>kubectl log myapp-pod -c test</code></li>
+</ul>
+</li>
+<li>Q:initContainer模板是什么？<ul>
+<li>initContainers里面会按照顺序依次往下执行</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup mydb; do echo waiting for mydb; sleep 2; done;&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-就绪检测模板？readinessProbe-httpget</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-exec</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;touch /tmp/live ; sleep 60; rm -rf /tmp/live; sleep 3600&quot;</span>]</span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;test&quot;</span>,<span class="string">&quot;-e&quot;</span>,<span class="string">&quot;/tmp/live&quot;</span>]</span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-httpget</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-tcp</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:启动、退出动作pod模板</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">postStart:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the postStart handler &gt; /usr/share/message&quot;</span>]</span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the poststop handler &gt; /usr/share/message&quot;</span>]</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s培训第6课 Service</title>
     <url>/k8s-6/</url>
     <content><![CDATA[<ul>
@@ -1874,138 +2011,6 @@
       </categories>
       <tags>
         <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>海量数据处理</title>
-    <url>/mass-data-processing/</url>
-    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
-<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
-<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
-<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
-<li>3.堆/快排：排序得到频率最高的IP</li>
-</ul>
-</li>
-<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
-<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
-<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
-<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
-<li>也可用trie树</li>
-</ul>
-</li>
-<li>堆排找topK过程<ul>
-<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
-</ul>
-</li>
-<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
-<li>如果同一个数据元素只出现在某一台机器中<ul>
-<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
-<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
-</ul>
-</li>
-<li>如果同一个数据元素出现在不同机器中<ul>
-<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
-<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
-<li>解法一<ul>
-<li>1.散列映射</li>
-<li>2.hash_map统计</li>
-<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
-</ul>
-</li>
-<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
-</ul>
-</li>
-<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
-<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
-<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
-<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
-<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
-<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
-<li>2.不同的区域再利用位图进行统计</li>
-</ul>
-</li>
-<li>寻找中位数：找出5亿个int型数的中位数<ul>
-<li>1.将这5亿个int型数划分为2^{16}个区域</li>
-<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
-<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
-</ul>
-</li>
-</ul>
-<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
-<li>外排序介绍<ul>
-<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
-</ul>
-</li>
-<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
-<li>1.位图<ul>
-<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
-<li>能采用位图方案的原因<ul>
-<li>输入数据限制在相对较小的范围内</li>
-<li>数据没有重复</li>
-<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>2.多路归并<ul>
-<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
-<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
-<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
-</ul>
-</li>
-<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
-<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
-<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
-<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
-</ul>
-</li>
-<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
-<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
-<li>读入40亿个数，设置相应的位</li>
-<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
-<li>原理<ul>
-<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
-<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
-<li>但会有误判的可能</li>
-</ul>
-</li>
-</ul>
-<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
-<li>设计一个比较两篇文档相似度的算法<ul>
-<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
-<li>simhash算法</li>
-</ul>
-</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
-- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>海量数据</tag>
       </tags>
   </entry>
   <entry>
@@ -2224,6 +2229,138 @@
       </categories>
       <tags>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>海量数据处理</title>
+    <url>/mass-data-processing/</url>
+    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
+<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
+<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
+<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
+<li>3.堆/快排：排序得到频率最高的IP</li>
+</ul>
+</li>
+<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
+<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
+<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
+<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
+<li>也可用trie树</li>
+</ul>
+</li>
+<li>堆排找topK过程<ul>
+<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
+</ul>
+</li>
+<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
+<li>如果同一个数据元素只出现在某一台机器中<ul>
+<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
+<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
+</ul>
+</li>
+<li>如果同一个数据元素出现在不同机器中<ul>
+<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
+<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
+<li>解法一<ul>
+<li>1.散列映射</li>
+<li>2.hash_map统计</li>
+<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
+</ul>
+</li>
+<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
+</ul>
+</li>
+<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
+<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
+<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
+<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
+<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
+<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
+<li>2.不同的区域再利用位图进行统计</li>
+</ul>
+</li>
+<li>寻找中位数：找出5亿个int型数的中位数<ul>
+<li>1.将这5亿个int型数划分为2^{16}个区域</li>
+<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
+<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
+</ul>
+</li>
+</ul>
+<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
+<li>外排序介绍<ul>
+<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
+</ul>
+</li>
+<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
+<li>1.位图<ul>
+<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
+<li>能采用位图方案的原因<ul>
+<li>输入数据限制在相对较小的范围内</li>
+<li>数据没有重复</li>
+<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.多路归并<ul>
+<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
+<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
+<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
+</ul>
+</li>
+<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
+<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
+<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
+<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
+</ul>
+</li>
+<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
+<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
+<li>读入40亿个数，设置相应的位</li>
+<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
+<li>原理<ul>
+<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
+<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
+<li>但会有误判的可能</li>
+</ul>
+</li>
+</ul>
+<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
+<li>设计一个比较两篇文档相似度的算法<ul>
+<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
+<li>simhash算法</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
+- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>海量数据</tag>
       </tags>
   </entry>
   <entry>
@@ -3459,509 +3596,6 @@
       </tags>
   </entry>
   <entry>
-    <title>恶魔奶爸语法4-6课</title>
-    <url>/gramma4-6/</url>
-    <content><![CDATA[<h1 id="4-被动语态的重难点——不完全及物动词和授予动词补充"><a href="#4-被动语态的重难点——不完全及物动词和授予动词补充" class="headerlink" title="4.被动语态的重难点——不完全及物动词和授予动词补充"></a>4.被动语态的重难点——不完全及物动词和授予动词补充</h1><ul>
-<li>第四大句型，主谓宾补，其实就是“让某人做某事”<ul>
-<li>My mother made me wash the car.</li>
-<li>宾语是“我”，宾补是“洗车”，也就是说，宾语和宾补放在一起，逻辑上可以构成一个句子“我洗车”。</li>
-<li>宾语和宾补之间的关系是被动语态呢?</li>
-<li>他让这个任务完成了。</li>
-<li>如果按照造句规律，应该是: He made this task be finished.或者He get this task to be finished.</li>
-<li>宾补中，出现的be或者to be，通常要省略！所以，这句话应该说成: He made this task finished.</li>
-</ul>
-</li>
-<li>英语中还有什么时候会出现be动词呢?<ul>
-<li>除了被动语态(过去分词作表语)之外，还有主系表句型(be动词后面的名词作表语，形容词作表语，地点副词作表语)</li>
-</ul>
-</li>
-<li>使役动词+宾语+过去分词（补语）<ul>
-<li>Now a group of students will have the plane restored.一群学生计划修复这架飞机。</li>
-<li>Officials have the clock checked twice a day.官员们每天两次派人检查此钟。</li>
-</ul>
-</li>
-<li>使役动词+宾语+名词、形容词或地点副词<ul>
-<li>使役动词也可加名词、形容词或地点副词等作补语，其原因是前面省略了不定式be或to be。<ul>
-<li>His teacher made him a good student. (名词作宾补)他的老师使他成为好学生。</li>
-<li>The trip made him happy.(形容词作宾补)这次旅行使他很愉快。</li>
-<li>He let me in. (地点副词作宾补)他让我进来。</li>
-<li>Get him out of here. (介词短语，相当于地点副词)把他弄出去!</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>各种不完全及物动词：接上宾语后意思仍然不完整<ul>
-<li>让某人做某事，只能接不定时作宾语补语：ask、encourage、tell、push、expect、want、drive/force/oblige/compel、order、cause/urge<ul>
-<li>The postman <code>wanted</code> me to sign for a letter!邮递员要我签收一封挂号信!</li>
-<li>Last week at a dinner-party, the hostess <code>asked</code> me to sit next to Mrs. Rumbold.在上星期的一次宴会上，女主人安排我坐在兰伯尔德夫人的身旁。</li>
-<li>Byrd at once <code>ordered</code> his men to throw out two heavy food sacks.伯德马上命令他的助手们把两个沉重的食物袋扔掉。</li>
-<li>My dentist had <code>told</code> me to rest for a while.我的牙科医生叫我休息一会儿。</li>
-<li>My old friend Brian <code>urged</code> me to accept a cigarette.我的老朋友布赖恩极力劝我接受一枝香烟。</li>
-</ul>
-</li>
-<li>知觉动词（5看，2听，1感觉）：感觉：feel，听：hear, listen to，看：see, observe, watch, look at, notice<ul>
-<li>表事实：此类动词+宾语+动词原形(补语)，译为”……..了。”<ul>
-<li>I <code>saw</code> him dance.我看见他跳舞了。</li>
-<li>I <code>heard</code> him sing.我听见他唱歌了。</li>
-</ul>
-</li>
-<li>表进行状态：此类动词+宾语+现在分词(补语)，译为”…..正在……”<ul>
-<li>Early next morning, she <code>heard</code> planes passing overhead. 第二天一大早，她听到头顶上飞机正在盘旋。</li>
-<li>The pilot <code>saw</code> one of the men taking photographs.当气球飞临基地上空时，飞行员看见有一个人在拍照。</li>
-</ul>
-</li>
-<li>表被动状态：此类动词+宾语+过去分词(补语)，译为”…..被…..”<ul>
-<li>I <code>saw</code> him killed.我看见他被杀了。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>认定动词：视…为…；认为…是…：动词 + 宾语 + 介词as + 名词或形容词(补语)<ul>
-<li>regard<ul>
-<li>In spite of this, the Italians <code>regarded</code> him <code>as</code> a sort of hero.尽管如此，意大利人还是把他视作某种英雄。</li>
-</ul>
-</li>
-<li>look upon<ul>
-<li>His students all <code>look upon</code> him <code>as</code> a friend.他的学生都把他看成是朋友。</li>
-</ul>
-</li>
-<li>think of<ul>
-<li>They <code>think of</code> themselves <code>as</code> the salt of the earth.他们自认为是社会中坚。</li>
-</ul>
-</li>
-<li>see<ul>
-<li>I’d like to <code>see</code> Europe <code>as</code> a nuclear-free zone.我希望欧洲成为无核区。</li>
-</ul>
-</li>
-<li>view<ul>
-<li>We <code>view</code> every customer <code>as</code> a partner.我们将每一位客户视为合作伙伴。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>认定动词：视…为…；认为…是…：动词 + 宾语 + (to be) + 名词或形容词(补语)：consider, deem, think, find, believe<ul>
-<li>He is <code>finding</code> his new work far more exciting.他发觉自己的新工作令人兴奋得多。</li>
-<li>I <code>found</code> his advice really useful.我发现他的建议非常有用。</li>
-<li>People <code>think</code> this problem determination.人们认为这个问题解决了。</li>
-</ul>
-</li>
-<li>转变动词：使…变成…：change/turn + 宾语 + into + 名词(补语)<ul>
-<li>I need to change my dollars into francs.我需要把美金换成法郎。</li>
-<li>The experience turned him into a good student.这个经验使他变成了好学生。</li>
-</ul>
-</li>
-<li>call/name + 宾语 + 名词(补语)<ul>
-<li>‘Do you call that a hat?’ I said to my wife.“你把那个叫帽子吗?”我对妻子说。</li>
-<li>You can name your pet dog Doctor.你可以把你的狗狗取名为博士。</li>
-</ul>
-</li>
-<li>help后接不定式(to可省略) 作宾语补语。<ul>
-<li>A short while ago, my sister helped me to carry my old bookcases up the stairs.几分钟前，我妹妹帮我把我的旧书橱抬上了楼。</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.店员看见这个衣着很好的妇女正在偷东西。<ul>
-<li>1.The shop assistant saw the well-dressed woman stealing something.</li>
-</ul>
-</li>
-<li>2.你能帮我洗衣服吗?<ul>
-<li>2.Can you help me to wash clothes?</li>
-</ul>
-</li>
-<li>3.作为老师，你应该鼓励你的学生努力学习。<ul>
-<li>3.As a teacher, you should encourage your students to study hard.</li>
-</ul>
-</li>
-<li>4.父母不应该期望他们的孩子做任何事都成功。<ul>
-<li>4.The parents should not expect their children to succeed in doing everything.</li>
-</ul>
-</li>
-<li>5.你应该命令这个计划在一个月内完成。(order)<ul>
-<li>5.You should order this project to finished within a month.</li>
-</ul>
-</li>
-<li>6.我发现我们的老师被警察逮捕了。<ul>
-<li>6.I found our teacher arrested by the police.</li>
-</ul>
-</li>
-<li>7.工人们明天将把墙刷成绿色。<ul>
-<li>7.The workers will paint the wall green.</li>
-</ul>
-</li>
-<li>8.女主人邀请我们进去。<ul>
-<li>8.The hostess invited us in.</li>
-</ul>
-</li>
-<li>9.我们认为这个男人处于危险中。<ul>
-<li>9.We considered the man in danger.</li>
-</ul>
-</li>
-<li>10.大部分人把他当作英雄。<ul>
-<li>10.Most people regarded him as a hero.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>特殊的授予动词<ul>
-<li>间接宾语与直接宾语位置可以倒置，此时需要加介词to, for, of。<ul>
-<li>表“给予”的概念，要用to<ul>
-<li>My holidays passed quickly, but I did not send any cards <code>to</code> my friends.假期过得真快，可我还没有给我的朋友们寄过一张明信片。</li>
-</ul>
-</li>
-<li>表“代劳”的概念(buy等) ，要用for<ul>
-<li>I bought a book <code>for</code> him.我为他买了一本书</li>
-</ul>
-</li>
-<li>ask要用of<ul>
-<li>I asked a question <code>of</code> him.我问了他一个问题。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>下列授予动词与of连用<ul>
-<li>1.rob 抢夺<ul>
-<li>He robbed me of my money.他抢了我的钱。</li>
-<li>注:中式思维容易说成He robbed my money. (X) 这是绝对错误的!</li>
-</ul>
-</li>
-<li>2.deprive 剥夺(权利)<ul>
-<li>This law will deprive us of our most basic rights.这条法律将剥夺我们最基本的权利。</li>
-</ul>
-</li>
-<li>3.cure 治愈<ul>
-<li>The teacher cured him of bad habits.老师纠正了他的坏习惯。</li>
-</ul>
-</li>
-<li>4.relieve 减轻<ul>
-<li>It will relieve her of a tremendous burden. 这将给她解决一个巨大的负担。</li>
-</ul>
-</li>
-<li>5.remind 提醒<ul>
-<li>I continually have to remind him of his responsibilities.我得一再提醒他记住他的责任。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>表“提供”概念的授予动词provide, furnish, supply必须与介词with连用。(但双宾语倒置的时候任然用to，for)<ul>
-<li>He provided me with a lot of money.他提供给我很多钱。</li>
-<li>The present conflict may provide fresh impetus for peace talk.目前的冲突可能会给和谈提供新的推动力。</li>
-<li>The school doesn’t furnish students with lunch.学校不供给学生午饭。</li>
-<li>The gas station usually supplies its nearby communities with gas.这个加油站通常为附近的社区提供汽油。</li>
-<li>We supply power to the three nearby towns.我们对附近的三个城镇提供电力。</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.这个著名的歌手给我们演唱了一首流行歌曲。<ul>
-<li>1.The famous singer sang us a popular song.</li>
-</ul>
-</li>
-<li>2.这座新桥带给当地人极大的方便。<ul>
-<li>2.The new bridge brings the local people the great convenience.</li>
-</ul>
-</li>
-<li>3.你不能剥夺她的权利。<ul>
-<li>3.You can’t deprive her of her rights.</li>
-</ul>
-</li>
-<li>4.这张照片使我想起了我们在夏令营度过的日子。<ul>
-<li>4.The photo reminds me of the days which spent in the summer camp.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>第四大句型:主语+不完全及物动词+宾语+宾语补语，变成被动语态时，原句的宾语补语，在被动语态中的名称为“主语补语”<ul>
-<li>My father was shocked. Now we are not allowed to touch it. 我父亲大为吃惊，不许我们再动它。</li>
-<li>The Games will be held just outside the capital and the whole area will be called ‘Olympic City’. 奥运会就在首都市郊举办，整个地区将被称作奥林匹克城”。</li>
-<li>The man was ordered to pay 43,545 for the cost of the trip. 此人被责令交付旅费3,500英镑.</li>
-</ul>
-</li>
-<li>make, have, let, get 这4个使役动词，只有make可以用于被动语态。这类句型在被动语态句里边，主语补语必须加上to!<ul>
-<li>They made me repeat the story. / I was made to repeat the story.他们让我又把那事讲了一遍。</li>
-</ul>
-</li>
-<li>能用动词原形作宾语补语的不完全(及物)动词有<ul>
-<li>5看：see, observe, watch, look at, notice<ul>
-<li>I saw him dance. / He was seen to dance. 我看见他跳舞了。</li>
-</ul>
-</li>
-<li>1使：make</li>
-<li>2听：hear, listen to</li>
-<li>1感：feel</li>
-</ul>
-</li>
-<li>第五大句型变成被动语态时，两个宾语都可以成为被动句的主语。但由于间接宾语是人，通常更常变成主语。<ul>
-<li>I give him a book. = He was given a book by me. = A book was given to him by me.</li>
-</ul>
-</li>
-</ul>
-<h1 id="5-最简单的长句——并列句"><a href="#5-最简单的长句——并列句" class="headerlink" title="5.最简单的长句——并列句"></a>5.最简单的长句——并列句</h1><h2 id="简单句、复合句、并列句"><a href="#简单句、复合句、并列句" class="headerlink" title="简单句、复合句、并列句"></a>简单句、复合句、并列句</h2><ul>
-<li>简单句：是只有一个主干的句子</li>
-<li>复合句：是除主句外还包含一个或一个以上从句的句子</li>
-<li>并列句：由并列连词连接两个或两个以上简单句而成的句子。</li>
-<li>注意：汉语可以用逗号分隔两个完整的句子，英语绝对不可以！而是必须有连词连接，或者把其中一个句子，化简为分词短语或不定时短语</li>
-</ul>
-<h2 id="连接主句和从句的连词有三种"><a href="#连接主句和从句的连词有三种" class="headerlink" title="连接主句和从句的连词有三种"></a>连接主句和从句的连词有三种</h2><ul>
-<li>引导词，连接名词性从句</li>
-<li>副词连词，连接状语从句</li>
-<li>关系词，连接定语从句</li>
-</ul>
-<h2 id="单一连接词：and-or-but"><a href="#单一连接词：and-or-but" class="headerlink" title="单一连接词：and, or, but"></a>单一连接词：and, or, but</h2><ul>
-<li>连接对等的句子<ul>
-<li>I had just lost $50 <code>and</code> I felt very upset. 我刚刚丢了50英镑，感到非常烦恼。(and连接不用加逗号)</li>
-<li>The police had a difficult time, <code>but</code> they were most amused. 警察虽然吃了苦头，但他们还是感到很有趣。(but连接要加逗号)</li>
-<li>注：or连接句子的时候，通常用于祈使句后面，翻译为“否则”</li>
-<li>Obey your boss <code>or</code> you will be fired. 服从你的上司，否则你会被解雇。</li>
-<li>Don’t cheat at exams <code>or</code> others will despise you. 考试不要作弊，否则别人会瞧不起你。</li>
-<li>Give me liberty <code>or</code> give me death. 不自由，毋宁死。</li>
-</ul>
-</li>
-<li>连接句子中任何对等的成分<ul>
-<li>连接主语<ul>
-<li>A young man <code>and</code> a young woman were sitting behind me.</li>
-<li>一青年男子与一青年女子坐在我的身后。</li>
-</ul>
-</li>
-<li>连接谓语：相当于是连接两个句子，省略了第二个句子的主语<ul>
-<li>I visited museums <code>and</code> sat in public gardens. 我参观了博物馆，还去了公园。</li>
-<li>I entered the hotel manager’s office <code>and</code> sat down. 我走进饭店经理的办公室，坐了下来</li>
-<li>注：连接谓语的时候，只要助动词相同，即可省略助动词<ul>
-<li>After taking off, we were flying low over the city <code>and</code> (were) slowly gaining height, when the plane suddenly turned round and flew back to the airport. 起飞之后，我们在城市上空低低地飞行，然后慢慢爬高。这时飞机突然调转头来，飞回了 机场。(括号里的助动词were可省略)</li>
-</ul>
-</li>
-<li>谓语动词相同的，也可以省略。<ul>
-<li>Mary is very happy <code>but</code> John (is) very miserable. 玛丽很幸福，但是约翰很悲惨。</li>
-<li>Experience is the father of wisdom, <code>and</code> memory (is) the mother. 经验乃智慧之父，记忆为智慧之母。</li>
-<li>Reading makes a full man; conference a ready man; <code>and</code> writing an exact man.读书使人渊博，交谈使人机敏，写作使人严谨。(conference和writing后省略了makes)- Francis Bacon(弗朗西斯培根)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>连接宾语<ul>
-<li>I looked at the man <code>and</code> the woman angrily. 我回过头去怒视着那一男一女。</li>
-<li>He asked me for a meal <code>and</code> a glass of beer. 他问我要一顿饭和一杯啤酒。(连接介词for的两个宾语)</li>
-</ul>
-</li>
-<li>连接表语<ul>
-<li>The railway station was big, black <code>and</code> dark. 火车站很大，又黑又暗。</li>
-<li>The explanation was simple <code>but</code> very unusual. 解释很简单，却异乎寻常</li>
-</ul>
-</li>
-<li>连接宾语补语<ul>
-<li>He saw two thieves rush out of a shop <code>and</code> run towards a waiting car. 他看到有两个小偷从一家商店里冲出来，奔向等在那里的一辆汽车。</li>
-</ul>
-</li>
-<li>连接定语<ul>
-<li>Pupils of the school, old <code>and</code> new, will be sending him a present to mark the occasion.为了纪念这个日子，学校的学生——无论老同学还是新同学——将送他一件礼物。</li>
-</ul>
-</li>
-<li>连接状语<ul>
-<li>We shall all remember Mr. Page for his patience <code>and</code> understanding and for the kindly encouragement.我们不会忘记佩奇先生对我们既有耐心又充满理解，还有亲切鼓励。</li>
-</ul>
-</li>
-<li>注：or连接对等成分的时候，通常翻译为“或者”<ul>
-<li>They will go to the zoo <code>or</code> play volleyball. 他们要去动物园或打排球</li>
-<li>I want to have a talk with Mr. Jones <code>or</code> Mr. Smith. 我想和琼斯先生或者史密斯先生谈谈。</li>
-</ul>
-</li>
-<li>And也可表示“然后”，“但是”，”那么，则”的意思<ul>
-<li>Cease to struggle and you cease to live. 停止奋斗，则终止了生命。</li>
-<li>Idleness is sweet, and its consequences are cruel.  懒惰是甜蜜的，但其结果是残酷的。</li>
-<li>I will set my goal and work toward it. 我要确定目标，然后为此努力。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="由单一连词衍生的连接词"><a href="#由单一连词衍生的连接词" class="headerlink" title="由单一连词衍生的连接词"></a>由单一连词衍生的连接词</h2><ul>
-<li>要么…要么…：either…or…(连接2者以上的结构)<ul>
-<li>In answer to these questions I <code>either</code> nodded <code>or</code> made strange noises. 作为对这些问题的回答，我不是点头，就是发出奇怪的声音。</li>
-<li><code>Either</code> Bob <code>or</code> Jim or Sam will be the new vice president of the company. 不是鲍勃就是吉姆或者是山姆会成为这家公司的新副总裁。</li>
-</ul>
-</li>
-<li>既不是…也不是…：neither…nor…，也可用其它否定词代替neither<ul>
-<li>He answered me, but he spoke <code>neither</code> slowly <code>nor</code> clearly. 他回答了，但他讲得既不慢也不清楚。</li>
-<li>We are worried about Mary. She <code>neither</code> eats <code>nor</code> drinks <code>nor</code> talks. 我们替玛丽担心。她不吃不喝也不说话</li>
-<li>The story is <code>not</code> interesting <code>nor</code> instructive. 这个故事没有味道，也没有教育意义。</li>
-<li>I have <code>never</code> spoken <code>nor</code> written to her. 我跟她从来没说过话，也没写过信。</li>
-</ul>
-</li>
-<li>不是…而是…：not…but…<ul>
-<li>I went to the concert <code>not</code> with my brother <code>but</code> with my friend. 我不是和我哥哥去音乐会，而是和我朋友去的。(只能省略动词，不能省略介词)</li>
-<li>We choose to go to the moon in this decade and do the other things, <code>not</code> because they are easy, <code>but</code> because they are hard. 我们选择10年内登月以及另外一些事情，不是因为它们容易，而是因为它们困难。(肯尼迪总统在阿波罗登月计划动员会上的讲话)</li>
-<li>“Listen, my dear, we must hold on to hope,” my father calm but insistently replied.“<code>Not</code> because hope is real, but because we have to live up to nobility.” “听着，亲爱的，我们必须抱有希望，”我爸爸平静但坚定地回答。“这并不是因为希望真的存在，而是因为我们要做高贵的人。” 《The wandering earth》Liu Cixin (刘慈欣《流浪地球》)</li>
-</ul>
-</li>
-<li>不仅…而且…：not only…but(also)…/not only…but…as well<ul>
-<li>He answered all the question <code>not only</code> quickly <code>but (also)</code> accurately. 他回答所有问题时不仅快，而且准确。</li>
-<li>The Big Ben is <code>not only</code> of immense size, <code>but</code> is extremely accurate <code>as well.</code> 此钟不仅外型巨大，而且走时也非常准确。</li>
-<li>英国英语常用not only… but… as well,</li>
-<li>美国英语常用not only… but also…(also可省略)</li>
-<li>I <code>not only</code> spoke English very carefully, <code>but</code> very clearly <code>as well</code>.(英)</li>
-<li>I <code>not only</code> spoke English very carefully, <code>but (also)</code> very clearly. (美)我的英语讲得不但非常认真，而且咬字也非常清楚。</li>
-</ul>
-</li>
-<li>注：上述并列连词连接的并列名词作主语时，谓语动词的单复数与靠后面的名词一致<ul>
-<li>Either Thomas or I <code>am</code> going to call you tomorrow about the job.不是托马斯就是我明天会打电话给你谈工作的事。</li>
-</ul>
-</li>
-<li>…和…两者都：both…and…<ul>
-<li>To go far, you need <code>both</code> a dream <code>and</code> a positive attitude.要成功，你需要梦想和积极的态度。</li>
-<li>注：本并列连接的并列名词作主语时，谓语动词一律用复数</li>
-<li>Both my mother and my sister <code>work</code> at the grocery store. 我妈妈和我姐姐都在这个杂货店工作。</li>
-</ul>
-</li>
-<li>既是…又是…：… as well as …<ul>
-<li>Nursing is a vocation <code>as well as</code> a profession. 护理工作既是职业又是救死扶伤的责任。</li>
-<li>He shared in my sorrows <code>as well as</code> in my joys. 他分担我的快乐也分享我的悲伤。</li>
-<li>注：…as well as…的意思和not only…but (also)…相近，但是前者强调前面的名词，谓语动词与强调的名词一致。<ul>
-<li>The bedrooms, as well as the kitchen, <code>need</code> to be repaired if we rent the house. 如果我们要租这个房子，卧室和厨房都需要维修。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>是…而不是…：…rather than…<ul>
-<li>These are political <code>rather than</code> social matters.这是政治问题而不是社会问题。</li>
-</ul>
-</li>
-</ul>
-<h2 id="造句练习"><a href="#造句练习" class="headerlink" title="造句练习"></a>造句练习</h2><ul>
-<li>1.中国和印度的人口都超过了10亿。<ul>
-<li>1.Both China and India have a population of over one billion.</li>
-</ul>
-</li>
-<li>2.我们应该要么把电脑送修要么买台新的。<ul>
-<li>2.We should either get the computer fixed or buy a new one.</li>
-</ul>
-</li>
-<li>3.冰箱里既没有牛奶也没有蔬菜。<ul>
-<li>3.Neither milk nor vegetables is in the refrigerator.</li>
-</ul>
-</li>
-<li>4.无论下雪、下雨或者高温天气都不能阻止这些邮递员完成他们的投递工作。<ul>
-<li>4.Neither snow nor rain nor hot weather prevents these postmen from completing their deliveries.</li>
-</ul>
-</li>
-<li>5.不是公司董事长而是我将出席明天早上的商务会议。<ul>
-<li>5.Not the company’s president but I am going to the business meeting tomorrow morning.</li>
-</ul>
-</li>
-<li>6.我们都喜欢张小姐，不是因为她是我们老师，而是因为她是美女。<ul>
-<li>6.We all like Miss Zhang not because she is our teacher but because she is very beautiful.</li>
-</ul>
-</li>
-<li>7.恶心和呕吐都是食物中毒的症状。<ul>
-<li>7.Both nausea and vomiting are signs of food poisoning.</li>
-</ul>
-</li>
-<li>8.他不但英语说得非常好，而且还会说法语。<ul>
-<li>8.He can not only speak English very well but also French.</li>
-</ul>
-</li>
-<li>9.这名女子听到这个消息的时候是高兴而不是悲伤。<ul>
-<li>9.The woman was happy rather than sad when she heard the news</li>
-</ul>
-</li>
-</ul>
-<h1 id="6-把句子套进另一个句子里，变身“大名词”"><a href="#6-把句子套进另一个句子里，变身“大名词”" class="headerlink" title="6.把句子套进另一个句子里，变身“大名词”"></a>6.把句子套进另一个句子里，变身“大名词”</h1><ul>
-<li>从句是什么<ul>
-<li>就是一个句子在另外一个句子里边做句子成分</li>
-</ul>
-</li>
-<li>名词从句<ul>
-<li>一个句子，在另外一个句子里边当名词使用</li>
-<li>4种用法：主语、宾语、同位语、表语</li>
-<li>名词从句需要有引导词：<code>That</code> he doesn’t like to study makes me angry.</li>
-</ul>
-</li>
-<li>that从句：任何一个陈述句，前面加上引导词that，构成that从句。（作宾语/表语时，that可省略）<ul>
-<li><code>That</code> everyone may receive a moderate education is an object of vital importance. 每个人能够接受适当的教育似乎是一个至关重要的目标。(主语从句)</li>
-<li>Many people pretend <code>that</code> they understand modern art. 有很多人装成很懂现代艺术的样子。(宾语从句)</li>
-<li>The most surprising thing about it, however, is <code>that</code> it can land anywhere: on snow, water, or even on a ploughed field. 然而，最令人惊奇的是它能够在任何地方降落:雪地，水面，甚至刚耕过的田里。(表语从句)</li>
-<li>No one could account for the fact <code>that</code> one of the boxes was extremely heavy.其中有只箱子特别重，可谁也弄不清是怎么回事。(同位语从句)</li>
-</ul>
-</li>
-<li>that从句作主语时，为了使主干更紧凑，通常可用it作行驶时主语，而将真正的主语后置<ul>
-<li>It was obvious <code>that</code> he was very embarrassed. 显然他感到很尴尬。</li>
-<li>It is a curious coincidence <code>that</code> Mr. Page will have been teaching for a total of forty years. 佩奇先生执教满总共40年，这真是奇妙的巧合。</li>
-</ul>
-</li>
-<li>consider, deem, think, find, believe五个动词是宾补动词，构成第四大句型，表示“认为…是…”<ul>
-<li>我认为健康是非常重要的</li>
-<li>I think health very important.其中health是宾语，important是补语</li>
-<li>我认为我们每天说英语是重要的</li>
-<li>I think that we should speak English important. X</li>
-<li>I think it important that we should speak English.√</li>
-<li>I think it necessary that you do it at once.我认为你必须立刻做那件事。</li>
-<li>We find it necessary that we practice spoken English every day. 我们发现每天练习英语口语很有必要。</li>
-</ul>
-</li>
-<li>whether/if从句：任何一个一般疑问句，前面加上引导词whether或if，构成whether从句，但主语与be动词或助动词的位置还原。如果助动词为do, does, did, 还原后将do, does, did去掉，后面的动词根据人称和时态变化<ul>
-<li><code>Whether</code> they would support us was a problem. 他们是否会支持我们还是一个问题。(主语从句) </li>
-<li>He asked <code>if</code> Mr Gilbert’s operation had been successful and the doctor told him that it had been. 他问吉尔伯特先生的手术中否成功，医生告诉他手术很成功。(宾语从句)</li>
-<li>On the way home, he asked Jenny <code>if</code> she had enjoyed the speech. 在回家的路上，他问珍妮是否喜欢他的祝词。(宾语从句， 直接宾语)</li>
-</ul>
-</li>
-<li>介词后及or not结构中，通常用whether<ul>
-<li>My sister is only seven, but she always tells me <code>whether</code> my pictures are good <code>or not</code>. 我的妹妹只有7岁，但她总能说出我的画是好还是坏。</li>
-<li>I worry about <code>whether</code> I hurt his feeling. 我担心是否伤害了他的感情</li>
-</ul>
-</li>
-<li>疑问词从句：构成方法与whether从句一样，只是将whether换成疑问词而已，句子必须改为陈述句语序<ul>
-<li>He then asked <code>when</code> Mr Gilbert would be allowed to go home and the doctor told him that he would have to stay in hospital for another two weeks.然后他又问吉尔伯特先生什么时候可以回家，医生说他在医院还必须再住上两个星期。(宾语从句，其中when作从句中的状语)</li>
-<li>The doctors have not yes decided <code>how</code> the woman died. 医生们至今还未确定这位妇女的死因。</li>
-<li>I have no idea <code>what</code> has happened to him. 我不知道他发生了什么事?</li>
-</ul>
-</li>
-<li>造句练习<ul>
-<li>1.谁将负责这项工程还没有(被)决定。(be in charge of)<ul>
-<li>1.Who will be in charge of the project hasn’t been decided yet.</li>
-</ul>
-</li>
-<li>2.他要来参加这个会议(已经)使得我们每个人激动了。<ul>
-<li>2.That he will come to the conference has excited every one of us.</li>
-</ul>
-</li>
-<li>3.他告诉我他们会帮助我们完成整个工作的。<ul>
-<li>3.He told me that they would help us finish the whole work.</li>
-</ul>
-</li>
-<li>4.我不知道(wonder)您是否能小声点。<ul>
-<li>4.I wonder whether/if you would mind making less noise.</li>
-</ul>
-</li>
-<li>5.我认为每天多喝水是有必要的。<ul>
-<li>5.I think it necessary that we (should) take plenty of water every day.</li>
-</ul>
-</li>
-<li>6.我不知道(have no idea)他们什么时候回来定居。<ul>
-<li>6.I have no idea when they will be back and settle down.</li>
-</ul>
-</li>
-<li>7.我(已经)发现所有的票都(已经)卖光了。<ul>
-<li>7.I have found that all the tickets had been sold out.</li>
-</ul>
-</li>
-<li>8.问题是这部电视剧是否值得一看。<ul>
-<li>8.The question is whether the TV play is worth watching.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>英语</category>
-      </categories>
-      <tags>
-        <tag>英语</tag>
-        <tag>语法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>恶魔奶爸语法13-15课</title>
     <url>/gramma13-15/</url>
     <content><![CDATA[<h1 id="13-如何用好比较结构"><a href="#13-如何用好比较结构" class="headerlink" title="13.如何用好比较结构"></a>13.如何用好比较结构</h1><h2 id="比较句，其实并不是状语从句，而是一种特殊的并列句"><a href="#比较句，其实并不是状语从句，而是一种特殊的并列句" class="headerlink" title="比较句，其实并不是状语从句，而是一种特殊的并列句"></a>比较句，其实并不是状语从句，而是一种特殊的并列句</h2><ul>
@@ -4469,6 +4103,509 @@
 <li>He is <code>easy</code> to please.他很容易被取悦。</li>
 <li>He is <code>difficult</code> to fool.他不容易受骗。</li>
 <li>This book is hard to understand.这本书很难被理解。(绝对不能说: This book is hard to be understood.(X)</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>英语</category>
+      </categories>
+      <tags>
+        <tag>英语</tag>
+        <tag>语法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>恶魔奶爸语法4-6课</title>
+    <url>/gramma4-6/</url>
+    <content><![CDATA[<h1 id="4-被动语态的重难点——不完全及物动词和授予动词补充"><a href="#4-被动语态的重难点——不完全及物动词和授予动词补充" class="headerlink" title="4.被动语态的重难点——不完全及物动词和授予动词补充"></a>4.被动语态的重难点——不完全及物动词和授予动词补充</h1><ul>
+<li>第四大句型，主谓宾补，其实就是“让某人做某事”<ul>
+<li>My mother made me wash the car.</li>
+<li>宾语是“我”，宾补是“洗车”，也就是说，宾语和宾补放在一起，逻辑上可以构成一个句子“我洗车”。</li>
+<li>宾语和宾补之间的关系是被动语态呢?</li>
+<li>他让这个任务完成了。</li>
+<li>如果按照造句规律，应该是: He made this task be finished.或者He get this task to be finished.</li>
+<li>宾补中，出现的be或者to be，通常要省略！所以，这句话应该说成: He made this task finished.</li>
+</ul>
+</li>
+<li>英语中还有什么时候会出现be动词呢?<ul>
+<li>除了被动语态(过去分词作表语)之外，还有主系表句型(be动词后面的名词作表语，形容词作表语，地点副词作表语)</li>
+</ul>
+</li>
+<li>使役动词+宾语+过去分词（补语）<ul>
+<li>Now a group of students will have the plane restored.一群学生计划修复这架飞机。</li>
+<li>Officials have the clock checked twice a day.官员们每天两次派人检查此钟。</li>
+</ul>
+</li>
+<li>使役动词+宾语+名词、形容词或地点副词<ul>
+<li>使役动词也可加名词、形容词或地点副词等作补语，其原因是前面省略了不定式be或to be。<ul>
+<li>His teacher made him a good student. (名词作宾补)他的老师使他成为好学生。</li>
+<li>The trip made him happy.(形容词作宾补)这次旅行使他很愉快。</li>
+<li>He let me in. (地点副词作宾补)他让我进来。</li>
+<li>Get him out of here. (介词短语，相当于地点副词)把他弄出去!</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>各种不完全及物动词：接上宾语后意思仍然不完整<ul>
+<li>让某人做某事，只能接不定时作宾语补语：ask、encourage、tell、push、expect、want、drive/force/oblige/compel、order、cause/urge<ul>
+<li>The postman <code>wanted</code> me to sign for a letter!邮递员要我签收一封挂号信!</li>
+<li>Last week at a dinner-party, the hostess <code>asked</code> me to sit next to Mrs. Rumbold.在上星期的一次宴会上，女主人安排我坐在兰伯尔德夫人的身旁。</li>
+<li>Byrd at once <code>ordered</code> his men to throw out two heavy food sacks.伯德马上命令他的助手们把两个沉重的食物袋扔掉。</li>
+<li>My dentist had <code>told</code> me to rest for a while.我的牙科医生叫我休息一会儿。</li>
+<li>My old friend Brian <code>urged</code> me to accept a cigarette.我的老朋友布赖恩极力劝我接受一枝香烟。</li>
+</ul>
+</li>
+<li>知觉动词（5看，2听，1感觉）：感觉：feel，听：hear, listen to，看：see, observe, watch, look at, notice<ul>
+<li>表事实：此类动词+宾语+动词原形(补语)，译为”……..了。”<ul>
+<li>I <code>saw</code> him dance.我看见他跳舞了。</li>
+<li>I <code>heard</code> him sing.我听见他唱歌了。</li>
+</ul>
+</li>
+<li>表进行状态：此类动词+宾语+现在分词(补语)，译为”…..正在……”<ul>
+<li>Early next morning, she <code>heard</code> planes passing overhead. 第二天一大早，她听到头顶上飞机正在盘旋。</li>
+<li>The pilot <code>saw</code> one of the men taking photographs.当气球飞临基地上空时，飞行员看见有一个人在拍照。</li>
+</ul>
+</li>
+<li>表被动状态：此类动词+宾语+过去分词(补语)，译为”…..被…..”<ul>
+<li>I <code>saw</code> him killed.我看见他被杀了。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>认定动词：视…为…；认为…是…：动词 + 宾语 + 介词as + 名词或形容词(补语)<ul>
+<li>regard<ul>
+<li>In spite of this, the Italians <code>regarded</code> him <code>as</code> a sort of hero.尽管如此，意大利人还是把他视作某种英雄。</li>
+</ul>
+</li>
+<li>look upon<ul>
+<li>His students all <code>look upon</code> him <code>as</code> a friend.他的学生都把他看成是朋友。</li>
+</ul>
+</li>
+<li>think of<ul>
+<li>They <code>think of</code> themselves <code>as</code> the salt of the earth.他们自认为是社会中坚。</li>
+</ul>
+</li>
+<li>see<ul>
+<li>I’d like to <code>see</code> Europe <code>as</code> a nuclear-free zone.我希望欧洲成为无核区。</li>
+</ul>
+</li>
+<li>view<ul>
+<li>We <code>view</code> every customer <code>as</code> a partner.我们将每一位客户视为合作伙伴。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>认定动词：视…为…；认为…是…：动词 + 宾语 + (to be) + 名词或形容词(补语)：consider, deem, think, find, believe<ul>
+<li>He is <code>finding</code> his new work far more exciting.他发觉自己的新工作令人兴奋得多。</li>
+<li>I <code>found</code> his advice really useful.我发现他的建议非常有用。</li>
+<li>People <code>think</code> this problem determination.人们认为这个问题解决了。</li>
+</ul>
+</li>
+<li>转变动词：使…变成…：change/turn + 宾语 + into + 名词(补语)<ul>
+<li>I need to change my dollars into francs.我需要把美金换成法郎。</li>
+<li>The experience turned him into a good student.这个经验使他变成了好学生。</li>
+</ul>
+</li>
+<li>call/name + 宾语 + 名词(补语)<ul>
+<li>‘Do you call that a hat?’ I said to my wife.“你把那个叫帽子吗?”我对妻子说。</li>
+<li>You can name your pet dog Doctor.你可以把你的狗狗取名为博士。</li>
+</ul>
+</li>
+<li>help后接不定式(to可省略) 作宾语补语。<ul>
+<li>A short while ago, my sister helped me to carry my old bookcases up the stairs.几分钟前，我妹妹帮我把我的旧书橱抬上了楼。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.店员看见这个衣着很好的妇女正在偷东西。<ul>
+<li>1.The shop assistant saw the well-dressed woman stealing something.</li>
+</ul>
+</li>
+<li>2.你能帮我洗衣服吗?<ul>
+<li>2.Can you help me to wash clothes?</li>
+</ul>
+</li>
+<li>3.作为老师，你应该鼓励你的学生努力学习。<ul>
+<li>3.As a teacher, you should encourage your students to study hard.</li>
+</ul>
+</li>
+<li>4.父母不应该期望他们的孩子做任何事都成功。<ul>
+<li>4.The parents should not expect their children to succeed in doing everything.</li>
+</ul>
+</li>
+<li>5.你应该命令这个计划在一个月内完成。(order)<ul>
+<li>5.You should order this project to finished within a month.</li>
+</ul>
+</li>
+<li>6.我发现我们的老师被警察逮捕了。<ul>
+<li>6.I found our teacher arrested by the police.</li>
+</ul>
+</li>
+<li>7.工人们明天将把墙刷成绿色。<ul>
+<li>7.The workers will paint the wall green.</li>
+</ul>
+</li>
+<li>8.女主人邀请我们进去。<ul>
+<li>8.The hostess invited us in.</li>
+</ul>
+</li>
+<li>9.我们认为这个男人处于危险中。<ul>
+<li>9.We considered the man in danger.</li>
+</ul>
+</li>
+<li>10.大部分人把他当作英雄。<ul>
+<li>10.Most people regarded him as a hero.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>特殊的授予动词<ul>
+<li>间接宾语与直接宾语位置可以倒置，此时需要加介词to, for, of。<ul>
+<li>表“给予”的概念，要用to<ul>
+<li>My holidays passed quickly, but I did not send any cards <code>to</code> my friends.假期过得真快，可我还没有给我的朋友们寄过一张明信片。</li>
+</ul>
+</li>
+<li>表“代劳”的概念(buy等) ，要用for<ul>
+<li>I bought a book <code>for</code> him.我为他买了一本书</li>
+</ul>
+</li>
+<li>ask要用of<ul>
+<li>I asked a question <code>of</code> him.我问了他一个问题。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>下列授予动词与of连用<ul>
+<li>1.rob 抢夺<ul>
+<li>He robbed me of my money.他抢了我的钱。</li>
+<li>注:中式思维容易说成He robbed my money. (X) 这是绝对错误的!</li>
+</ul>
+</li>
+<li>2.deprive 剥夺(权利)<ul>
+<li>This law will deprive us of our most basic rights.这条法律将剥夺我们最基本的权利。</li>
+</ul>
+</li>
+<li>3.cure 治愈<ul>
+<li>The teacher cured him of bad habits.老师纠正了他的坏习惯。</li>
+</ul>
+</li>
+<li>4.relieve 减轻<ul>
+<li>It will relieve her of a tremendous burden. 这将给她解决一个巨大的负担。</li>
+</ul>
+</li>
+<li>5.remind 提醒<ul>
+<li>I continually have to remind him of his responsibilities.我得一再提醒他记住他的责任。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>表“提供”概念的授予动词provide, furnish, supply必须与介词with连用。(但双宾语倒置的时候任然用to，for)<ul>
+<li>He provided me with a lot of money.他提供给我很多钱。</li>
+<li>The present conflict may provide fresh impetus for peace talk.目前的冲突可能会给和谈提供新的推动力。</li>
+<li>The school doesn’t furnish students with lunch.学校不供给学生午饭。</li>
+<li>The gas station usually supplies its nearby communities with gas.这个加油站通常为附近的社区提供汽油。</li>
+<li>We supply power to the three nearby towns.我们对附近的三个城镇提供电力。</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.这个著名的歌手给我们演唱了一首流行歌曲。<ul>
+<li>1.The famous singer sang us a popular song.</li>
+</ul>
+</li>
+<li>2.这座新桥带给当地人极大的方便。<ul>
+<li>2.The new bridge brings the local people the great convenience.</li>
+</ul>
+</li>
+<li>3.你不能剥夺她的权利。<ul>
+<li>3.You can’t deprive her of her rights.</li>
+</ul>
+</li>
+<li>4.这张照片使我想起了我们在夏令营度过的日子。<ul>
+<li>4.The photo reminds me of the days which spent in the summer camp.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>第四大句型:主语+不完全及物动词+宾语+宾语补语，变成被动语态时，原句的宾语补语，在被动语态中的名称为“主语补语”<ul>
+<li>My father was shocked. Now we are not allowed to touch it. 我父亲大为吃惊，不许我们再动它。</li>
+<li>The Games will be held just outside the capital and the whole area will be called ‘Olympic City’. 奥运会就在首都市郊举办，整个地区将被称作奥林匹克城”。</li>
+<li>The man was ordered to pay 43,545 for the cost of the trip. 此人被责令交付旅费3,500英镑.</li>
+</ul>
+</li>
+<li>make, have, let, get 这4个使役动词，只有make可以用于被动语态。这类句型在被动语态句里边，主语补语必须加上to!<ul>
+<li>They made me repeat the story. / I was made to repeat the story.他们让我又把那事讲了一遍。</li>
+</ul>
+</li>
+<li>能用动词原形作宾语补语的不完全(及物)动词有<ul>
+<li>5看：see, observe, watch, look at, notice<ul>
+<li>I saw him dance. / He was seen to dance. 我看见他跳舞了。</li>
+</ul>
+</li>
+<li>1使：make</li>
+<li>2听：hear, listen to</li>
+<li>1感：feel</li>
+</ul>
+</li>
+<li>第五大句型变成被动语态时，两个宾语都可以成为被动句的主语。但由于间接宾语是人，通常更常变成主语。<ul>
+<li>I give him a book. = He was given a book by me. = A book was given to him by me.</li>
+</ul>
+</li>
+</ul>
+<h1 id="5-最简单的长句——并列句"><a href="#5-最简单的长句——并列句" class="headerlink" title="5.最简单的长句——并列句"></a>5.最简单的长句——并列句</h1><h2 id="简单句、复合句、并列句"><a href="#简单句、复合句、并列句" class="headerlink" title="简单句、复合句、并列句"></a>简单句、复合句、并列句</h2><ul>
+<li>简单句：是只有一个主干的句子</li>
+<li>复合句：是除主句外还包含一个或一个以上从句的句子</li>
+<li>并列句：由并列连词连接两个或两个以上简单句而成的句子。</li>
+<li>注意：汉语可以用逗号分隔两个完整的句子，英语绝对不可以！而是必须有连词连接，或者把其中一个句子，化简为分词短语或不定时短语</li>
+</ul>
+<h2 id="连接主句和从句的连词有三种"><a href="#连接主句和从句的连词有三种" class="headerlink" title="连接主句和从句的连词有三种"></a>连接主句和从句的连词有三种</h2><ul>
+<li>引导词，连接名词性从句</li>
+<li>副词连词，连接状语从句</li>
+<li>关系词，连接定语从句</li>
+</ul>
+<h2 id="单一连接词：and-or-but"><a href="#单一连接词：and-or-but" class="headerlink" title="单一连接词：and, or, but"></a>单一连接词：and, or, but</h2><ul>
+<li>连接对等的句子<ul>
+<li>I had just lost $50 <code>and</code> I felt very upset. 我刚刚丢了50英镑，感到非常烦恼。(and连接不用加逗号)</li>
+<li>The police had a difficult time, <code>but</code> they were most amused. 警察虽然吃了苦头，但他们还是感到很有趣。(but连接要加逗号)</li>
+<li>注：or连接句子的时候，通常用于祈使句后面，翻译为“否则”</li>
+<li>Obey your boss <code>or</code> you will be fired. 服从你的上司，否则你会被解雇。</li>
+<li>Don’t cheat at exams <code>or</code> others will despise you. 考试不要作弊，否则别人会瞧不起你。</li>
+<li>Give me liberty <code>or</code> give me death. 不自由，毋宁死。</li>
+</ul>
+</li>
+<li>连接句子中任何对等的成分<ul>
+<li>连接主语<ul>
+<li>A young man <code>and</code> a young woman were sitting behind me.</li>
+<li>一青年男子与一青年女子坐在我的身后。</li>
+</ul>
+</li>
+<li>连接谓语：相当于是连接两个句子，省略了第二个句子的主语<ul>
+<li>I visited museums <code>and</code> sat in public gardens. 我参观了博物馆，还去了公园。</li>
+<li>I entered the hotel manager’s office <code>and</code> sat down. 我走进饭店经理的办公室，坐了下来</li>
+<li>注：连接谓语的时候，只要助动词相同，即可省略助动词<ul>
+<li>After taking off, we were flying low over the city <code>and</code> (were) slowly gaining height, when the plane suddenly turned round and flew back to the airport. 起飞之后，我们在城市上空低低地飞行，然后慢慢爬高。这时飞机突然调转头来，飞回了 机场。(括号里的助动词were可省略)</li>
+</ul>
+</li>
+<li>谓语动词相同的，也可以省略。<ul>
+<li>Mary is very happy <code>but</code> John (is) very miserable. 玛丽很幸福，但是约翰很悲惨。</li>
+<li>Experience is the father of wisdom, <code>and</code> memory (is) the mother. 经验乃智慧之父，记忆为智慧之母。</li>
+<li>Reading makes a full man; conference a ready man; <code>and</code> writing an exact man.读书使人渊博，交谈使人机敏，写作使人严谨。(conference和writing后省略了makes)- Francis Bacon(弗朗西斯培根)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>连接宾语<ul>
+<li>I looked at the man <code>and</code> the woman angrily. 我回过头去怒视着那一男一女。</li>
+<li>He asked me for a meal <code>and</code> a glass of beer. 他问我要一顿饭和一杯啤酒。(连接介词for的两个宾语)</li>
+</ul>
+</li>
+<li>连接表语<ul>
+<li>The railway station was big, black <code>and</code> dark. 火车站很大，又黑又暗。</li>
+<li>The explanation was simple <code>but</code> very unusual. 解释很简单，却异乎寻常</li>
+</ul>
+</li>
+<li>连接宾语补语<ul>
+<li>He saw two thieves rush out of a shop <code>and</code> run towards a waiting car. 他看到有两个小偷从一家商店里冲出来，奔向等在那里的一辆汽车。</li>
+</ul>
+</li>
+<li>连接定语<ul>
+<li>Pupils of the school, old <code>and</code> new, will be sending him a present to mark the occasion.为了纪念这个日子，学校的学生——无论老同学还是新同学——将送他一件礼物。</li>
+</ul>
+</li>
+<li>连接状语<ul>
+<li>We shall all remember Mr. Page for his patience <code>and</code> understanding and for the kindly encouragement.我们不会忘记佩奇先生对我们既有耐心又充满理解，还有亲切鼓励。</li>
+</ul>
+</li>
+<li>注：or连接对等成分的时候，通常翻译为“或者”<ul>
+<li>They will go to the zoo <code>or</code> play volleyball. 他们要去动物园或打排球</li>
+<li>I want to have a talk with Mr. Jones <code>or</code> Mr. Smith. 我想和琼斯先生或者史密斯先生谈谈。</li>
+</ul>
+</li>
+<li>And也可表示“然后”，“但是”，”那么，则”的意思<ul>
+<li>Cease to struggle and you cease to live. 停止奋斗，则终止了生命。</li>
+<li>Idleness is sweet, and its consequences are cruel.  懒惰是甜蜜的，但其结果是残酷的。</li>
+<li>I will set my goal and work toward it. 我要确定目标，然后为此努力。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="由单一连词衍生的连接词"><a href="#由单一连词衍生的连接词" class="headerlink" title="由单一连词衍生的连接词"></a>由单一连词衍生的连接词</h2><ul>
+<li>要么…要么…：either…or…(连接2者以上的结构)<ul>
+<li>In answer to these questions I <code>either</code> nodded <code>or</code> made strange noises. 作为对这些问题的回答，我不是点头，就是发出奇怪的声音。</li>
+<li><code>Either</code> Bob <code>or</code> Jim or Sam will be the new vice president of the company. 不是鲍勃就是吉姆或者是山姆会成为这家公司的新副总裁。</li>
+</ul>
+</li>
+<li>既不是…也不是…：neither…nor…，也可用其它否定词代替neither<ul>
+<li>He answered me, but he spoke <code>neither</code> slowly <code>nor</code> clearly. 他回答了，但他讲得既不慢也不清楚。</li>
+<li>We are worried about Mary. She <code>neither</code> eats <code>nor</code> drinks <code>nor</code> talks. 我们替玛丽担心。她不吃不喝也不说话</li>
+<li>The story is <code>not</code> interesting <code>nor</code> instructive. 这个故事没有味道，也没有教育意义。</li>
+<li>I have <code>never</code> spoken <code>nor</code> written to her. 我跟她从来没说过话，也没写过信。</li>
+</ul>
+</li>
+<li>不是…而是…：not…but…<ul>
+<li>I went to the concert <code>not</code> with my brother <code>but</code> with my friend. 我不是和我哥哥去音乐会，而是和我朋友去的。(只能省略动词，不能省略介词)</li>
+<li>We choose to go to the moon in this decade and do the other things, <code>not</code> because they are easy, <code>but</code> because they are hard. 我们选择10年内登月以及另外一些事情，不是因为它们容易，而是因为它们困难。(肯尼迪总统在阿波罗登月计划动员会上的讲话)</li>
+<li>“Listen, my dear, we must hold on to hope,” my father calm but insistently replied.“<code>Not</code> because hope is real, but because we have to live up to nobility.” “听着，亲爱的，我们必须抱有希望，”我爸爸平静但坚定地回答。“这并不是因为希望真的存在，而是因为我们要做高贵的人。” 《The wandering earth》Liu Cixin (刘慈欣《流浪地球》)</li>
+</ul>
+</li>
+<li>不仅…而且…：not only…but(also)…/not only…but…as well<ul>
+<li>He answered all the question <code>not only</code> quickly <code>but (also)</code> accurately. 他回答所有问题时不仅快，而且准确。</li>
+<li>The Big Ben is <code>not only</code> of immense size, <code>but</code> is extremely accurate <code>as well.</code> 此钟不仅外型巨大，而且走时也非常准确。</li>
+<li>英国英语常用not only… but… as well,</li>
+<li>美国英语常用not only… but also…(also可省略)</li>
+<li>I <code>not only</code> spoke English very carefully, <code>but</code> very clearly <code>as well</code>.(英)</li>
+<li>I <code>not only</code> spoke English very carefully, <code>but (also)</code> very clearly. (美)我的英语讲得不但非常认真，而且咬字也非常清楚。</li>
+</ul>
+</li>
+<li>注：上述并列连词连接的并列名词作主语时，谓语动词的单复数与靠后面的名词一致<ul>
+<li>Either Thomas or I <code>am</code> going to call you tomorrow about the job.不是托马斯就是我明天会打电话给你谈工作的事。</li>
+</ul>
+</li>
+<li>…和…两者都：both…and…<ul>
+<li>To go far, you need <code>both</code> a dream <code>and</code> a positive attitude.要成功，你需要梦想和积极的态度。</li>
+<li>注：本并列连接的并列名词作主语时，谓语动词一律用复数</li>
+<li>Both my mother and my sister <code>work</code> at the grocery store. 我妈妈和我姐姐都在这个杂货店工作。</li>
+</ul>
+</li>
+<li>既是…又是…：… as well as …<ul>
+<li>Nursing is a vocation <code>as well as</code> a profession. 护理工作既是职业又是救死扶伤的责任。</li>
+<li>He shared in my sorrows <code>as well as</code> in my joys. 他分担我的快乐也分享我的悲伤。</li>
+<li>注：…as well as…的意思和not only…but (also)…相近，但是前者强调前面的名词，谓语动词与强调的名词一致。<ul>
+<li>The bedrooms, as well as the kitchen, <code>need</code> to be repaired if we rent the house. 如果我们要租这个房子，卧室和厨房都需要维修。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>是…而不是…：…rather than…<ul>
+<li>These are political <code>rather than</code> social matters.这是政治问题而不是社会问题。</li>
+</ul>
+</li>
+</ul>
+<h2 id="造句练习"><a href="#造句练习" class="headerlink" title="造句练习"></a>造句练习</h2><ul>
+<li>1.中国和印度的人口都超过了10亿。<ul>
+<li>1.Both China and India have a population of over one billion.</li>
+</ul>
+</li>
+<li>2.我们应该要么把电脑送修要么买台新的。<ul>
+<li>2.We should either get the computer fixed or buy a new one.</li>
+</ul>
+</li>
+<li>3.冰箱里既没有牛奶也没有蔬菜。<ul>
+<li>3.Neither milk nor vegetables is in the refrigerator.</li>
+</ul>
+</li>
+<li>4.无论下雪、下雨或者高温天气都不能阻止这些邮递员完成他们的投递工作。<ul>
+<li>4.Neither snow nor rain nor hot weather prevents these postmen from completing their deliveries.</li>
+</ul>
+</li>
+<li>5.不是公司董事长而是我将出席明天早上的商务会议。<ul>
+<li>5.Not the company’s president but I am going to the business meeting tomorrow morning.</li>
+</ul>
+</li>
+<li>6.我们都喜欢张小姐，不是因为她是我们老师，而是因为她是美女。<ul>
+<li>6.We all like Miss Zhang not because she is our teacher but because she is very beautiful.</li>
+</ul>
+</li>
+<li>7.恶心和呕吐都是食物中毒的症状。<ul>
+<li>7.Both nausea and vomiting are signs of food poisoning.</li>
+</ul>
+</li>
+<li>8.他不但英语说得非常好，而且还会说法语。<ul>
+<li>8.He can not only speak English very well but also French.</li>
+</ul>
+</li>
+<li>9.这名女子听到这个消息的时候是高兴而不是悲伤。<ul>
+<li>9.The woman was happy rather than sad when she heard the news</li>
+</ul>
+</li>
+</ul>
+<h1 id="6-把句子套进另一个句子里，变身“大名词”"><a href="#6-把句子套进另一个句子里，变身“大名词”" class="headerlink" title="6.把句子套进另一个句子里，变身“大名词”"></a>6.把句子套进另一个句子里，变身“大名词”</h1><ul>
+<li>从句是什么<ul>
+<li>就是一个句子在另外一个句子里边做句子成分</li>
+</ul>
+</li>
+<li>名词从句<ul>
+<li>一个句子，在另外一个句子里边当名词使用</li>
+<li>4种用法：主语、宾语、同位语、表语</li>
+<li>名词从句需要有引导词：<code>That</code> he doesn’t like to study makes me angry.</li>
+</ul>
+</li>
+<li>that从句：任何一个陈述句，前面加上引导词that，构成that从句。（作宾语/表语时，that可省略）<ul>
+<li><code>That</code> everyone may receive a moderate education is an object of vital importance. 每个人能够接受适当的教育似乎是一个至关重要的目标。(主语从句)</li>
+<li>Many people pretend <code>that</code> they understand modern art. 有很多人装成很懂现代艺术的样子。(宾语从句)</li>
+<li>The most surprising thing about it, however, is <code>that</code> it can land anywhere: on snow, water, or even on a ploughed field. 然而，最令人惊奇的是它能够在任何地方降落:雪地，水面，甚至刚耕过的田里。(表语从句)</li>
+<li>No one could account for the fact <code>that</code> one of the boxes was extremely heavy.其中有只箱子特别重，可谁也弄不清是怎么回事。(同位语从句)</li>
+</ul>
+</li>
+<li>that从句作主语时，为了使主干更紧凑，通常可用it作行驶时主语，而将真正的主语后置<ul>
+<li>It was obvious <code>that</code> he was very embarrassed. 显然他感到很尴尬。</li>
+<li>It is a curious coincidence <code>that</code> Mr. Page will have been teaching for a total of forty years. 佩奇先生执教满总共40年，这真是奇妙的巧合。</li>
+</ul>
+</li>
+<li>consider, deem, think, find, believe五个动词是宾补动词，构成第四大句型，表示“认为…是…”<ul>
+<li>我认为健康是非常重要的</li>
+<li>I think health very important.其中health是宾语，important是补语</li>
+<li>我认为我们每天说英语是重要的</li>
+<li>I think that we should speak English important. X</li>
+<li>I think it important that we should speak English.√</li>
+<li>I think it necessary that you do it at once.我认为你必须立刻做那件事。</li>
+<li>We find it necessary that we practice spoken English every day. 我们发现每天练习英语口语很有必要。</li>
+</ul>
+</li>
+<li>whether/if从句：任何一个一般疑问句，前面加上引导词whether或if，构成whether从句，但主语与be动词或助动词的位置还原。如果助动词为do, does, did, 还原后将do, does, did去掉，后面的动词根据人称和时态变化<ul>
+<li><code>Whether</code> they would support us was a problem. 他们是否会支持我们还是一个问题。(主语从句) </li>
+<li>He asked <code>if</code> Mr Gilbert’s operation had been successful and the doctor told him that it had been. 他问吉尔伯特先生的手术中否成功，医生告诉他手术很成功。(宾语从句)</li>
+<li>On the way home, he asked Jenny <code>if</code> she had enjoyed the speech. 在回家的路上，他问珍妮是否喜欢他的祝词。(宾语从句， 直接宾语)</li>
+</ul>
+</li>
+<li>介词后及or not结构中，通常用whether<ul>
+<li>My sister is only seven, but she always tells me <code>whether</code> my pictures are good <code>or not</code>. 我的妹妹只有7岁，但她总能说出我的画是好还是坏。</li>
+<li>I worry about <code>whether</code> I hurt his feeling. 我担心是否伤害了他的感情</li>
+</ul>
+</li>
+<li>疑问词从句：构成方法与whether从句一样，只是将whether换成疑问词而已，句子必须改为陈述句语序<ul>
+<li>He then asked <code>when</code> Mr Gilbert would be allowed to go home and the doctor told him that he would have to stay in hospital for another two weeks.然后他又问吉尔伯特先生什么时候可以回家，医生说他在医院还必须再住上两个星期。(宾语从句，其中when作从句中的状语)</li>
+<li>The doctors have not yes decided <code>how</code> the woman died. 医生们至今还未确定这位妇女的死因。</li>
+<li>I have no idea <code>what</code> has happened to him. 我不知道他发生了什么事?</li>
+</ul>
+</li>
+<li>造句练习<ul>
+<li>1.谁将负责这项工程还没有(被)决定。(be in charge of)<ul>
+<li>1.Who will be in charge of the project hasn’t been decided yet.</li>
+</ul>
+</li>
+<li>2.他要来参加这个会议(已经)使得我们每个人激动了。<ul>
+<li>2.That he will come to the conference has excited every one of us.</li>
+</ul>
+</li>
+<li>3.他告诉我他们会帮助我们完成整个工作的。<ul>
+<li>3.He told me that they would help us finish the whole work.</li>
+</ul>
+</li>
+<li>4.我不知道(wonder)您是否能小声点。<ul>
+<li>4.I wonder whether/if you would mind making less noise.</li>
+</ul>
+</li>
+<li>5.我认为每天多喝水是有必要的。<ul>
+<li>5.I think it necessary that we (should) take plenty of water every day.</li>
+</ul>
+</li>
+<li>6.我不知道(have no idea)他们什么时候回来定居。<ul>
+<li>6.I have no idea when they will be back and settle down.</li>
+</ul>
+</li>
+<li>7.我(已经)发现所有的票都(已经)卖光了。<ul>
+<li>7.I have found that all the tickets had been sold out.</li>
+</ul>
+</li>
+<li>8.问题是这部电视剧是否值得一看。<ul>
+<li>8.The question is whether the TV play is worth watching.</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

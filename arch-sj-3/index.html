@@ -22,22 +22,33 @@
     var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="域名备案、博客升级为HTTPS、图床域名替换、图床升级为HTTPS">
+  <meta name="description" content="包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了">
 <meta property="og:type" content="article">
-<meta property="og:title" content="博客升级纪要">
-<meta property="og:url" content="http://shiqi-lu.tech/update-blog/index.html">
+<meta property="og:title" content="《沈剑架构师训练营》第3章 - 快速性能优化">
+<meta property="og:url" content="http://shiqi-lu.tech/arch-sj-3/index.html">
 <meta property="og:site_name" content="每天净瞎搞">
-<meta property="og:description" content="域名备案、博客升级为HTTPS、图床域名替换、图床升级为HTTPS">
+<meta property="og:description" content="包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-01T06:27:02.000Z">
-<meta property="article:modified_time" content="2021-04-02T06:54:49.725Z">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906113515.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906113737.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908205424.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908205943.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908211227.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908211506.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210823230403.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212034.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212221.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212329.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212439.png">
+<meta property="article:published_time" content="2021-09-14T13:08:00.000Z">
+<meta property="article:modified_time" content="2021-09-14T12:08:00.000Z">
 <meta property="article:author" content="Shiqi Lu">
-<meta property="article:tag" content="感想">
-<meta property="article:tag" content="自我提升">
+<meta property="article:tag" content="架构">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210906113515.png">
 
 
-<link rel="canonical" href="http://shiqi-lu.tech/update-blog/">
+<link rel="canonical" href="http://shiqi-lu.tech/arch-sj-3/">
 
 
 <script data-pjax class="page-configurations">
@@ -50,7 +61,7 @@
   };
 </script>
 
-  <title>博客升级纪要 | 每天净瞎搞</title>
+  <title>《沈剑架构师训练营》第3章 - 快速性能优化 | 每天净瞎搞</title>
   
 
 
@@ -194,7 +205,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -206,6 +217,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11%E3%80%81%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%9A%E5%8A%A8%E9%9D%99%E5%88%86%E7%A6%BB%EF%BC%8C%E4%BA%92%E8%81%94%E7%BD%91%E4%BC%98%E5%8C%96%E5%88%A9%E5%99%A8%EF%BC%9F"><span class="nav-text">11、性能优化：动静分离，互联网优化利器？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12%E3%80%81%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%9A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%EF%BC%8C%E5%89%8D%E5%8F%B0%E4%B8%8E%E5%90%8E%E5%8F%B0%E5%88%86%E7%A6%BB"><span class="nav-text">12、性能优化：读写分离，前台与后台分离</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#13%E3%80%81%E6%9C%AC%E7%AB%A0%E5%B0%8F%E7%BB%93%EF%BC%9A%E7%99%BE%E4%B8%87%E6%B5%81%E9%87%8F%EF%BC%8C%E8%BF%99%E4%BA%9B%E6%8A%80%E6%9C%AF%E5%A4%9F%E7%94%A8%E4%BA%86"><span class="nav-text">13、本章小结：百万流量，这些技术够用了</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -291,7 +303,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/update-blog/">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/arch-sj-3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
@@ -307,7 +319,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          博客升级纪要
+          《沈剑架构师训练营》第3章 - 快速性能优化
         </h1>
 
         <div class="post-meta-container">
@@ -317,28 +329,22 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-04-01 14:27:02" itemprop="dateCreated datePublished" datetime="2021-04-01T14:27:02+08:00">2021-04-01</time>
+      <time title="创建时间：2021-09-14 21:08:00 / 修改时间：20:08:00" itemprop="dateCreated datePublished" datetime="2021-09-14T21:08:00+08:00">2021-09-14</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-02 14:54:49" itemprop="dateModified" datetime="2021-04-02T14:54:49+08:00">2021-04-02</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%87%AA%E6%88%91%E6%8F%90%E5%8D%87/" itemprop="url" rel="index"><span itemprop="name">自我提升</span></a>
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
         </span>
     </span>
 
   
-    <span id="/update-blog/" class="post-meta-item leancloud_visitors" data-flag-title="博客升级纪要" title="阅读次数">
+    <span id="/arch-sj-3/" class="post-meta-item leancloud_visitors" data-flag-title="《沈剑架构师训练营》第3章 - 快速性能优化" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -353,8 +359,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/update-blog/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/update-blog/" itemprop="commentCount"></span>
+    <a title="valine" href="/arch-sj-3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/arch-sj-3/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -366,7 +372,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>394</span>
+      <span>1.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -377,7 +383,7 @@
     </span>
 </div>
 
-            <div class="post-description">域名备案、博客升级为HTTPS、图床域名替换、图床升级为HTTPS</div>
+            <div class="post-description">包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了</div>
         </div>
       </header>
 
@@ -385,10 +391,132 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>学完HTTP协议后，然后下决心要把博客和图床都升级为HTTPS，然后域名也备案，并且把图床也用自己的域名</p>
-<p>参考：<a target="_blank" rel="noopener" href="https://jiapeng.me/markdown-picbed/">https://jiapeng.me/markdown-picbed/</a></p>
-<p>简要步骤：<br>1.先把原有的域名走备案流程，原有申请的域名在万网，就直接在阿里云备案了，这需要一周左右时间，这里我要吐槽一下，备案一定要买阿里云的服务器，，，，，，<br>2.在阿里云上课直接申请免费的SSL证书，同时在七牛云上的图床的对象存储中新开一个域名，配置好后，打开HTTPS访问，并且自动转换HTTP为HTTPS访问<br>3.申请一个子域名img.shiqi-lu.tech，然后指向七牛云中<br>4.批量替换原有图床的域名为新域名</p>
-<p>除了第1个步骤等了很久，其它都很快。。。整个过程阿里云的服务器买了最低配的，花了300多，七牛云以后用HTTPS的话，就没有免费额度了，看了一下价格也不贵，19块有100G流量，够用了。。。</p>
+        <h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
+<li>no11：与静态页面、动态页面匹配的加速技术有哪些？<ul>
+<li>静态页面<ul>
+<li>CDN</li>
+<li>nginx</li>
+<li>squid/varnish</li>
+</ul>
+</li>
+<li>动态页面<ul>
+<li>分层架构</li>
+<li>服务化架构</li>
+<li>数据库，缓存架构</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no11：动静分离是什么？<ul>
+<li>静态页面与动态页面分开不同的系统访问的架构设计方法</li>
+<li><img src="https://img.shiqi-lu.tech/20210906113515.png"></li>
+<li>静态页面，几毫秒返回</li>
+<li>动态页面，几百毫秒返回</li>
+</ul>
+</li>
+<li>no11：「页面静态化」是什么？如何实施？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906113737.png"></li>
+<li>把网页内容提前生成相关的 html，用静态页面相关的加速技术来进行加速</li>
+<li>适合场景：返回页面结果集有限</li>
+<li>不适合场景：返回页面结果集数据量过大，如帖子，搜索等</li>
+</ul>
+</li>
+</ul>
+<h1 id="12、性能优化：读写分离，前台与后台分离"><a href="#12、性能优化：读写分离，前台与后台分离" class="headerlink" title="12、性能优化：读写分离，前台与后台分离"></a>12、性能优化：读写分离，前台与后台分离</h1><ul>
+<li>no12：什么是读写分离？能解决什么问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908205424.png"></li>
+<li>一主多从，读写分离，主从同步，是一种常见的数据库架构</li>
+<li>一般来说，主库，提供数据库的写服务，从库，提供数据库的读服务，主从之间通过某种机制来实现数据库的同步，如 MySQL 的 binlog，一个主从同步集群通常被称为一个「分组」</li>
+<li>能解决什么问题？<ul>
+<li>主要可以线性提升读的性能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no12：什么是水平切分？能解决什么问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908205943.png"></li>
+<li>数据库水平切分后，数据库之间没有数据的重合，不需要同步</li>
+<li>能解决什么问题？<ul>
+<li>数据库存储容量提升</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no12：什么是前台？什么是后台？<ul>
+<li>前台，用户访问的对外系统</li>
+<li>后台，运营访问的对内系统</li>
+</ul>
+</li>
+</ul>
+<h1 id="13、本章小结：百万流量，这些技术够用了"><a href="#13、本章小结：百万流量，这些技术够用了" class="headerlink" title="13、本章小结：百万流量，这些技术够用了"></a>13、本章小结：百万流量，这些技术够用了</h1><ul>
+<li>no13：早期单体 ALL in one 架构，遇到什么问题？这阶段的优化思路是什么？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908211227.png"></li>
+<li>性能问题：访问人数多的时候，希望系统快一点</li>
+<li>耦合问题：当出现问题的时候，系统不要全部挂掉</li>
+<li>思路：<ul>
+<li>1.技术不炫技，以解决业务问题为导向</li>
+<li>2.系统改造尽可能小的架构方案</li>
+<li>3.以最快的速度，提升系统的性能，解决遇到的问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no13：单体架构演进：伪分布式，提升性能<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908211506.png"></li>
+<li>三大分离<ul>
+<li>动静分离</li>
+<li>读写分离(引发读写延时新问题)</li>
+<li>前台后台分离</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no13：单体架构演进：垂直拆分，解耦<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
+<li>业务垂直划分</li>
+<li>代码垂直划分(子系统解耦)</li>
+<li>数据库垂直划分(数据量降低,延时缓解)</li>
+<li>研发团队垂直拆分(专业化，效率提升)</li>
+</ul>
+</li>
+<li>no13：如何保证垂直拆分后，子系统的高可用？<ul>
+<li>使用反向代理</li>
+<li>子web系统的性能，不再受到单台机器资源限制，可以扩展</li>
+<li>子web系统，实现了高可用(伪集群-&gt;真集群) </li>
+<li><img src="https://img.shiqi-lu.tech/20210908212034.png"></li>
+</ul>
+</li>
+<li>no13：真集群后，反向代理如何做负载均衡？<ul>
+<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
+<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
+</ul>
+</li>
+<li>no13：反向代理，如何保证高可用？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908212221.png"></li>
+</ul>
+</li>
+<li>no13：反向代理技术出现之前，接入层如何扩展？<ul>
+<li>DNS 轮询</li>
+<li><img src="https://img.shiqi-lu.tech/20210908212329.png"></li>
+</ul>
+</li>
+<li>no13：使用多层反向代理后，如何做到继续提升性能？<ul>
+<li>DNS 轮询</li>
+<li><img src="https://img.shiqi-lu.tech/20210908212439.png"></li>
+</ul>
+</li>
+<li>no13：session 一致性如何保障？<ul>
+<li>session 同步法</li>
+<li>客户端存储法</li>
+<li>反向代理 hash 一致性</li>
+<li>后端统一存储法</li>
+</ul>
+</li>
+<li>no13：如何加速静态资源？<ul>
+<li>CDN</li>
+</ul>
+</li>
+</ul>
 
     </div>
 
@@ -424,7 +552,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://shiqi-lu.tech/update-blog/" title="博客升级纪要">http://shiqi-lu.tech/update-blog/</a>
+      <a href="http://shiqi-lu.tech/arch-sj-3/" title="《沈剑架构师训练营》第3章 - 快速性能优化">http://shiqi-lu.tech/arch-sj-3/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -433,22 +561,18 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E6%84%9F%E6%83%B3/" rel="tag"># 感想</a>
-              <a href="/tags/%E8%87%AA%E6%88%91%E6%8F%90%E5%8D%87/" rel="tag"># 自我提升</a>
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/http-perspective-3/" rel="prev" title="《透视HTTP协议》飞翔篇">
-                  <i class="fa fa-chevron-left"></i> 《透视HTTP协议》飞翔篇
+                <a href="/arch-sj-2/" rel="prev" title="《沈剑架构师训练营》第2章 - 接入层架构">
+                  <i class="fa fa-chevron-left"></i> 《沈剑架构师训练营》第2章 - 接入层架构
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/sort-algo/" rel="next" title="排序算法全整理（python3）">
-                  排序算法全整理（python3） <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -597,7 +721,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({
       el  : '#valine-comments',
-      path: "/update-blog/",
+      path: "/arch-sj-3/",
     }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
     ));
   }, window.Valine);
