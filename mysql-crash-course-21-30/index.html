@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="《MySQL必知必会》学习笔记21-30章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《MySQL必知必会》学习笔记21-30章">
+<meta property="og:url" content="http://shiqi-lu.tech/mysql-crash-course-21-30/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="《MySQL必知必会》学习笔记21-30章">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210219172421.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210325082641.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210325082724.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210325082748.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210325082804.png">
+<meta property="article:published_time" content="2021-05-09T06:51:52.000Z">
+<meta property="article:modified_time" content="2021-05-09T06:51:52.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210219172421.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/mysql-crash-course-21-30/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《MySQL必知必会》学习笔记21-30章 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC21%E7%AB%A0-%E5%88%9B%E5%BB%BA%E5%92%8C%E6%93%8D%E7%BA%B5%E8%A1%A8"><span class="nav-text">第21章 创建和操纵表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC22%E7%AB%A0-%E4%BD%BF%E7%94%A8%E8%A7%86%E5%9B%BE"><span class="nav-text">第22章 使用视图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC23%E7%AB%A0-%E4%BD%BF%E7%94%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-text">第23章 使用存储过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC24%E7%AB%A0-%E4%BD%BF%E7%94%A8%E6%B8%B8%E6%A0%87"><span class="nav-text">第24章 使用游标</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC26%E7%AB%A0-%E7%AE%A1%E7%90%86%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86"><span class="nav-text">第26章 管理事务处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC27%E7%AB%A0-%E5%85%A8%E7%90%83%E5%8C%96%E5%92%8C%E6%9C%AC%E5%9C%B0%E5%8C%96"><span class="nav-text">第27章 全球化和本地化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC28%E7%AB%A0-%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86"><span class="nav-text">第28章 安全管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC29%E7%AB%A0-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%B4%E6%8A%A4"><span class="nav-text">第29章 数据库维护</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC30%E7%AB%A0-%E6%94%B9%E5%96%84%E6%80%A7%E8%83%BD"><span class="nav-text">第30章 改善性能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84%E5%BD%95D-MySQL%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">附录D MySQL数据类型</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/mysql-crash-course-21-30/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《MySQL必知必会》学习笔记21-30章
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-09 14:51:52" itemprop="dateCreated datePublished" datetime="2021-05-09T14:51:52+08:00">2021-05-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/mysql-crash-course-21-30/" class="post-meta-item leancloud_visitors" data-flag-title="《MySQL必知必会》学习笔记21-30章" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql-crash-course-21-30/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql-crash-course-21-30/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>19k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">《MySQL必知必会》学习笔记21-30章</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="第21章-创建和操纵表"><a href="#第21章-创建和操纵表" class="headerlink" title="第21章 创建和操纵表"></a>第21章 创建和操纵表</h1><ul>
+<li>Q:创建customers表示例，NULL、自增、主键、默认值写法<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> customers</span><br><span class="line">(</span><br><span class="line">  cust_id      <span class="built_in">int</span>       <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  cust_name    <span class="built_in">char</span>(<span class="number">50</span>)  <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  cust_address <span class="built_in">char</span>(<span class="number">50</span>)  <span class="literal">NULL</span>,</span><br><span class="line">  cust_city    <span class="built_in">char</span>(<span class="number">50</span>)  <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;bj&#x27;</span>,</span><br><span class="line">  cust_state   <span class="built_in">char</span>(<span class="number">5</span>)   <span class="literal">NULL</span>,</span><br><span class="line">  cust_email   <span class="built_in">char</span>(<span class="number">255</span>) <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (cust_id)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>NULL：允许NULL值的列允许在插入行时不给出该列的值，NOT NULL则在插入或更新行时该列必须有值</li>
+<li>注意NULL值和空串’’，空串是一个有效值，不是NULL</li>
+<li>主键：表的每个行必须具有唯一的主键值，如果主键使用单个列，则它的值必须唯一。如果使用多个列，则这些列的组合值必须唯一。主键中只能使用不允许NULL值的列</li>
+<li>AUTO_INCREMENT：本列每当增加一行时，自动增量。多个语句连续使用时，可用last_insert_id()获取最后一个AUTO_INCREMENT值，<code>SELECT last_insert_id()</code></li>
+<li>默认值：在未给出值时使用该值</li>
+<li>引擎类型：<ul>
+<li>InnoDB：可靠的事务处理引擎，不支持全文本搜索</li>
+<li>MEMORY：功能等同于MyISAM，但数据存储在内存，数据很快，适合临时表</li>
+<li>MyISAM：性能极高的引擎，支持全文本搜索，但不支持事务处理</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:修改表结构，给表添加一个列<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> vendors</span><br><span class="line"><span class="keyword">ADD</span> vend_phone <span class="built_in">CHAR</span>(<span class="number">20</span>);</span><br></pre></td></tr></table></figure></li>
+<li>Q:修改表结构，删除表中的列<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> vendors</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">COLUMN</span> VEND_phone;</span><br></pre></td></tr></table></figure></li>
+<li>Q:修改表结构，定义外键<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> orderitems</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> fk_orderitems_orders</span><br><span class="line"><span class="keyword">FOREIGN</span> <span class="keyword">KEY</span> (order_num) <span class="keyword">REFERENCES</span> orders (order_num);</span><br></pre></td></tr></table></figure></li>
+<li>Q:复杂表结构的更改步骤<ul>
+<li>用新的列布局创建一个新表</li>
+<li>使用INSERT SELECT语句从旧表复制数据到新表。必要时适用转换函数和计算字段</li>
+<li>校验包含所需数据的新表</li>
+<li>重命名旧表(如果确定，可以删除它)</li>
+<li>用旧表原来的名字重命名新表</li>
+<li>根据需要，重新创建触发器、存储过程、索引和外键</li>
+<li>注意：使用ALTER TABLE要极为小心，应该在进行改动前做一个完整的备份(模式和数据的备份)。数据库表的更改不能撤销</li>
+</ul>
+</li>
+<li>Q:删除表<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> customers2;</span><br></pre></td></tr></table></figure></li>
+<li>Q:重命名多个表<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RENAME</span> <span class="keyword">TABLE</span> backup_customers <span class="keyword">TO</span> customers,</span><br><span class="line">             backup_vendors <span class="keyword">TO</span> vendors;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第22章-使用视图"><a href="#第22章-使用视图" class="headerlink" title="第22章 使用视图"></a>第22章 使用视图</h1><ul>
+<li>Q:视图有哪些应用呢<ul>
+<li>1.重用SQL语句</li>
+<li>2.简化复杂的SQL操作。在编写查询后，可以方便地重用它而不必知道它的基本查询细节</li>
+<li>3.使用表的组成部分而不是整个表</li>
+<li>4.保护数据。可以给用户授予表的特定部分的访问权限而不是整个表的访问权限</li>
+<li>5.更改数据格式和表示。视图可返回与底层表的表示和格式不同的数据</li>
+</ul>
+</li>
+<li>Q:视图的可用操作<ul>
+<li>可用与表基本相同的方式利用它们。可对视图执行SELECT操作，过滤和排序数据，将视图联结到其它视图或表，甚至能添加和更新数据(存在一些限制)</li>
+<li>重要的是知道视图仅仅是用来查看存储在别处的数据的一种设施。 视图本身不包含数据，因此它们返回的数据是从其他表中检索出来的。 在添加或更改这些表中的数据时，视图将返回改变过的数据</li>
+<li>因为视图不包含数据，所以每次使用视图时，都必须处理查询执行时所需的任一个检索。如果用多个联结和过滤创建了复杂的视图或者嵌套了视图，可能会发现性能下降得很厉害。因此，在部署使用了大量视图的应用前，应该进行测试</li>
+</ul>
+</li>
+<li>Q:创图创建和使用有哪些常见的规则和限制？<ul>
+<li>与表一样，视图必须唯一命名(不能给视图取与别的视图或表相同的名字)</li>
+<li>对于可以创建的视图数目没有限制</li>
+<li>为了创建视图，必须具有足够的访问权限。这些限制通常由数据库管理人员授予</li>
+<li>视图可以嵌套，即可利用从其它视图中检索数据的查询来构造一个视图</li>
+<li>ORDER BY可以用在视图中，但如果从该视图检索数据SELECT中也含有ORDER BY，那么该视图中的ORDER BY将被覆盖</li>
+<li>视图不能索引， 也不能有关联的触发器或默认值</li>
+<li>视图可以和表一起使用。如编写一条联结表和视图的SELECT语句</li>
+</ul>
+</li>
+<li>Q:如何使用视图<ul>
+<li>创建：<code>CREATE VIEW</code></li>
+<li>查看创建视图的语句：<code>SHOW CREATE VIEW viewname;</code></li>
+<li>删除：<code>DROP VIEW viewname;</code></li>
+<li>更新：可先用DROP再用CREATE，或<code>CREATE OR REPLACE VIEW</code>。</li>
+<li>如果要更新的视图不存在，则第2条更新语句会创建一个视图；如果要更新的视图存在， 则第2条更新语句会替换原有视图</li>
+</ul>
+</li>
+<li>Q:创建一个名为productcustomers的视图，联结三个表，以返回已订购了任意产品的所有客户的列表<ul>
+<li>如果执行<code>SELECT * FROM productcustomers</code>，列出订购了任意产品的所有客户的列表<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE VIEW productcustomers AS</span><br><span class="line">    -&gt; SELECT cust_name, cust_contact, prod_id</span><br><span class="line">    -&gt; FROM customers, orders, orderitems</span><br><span class="line">    -&gt; WHERE customers.cust_id = orders.cust_id</span><br><span class="line">    -&gt;   AND orderitems.order_num = orders.order_num;</span><br><span class="line">Query OK, 0 rows affected (0.04 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT * from productcustomers;</span><br><span class="line">+<span class="comment">----------------+--------------+---------+</span></span><br><span class="line">| cust_name      | cust_contact | prod_id |</span><br><span class="line">+<span class="comment">----------------+--------------+---------+</span></span><br><span class="line">| Coyote Inc.    | Y Lee        | ANV01   |</span><br><span class="line">| Coyote Inc.    | Y Lee        | ANV02   |</span><br><span class="line">| Coyote Inc.    | Y Lee        | TNT2    |</span><br><span class="line">| Coyote Inc.    | Y Lee        | FB      |</span><br><span class="line">| Coyote Inc.    | Y Lee        | FB      |</span><br><span class="line">| Coyote Inc.    | Y Lee        | OL1     |</span><br><span class="line">| Coyote Inc.    | Y Lee        | SLING   |</span><br><span class="line">| Coyote Inc.    | Y Lee        | ANV03   |</span><br><span class="line">| Wascals        | Jim Jones    | JP2000  |</span><br><span class="line">| Yosemite Place | Y Sam        | TNT2    |</span><br><span class="line">| E Fudd         | E Fudd       | FC      |</span><br><span class="line">+<span class="comment">----------------+--------------+---------+</span></span><br><span class="line">11 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>检索订购了产品TN2的客户<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT cust_name, cust_contact</span><br><span class="line">    -&gt; FROM productcustomers</span><br><span class="line">    -&gt; WHERE prod_id = &#x27;TNT2&#x27;;</span><br><span class="line">+<span class="comment">----------------+--------------+</span></span><br><span class="line">| cust_name      | cust_contact |</span><br><span class="line">+<span class="comment">----------------+--------------+</span></span><br><span class="line">| Coyote Inc.    | Y Lee        |</span><br><span class="line">| Yosemite Place | Y Sam        |</span><br><span class="line">+<span class="comment">----------------+--------------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:如何使用重新格式化检索出的数据<ul>
+<li>经常需要某个格式的结果。不必在每次需要时执行联结，创建一个视图，每次需要时使用它即可<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT Concat(RTrim(vend_name), &#x27; (&#x27;, RTrim(vend_country), &#x27;)&#x27;)</span><br><span class="line">    -&gt;        AS vend_title</span><br><span class="line">    -&gt; FROM vendors</span><br><span class="line">    -&gt; ORDER BY vend_name;</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| vend_title              |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| ACME (USA)              |</span><br><span class="line">| Anvils R Us (USA)       |</span><br><span class="line">| Furball Inc. (USA)      |</span><br><span class="line">| Jet <span class="keyword">Set</span> (England)       |</span><br><span class="line">| Jouets Et Ours (France) |</span><br><span class="line">| LT Supplies (USA)       |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; <span class="keyword">CREATE</span> <span class="keyword">VIEW</span> vendorlocations <span class="keyword">AS</span></span><br><span class="line">    -&gt; <span class="keyword">SELECT</span> <span class="keyword">Concat</span>(<span class="keyword">RTrim</span>(vend_name), <span class="string">&#x27; (&#x27;</span>, <span class="keyword">RTrim</span>(vend_country), <span class="string">&#x27;)&#x27;</span>)</span><br><span class="line">    -&gt;        <span class="keyword">AS</span> vend_title</span><br><span class="line">    -&gt; <span class="keyword">FROM</span> vendors</span><br><span class="line">    -&gt; <span class="keyword">ORDER</span> <span class="keyword">BY</span> vend_name;</span><br><span class="line">Query OK, 0 rows affected (0.04 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT * FROM vendorlocations;</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| vend_title              |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| ACME (USA)              |</span><br><span class="line">| Anvils R Us (USA)       |</span><br><span class="line">| Furball Inc. (USA)      |</span><br><span class="line">| Jet <span class="keyword">Set</span> (England)       |</span><br><span class="line">| Jouets Et Ours (France) |</span><br><span class="line">| LT Supplies (USA)       |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:用视图过滤不想要的数据，如定义 customeremaillist视图，它过滤没有电子邮件地址的客户<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE VIEW customeremaillist AS</span><br><span class="line">    -&gt; SELECT cust_id, cust_name, cust_email</span><br><span class="line">    -&gt; FROM customers</span><br><span class="line">    -&gt; WHERE cust_email IS NOT NULL;</span><br><span class="line">Query OK, 0 rows affected (0.06 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT * FROM customeremaillist;</span><br><span class="line">+<span class="comment">---------+----------------+---------------------+</span></span><br><span class="line">| cust_id | cust_name      | cust_email          |</span><br><span class="line">+<span class="comment">---------+----------------+---------------------+</span></span><br><span class="line">|   10001 | Coyote Inc.    | ylee@coyote.com     |</span><br><span class="line">|   10003 | Wascals        | rabbit@wascally.com |</span><br><span class="line">|   10004 | Yosemite Place | sam@yosemite.com    |</span><br><span class="line">|   10008 | The Fudds      | elmer@fudd.com      |</span><br><span class="line">+<span class="comment">---------+----------------+---------------------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:如何使用视图简化计算字段<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id,</span><br><span class="line">    -&gt;        quantity,</span><br><span class="line">    -&gt;        item_price,</span><br><span class="line">    -&gt;        quantity*item_price AS expanded_price</span><br><span class="line">    -&gt; FROM orderitems</span><br><span class="line">    -&gt; WHERE order_num = 20005;</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">| prod_id | quantity | item_price | expanded_price |</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">| ANV01   |       10 |       5.99 |          59.90 |</span><br><span class="line">| ANV02   |        3 |       9.99 |          29.97 |</span><br><span class="line">| TNT2    |        5 |      10.00 |          50.00 |</span><br><span class="line">| FB      |        1 |      10.00 |          10.00 |</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; <span class="keyword">CREATE</span> <span class="keyword">VIEW</span> orderitemexpanded <span class="keyword">AS</span></span><br><span class="line">    -&gt; <span class="keyword">SELECT</span> order_num,</span><br><span class="line">    -&gt;        prod_id,</span><br><span class="line">    -&gt;        quantity,</span><br><span class="line">    -&gt;        item_price,</span><br><span class="line">    -&gt;        quantity*item_price <span class="keyword">AS</span> expanded_price</span><br><span class="line">    -&gt; <span class="keyword">FROM</span> orderitems;</span><br><span class="line">Query OK, 0 rows affected (0.04 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT * FROM orderitemexpanded</span><br><span class="line">    -&gt; WHERE order_num = 20005;</span><br><span class="line">+<span class="comment">-----------+---------+----------+------------+----------------+</span></span><br><span class="line">| order_num | prod_id | quantity | item_price | expanded_price |</span><br><span class="line">+<span class="comment">-----------+---------+----------+------------+----------------+</span></span><br><span class="line">|     20005 | ANV01   |       10 |       5.99 |          59.90 |</span><br><span class="line">|     20005 | ANV02   |        3 |       9.99 |          29.97 |</span><br><span class="line">|     20005 | TNT2    |        5 |      10.00 |          50.00 |</span><br><span class="line">|     20005 | FB      |        1 |      10.00 |          10.00 |</span><br><span class="line">+<span class="comment">-----------+---------+----------+------------+----------------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:什么情况下，MySQL不允许更新、插入和删除视图<ul>
+<li>1.分组(使用GROUP BY和HAVING)</li>
+<li>2.联结</li>
+<li>3.子查询</li>
+<li>4.并</li>
+<li>5.聚集函数(Min()、Count()、Sum()等)</li>
+<li>6.DISTINCT</li>
+<li>7.导出(计算)列</li>
+</ul>
+</li>
+</ul>
+<h1 id="第23章-使用存储过程"><a href="#第23章-使用存储过程" class="headerlink" title="第23章 使用存储过程"></a>第23章 使用存储过程</h1><ul>
+<li>Q:创建存储过程，返回产品平均价格<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> productpricing()</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">   <span class="keyword">SELECT</span> <span class="keyword">Avg</span>(prod_price) <span class="keyword">AS</span> priceaverage</span><br><span class="line">   <span class="keyword">FROM</span> products;</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在命令行中书写时要重新定义分隔符，注意使用完要恢复<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DELIMITER //</span><br><span class="line">mysql&gt; CREATE PROCEDURE productpricing()</span><br><span class="line">    -&gt; BEGIN</span><br><span class="line">    -&gt;    SELECT Avg(prod_price) AS priceaverage</span><br><span class="line">    -&gt;    FROM products;</span><br><span class="line">    -&gt; END //</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; DELIMITER ;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CALL productpricing();</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| priceaverage |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">|    16.133571 |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line"><span class="keyword">Query</span> OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:删除存储过程<ul>
+<li>如果指定的过程不存在，则DROP PROCEDURE将产生一个错误。当过程存在想删除它时（如果过程不存在也不产生错误）可使用DROP PROCEDURE IF EXISTS<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DROP PROCEDURE productpricing;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; DROP PROCEDURE IF EXISTS proceductpricing;</span><br><span class="line">Query OK, 0 rows affected, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:创建使用参数的存储过程<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DELIMITER //</span><br><span class="line">mysql&gt; CREATE PROCEDURE productpricing(</span><br><span class="line">    -&gt;    OUT pl DECIMAL(8,2),</span><br><span class="line">    -&gt;    OUT ph DECIMAL(8,2),</span><br><span class="line">    -&gt;    OUT pa DECIMAL(8,2)</span><br><span class="line">    -&gt; )</span><br><span class="line">    -&gt; BEGIN</span><br><span class="line">    -&gt;    SELECT Min(prod_price)</span><br><span class="line">    -&gt;    INTO pl</span><br><span class="line">    -&gt;    FROM products;</span><br><span class="line">    -&gt;    SELECT Max(prod_price)</span><br><span class="line">    -&gt;    INTO ph</span><br><span class="line">    -&gt;    FROM products;</span><br><span class="line">    -&gt;    SELECT Avg(prod_price)</span><br><span class="line">    -&gt;    INTO pa</span><br><span class="line">    -&gt;    FROM products;</span><br><span class="line">    -&gt; END //</span><br><span class="line">    </span><br><span class="line">mysql&gt; CALL productpricing(@pricelow,</span><br><span class="line">    -&gt;                     @pricehigh,</span><br><span class="line">    -&gt;                     @priceaverage) //</span><br><span class="line">Query OK, 1 row affected, 1 warning (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT @priceaverage //</span><br><span class="line">+<span class="comment">---------------+</span></span><br><span class="line">| @priceaverage |</span><br><span class="line">+<span class="comment">---------------+</span></span><br><span class="line">|         16.13 |</span><br><span class="line">+<span class="comment">---------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>此存储过程接受3个参数：pl存储产品最低价格，ph存储产品最高价格，pa存储产品平均价格。每个参数必须具有指定的类型，这里使用十进制值。关键字OUT指出相应的参数用来从存储过程传出一个值(返回给调用者)。</li>
+<li>MySQL支持IN(传递给存储过程)、OUT(从存储过程传出)和INOUT(对存储过程传入和传出)类型的参数</li>
+<li>存储过程是一系列SELECT语句，用来检索值，然后保存到相应的变量(通过指定INTO关键字)</li>
+<li>存储过程的参数允许的数据类型与表中使用的数据类型相同</li>
+</ul>
+</li>
+<li>Q:使用IN和OUT参数的存储过程，ordertotal接受订单号并返回该订单的合计<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; DELIMITER //</span><br><span class="line">mysql&gt; CREATE PROCEDURE ordertotal(</span><br><span class="line">    -&gt;    IN onumber INT,</span><br><span class="line">    -&gt;    OUT ototal DECIMAL(8,2)</span><br><span class="line">    -&gt; )</span><br><span class="line">    -&gt; BEGIN</span><br><span class="line">    -&gt;    SELECT Sum(item_price*quantity)</span><br><span class="line">    -&gt;    FROM orderitems</span><br><span class="line">    -&gt;    WHERE order_num = onumber</span><br><span class="line">    -&gt;    INTO ototal;</span><br><span class="line">    -&gt; END//</span><br><span class="line">    </span><br><span class="line">mysql&gt; CALL ordertotal(20005, @total)//</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT @total //</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">| @total |</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">| 149.87 |</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:显示用来创建一个存储过程的CREATE语句<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW CREATE PROCEDURE ordertotal //</span><br><span class="line">+<span class="comment">------------+-------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+</span></span><br><span class="line">| Procedure  | sql_mode                                                                                                                                  | <span class="keyword">Create</span> <span class="keyword">Procedure</span>                                                                                                                                                                                                       | character_set_client | collation_connection | <span class="keyword">Database</span> <span class="keyword">Collation</span> |</span><br><span class="line">+<span class="comment">------------+-------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+</span></span><br><span class="line">| ordertotal | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION | <span class="keyword">CREATE</span> DEFINER=<span class="string">`root`</span>@<span class="string">`localhost`</span> <span class="keyword">PROCEDURE</span> <span class="string">`ordertotal`</span>(    <span class="keyword">IN</span> onumber <span class="built_in">INT</span>,    <span class="keyword">OUT</span> ototal <span class="built_in">DECIMAL</span>(<span class="number">8</span>,<span class="number">2</span>) )</span><br><span class="line"><span class="keyword">BEGIN</span>    <span class="keyword">SELECT</span> <span class="keyword">Sum</span>(item_price*quantity)    <span class="keyword">FROM</span> orderitems    <span class="keyword">WHERE</span> order_num = onumber    <span class="keyword">INTO</span> ototal; <span class="keyword">END</span> | utf8                 | utf8_general_ci      | latin1_swedish_ci  |</span><br><span class="line">+<span class="comment">------------+-------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:获得包括何时、由谁创建等详细信息的存储过程列表<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">PROCEDURE</span> <span class="keyword">STATUS</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>限制过程状态结果<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW PROCEDURE STATUS LIKE &#x27;ordertotal&#x27; //</span><br><span class="line">+<span class="comment">-------------+------------+-----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+</span></span><br><span class="line">| Db          | Name       | Type      | Definer        | Modified            | Created             | Security_type | <span class="keyword">Comment</span> | character_set_client | collation_connection | <span class="keyword">Database</span> <span class="keyword">Collation</span> |</span><br><span class="line">+<span class="comment">-------------+------------+-----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+</span></span><br><span class="line">| crashcourse | ordertotal | <span class="keyword">PROCEDURE</span> | root@localhost | <span class="number">2021</span><span class="number">-03</span><span class="number">-25</span> <span class="number">13</span>:<span class="number">12</span>:<span class="number">18</span> | <span class="number">2021</span><span class="number">-03</span><span class="number">-25</span> <span class="number">13</span>:<span class="number">12</span>:<span class="number">18</span> | DEFINER       |         | utf8                 | utf8_general_ci      | latin1_swedish_ci  |</span><br><span class="line">+<span class="comment">-------------+------------+-----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第24章-使用游标"><a href="#第24章-使用游标" class="headerlink" title="第24章 使用游标"></a>第24章 使用游标</h1><ul>
+<li>Q:使用游标的几个步骤是什么？<ul>
+<li>1.在能够使用游标前，必须声明它。这个过程实际上没用检索数据，它只是定义要使用的SELECT语句</li>
+<li>2.一旦声明后，必须打开游标以供使用。这个过程用前面定义的SELECT语句把数据实际检索出来</li>
+<li>3.对于填有数据的游标，根据需要取出(检索)各行</li>
+<li>4.在结束游标使用时，必须关闭游标</li>
+<li>在声明游标后，可根据需要频繁地打开和关闭游标。在游标打开后，可根据需要频繁地执行取操作</li>
+</ul>
+</li>
+</ul>
+<h1 id="第26章-管理事务处理"><a href="#第26章-管理事务处理" class="headerlink" title="第26章 管理事务处理"></a>第26章 管理事务处理</h1><ul>
+<li>Q:事务处理是什么？<ul>
+<li>事务处理是一种机制，用来管理必须成批执行的MySQL操作，以保证数据库不包含不完整的操作结果。利用事务处理，可以保证一组操作不会中途停止，它们或者作为整体执行，或者完全不执行(除非明确指示)。如果没有发生错误，整组语句提交个诶数据库表。如果发生错误，则进行回退以恢复数据库到某个已知且安全的状态</li>
+</ul>
+</li>
+<li>Q:事务开始和ROLLBACK命令示例<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> ordertotals;</span><br><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"><span class="keyword">DELETE</span> FRMO ordertotals;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> ordertotals;</span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> ordertotals;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>事务处理用来管理INSERT、UPDATE和DELETE语句。不能回退SELECT、CREATE和DROP，这些语句可以使用，但如果执行回退，不会被撤销</li>
+</ul>
+</li>
+<li>Q:COMMIT命令示例<ul>
+<li>一般的MySQL语句是直接针对数据库表执行和编写的，即隐含提交(implicit commit)，即提交(写或保存)操作是自动进行的</li>
+<li>但事务处理块中必须用COMMIT进行明确的提交<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> orderitems <span class="keyword">WHERE</span> order_num = <span class="number">20010</span>;</span><br><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> orders <span class="keyword">WHERE</span> order_num = <span class="number">20010</span>;</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:使用保留点，支持回退部分事务处理<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SAVEPOINT</span> delete1;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">ROLLBACK</span> <span class="keyword">TO</span> delete1;</span><br></pre></td></tr></table></figure></li>
+<li>Q:更改默认的提交行为<ul>
+<li>默认MySQL是自动提交所有更改。即任何时候你执行一条MySQL语句，该语句实际上都是针对表执行的，而且所做的更改立即生效，不管有没有COMMIT语句</li>
+<li>为指示MySQL不自动提交更改，可使用语句<code>SET autocommit=0;</code></li>
+<li>注意：autocommit标志是针对每个连接而不是服务器的</li>
+</ul>
+</li>
+</ul>
+<h1 id="第27章-全球化和本地化"><a href="#第27章-全球化和本地化" class="headerlink" title="第27章 全球化和本地化"></a>第27章 全球化和本地化</h1><ul>
+<li>Q:字符集、编码、校对是什么<ul>
+<li>字符集：字母和符号的集合</li>
+<li>编码：某个字符集成员的内部表示</li>
+<li>校对：规定字符如何比较的指令</li>
+</ul>
+</li>
+<li>Q:查看所支持的字符集完整列表以及每个字符集的描述和默认校对<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW CHARACTER SET;</span><br><span class="line">+<span class="comment">----------+---------------------------------+---------------------+--------+</span></span><br><span class="line">| Charset  | Description                     | Default collation   | Maxlen |</span><br><span class="line">+<span class="comment">----------+---------------------------------+---------------------+--------+</span></span><br><span class="line">| big5     | Big5 Traditional Chinese        | big5_chinese_ci     |      2 |</span><br><span class="line">| ascii    | US ASCII                        | ascii_general_ci    |      1 |</span><br><span class="line">| ujis     | EUC-JP Japanese                 | ujis_japanese_ci    |      3 |</span><br><span class="line">| koi8u    | KOI8-U Ukrainian                | koi8u_general_ci    |      1 |</span><br><span class="line">| gb2312   | GB2312 Simplified Chinese       | gb2312_chinese_ci   |      2 |</span><br><span class="line">| greek    | ISO 8859-7 Greek                | greek_general_ci    |      1 |</span><br><span class="line">| cp1250   | Windows Central European        | cp1250_general_ci   |      1 |</span><br><span class="line">| gbk      | GBK Simplified Chinese          | gbk_chinese_ci      |      2 |</span><br><span class="line">| utf8mb4  | UTF-8 Unicode                   | utf8mb4_general_ci  |      4 |</span><br><span class="line">| cp1251   | Windows Cyrillic                | cp1251_general_ci   |      1 |</span><br><span class="line">| utf16    | UTF-16 Unicode                  | utf16_general_ci    |      4 |</span><br><span class="line">| utf16le  | UTF-16LE Unicode                | utf16le_general_ci  |      4 |</span><br><span class="line">| cp1256   | Windows Arabic                  | cp1256_general_ci   |      1 |</span><br><span class="line">| cp1257   | Windows Baltic                  | cp1257_general_ci   |      1 |</span><br><span class="line">| utf32    | UTF-32 Unicode                  | utf32_general_ci    |      4 |</span><br><span class="line">| binary   | Binary pseudo charset           | binary              |      1 |</span><br><span class="line">| eucjpms  | UJIS for Windows Japanese       | eucjpms_japanese_ci |      3 |</span><br><span class="line">| gb18030  | China National Standard GB18030 | gb18030_chinese_ci  |      4 |</span><br><span class="line">+<span class="comment">----------+---------------------------------+---------------------+--------+</span></span><br><span class="line">41 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:查看所支持校对的完整列表，以及它们使用的字符集<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW COLLATION;</span><br><span class="line">+<span class="comment">--------------------------+----------+-----+---------+----------+---------+</span></span><br><span class="line">| Collation                | Charset  | Id  | Default | Compiled | Sortlen |</span><br><span class="line">+<span class="comment">--------------------------+----------+-----+---------+----------+---------+</span></span><br><span class="line">| big5_chinese_ci          | big5     |   1 | Yes     | Yes      |       1 |</span><br><span class="line">| big5_bin                 | big5     |  84 |         | Yes      |       1 |</span><br><span class="line">| latin1_german1_ci        | latin1   |   5 |         | Yes      |       1 |</span><br><span class="line">| latin1_swedish_ci        | latin1   |   8 | Yes     | Yes      |       1 |</span><br><span class="line">| latin1_danish_ci         | latin1   |  15 |         | Yes      |       1 |</span><br><span class="line">| latin1_german2_ci        | latin1   |  31 |         | Yes      |       2 |</span><br><span class="line">| latin1_bin               | latin1   |  47 |         | Yes      |       1 |</span><br><span class="line">| latin1_general_ci        | latin1   |  48 |         | Yes      |       1 |</span><br><span class="line">| latin1_general_cs        | latin1   |  49 |         | Yes      |       1 |</span><br><span class="line">| latin1_spanish_ci        | latin1   |  94 |         | Yes      |       1 |</span><br><span class="line">| gb2312_chinese_ci        | gb2312   |  24 | Yes     | Yes      |       1 |</span><br><span class="line">| gb2312_bin               | gb2312   |  86 |         | Yes      |       1 |</span><br><span class="line">| gbk_chinese_ci           | gbk      |  28 | Yes     | Yes      |       1 |</span><br><span class="line">| gbk_bin                  | gbk      |  87 |         | Yes      |       1 |</span><br><span class="line">| utf8_general_ci          | utf8     |  33 | Yes     | Yes      |       1 |</span><br><span class="line">| utf8_bin                 | utf8     |  83 |         | Yes      |       1 |</span><br><span class="line">| utf8_unicode_ci          | utf8     | 192 |         | Yes      |       8 |</span><br><span class="line">| utf8_icelandic_ci        | utf8     | 193 |         | Yes      |       8 |</span><br><span class="line">| utf8_roman_ci            | utf8     | 207 |         | Yes      |       8 |</span><br><span class="line">| utf8_persian_ci          | utf8     | 208 |         | Yes      |       8 |</span><br><span class="line">| utf8_croatian_ci         | utf8     | 213 |         | Yes      |       8 |</span><br><span class="line">| utf8_unicode_520_ci      | utf8     | 214 |         | Yes      |       8 |</span><br><span class="line">| utf8_vietnamese_ci       | utf8     | 215 |         | Yes      |       8 |</span><br><span class="line">| utf8_general_mysql500_ci | utf8     | 223 |         | Yes      |       1 |</span><br><span class="line">| gb18030_chinese_ci       | gb18030  | 248 | Yes     | Yes      |       2 |</span><br><span class="line">| gb18030_bin              | gb18030  | 249 |         | Yes      |       1 |</span><br><span class="line">| gb18030_unicode_520_ci   | gb18030  | 250 |         | Yes      |       8 |</span><br><span class="line">+<span class="comment">--------------------------+----------+-----+---------+----------+---------+</span></span><br><span class="line">222 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>有的字符集具有不止一种校对。如latin1对不同的欧洲语言有几种校对，而且许多校对出现两次，一次区分大小写（由_cs表示)，一次不区分大小写（由_ci表示）</li>
+<li>通常系统管理在安装时定义一个默认的字符集和校对。此外，也可以在创建数据库时，指定默认的字符集和校对</li>
+</ul>
+</li>
+<li>Q:确定所用的字符集和校对<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW VARIABLES LIKE &#x27;character%&#x27;;</span><br><span class="line">+<span class="comment">--------------------------+----------------------------+</span></span><br><span class="line">| Variable_name            | Value                      |</span><br><span class="line">+<span class="comment">--------------------------+----------------------------+</span></span><br><span class="line">| character_set_client     | utf8                       |</span><br><span class="line">| character_set_connection | utf8                       |</span><br><span class="line">| character_set_database   | latin1                     |</span><br><span class="line">| character_set_filesystem | binary                     |</span><br><span class="line">| character_set_results    | utf8                       |</span><br><span class="line">| character_set_server     | latin1                     |</span><br><span class="line">| character_set_system     | utf8                       |</span><br><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |</span><br><span class="line">+<span class="comment">--------------------------+----------------------------+</span></span><br><span class="line">8 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; <span class="keyword">SHOW</span> <span class="keyword">VARIABLES</span> <span class="keyword">LIKE</span> <span class="string">&#x27;collation%&#x27;</span>;</span><br><span class="line">+<span class="comment">----------------------+-------------------+</span></span><br><span class="line">| Variable_name        | Value             |</span><br><span class="line">+<span class="comment">----------------------+-------------------+</span></span><br><span class="line">| collation_connection | utf8_general_ci   |</span><br><span class="line">| collation_database   | latin1_swedish_ci |</span><br><span class="line">| collation_server     | latin1_swedish_ci |</span><br><span class="line">+<span class="comment">----------------------+-------------------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>字符集很少是服务器范围(甚至是数据库范围)的设置。不同的表，甚至不同的列都可能需要不同的字符集，而且两者都可以在创建表时指定</li>
+</ul>
+</li>
+<li>Q:使用带子句的CREATE TABLE给表指定字符集和校对<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE mytable</span><br><span class="line">    -&gt; (</span><br><span class="line">    -&gt;    columnn1 INT,</span><br><span class="line">    -&gt;    columnn2 VARCHAR(10)</span><br><span class="line">    -&gt; ) DEFAULT CHARACTER SET hebrew</span><br><span class="line">    -&gt;   COLLATE hebrew_general_ci;</span><br><span class="line">Query OK, 0 rows affected (0.22 sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:MySQL如何确定使用什么样的字符集和校对<ul>
+<li>1.如果指定CHARACTER SET和COLLATE两者，则使用这些值</li>
+<li>2.如果只指定CHARACTER SET，则使用此字符集及其默认的校对(如SHOW CHARACTER SET的结果中所示)</li>
+<li>3.如果既不指定CHARACTER SET，也不指定COLLATE，则使用数据库默认</li>
+</ul>
+</li>
+<li>Q:MySQL如何对特定列设置字符集和校对<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE mytable</span><br><span class="line">    -&gt; (</span><br><span class="line">    -&gt;    columnn1 INT,</span><br><span class="line">    -&gt;    columnn2 VARCHAR(10),</span><br><span class="line">    -&gt;    columnn3 VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_general_ci</span><br><span class="line">    -&gt; ) DEFAULT CHARACTER SET hebrew</span><br><span class="line">    -&gt;   COLLATE hebrew_general_ci;</span><br><span class="line">Query OK, 0 rows affected (0.26 sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:如何使用与创建表时不同的校对顺序排序特定的SELECT语句<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM customers</span><br><span class="line">    -&gt; ORDER BY lastname, firstname COLLATE latin1_general_cs;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>校对在对用ORDER BY子句检索出来的数据排序时起重要的作用，这里SELECT使用COLLATE指定一个备用的校对顺序，这会影响到结果排序的次序</li>
+<li>这个例子为区分大小写的校对。反之也可以</li>
+</ul>
+</li>
+<li>Q:COLLATE还可以使用在什么语句<ul>
+<li>SELECT、ORDER BY、GROUP BY、HAVING、聚集函数、别名等</li>
+<li>值得注意的是，如果绝对需要，串可以使用Cast()或Convert()函数在字符集之间进行转换</li>
+</ul>
+</li>
+</ul>
+<h1 id="第28章-安全管理"><a href="#第28章-安全管理" class="headerlink" title="第28章 安全管理"></a>第28章 安全管理</h1><ul>
+<li>Q:获得所有用户账号列表<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">USE</span> mysql;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">user</span> <span class="keyword">FROM</span> <span class="keyword">user</span>;</span><br></pre></td></tr></table></figure></li>
+<li>Q:创建用户账号<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> ben <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">&#x27;pa@$$w0rd&#x27;</span>;</span><br></pre></td></tr></table></figure></li>
+<li>Q:重新命名一个用户账户<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RENAME</span> <span class="keyword">USER</span> ben <span class="keyword">TO</span> bforta;</span><br></pre></td></tr></table></figure></li>
+<li>Q:删除用户账户<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">USER</span> bforta;</span><br></pre></td></tr></table></figure></li>
+<li>Q:查看用户账户权限<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW GRANTS FOR root;</span><br><span class="line">+<span class="comment">-------------------------------------------+</span></span><br><span class="line">| Grants for root@%                         |</span><br><span class="line">+<span class="comment">-------------------------------------------+</span></span><br><span class="line">| <span class="keyword">GRANT</span> <span class="keyword">ALL</span> <span class="keyword">PRIVILEGES</span> <span class="keyword">ON</span> *.* <span class="keyword">TO</span> <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> |</span><br><span class="line">+<span class="comment">-------------------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果显示<code>USAGE ON *.*</code>，其中USAGE表示根本没有权限</li>
+</ul>
+</li>
+<li>Q:允许用户在crashcourse数据库的所有表上使用SELECT<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> crashcourse.* <span class="keyword">TO</span> bforta;</span><br></pre></td></tr></table></figure></li>
+<li>Q:取消赋予用户bforta的SELECT访问权限<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> crashcourse.* <span class="keyword">FROM</span> bforta;</span><br></pre></td></tr></table></figure></li>
+<li>Q:权限表<ul>
+<li><img src="https://img.shiqi-lu.tech/20210219172421.png"></li>
+</ul>
+</li>
+<li>Q:设置自己的口令<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="keyword">PASSWORD</span> = <span class="keyword">Password</span>(<span class="string">&#x27;n3w p@$$w0rd&#x27;</span>);</span><br></pre></td></tr></table></figure></li>
+<li>Q:更改用户口令<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="keyword">PASSWORD</span> <span class="keyword">FOR</span> bforta = <span class="keyword">Password</span>(<span class="string">&#x27;n3w p@$$w0rd&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第29章-数据库维护"><a href="#第29章-数据库维护" class="headerlink" title="第29章 数据库维护"></a>第29章 数据库维护</h1><ul>
+<li>Q:数据备份的3个方案<ul>
+<li>备份前首先使用<code>FLUSH TABLES</code>刷新未写数据</li>
+<li>使用mysqldump转储所有数据库内容到某个外部文件</li>
+<li>使用mysqlhotcopy从一个数据库复制所有数据(某些数据库引擎不支持)</li>
+<li>使用MySQL的<code>BACKUP TABLE</code>或<code>SELECT INTO OUTFILE</code>转储所有数据到某个外部文件。这两条语句都接受要创建的系统文件名，此系统文件必须不存在。可用<code>RESTORE TABLE</code>来复原</li>
+</ul>
+</li>
+<li>Q:检查表键是否正确<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ANALYZE TABLE orders;</span><br><span class="line">+<span class="comment">--------------------+---------+----------+----------+</span></span><br><span class="line">| Table              | Op      | Msg_type | Msg_text |</span><br><span class="line">+<span class="comment">--------------------+---------+----------+----------+</span></span><br><span class="line">| crashcourse.orders | <span class="keyword">analyze</span> | <span class="keyword">status</span>   | OK       |</span><br><span class="line">+<span class="comment">--------------------+---------+----------+----------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.06</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检查CHECK TABLE<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CHECK TABLE orders, orderitems;</span><br><span class="line">+<span class="comment">------------------------+-------+----------+----------+</span></span><br><span class="line">| Table                  | Op    | Msg_type | Msg_text |</span><br><span class="line">+<span class="comment">------------------------+-------+----------+----------+</span></span><br><span class="line">| crashcourse.orders     | <span class="keyword">check</span> | <span class="keyword">status</span>   | OK       |</span><br><span class="line">| crashcourse.orderitems | <span class="keyword">check</span> | <span class="keyword">status</span>   | OK       |</span><br><span class="line">+<span class="comment">------------------------+-------+----------+----------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:修复相应表<ul>
+<li><code>REPAIR TABLE</code></li>
+</ul>
+</li>
+<li>Q:从一个表中删除大量数据后收回所用空间<ul>
+<li><code>OPTIMIZE TABLE</code></li>
+</ul>
+</li>
+<li>Q:MySQL的日志文件<ul>
+<li>错误日志：包含启动和关闭问题以及任意关键错误的细节。通常名为 hostname.err，位于 data 目录</li>
+<li>查询日志：记录所有MySQL活动，在诊断问题时非常有用。此日志文件可能会很快地变得非常大，因此不应该长期使用它。通常名为 hostname.log ， 位于 data 目录</li>
+<li>二进制日志：记录更新过数据的所有语句。通常名为hostname-bin，位于 data 目录</li>
+<li>慢查询日志：记录执行缓慢的任何查询。这 个日志在确定数据库何处需要优化很有用。 此日志通常名为 hostname-slow.log ， 位于 data 目录</li>
+</ul>
+</li>
+</ul>
+<h1 id="第30章-改善性能"><a href="#第30章-改善性能" class="headerlink" title="第30章 改善性能"></a>第30章 改善性能</h1><ul>
+<li>Q:改善性能的建议<ul>
+<li>MySQL（与所有DBMS一样）具有特定的硬件建议。对用于生产的服务器来说，应该坚持遵循这些硬件建议</li>
+<li>关键的生产DBMS应该运行在自己的专用服务器上</li>
+<li>MySQL是用一系列的默认设置预先配置的，从这些设置开始通常是很好的。但过一段时间后你可能需要调整内存分配、缓冲区大小等。（为查看当前设置， 可使用 <code>SHOW VARIABLES;</code> 和 <code>SHOW STATUS;</code>）</li>
+<li>MySQL是一个多用户多线程的DBMS。如果这些任务中的某一个执行缓慢，则所有请求都会执行缓慢。如果你到显著的性能不良，可使用<code>SHOW PROCESSLIST</code>显示所有活动进程（以及它们的线程ID和执行时间）。还可用KILL命令终结某个特定的进程</li>
+<li>总有不止一种方法编写同一条SELECT语句。应该试验联结、并、子查询等，找出最佳的方法</li>
+<li>使用EXPLAIN语句让MySQL解释它将如何执行一条SELECT语句</li>
+<li>一般来说，存储过程执行得比一条一条地执行其中的各条MySQL语句快</li>
+<li>应该总是使用正确的数据类型</li>
+<li>决不要检索比需求还要多的数据。除非你真正需要每个列，否则不要用<code>SELECT *</code></li>
+<li>有的操作（包括INSERT）支持一个可选的DELAYED关键字，如果使用它，将把控制立即返回给调用程序，并且一旦有可能就实际执行该操作</li>
+<li>在导入数据时，应该关闭自动提交。你可能还想删除索引（包括FULLTEXT索引），然后在导入完成后再重建它们</li>
+<li>必须索引数据库表以改善数据检索的性能。确定索引什么不是一件微不足道的任务， 需要分析使用的 SELECT 语句以找出重复的WHERE和ORDER BY子句。如果一个简单的WHERE子句返回结果所花的时间太长，则可以断定其中使用的列（或几个列）就是需要索引的对象</li>
+<li>SELECT 语句中有一系列复杂的 OR 条件时，通过使用多条 SELECT 语句和连接它们的 UNION 语句， 可看到极大的性能改进</li>
+<li>索引改善数据检索的性能，但损害数据插入、删除和更新的性能。 如果有一些表，它们收集数据且不经常被搜索，则在有必要之前不要索引它们。（索引可根据需要添加和删除。）</li>
+<li>LIKE很慢。一般来说，最好是使用FULLTEXT而不是LIKE</li>
+<li>数据库是不断变化的实体。一组优化良好的表一会儿后可能就面目全非了。由于表的使用和内容的更改，理想的优化和配置也会改变</li>
+<li>最重要的规则就是，每条规则在某些条件下都会被打破</li>
+</ul>
+</li>
+</ul>
+<h1 id="附录D-MySQL数据类型"><a href="#附录D-MySQL数据类型" class="headerlink" title="附录D MySQL数据类型"></a>附录D MySQL数据类型</h1><ul>
+<li>串数据类型<ul>
+<li><img src="https://img.shiqi-lu.tech/20210325082641.png"></li>
+</ul>
+</li>
+<li>数值数据类型<ul>
+<li><img src="https://img.shiqi-lu.tech/20210325082724.png"></li>
+</ul>
+</li>
+<li>日期和时间数据类型<ul>
+<li><img src="https://img.shiqi-lu.tech/20210325082748.png"></li>
+</ul>
+</li>
+<li>二进制数据类型<ul>
+<li><img src="https://img.shiqi-lu.tech/20210325082804.png"></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/mysql-crash-course-21-30/" title="《MySQL必知必会》学习笔记21-30章">http://shiqi-lu.tech/mysql-crash-course-21-30/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/binary-search/" rel="prev" title="六种不同的二分查找全总结">
+                  <i class="fa fa-chevron-left"></i> 六种不同的二分查找全总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/arch-sj-1/" rel="next" title="《沈剑架构师训练营》第1章 - 技术选型">
+                  《沈剑架构师训练营》第1章 - 技术选型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/mysql-crash-course-21-30/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>

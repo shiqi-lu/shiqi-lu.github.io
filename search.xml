@@ -178,143 +178,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《沈剑架构师训练营》第3章 - 快速性能优化</title>
-    <url>/arch-sj-3/</url>
-    <content><![CDATA[<h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
-<li>no11：与静态页面、动态页面匹配的加速技术有哪些？<ul>
-<li>静态页面<ul>
-<li>CDN</li>
-<li>nginx</li>
-<li>squid/varnish</li>
-</ul>
-</li>
-<li>动态页面<ul>
-<li>分层架构</li>
-<li>服务化架构</li>
-<li>数据库，缓存架构</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no11：动静分离是什么？<ul>
-<li>静态页面与动态页面分开不同的系统访问的架构设计方法</li>
-<li><img src="https://img.shiqi-lu.tech/20210906113515.png"></li>
-<li>静态页面，几毫秒返回</li>
-<li>动态页面，几百毫秒返回</li>
-</ul>
-</li>
-<li>no11：「页面静态化」是什么？如何实施？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210906113737.png"></li>
-<li>把网页内容提前生成相关的 html，用静态页面相关的加速技术来进行加速</li>
-<li>适合场景：返回页面结果集有限</li>
-<li>不适合场景：返回页面结果集数据量过大，如帖子，搜索等</li>
-</ul>
-</li>
-</ul>
-<h1 id="12、性能优化：读写分离，前台与后台分离"><a href="#12、性能优化：读写分离，前台与后台分离" class="headerlink" title="12、性能优化：读写分离，前台与后台分离"></a>12、性能优化：读写分离，前台与后台分离</h1><ul>
-<li>no12：什么是读写分离？能解决什么问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908205424.png"></li>
-<li>一主多从，读写分离，主从同步，是一种常见的数据库架构</li>
-<li>一般来说，主库，提供数据库的写服务，从库，提供数据库的读服务，主从之间通过某种机制来实现数据库的同步，如 MySQL 的 binlog，一个主从同步集群通常被称为一个「分组」</li>
-<li>能解决什么问题？<ul>
-<li>主要可以线性提升读的性能</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no12：什么是水平切分？能解决什么问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908205943.png"></li>
-<li>数据库水平切分后，数据库之间没有数据的重合，不需要同步</li>
-<li>能解决什么问题？<ul>
-<li>数据库存储容量提升</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no12：什么是前台？什么是后台？<ul>
-<li>前台，用户访问的对外系统</li>
-<li>后台，运营访问的对内系统</li>
-</ul>
-</li>
-</ul>
-<h1 id="13、本章小结：百万流量，这些技术够用了"><a href="#13、本章小结：百万流量，这些技术够用了" class="headerlink" title="13、本章小结：百万流量，这些技术够用了"></a>13、本章小结：百万流量，这些技术够用了</h1><ul>
-<li>no13：早期单体 ALL in one 架构，遇到什么问题？这阶段的优化思路是什么？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908211227.png"></li>
-<li>性能问题：访问人数多的时候，希望系统快一点</li>
-<li>耦合问题：当出现问题的时候，系统不要全部挂掉</li>
-<li>思路：<ul>
-<li>1.技术不炫技，以解决业务问题为导向</li>
-<li>2.系统改造尽可能小的架构方案</li>
-<li>3.以最快的速度，提升系统的性能，解决遇到的问题</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no13：单体架构演进：伪分布式，提升性能<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908211506.png"></li>
-<li>三大分离<ul>
-<li>动静分离</li>
-<li>读写分离(引发读写延时新问题)</li>
-<li>前台后台分离</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no13：单体架构演进：垂直拆分，解耦<ul>
-<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
-<li>业务垂直划分</li>
-<li>代码垂直划分(子系统解耦)</li>
-<li>数据库垂直划分(数据量降低,延时缓解)</li>
-<li>研发团队垂直拆分(专业化，效率提升)</li>
-</ul>
-</li>
-<li>no13：如何保证垂直拆分后，子系统的高可用？<ul>
-<li>使用反向代理</li>
-<li>子web系统的性能，不再受到单台机器资源限制，可以扩展</li>
-<li>子web系统，实现了高可用(伪集群-&gt;真集群) </li>
-<li><img src="https://img.shiqi-lu.tech/20210908212034.png"></li>
-</ul>
-</li>
-<li>no13：真集群后，反向代理如何做负载均衡？<ul>
-<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
-<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
-</ul>
-</li>
-<li>no13：反向代理，如何保证高可用？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908212221.png"></li>
-</ul>
-</li>
-<li>no13：反向代理技术出现之前，接入层如何扩展？<ul>
-<li>DNS 轮询</li>
-<li><img src="https://img.shiqi-lu.tech/20210908212329.png"></li>
-</ul>
-</li>
-<li>no13：使用多层反向代理后，如何做到继续提升性能？<ul>
-<li>DNS 轮询</li>
-<li><img src="https://img.shiqi-lu.tech/20210908212439.png"></li>
-</ul>
-</li>
-<li>no13：session 一致性如何保障？<ul>
-<li>session 同步法</li>
-<li>客户端存储法</li>
-<li>反向代理 hash 一致性</li>
-<li>后端统一存储法</li>
-</ul>
-</li>
-<li>no13：如何加速静态资源？<ul>
-<li>CDN</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《沈剑架构师训练营》第2章 - 接入层架构</title>
     <url>/arch-sj-2/</url>
     <content><![CDATA[<h1 id="6、接入层：反向代理，负载均衡，我有话要说"><a href="#6、接入层：反向代理，负载均衡，我有话要说" class="headerlink" title="6、接入层：反向代理，负载均衡，我有话要说"></a>6、接入层：反向代理，负载均衡，我有话要说</h1><ul>
@@ -532,6 +395,143 @@
 <li>no10：TCP负载均衡的服务端负载均衡(服务状态拉取)<ul>
 <li><img src="https://img.shiqi-lu.tech/20210906102148.png"></li>
 <li>tcp-server就独立与解耦了，只需要专注于自身 tcp-server 业务相关的功能即可，而高可用，负载均衡，扩展性，存活性，都由 web-server 这个子系统去实施</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《沈剑架构师训练营》第3章 - 快速性能优化</title>
+    <url>/arch-sj-3/</url>
+    <content><![CDATA[<h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
+<li>no11：与静态页面、动态页面匹配的加速技术有哪些？<ul>
+<li>静态页面<ul>
+<li>CDN</li>
+<li>nginx</li>
+<li>squid/varnish</li>
+</ul>
+</li>
+<li>动态页面<ul>
+<li>分层架构</li>
+<li>服务化架构</li>
+<li>数据库，缓存架构</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no11：动静分离是什么？<ul>
+<li>静态页面与动态页面分开不同的系统访问的架构设计方法</li>
+<li><img src="https://img.shiqi-lu.tech/20210906113515.png"></li>
+<li>静态页面，几毫秒返回</li>
+<li>动态页面，几百毫秒返回</li>
+</ul>
+</li>
+<li>no11：「页面静态化」是什么？如何实施？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906113737.png"></li>
+<li>把网页内容提前生成相关的 html，用静态页面相关的加速技术来进行加速</li>
+<li>适合场景：返回页面结果集有限</li>
+<li>不适合场景：返回页面结果集数据量过大，如帖子，搜索等</li>
+</ul>
+</li>
+</ul>
+<h1 id="12、性能优化：读写分离，前台与后台分离"><a href="#12、性能优化：读写分离，前台与后台分离" class="headerlink" title="12、性能优化：读写分离，前台与后台分离"></a>12、性能优化：读写分离，前台与后台分离</h1><ul>
+<li>no12：什么是读写分离？能解决什么问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908205424.png"></li>
+<li>一主多从，读写分离，主从同步，是一种常见的数据库架构</li>
+<li>一般来说，主库，提供数据库的写服务，从库，提供数据库的读服务，主从之间通过某种机制来实现数据库的同步，如 MySQL 的 binlog，一个主从同步集群通常被称为一个「分组」</li>
+<li>能解决什么问题？<ul>
+<li>主要可以线性提升读的性能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no12：什么是水平切分？能解决什么问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908205943.png"></li>
+<li>数据库水平切分后，数据库之间没有数据的重合，不需要同步</li>
+<li>能解决什么问题？<ul>
+<li>数据库存储容量提升</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no12：什么是前台？什么是后台？<ul>
+<li>前台，用户访问的对外系统</li>
+<li>后台，运营访问的对内系统</li>
+</ul>
+</li>
+</ul>
+<h1 id="13、本章小结：百万流量，这些技术够用了"><a href="#13、本章小结：百万流量，这些技术够用了" class="headerlink" title="13、本章小结：百万流量，这些技术够用了"></a>13、本章小结：百万流量，这些技术够用了</h1><ul>
+<li>no13：早期单体 ALL in one 架构，遇到什么问题？这阶段的优化思路是什么？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908211227.png"></li>
+<li>性能问题：访问人数多的时候，希望系统快一点</li>
+<li>耦合问题：当出现问题的时候，系统不要全部挂掉</li>
+<li>思路：<ul>
+<li>1.技术不炫技，以解决业务问题为导向</li>
+<li>2.系统改造尽可能小的架构方案</li>
+<li>3.以最快的速度，提升系统的性能，解决遇到的问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no13：单体架构演进：伪分布式，提升性能<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908211506.png"></li>
+<li>三大分离<ul>
+<li>动静分离</li>
+<li>读写分离(引发读写延时新问题)</li>
+<li>前台后台分离</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no13：单体架构演进：垂直拆分，解耦<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
+<li>业务垂直划分</li>
+<li>代码垂直划分(子系统解耦)</li>
+<li>数据库垂直划分(数据量降低,延时缓解)</li>
+<li>研发团队垂直拆分(专业化，效率提升)</li>
+</ul>
+</li>
+<li>no13：如何保证垂直拆分后，子系统的高可用？<ul>
+<li>使用反向代理</li>
+<li>子web系统的性能，不再受到单台机器资源限制，可以扩展</li>
+<li>子web系统，实现了高可用(伪集群-&gt;真集群) </li>
+<li><img src="https://img.shiqi-lu.tech/20210908212034.png"></li>
+</ul>
+</li>
+<li>no13：真集群后，反向代理如何做负载均衡？<ul>
+<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
+<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
+</ul>
+</li>
+<li>no13：反向代理，如何保证高可用？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908212221.png"></li>
+</ul>
+</li>
+<li>no13：反向代理技术出现之前，接入层如何扩展？<ul>
+<li>DNS 轮询</li>
+<li><img src="https://img.shiqi-lu.tech/20210908212329.png"></li>
+</ul>
+</li>
+<li>no13：使用多层反向代理后，如何做到继续提升性能？<ul>
+<li>DNS 轮询</li>
+<li><img src="https://img.shiqi-lu.tech/20210908212439.png"></li>
+</ul>
+</li>
+<li>no13：session 一致性如何保障？<ul>
+<li>session 同步法</li>
+<li>客户端存储法</li>
+<li>反向代理 hash 一致性</li>
+<li>后端统一存储法</li>
+</ul>
+</li>
+<li>no13：如何加速静态资源？<ul>
+<li>CDN</li>
 </ul>
 </li>
 </ul>
@@ -1557,6 +1557,108 @@
       </tags>
   </entry>
   <entry>
+    <title>六种不同的二分查找全总结</title>
+    <url>/binary-search/</url>
+    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
+<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
+<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
+<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
+<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
+<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
+<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while 中是&lt;而不是&lt;=<ul>
+<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
+<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
+<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
+<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
+<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
+<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
+<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
+<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
+<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
+<li>循环判断规则为<code>left &lt;= right</code></li>
+<li>结束时<code>left == right+1</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
+<li>初始化为<code>left = 0; right = nums.length</code></li>
+<li>循环判断规则为<code>left &lt; right</code></li>
+<li>结束时<code>left == right</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
+<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
+<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
+<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
+<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
+</ul>
+</li>
+<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
+<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
+<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
+<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
+<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
+<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
+<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
+</ul>
+</li>
+</ul>
+<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
+<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>Python3<ul>
+<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
+<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
+<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
+<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>二分查找</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>类别不平衡问题的方法汇总</title>
     <url>/class-imbalance/</url>
     <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
@@ -1742,211 +1844,6 @@
         <tag>机器学习</tag>
         <tag>特征工程</tag>
         <tag>数据预处理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
-    <url>/distrib-principal-algo-1/</url>
-    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
-<li>Q：分布式技术涉及内容<ul>
-<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
-<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
-<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
-</ul>
-</li>
-</ul>
-<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
-<li>Q:分布式的三个演进模式是什么？<ul>
-<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
-<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
-<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
-</ul>
-</li>
-<li>Q:分布式是什么？<ul>
-<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
-</ul>
-</li>
-<li>Q:判断采取数据并行还是任务并行的方式：<ul>
-<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
-<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
-</ul>
-</li>
-</ul>
-<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
-<li>Q:分布式系统的目的是什么？<ul>
-<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
-</ul>
-</li>
-<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
-<li>一个系统处理各种任务的能力</li>
-</ul>
-</li>
-<li>Q:分布式的3个性能指标是什么？<ul>
-<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
-</ul>
-</li>
-<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
-<li>系统在一定时间内可以处理的任务数</li>
-<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
-</ul>
-</li>
-<li>Q:QPS是什么？<ul>
-<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
-</ul>
-</li>
-<li>Q:TPS是什么？<ul>
-<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
-</ul>
-</li>
-<li>Q:BPS是什么？<ul>
-<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
-</ul>
-</li>
-<li>Q:响应时间是什么？<ul>
-<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
-</ul>
-</li>
-<li>Q:完成时间是什么？<ul>
-<li>系统真正完成一个请求或处理需要花费的时间</li>
-</ul>
-</li>
-<li>Q:资源占用是什么？<ul>
-<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
-</ul>
-</li>
-<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
-<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
-<li>满载资源占用：一个系统满额负载时的资源占用</li>
-</ul>
-</li>
-<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
-<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
-<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
-</ul>
-</li>
-<li>Q:系统可用性的两个指标是什么？<ul>
-<li>1.系统停止服务的时间与总的时间之比</li>
-<li>2.某功能的失败次数与总的请求次数之比</li>
-</ul>
-</li>
-<li>Q:可扩展性(Scalability)是什么?<ul>
-<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
-</ul>
-</li>
-<li>Q:有哪两种扩展系统的方法？<ul>
-<li>垂直/纵向扩展：增加单机的硬件能力</li>
-<li>水平/横向扩展：增加计算机数量</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>分布式</category>
-      </categories>
-      <tags>
-        <tag>分布式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>六种不同的二分查找全总结</title>
-    <url>/binary-search/</url>
-    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
-<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
-<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
-<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
-<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
-<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
-</ul>
-</li>
-</ul>
-<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
-<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为什么while 中是&lt;而不是&lt;=<ul>
-<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
-<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
-<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
-</ul>
-</li>
-</ul>
-<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
-<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
-<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
-<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
-</ul>
-<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
-<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
-<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
-</ul>
-<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
-<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
-<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
-<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
-<li>循环判断规则为<code>left &lt;= right</code></li>
-<li>结束时<code>left == right+1</code></li>
-<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
-<li>初始化为<code>left = 0; right = nums.length</code></li>
-<li>循环判断规则为<code>left &lt; right</code></li>
-<li>结束时<code>left == right</code></li>
-<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
-<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
-<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
-<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
-<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
-</ul>
-</li>
-<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
-<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
-<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
-<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
-<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
-<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
-<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
-</ul>
-</li>
-</ul>
-<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
-<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>Python3<ul>
-<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
-<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
-<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
-<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
-</ul>
-</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>二分查找</tag>
       </tags>
   </entry>
   <entry>
@@ -2221,6 +2118,109 @@
       </categories>
       <tags>
         <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
+    <url>/distrib-principal-algo-1/</url>
+    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
+<li>Q：分布式技术涉及内容<ul>
+<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
+<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
+<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
+<li>Q:分布式的三个演进模式是什么？<ul>
+<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
+<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
+<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
+</ul>
+</li>
+<li>Q:分布式是什么？<ul>
+<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
+</ul>
+</li>
+<li>Q:判断采取数据并行还是任务并行的方式：<ul>
+<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
+<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
+</ul>
+</li>
+</ul>
+<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
+<li>Q:分布式系统的目的是什么？<ul>
+<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
+</ul>
+</li>
+<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
+<li>一个系统处理各种任务的能力</li>
+</ul>
+</li>
+<li>Q:分布式的3个性能指标是什么？<ul>
+<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
+</ul>
+</li>
+<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
+<li>系统在一定时间内可以处理的任务数</li>
+<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
+</ul>
+</li>
+<li>Q:QPS是什么？<ul>
+<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
+</ul>
+</li>
+<li>Q:TPS是什么？<ul>
+<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
+</ul>
+</li>
+<li>Q:BPS是什么？<ul>
+<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
+</ul>
+</li>
+<li>Q:响应时间是什么？<ul>
+<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
+</ul>
+</li>
+<li>Q:完成时间是什么？<ul>
+<li>系统真正完成一个请求或处理需要花费的时间</li>
+</ul>
+</li>
+<li>Q:资源占用是什么？<ul>
+<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
+</ul>
+</li>
+<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
+<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
+<li>满载资源占用：一个系统满额负载时的资源占用</li>
+</ul>
+</li>
+<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
+<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
+<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
+</ul>
+</li>
+<li>Q:系统可用性的两个指标是什么？<ul>
+<li>1.系统停止服务的时间与总的时间之比</li>
+<li>2.某功能的失败次数与总的请求次数之比</li>
+</ul>
+</li>
+<li>Q:可扩展性(Scalability)是什么?<ul>
+<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
+</ul>
+</li>
+<li>Q:有哪两种扩展系统的方法？<ul>
+<li>垂直/纵向扩展：增加单机的硬件能力</li>
+<li>水平/横向扩展：增加计算机数量</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>
@@ -8543,6 +8543,295 @@ tensor([10.])</code></pre>
       <tags>
         <tag>英语</tag>
         <tag>语法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《MySQL必知必会》学习笔记21-30章</title>
+    <url>/mysql-crash-course-21-30/</url>
+    <content><![CDATA[<h1 id="第21章-创建和操纵表"><a href="#第21章-创建和操纵表" class="headerlink" title="第21章 创建和操纵表"></a>第21章 创建和操纵表</h1><ul>
+<li>Q:创建customers表示例，NULL、自增、主键、默认值写法<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> customers</span><br><span class="line">(</span><br><span class="line">  cust_id      <span class="built_in">int</span>       <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  cust_name    <span class="built_in">char</span>(<span class="number">50</span>)  <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  cust_address <span class="built_in">char</span>(<span class="number">50</span>)  <span class="literal">NULL</span>,</span><br><span class="line">  cust_city    <span class="built_in">char</span>(<span class="number">50</span>)  <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;bj&#x27;</span>,</span><br><span class="line">  cust_state   <span class="built_in">char</span>(<span class="number">5</span>)   <span class="literal">NULL</span>,</span><br><span class="line">  cust_email   <span class="built_in">char</span>(<span class="number">255</span>) <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (cust_id)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>NULL：允许NULL值的列允许在插入行时不给出该列的值，NOT NULL则在插入或更新行时该列必须有值</li>
+<li>注意NULL值和空串’’，空串是一个有效值，不是NULL</li>
+<li>主键：表的每个行必须具有唯一的主键值，如果主键使用单个列，则它的值必须唯一。如果使用多个列，则这些列的组合值必须唯一。主键中只能使用不允许NULL值的列</li>
+<li>AUTO_INCREMENT：本列每当增加一行时，自动增量。多个语句连续使用时，可用last_insert_id()获取最后一个AUTO_INCREMENT值，<code>SELECT last_insert_id()</code></li>
+<li>默认值：在未给出值时使用该值</li>
+<li>引擎类型：<ul>
+<li>InnoDB：可靠的事务处理引擎，不支持全文本搜索</li>
+<li>MEMORY：功能等同于MyISAM，但数据存储在内存，数据很快，适合临时表</li>
+<li>MyISAM：性能极高的引擎，支持全文本搜索，但不支持事务处理</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:修改表结构，给表添加一个列<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> vendors</span><br><span class="line"><span class="keyword">ADD</span> vend_phone <span class="built_in">CHAR</span>(<span class="number">20</span>);</span><br></pre></td></tr></table></figure></li>
+<li>Q:修改表结构，删除表中的列<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> vendors</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">COLUMN</span> VEND_phone;</span><br></pre></td></tr></table></figure></li>
+<li>Q:修改表结构，定义外键<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> orderitems</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> fk_orderitems_orders</span><br><span class="line"><span class="keyword">FOREIGN</span> <span class="keyword">KEY</span> (order_num) <span class="keyword">REFERENCES</span> orders (order_num);</span><br></pre></td></tr></table></figure></li>
+<li>Q:复杂表结构的更改步骤<ul>
+<li>用新的列布局创建一个新表</li>
+<li>使用INSERT SELECT语句从旧表复制数据到新表。必要时适用转换函数和计算字段</li>
+<li>校验包含所需数据的新表</li>
+<li>重命名旧表(如果确定，可以删除它)</li>
+<li>用旧表原来的名字重命名新表</li>
+<li>根据需要，重新创建触发器、存储过程、索引和外键</li>
+<li>注意：使用ALTER TABLE要极为小心，应该在进行改动前做一个完整的备份(模式和数据的备份)。数据库表的更改不能撤销</li>
+</ul>
+</li>
+<li>Q:删除表<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> customers2;</span><br></pre></td></tr></table></figure></li>
+<li>Q:重命名多个表<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RENAME</span> <span class="keyword">TABLE</span> backup_customers <span class="keyword">TO</span> customers,</span><br><span class="line">             backup_vendors <span class="keyword">TO</span> vendors;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第22章-使用视图"><a href="#第22章-使用视图" class="headerlink" title="第22章 使用视图"></a>第22章 使用视图</h1><ul>
+<li>Q:视图有哪些应用呢<ul>
+<li>1.重用SQL语句</li>
+<li>2.简化复杂的SQL操作。在编写查询后，可以方便地重用它而不必知道它的基本查询细节</li>
+<li>3.使用表的组成部分而不是整个表</li>
+<li>4.保护数据。可以给用户授予表的特定部分的访问权限而不是整个表的访问权限</li>
+<li>5.更改数据格式和表示。视图可返回与底层表的表示和格式不同的数据</li>
+</ul>
+</li>
+<li>Q:视图的可用操作<ul>
+<li>可用与表基本相同的方式利用它们。可对视图执行SELECT操作，过滤和排序数据，将视图联结到其它视图或表，甚至能添加和更新数据(存在一些限制)</li>
+<li>重要的是知道视图仅仅是用来查看存储在别处的数据的一种设施。 视图本身不包含数据，因此它们返回的数据是从其他表中检索出来的。 在添加或更改这些表中的数据时，视图将返回改变过的数据</li>
+<li>因为视图不包含数据，所以每次使用视图时，都必须处理查询执行时所需的任一个检索。如果用多个联结和过滤创建了复杂的视图或者嵌套了视图，可能会发现性能下降得很厉害。因此，在部署使用了大量视图的应用前，应该进行测试</li>
+</ul>
+</li>
+<li>Q:创图创建和使用有哪些常见的规则和限制？<ul>
+<li>与表一样，视图必须唯一命名(不能给视图取与别的视图或表相同的名字)</li>
+<li>对于可以创建的视图数目没有限制</li>
+<li>为了创建视图，必须具有足够的访问权限。这些限制通常由数据库管理人员授予</li>
+<li>视图可以嵌套，即可利用从其它视图中检索数据的查询来构造一个视图</li>
+<li>ORDER BY可以用在视图中，但如果从该视图检索数据SELECT中也含有ORDER BY，那么该视图中的ORDER BY将被覆盖</li>
+<li>视图不能索引， 也不能有关联的触发器或默认值</li>
+<li>视图可以和表一起使用。如编写一条联结表和视图的SELECT语句</li>
+</ul>
+</li>
+<li>Q:如何使用视图<ul>
+<li>创建：<code>CREATE VIEW</code></li>
+<li>查看创建视图的语句：<code>SHOW CREATE VIEW viewname;</code></li>
+<li>删除：<code>DROP VIEW viewname;</code></li>
+<li>更新：可先用DROP再用CREATE，或<code>CREATE OR REPLACE VIEW</code>。</li>
+<li>如果要更新的视图不存在，则第2条更新语句会创建一个视图；如果要更新的视图存在， 则第2条更新语句会替换原有视图</li>
+</ul>
+</li>
+<li>Q:创建一个名为productcustomers的视图，联结三个表，以返回已订购了任意产品的所有客户的列表<ul>
+<li>如果执行<code>SELECT * FROM productcustomers</code>，列出订购了任意产品的所有客户的列表<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; CREATE VIEW productcustomers AS</span><br><span class="line">    -&gt; SELECT cust_name, cust_contact, prod_id</span><br><span class="line">    -&gt; FROM customers, orders, orderitems</span><br><span class="line">    -&gt; WHERE customers.cust_id = orders.cust_id</span><br><span class="line">    -&gt;   AND orderitems.order_num = orders.order_num;</span><br><span class="line">Query OK, 0 rows affected (0.04 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT * from productcustomers;</span><br><span class="line">+<span class="comment">----------------+--------------+---------+</span></span><br><span class="line">| cust_name      | cust_contact | prod_id |</span><br><span class="line">+<span class="comment">----------------+--------------+---------+</span></span><br><span class="line">| Coyote Inc.    | Y Lee        | ANV01   |</span><br><span class="line">| Coyote Inc.    | Y Lee        | ANV02   |</span><br><span class="line">| Coyote Inc.    | Y Lee        | TNT2    |</span><br><span class="line">| Coyote Inc.    | Y Lee        | FB      |</span><br><span class="line">| Coyote Inc.    | Y Lee        | FB      |</span><br><span class="line">| Coyote Inc.    | Y Lee        | OL1     |</span><br><span class="line">| Coyote Inc.    | Y Lee        | SLING   |</span><br><span class="line">| Coyote Inc.    | Y Lee        | ANV03   |</span><br><span class="line">| Wascals        | Jim Jones    | JP2000  |</span><br><span class="line">| Yosemite Place | Y Sam        | TNT2    |</span><br><span class="line">| E Fudd         | E Fudd       | FC      |</span><br><span class="line">+<span class="comment">----------------+--------------+---------+</span></span><br><span class="line">11 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>检索订购了产品TN2的客户<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT cust_name, cust_contact</span><br><span class="line">    -&gt; FROM productcustomers</span><br><span class="line">    -&gt; WHERE prod_id = &#x27;TNT2&#x27;;</span><br><span class="line">+<span class="comment">----------------+--------------+</span></span><br><span class="line">| cust_name      | cust_contact |</span><br><span class="line">+<span class="comment">----------------+--------------+</span></span><br><span class="line">| Coyote Inc.    | Y Lee        |</span><br><span class="line">| Yosemite Place | Y Sam        |</span><br><span class="line">+<span class="comment">----------------+--------------+</span></span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:如何使用重新格式化检索出的数据<ul>
+<li>经常需要某个格式的结果。不必在每次需要时执行联结，创建一个视图，每次需要时使用它即可<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT Concat(RTrim(vend_name), &#x27; (&#x27;, RTrim(vend_country), &#x27;)&#x27;)</span><br><span class="line">    -&gt;        AS vend_title</span><br><span class="line">    -&gt; FROM vendors</span><br><span class="line">    -&gt; ORDER BY vend_name;</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| vend_title              |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| ACME (USA)              |</span><br><span class="line">| Anvils R Us (USA)       |</span><br><span class="line">| Furball Inc. (USA)      |</span><br><span class="line">| Jet <span class="keyword">Set</span> (England)       |</span><br><span class="line">| Jouets Et Ours (France) |</span><br><span class="line">| LT Supplies (USA)       |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; <span class="keyword">CREATE</span> <span class="keyword">VIEW</span> vendorlocations <span class="keyword">AS</span></span><br><span class="line">    -&gt; <span class="keyword">SELECT</span> <span class="keyword">Concat</span>(<span class="keyword">RTrim</span>(vend_name), <span class="string">&#x27; (&#x27;</span>, <span class="keyword">RTrim</span>(vend_country), <span class="string">&#x27;)&#x27;</span>)</span><br><span class="line">    -&gt;        <span class="keyword">AS</span> vend_title</span><br><span class="line">    -&gt; <span class="keyword">FROM</span> vendors</span><br><span class="line">    -&gt; <span class="keyword">ORDER</span> <span class="keyword">BY</span> vend_name;</span><br><span class="line">Query OK, 0 rows affected (0.04 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT * FROM vendorlocations;</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| vend_title              |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line">| ACME (USA)              |</span><br><span class="line">| Anvils R Us (USA)       |</span><br><span class="line">| Furball Inc. (USA)      |</span><br><span class="line">| Jet <span class="keyword">Set</span> (England)       |</span><br><span class="line">| Jouets Et Ours (France) |</span><br><span class="line">| LT Supplies (USA)       |</span><br><span class="line">+<span class="comment">-------------------------+</span></span><br><span class="line"><span class="number">6</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:用视图过滤不想要的数据，如定义 customeremaillist视图，它过滤没有电子邮件地址的客户<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; CREATE VIEW customeremaillist AS</span><br><span class="line">    -&gt; SELECT cust_id, cust_name, cust_email</span><br><span class="line">    -&gt; FROM customers</span><br><span class="line">    -&gt; WHERE cust_email IS NOT NULL;</span><br><span class="line">Query OK, 0 rows affected (0.06 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT * FROM customeremaillist;</span><br><span class="line">+<span class="comment">---------+----------------+---------------------+</span></span><br><span class="line">| cust_id | cust_name      | cust_email          |</span><br><span class="line">+<span class="comment">---------+----------------+---------------------+</span></span><br><span class="line">|   10001 | Coyote Inc.    | ylee@coyote.com     |</span><br><span class="line">|   10003 | Wascals        | rabbit@wascally.com |</span><br><span class="line">|   10004 | Yosemite Place | sam@yosemite.com    |</span><br><span class="line">|   10008 | The Fudds      | elmer@fudd.com      |</span><br><span class="line">+<span class="comment">---------+----------------+---------------------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:如何使用视图简化计算字段<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT prod_id,</span><br><span class="line">    -&gt;        quantity,</span><br><span class="line">    -&gt;        item_price,</span><br><span class="line">    -&gt;        quantity*item_price AS expanded_price</span><br><span class="line">    -&gt; FROM orderitems</span><br><span class="line">    -&gt; WHERE order_num = 20005;</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">| prod_id | quantity | item_price | expanded_price |</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">| ANV01   |       10 |       5.99 |          59.90 |</span><br><span class="line">| ANV02   |        3 |       9.99 |          29.97 |</span><br><span class="line">| TNT2    |        5 |      10.00 |          50.00 |</span><br><span class="line">| FB      |        1 |      10.00 |          10.00 |</span><br><span class="line">+<span class="comment">---------+----------+------------+----------------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; <span class="keyword">CREATE</span> <span class="keyword">VIEW</span> orderitemexpanded <span class="keyword">AS</span></span><br><span class="line">    -&gt; <span class="keyword">SELECT</span> order_num,</span><br><span class="line">    -&gt;        prod_id,</span><br><span class="line">    -&gt;        quantity,</span><br><span class="line">    -&gt;        item_price,</span><br><span class="line">    -&gt;        quantity*item_price <span class="keyword">AS</span> expanded_price</span><br><span class="line">    -&gt; <span class="keyword">FROM</span> orderitems;</span><br><span class="line">Query OK, 0 rows affected (0.04 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT * FROM orderitemexpanded</span><br><span class="line">    -&gt; WHERE order_num = 20005;</span><br><span class="line">+<span class="comment">-----------+---------+----------+------------+----------------+</span></span><br><span class="line">| order_num | prod_id | quantity | item_price | expanded_price |</span><br><span class="line">+<span class="comment">-----------+---------+----------+------------+----------------+</span></span><br><span class="line">|     20005 | ANV01   |       10 |       5.99 |          59.90 |</span><br><span class="line">|     20005 | ANV02   |        3 |       9.99 |          29.97 |</span><br><span class="line">|     20005 | TNT2    |        5 |      10.00 |          50.00 |</span><br><span class="line">|     20005 | FB      |        1 |      10.00 |          10.00 |</span><br><span class="line">+<span class="comment">-----------+---------+----------+------------+----------------+</span></span><br><span class="line">4 rows in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:什么情况下，MySQL不允许更新、插入和删除视图<ul>
+<li>1.分组(使用GROUP BY和HAVING)</li>
+<li>2.联结</li>
+<li>3.子查询</li>
+<li>4.并</li>
+<li>5.聚集函数(Min()、Count()、Sum()等)</li>
+<li>6.DISTINCT</li>
+<li>7.导出(计算)列</li>
+</ul>
+</li>
+</ul>
+<h1 id="第23章-使用存储过程"><a href="#第23章-使用存储过程" class="headerlink" title="第23章 使用存储过程"></a>第23章 使用存储过程</h1><ul>
+<li>Q:创建存储过程，返回产品平均价格<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> productpricing()</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">   <span class="keyword">SELECT</span> <span class="keyword">Avg</span>(prod_price) <span class="keyword">AS</span> priceaverage</span><br><span class="line">   <span class="keyword">FROM</span> products;</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在命令行中书写时要重新定义分隔符，注意使用完要恢复<figure class="highlight"><table><tr><td class="code"><pre><span class="line">mysql&gt; DELIMITER //</span><br><span class="line">mysql&gt; CREATE PROCEDURE productpricing()</span><br><span class="line">    -&gt; BEGIN</span><br><span class="line">    -&gt;    SELECT Avg(prod_price) AS priceaverage</span><br><span class="line">    -&gt;    FROM products;</span><br><span class="line">    -&gt; END //</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; DELIMITER ;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; CALL productpricing();</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">| priceaverage |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">|    16.133571 |</span><br><span class="line">+<span class="comment">--------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line"><span class="keyword">Query</span> OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:删除存储过程<ul>
+<li>如果指定的过程不存在，则DROP PROCEDURE将产生一个错误。当过程存在想删除它时（如果过程不存在也不产生错误）可使用DROP PROCEDURE IF EXISTS<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; DROP PROCEDURE productpricing;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; DROP PROCEDURE IF EXISTS proceductpricing;</span><br><span class="line">Query OK, 0 rows affected, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:创建使用参数的存储过程<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; DELIMITER //</span><br><span class="line">mysql&gt; CREATE PROCEDURE productpricing(</span><br><span class="line">    -&gt;    OUT pl DECIMAL(8,2),</span><br><span class="line">    -&gt;    OUT ph DECIMAL(8,2),</span><br><span class="line">    -&gt;    OUT pa DECIMAL(8,2)</span><br><span class="line">    -&gt; )</span><br><span class="line">    -&gt; BEGIN</span><br><span class="line">    -&gt;    SELECT Min(prod_price)</span><br><span class="line">    -&gt;    INTO pl</span><br><span class="line">    -&gt;    FROM products;</span><br><span class="line">    -&gt;    SELECT Max(prod_price)</span><br><span class="line">    -&gt;    INTO ph</span><br><span class="line">    -&gt;    FROM products;</span><br><span class="line">    -&gt;    SELECT Avg(prod_price)</span><br><span class="line">    -&gt;    INTO pa</span><br><span class="line">    -&gt;    FROM products;</span><br><span class="line">    -&gt; END //</span><br><span class="line">    </span><br><span class="line">mysql&gt; CALL productpricing(@pricelow,</span><br><span class="line">    -&gt;                     @pricehigh,</span><br><span class="line">    -&gt;                     @priceaverage) //</span><br><span class="line">Query OK, 1 row affected, 1 warning (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT @priceaverage //</span><br><span class="line">+<span class="comment">---------------+</span></span><br><span class="line">| @priceaverage |</span><br><span class="line">+<span class="comment">---------------+</span></span><br><span class="line">|         16.13 |</span><br><span class="line">+<span class="comment">---------------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>此存储过程接受3个参数：pl存储产品最低价格，ph存储产品最高价格，pa存储产品平均价格。每个参数必须具有指定的类型，这里使用十进制值。关键字OUT指出相应的参数用来从存储过程传出一个值(返回给调用者)。</li>
+<li>MySQL支持IN(传递给存储过程)、OUT(从存储过程传出)和INOUT(对存储过程传入和传出)类型的参数</li>
+<li>存储过程是一系列SELECT语句，用来检索值，然后保存到相应的变量(通过指定INTO关键字)</li>
+<li>存储过程的参数允许的数据类型与表中使用的数据类型相同</li>
+</ul>
+</li>
+<li>Q:使用IN和OUT参数的存储过程，ordertotal接受订单号并返回该订单的合计<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; DELIMITER //</span><br><span class="line">mysql&gt; CREATE PROCEDURE ordertotal(</span><br><span class="line">    -&gt;    IN onumber INT,</span><br><span class="line">    -&gt;    OUT ototal DECIMAL(8,2)</span><br><span class="line">    -&gt; )</span><br><span class="line">    -&gt; BEGIN</span><br><span class="line">    -&gt;    SELECT Sum(item_price*quantity)</span><br><span class="line">    -&gt;    FROM orderitems</span><br><span class="line">    -&gt;    WHERE order_num = onumber</span><br><span class="line">    -&gt;    INTO ototal;</span><br><span class="line">    -&gt; END//</span><br><span class="line">    </span><br><span class="line">mysql&gt; CALL ordertotal(20005, @total)//</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT @total //</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">| @total |</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">| 149.87 |</span><br><span class="line">+<span class="comment">--------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:显示用来创建一个存储过程的CREATE语句<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SHOW CREATE PROCEDURE ordertotal //</span><br><span class="line">+<span class="comment">------------+-------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+</span></span><br><span class="line">| Procedure  | sql_mode                                                                                                                                  | <span class="keyword">Create</span> <span class="keyword">Procedure</span>                                                                                                                                                                                                       | character_set_client | collation_connection | <span class="keyword">Database</span> <span class="keyword">Collation</span> |</span><br><span class="line">+<span class="comment">------------+-------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+</span></span><br><span class="line">| ordertotal | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION | <span class="keyword">CREATE</span> DEFINER=<span class="string">`root`</span>@<span class="string">`localhost`</span> <span class="keyword">PROCEDURE</span> <span class="string">`ordertotal`</span>(    <span class="keyword">IN</span> onumber <span class="built_in">INT</span>,    <span class="keyword">OUT</span> ototal <span class="built_in">DECIMAL</span>(<span class="number">8</span>,<span class="number">2</span>) )</span><br><span class="line"><span class="keyword">BEGIN</span>    <span class="keyword">SELECT</span> <span class="keyword">Sum</span>(item_price*quantity)    <span class="keyword">FROM</span> orderitems    <span class="keyword">WHERE</span> order_num = onumber    <span class="keyword">INTO</span> ototal; <span class="keyword">END</span> | utf8                 | utf8_general_ci      | latin1_swedish_ci  |</span><br><span class="line">+<span class="comment">------------+-------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:获得包括何时、由谁创建等详细信息的存储过程列表<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">PROCEDURE</span> <span class="keyword">STATUS</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>限制过程状态结果<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SHOW PROCEDURE STATUS LIKE &#x27;ordertotal&#x27; //</span><br><span class="line">+<span class="comment">-------------+------------+-----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+</span></span><br><span class="line">| Db          | Name       | Type      | Definer        | Modified            | Created             | Security_type | <span class="keyword">Comment</span> | character_set_client | collation_connection | <span class="keyword">Database</span> <span class="keyword">Collation</span> |</span><br><span class="line">+<span class="comment">-------------+------------+-----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+</span></span><br><span class="line">| crashcourse | ordertotal | <span class="keyword">PROCEDURE</span> | root@localhost | <span class="number">2021</span><span class="number">-03</span><span class="number">-25</span> <span class="number">13</span>:<span class="number">12</span>:<span class="number">18</span> | <span class="number">2021</span><span class="number">-03</span><span class="number">-25</span> <span class="number">13</span>:<span class="number">12</span>:<span class="number">18</span> | DEFINER       |         | utf8                 | utf8_general_ci      | latin1_swedish_ci  |</span><br><span class="line">+<span class="comment">-------------+------------+-----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第24章-使用游标"><a href="#第24章-使用游标" class="headerlink" title="第24章 使用游标"></a>第24章 使用游标</h1><ul>
+<li>Q:使用游标的几个步骤是什么？<ul>
+<li>1.在能够使用游标前，必须声明它。这个过程实际上没用检索数据，它只是定义要使用的SELECT语句</li>
+<li>2.一旦声明后，必须打开游标以供使用。这个过程用前面定义的SELECT语句把数据实际检索出来</li>
+<li>3.对于填有数据的游标，根据需要取出(检索)各行</li>
+<li>4.在结束游标使用时，必须关闭游标</li>
+<li>在声明游标后，可根据需要频繁地打开和关闭游标。在游标打开后，可根据需要频繁地执行取操作</li>
+</ul>
+</li>
+</ul>
+<h1 id="第26章-管理事务处理"><a href="#第26章-管理事务处理" class="headerlink" title="第26章 管理事务处理"></a>第26章 管理事务处理</h1><ul>
+<li>Q:事务处理是什么？<ul>
+<li>事务处理是一种机制，用来管理必须成批执行的MySQL操作，以保证数据库不包含不完整的操作结果。利用事务处理，可以保证一组操作不会中途停止，它们或者作为整体执行，或者完全不执行(除非明确指示)。如果没有发生错误，整组语句提交个诶数据库表。如果发生错误，则进行回退以恢复数据库到某个已知且安全的状态</li>
+</ul>
+</li>
+<li>Q:事务开始和ROLLBACK命令示例<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> ordertotals;</span><br><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"><span class="keyword">DELETE</span> FRMO ordertotals;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> ordertotals;</span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> ordertotals;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>事务处理用来管理INSERT、UPDATE和DELETE语句。不能回退SELECT、CREATE和DROP，这些语句可以使用，但如果执行回退，不会被撤销</li>
+</ul>
+</li>
+<li>Q:COMMIT命令示例<ul>
+<li>一般的MySQL语句是直接针对数据库表执行和编写的，即隐含提交(implicit commit)，即提交(写或保存)操作是自动进行的</li>
+<li>但事务处理块中必须用COMMIT进行明确的提交<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> orderitems <span class="keyword">WHERE</span> order_num = <span class="number">20010</span>;</span><br><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> orders <span class="keyword">WHERE</span> order_num = <span class="number">20010</span>;</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:使用保留点，支持回退部分事务处理<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SAVEPOINT</span> delete1;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">ROLLBACK</span> <span class="keyword">TO</span> delete1;</span><br></pre></td></tr></table></figure></li>
+<li>Q:更改默认的提交行为<ul>
+<li>默认MySQL是自动提交所有更改。即任何时候你执行一条MySQL语句，该语句实际上都是针对表执行的，而且所做的更改立即生效，不管有没有COMMIT语句</li>
+<li>为指示MySQL不自动提交更改，可使用语句<code>SET autocommit=0;</code></li>
+<li>注意：autocommit标志是针对每个连接而不是服务器的</li>
+</ul>
+</li>
+</ul>
+<h1 id="第27章-全球化和本地化"><a href="#第27章-全球化和本地化" class="headerlink" title="第27章 全球化和本地化"></a>第27章 全球化和本地化</h1><ul>
+<li>Q:字符集、编码、校对是什么<ul>
+<li>字符集：字母和符号的集合</li>
+<li>编码：某个字符集成员的内部表示</li>
+<li>校对：规定字符如何比较的指令</li>
+</ul>
+</li>
+<li>Q:查看所支持的字符集完整列表以及每个字符集的描述和默认校对<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SHOW CHARACTER SET;</span><br><span class="line">+<span class="comment">----------+---------------------------------+---------------------+--------+</span></span><br><span class="line">| Charset  | Description                     | Default collation   | Maxlen |</span><br><span class="line">+<span class="comment">----------+---------------------------------+---------------------+--------+</span></span><br><span class="line">| big5     | Big5 Traditional Chinese        | big5_chinese_ci     |      2 |</span><br><span class="line">| ascii    | US ASCII                        | ascii_general_ci    |      1 |</span><br><span class="line">| ujis     | EUC-JP Japanese                 | ujis_japanese_ci    |      3 |</span><br><span class="line">| koi8u    | KOI8-U Ukrainian                | koi8u_general_ci    |      1 |</span><br><span class="line">| gb2312   | GB2312 Simplified Chinese       | gb2312_chinese_ci   |      2 |</span><br><span class="line">| greek    | ISO 8859-7 Greek                | greek_general_ci    |      1 |</span><br><span class="line">| cp1250   | Windows Central European        | cp1250_general_ci   |      1 |</span><br><span class="line">| gbk      | GBK Simplified Chinese          | gbk_chinese_ci      |      2 |</span><br><span class="line">| utf8mb4  | UTF-8 Unicode                   | utf8mb4_general_ci  |      4 |</span><br><span class="line">| cp1251   | Windows Cyrillic                | cp1251_general_ci   |      1 |</span><br><span class="line">| utf16    | UTF-16 Unicode                  | utf16_general_ci    |      4 |</span><br><span class="line">| utf16le  | UTF-16LE Unicode                | utf16le_general_ci  |      4 |</span><br><span class="line">| cp1256   | Windows Arabic                  | cp1256_general_ci   |      1 |</span><br><span class="line">| cp1257   | Windows Baltic                  | cp1257_general_ci   |      1 |</span><br><span class="line">| utf32    | UTF-32 Unicode                  | utf32_general_ci    |      4 |</span><br><span class="line">| binary   | Binary pseudo charset           | binary              |      1 |</span><br><span class="line">| eucjpms  | UJIS for Windows Japanese       | eucjpms_japanese_ci |      3 |</span><br><span class="line">| gb18030  | China National Standard GB18030 | gb18030_chinese_ci  |      4 |</span><br><span class="line">+<span class="comment">----------+---------------------------------+---------------------+--------+</span></span><br><span class="line">41 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:查看所支持校对的完整列表，以及它们使用的字符集<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SHOW COLLATION;</span><br><span class="line">+<span class="comment">--------------------------+----------+-----+---------+----------+---------+</span></span><br><span class="line">| Collation                | Charset  | Id  | Default | Compiled | Sortlen |</span><br><span class="line">+<span class="comment">--------------------------+----------+-----+---------+----------+---------+</span></span><br><span class="line">| big5_chinese_ci          | big5     |   1 | Yes     | Yes      |       1 |</span><br><span class="line">| big5_bin                 | big5     |  84 |         | Yes      |       1 |</span><br><span class="line">| latin1_german1_ci        | latin1   |   5 |         | Yes      |       1 |</span><br><span class="line">| latin1_swedish_ci        | latin1   |   8 | Yes     | Yes      |       1 |</span><br><span class="line">| latin1_danish_ci         | latin1   |  15 |         | Yes      |       1 |</span><br><span class="line">| latin1_german2_ci        | latin1   |  31 |         | Yes      |       2 |</span><br><span class="line">| latin1_bin               | latin1   |  47 |         | Yes      |       1 |</span><br><span class="line">| latin1_general_ci        | latin1   |  48 |         | Yes      |       1 |</span><br><span class="line">| latin1_general_cs        | latin1   |  49 |         | Yes      |       1 |</span><br><span class="line">| latin1_spanish_ci        | latin1   |  94 |         | Yes      |       1 |</span><br><span class="line">| gb2312_chinese_ci        | gb2312   |  24 | Yes     | Yes      |       1 |</span><br><span class="line">| gb2312_bin               | gb2312   |  86 |         | Yes      |       1 |</span><br><span class="line">| gbk_chinese_ci           | gbk      |  28 | Yes     | Yes      |       1 |</span><br><span class="line">| gbk_bin                  | gbk      |  87 |         | Yes      |       1 |</span><br><span class="line">| utf8_general_ci          | utf8     |  33 | Yes     | Yes      |       1 |</span><br><span class="line">| utf8_bin                 | utf8     |  83 |         | Yes      |       1 |</span><br><span class="line">| utf8_unicode_ci          | utf8     | 192 |         | Yes      |       8 |</span><br><span class="line">| utf8_icelandic_ci        | utf8     | 193 |         | Yes      |       8 |</span><br><span class="line">| utf8_roman_ci            | utf8     | 207 |         | Yes      |       8 |</span><br><span class="line">| utf8_persian_ci          | utf8     | 208 |         | Yes      |       8 |</span><br><span class="line">| utf8_croatian_ci         | utf8     | 213 |         | Yes      |       8 |</span><br><span class="line">| utf8_unicode_520_ci      | utf8     | 214 |         | Yes      |       8 |</span><br><span class="line">| utf8_vietnamese_ci       | utf8     | 215 |         | Yes      |       8 |</span><br><span class="line">| utf8_general_mysql500_ci | utf8     | 223 |         | Yes      |       1 |</span><br><span class="line">| gb18030_chinese_ci       | gb18030  | 248 | Yes     | Yes      |       2 |</span><br><span class="line">| gb18030_bin              | gb18030  | 249 |         | Yes      |       1 |</span><br><span class="line">| gb18030_unicode_520_ci   | gb18030  | 250 |         | Yes      |       8 |</span><br><span class="line">+<span class="comment">--------------------------+----------+-----+---------+----------+---------+</span></span><br><span class="line">222 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>有的字符集具有不止一种校对。如latin1对不同的欧洲语言有几种校对，而且许多校对出现两次，一次区分大小写（由_cs表示)，一次不区分大小写（由_ci表示）</li>
+<li>通常系统管理在安装时定义一个默认的字符集和校对。此外，也可以在创建数据库时，指定默认的字符集和校对</li>
+</ul>
+</li>
+<li>Q:确定所用的字符集和校对<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SHOW VARIABLES LIKE &#x27;character%&#x27;;</span><br><span class="line">+<span class="comment">--------------------------+----------------------------+</span></span><br><span class="line">| Variable_name            | Value                      |</span><br><span class="line">+<span class="comment">--------------------------+----------------------------+</span></span><br><span class="line">| character_set_client     | utf8                       |</span><br><span class="line">| character_set_connection | utf8                       |</span><br><span class="line">| character_set_database   | latin1                     |</span><br><span class="line">| character_set_filesystem | binary                     |</span><br><span class="line">| character_set_results    | utf8                       |</span><br><span class="line">| character_set_server     | latin1                     |</span><br><span class="line">| character_set_system     | utf8                       |</span><br><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |</span><br><span class="line">+<span class="comment">--------------------------+----------------------------+</span></span><br><span class="line">8 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; <span class="keyword">SHOW</span> <span class="keyword">VARIABLES</span> <span class="keyword">LIKE</span> <span class="string">&#x27;collation%&#x27;</span>;</span><br><span class="line">+<span class="comment">----------------------+-------------------+</span></span><br><span class="line">| Variable_name        | Value             |</span><br><span class="line">+<span class="comment">----------------------+-------------------+</span></span><br><span class="line">| collation_connection | utf8_general_ci   |</span><br><span class="line">| collation_database   | latin1_swedish_ci |</span><br><span class="line">| collation_server     | latin1_swedish_ci |</span><br><span class="line">+<span class="comment">----------------------+-------------------+</span></span><br><span class="line">3 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>字符集很少是服务器范围(甚至是数据库范围)的设置。不同的表，甚至不同的列都可能需要不同的字符集，而且两者都可以在创建表时指定</li>
+</ul>
+</li>
+<li>Q:使用带子句的CREATE TABLE给表指定字符集和校对<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE mytable</span><br><span class="line">    -&gt; (</span><br><span class="line">    -&gt;    columnn1 INT,</span><br><span class="line">    -&gt;    columnn2 VARCHAR(10)</span><br><span class="line">    -&gt; ) DEFAULT CHARACTER SET hebrew</span><br><span class="line">    -&gt;   COLLATE hebrew_general_ci;</span><br><span class="line">Query OK, 0 rows affected (0.22 sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:MySQL如何确定使用什么样的字符集和校对<ul>
+<li>1.如果指定CHARACTER SET和COLLATE两者，则使用这些值</li>
+<li>2.如果只指定CHARACTER SET，则使用此字符集及其默认的校对(如SHOW CHARACTER SET的结果中所示)</li>
+<li>3.如果既不指定CHARACTER SET，也不指定COLLATE，则使用数据库默认</li>
+</ul>
+</li>
+<li>Q:MySQL如何对特定列设置字符集和校对<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE mytable</span><br><span class="line">    -&gt; (</span><br><span class="line">    -&gt;    columnn1 INT,</span><br><span class="line">    -&gt;    columnn2 VARCHAR(10),</span><br><span class="line">    -&gt;    columnn3 VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_general_ci</span><br><span class="line">    -&gt; ) DEFAULT CHARACTER SET hebrew</span><br><span class="line">    -&gt;   COLLATE hebrew_general_ci;</span><br><span class="line">Query OK, 0 rows affected (0.26 sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:如何使用与创建表时不同的校对顺序排序特定的SELECT语句<figure class="highlight"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM customers</span><br><span class="line">    -&gt; ORDER BY lastname, firstname COLLATE latin1_general_cs;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>校对在对用ORDER BY子句检索出来的数据排序时起重要的作用，这里SELECT使用COLLATE指定一个备用的校对顺序，这会影响到结果排序的次序</li>
+<li>这个例子为区分大小写的校对。反之也可以</li>
+</ul>
+</li>
+<li>Q:COLLATE还可以使用在什么语句<ul>
+<li>SELECT、ORDER BY、GROUP BY、HAVING、聚集函数、别名等</li>
+<li>值得注意的是，如果绝对需要，串可以使用Cast()或Convert()函数在字符集之间进行转换</li>
+</ul>
+</li>
+</ul>
+<h1 id="第28章-安全管理"><a href="#第28章-安全管理" class="headerlink" title="第28章 安全管理"></a>第28章 安全管理</h1><ul>
+<li>Q:获得所有用户账号列表<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">USE</span> mysql;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">user</span> <span class="keyword">FROM</span> <span class="keyword">user</span>;</span><br></pre></td></tr></table></figure></li>
+<li>Q:创建用户账号<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> ben <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">&#x27;pa@$$w0rd&#x27;</span>;</span><br></pre></td></tr></table></figure></li>
+<li>Q:重新命名一个用户账户<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RENAME</span> <span class="keyword">USER</span> ben <span class="keyword">TO</span> bforta;</span><br></pre></td></tr></table></figure></li>
+<li>Q:删除用户账户<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">USER</span> bforta;</span><br></pre></td></tr></table></figure></li>
+<li>Q:查看用户账户权限<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; SHOW GRANTS FOR root;</span><br><span class="line">+<span class="comment">-------------------------------------------+</span></span><br><span class="line">| Grants for root@%                         |</span><br><span class="line">+<span class="comment">-------------------------------------------+</span></span><br><span class="line">| <span class="keyword">GRANT</span> <span class="keyword">ALL</span> <span class="keyword">PRIVILEGES</span> <span class="keyword">ON</span> *.* <span class="keyword">TO</span> <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> |</span><br><span class="line">+<span class="comment">-------------------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果显示<code>USAGE ON *.*</code>，其中USAGE表示根本没有权限</li>
+</ul>
+</li>
+<li>Q:允许用户在crashcourse数据库的所有表上使用SELECT<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> crashcourse.* <span class="keyword">TO</span> bforta;</span><br></pre></td></tr></table></figure></li>
+<li>Q:取消赋予用户bforta的SELECT访问权限<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> crashcourse.* <span class="keyword">FROM</span> bforta;</span><br></pre></td></tr></table></figure></li>
+<li>Q:权限表<ul>
+<li><img src="https://img.shiqi-lu.tech/20210219172421.png"></li>
+</ul>
+</li>
+<li>Q:设置自己的口令<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="keyword">PASSWORD</span> = <span class="keyword">Password</span>(<span class="string">&#x27;n3w p@$$w0rd&#x27;</span>);</span><br></pre></td></tr></table></figure></li>
+<li>Q:更改用户口令<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SET</span> <span class="keyword">PASSWORD</span> <span class="keyword">FOR</span> bforta = <span class="keyword">Password</span>(<span class="string">&#x27;n3w p@$$w0rd&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第29章-数据库维护"><a href="#第29章-数据库维护" class="headerlink" title="第29章 数据库维护"></a>第29章 数据库维护</h1><ul>
+<li>Q:数据备份的3个方案<ul>
+<li>备份前首先使用<code>FLUSH TABLES</code>刷新未写数据</li>
+<li>使用mysqldump转储所有数据库内容到某个外部文件</li>
+<li>使用mysqlhotcopy从一个数据库复制所有数据(某些数据库引擎不支持)</li>
+<li>使用MySQL的<code>BACKUP TABLE</code>或<code>SELECT INTO OUTFILE</code>转储所有数据到某个外部文件。这两条语句都接受要创建的系统文件名，此系统文件必须不存在。可用<code>RESTORE TABLE</code>来复原</li>
+</ul>
+</li>
+<li>Q:检查表键是否正确<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; ANALYZE TABLE orders;</span><br><span class="line">+<span class="comment">--------------------+---------+----------+----------+</span></span><br><span class="line">| Table              | Op      | Msg_type | Msg_text |</span><br><span class="line">+<span class="comment">--------------------+---------+----------+----------+</span></span><br><span class="line">| crashcourse.orders | <span class="keyword">analyze</span> | <span class="keyword">status</span>   | OK       |</span><br><span class="line">+<span class="comment">--------------------+---------+----------+----------+</span></span><br><span class="line"><span class="number">1</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.06</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:检查CHECK TABLE<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql&gt; CHECK TABLE orders, orderitems;</span><br><span class="line">+<span class="comment">------------------------+-------+----------+----------+</span></span><br><span class="line">| Table                  | Op    | Msg_type | Msg_text |</span><br><span class="line">+<span class="comment">------------------------+-------+----------+----------+</span></span><br><span class="line">| crashcourse.orders     | <span class="keyword">check</span> | <span class="keyword">status</span>   | OK       |</span><br><span class="line">| crashcourse.orderitems | <span class="keyword">check</span> | <span class="keyword">status</span>   | OK       |</span><br><span class="line">+<span class="comment">------------------------+-------+----------+----------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>Q:修复相应表<ul>
+<li><code>REPAIR TABLE</code></li>
+</ul>
+</li>
+<li>Q:从一个表中删除大量数据后收回所用空间<ul>
+<li><code>OPTIMIZE TABLE</code></li>
+</ul>
+</li>
+<li>Q:MySQL的日志文件<ul>
+<li>错误日志：包含启动和关闭问题以及任意关键错误的细节。通常名为 hostname.err，位于 data 目录</li>
+<li>查询日志：记录所有MySQL活动，在诊断问题时非常有用。此日志文件可能会很快地变得非常大，因此不应该长期使用它。通常名为 hostname.log ， 位于 data 目录</li>
+<li>二进制日志：记录更新过数据的所有语句。通常名为hostname-bin，位于 data 目录</li>
+<li>慢查询日志：记录执行缓慢的任何查询。这 个日志在确定数据库何处需要优化很有用。 此日志通常名为 hostname-slow.log ， 位于 data 目录</li>
+</ul>
+</li>
+</ul>
+<h1 id="第30章-改善性能"><a href="#第30章-改善性能" class="headerlink" title="第30章 改善性能"></a>第30章 改善性能</h1><ul>
+<li>Q:改善性能的建议<ul>
+<li>MySQL（与所有DBMS一样）具有特定的硬件建议。对用于生产的服务器来说，应该坚持遵循这些硬件建议</li>
+<li>关键的生产DBMS应该运行在自己的专用服务器上</li>
+<li>MySQL是用一系列的默认设置预先配置的，从这些设置开始通常是很好的。但过一段时间后你可能需要调整内存分配、缓冲区大小等。（为查看当前设置， 可使用 <code>SHOW VARIABLES;</code> 和 <code>SHOW STATUS;</code>）</li>
+<li>MySQL是一个多用户多线程的DBMS。如果这些任务中的某一个执行缓慢，则所有请求都会执行缓慢。如果你到显著的性能不良，可使用<code>SHOW PROCESSLIST</code>显示所有活动进程（以及它们的线程ID和执行时间）。还可用KILL命令终结某个特定的进程</li>
+<li>总有不止一种方法编写同一条SELECT语句。应该试验联结、并、子查询等，找出最佳的方法</li>
+<li>使用EXPLAIN语句让MySQL解释它将如何执行一条SELECT语句</li>
+<li>一般来说，存储过程执行得比一条一条地执行其中的各条MySQL语句快</li>
+<li>应该总是使用正确的数据类型</li>
+<li>决不要检索比需求还要多的数据。除非你真正需要每个列，否则不要用<code>SELECT *</code></li>
+<li>有的操作（包括INSERT）支持一个可选的DELAYED关键字，如果使用它，将把控制立即返回给调用程序，并且一旦有可能就实际执行该操作</li>
+<li>在导入数据时，应该关闭自动提交。你可能还想删除索引（包括FULLTEXT索引），然后在导入完成后再重建它们</li>
+<li>必须索引数据库表以改善数据检索的性能。确定索引什么不是一件微不足道的任务， 需要分析使用的 SELECT 语句以找出重复的WHERE和ORDER BY子句。如果一个简单的WHERE子句返回结果所花的时间太长，则可以断定其中使用的列（或几个列）就是需要索引的对象</li>
+<li>SELECT 语句中有一系列复杂的 OR 条件时，通过使用多条 SELECT 语句和连接它们的 UNION 语句， 可看到极大的性能改进</li>
+<li>索引改善数据检索的性能，但损害数据插入、删除和更新的性能。 如果有一些表，它们收集数据且不经常被搜索，则在有必要之前不要索引它们。（索引可根据需要添加和删除。）</li>
+<li>LIKE很慢。一般来说，最好是使用FULLTEXT而不是LIKE</li>
+<li>数据库是不断变化的实体。一组优化良好的表一会儿后可能就面目全非了。由于表的使用和内容的更改，理想的优化和配置也会改变</li>
+<li>最重要的规则就是，每条规则在某些条件下都会被打破</li>
+</ul>
+</li>
+</ul>
+<h1 id="附录D-MySQL数据类型"><a href="#附录D-MySQL数据类型" class="headerlink" title="附录D MySQL数据类型"></a>附录D MySQL数据类型</h1><ul>
+<li>串数据类型<ul>
+<li><img src="https://img.shiqi-lu.tech/20210325082641.png"></li>
+</ul>
+</li>
+<li>数值数据类型<ul>
+<li><img src="https://img.shiqi-lu.tech/20210325082724.png"></li>
+</ul>
+</li>
+<li>日期和时间数据类型<ul>
+<li><img src="https://img.shiqi-lu.tech/20210325082748.png"></li>
+</ul>
+</li>
+<li>二进制数据类型<ul>
+<li><img src="https://img.shiqi-lu.tech/20210325082804.png"></li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
