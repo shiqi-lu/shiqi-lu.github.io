@@ -1191,6 +1191,177 @@
       </tags>
   </entry>
   <entry>
+    <title>《沈剑架构师训练营》第6章 - 缓存架构</title>
+    <url>/arch-sj-6/</url>
+    <content><![CDATA[<h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
+<li>no27：什么是进程内缓存？好处？不足？<ul>
+<li>定义<ul>
+<li>将数据缓存在站点或者服务的进程内，如 map 或 leveldb，可存 json、html、object 等</li>
+</ul>
+</li>
+<li>好处<ul>
+<li>1.节省内网带宽</li>
+<li>2.时延更低</li>
+</ul>
+</li>
+<li>不足：一致性难以保证</li>
+</ul>
+</li>
+<li>no27：如何保证进程内缓存的一致性？<ul>
+<li>方案一，单节点通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183312.png"></li>
+<li>缺点<ul>
+<li>同一功能在集群内的多个节点相互耦合在一起，当节点比较多的时候，连接关系会相对比较复杂</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案二，MQ 解耦，通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183448.png"></li>
+<li>缺点<ul>
+<li>接触了结点耦合，但引入了 mq，增加系统复杂度</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案三，放弃实时一致性，定期从后端更新数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183706.png"></li>
+<li>缺点<ul>
+<li>必须一定程度上接受读旧数据</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no27：使用进程内缓存的场景是哪些？为什么不能频繁使用进程内缓存？<ul>
+<li>场景<ul>
+<li>1.只读数据</li>
+<li>2.并发极高，透传后端压力极大</li>
+<li>3.允许一定程度上数据不一致</li>
+</ul>
+</li>
+<li>原因<ul>
+<li>违背了「站点无状态、服务无状态」的设计准则</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="28、缓存：很多时候我们都用错了！"><a href="#28、缓存：很多时候我们都用错了！" class="headerlink" title="28、缓存：很多时候我们都用错了！"></a>28、缓存：很多时候我们都用错了！</h1><ul>
+<li>no28：缓存有哪 4 种误用的情况？<ul>
+<li>1.服务与服务之间不要通过缓存传递数据，数据传递使用 MQ 更合适<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114648.png"></li>
+</ul>
+</li>
+<li>2.如果缓存挂掉，可能导致雪崩，此时要做高可用缓存，或者水平切分</li>
+<li>3.调用方不宜再单独使用缓存存储服务底层的数据，容易出现数据不一致，以及反向依赖.</li>
+<li>4.不同服务，缓存实例要做垂直拆分，不宜共用缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114908.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="29、缓存：互联网最佳实践！"><a href="#29、缓存：互联网最佳实践！" class="headerlink" title="29、缓存：互联网最佳实践！"></a>29、缓存：互联网最佳实践！</h1><ul>
+<li>no29：互联网缓存最佳实践 Cache Aside Pattern 是什么？<ul>
+<li>读实践<ul>
+<li>先缓存，命中返回，未命中读数据库，再设置缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916205244.png"></li>
+</ul>
+</li>
+<li>写实践<ul>
+<li>淘汰缓存而不是修改缓存，先操作数据库，而不是先淘汰缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916210847.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="30、缓存：一致性优化！"><a href="#30、缓存：一致性优化！" class="headerlink" title="30、缓存：一致性优化！"></a>30、缓存：一致性优化！</h1><ul>
+<li>no30：数据库主从、数据库缓存什么时候会发生数据不一致问题？<ul>
+<li>数据库主从：写后立即读，短时间内，读旧数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916212948.png"></li>
+</ul>
+</li>
+<li>数据库缓存：写后立即读，短时间内，旧数据入缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213008.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no30：缓存不一致的优化思路和两个方案是什么？<ul>
+<li>思路：在从库同步完成之后，如果有旧数据入缓存，应该及时把这个旧数据淘汰掉</li>
+<li>方案一：二次淘汰法(在从库异步淘汰，或服务中异步淘汰)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213215.png"></li>
+<li>通过工具订阅从库的 binlog，如 DTS 或 canal，或自己订阅和分析 binlog，然后从库执行异步淘汰缓存的操作</li>
+</ul>
+</li>
+<li>方案二：为允许 cache miss 的场景，设定超时时间</li>
+</ul>
+</li>
+</ul>
+<h1 id="31、缓存：并发更新的大坑！"><a href="#31、缓存：并发更新的大坑！" class="headerlink" title="31、缓存：并发更新的大坑！"></a>31、缓存：并发更新的大坑！</h1><ul>
+<li>no31：缓存并发更新获取 token 会出现什么问题？如何解决？<ul>
+<li>问题<ul>
+<li>两个并发请求的token申请，可能导致 token 迭代过期了</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100503.png"></li>
+</ul>
+</li>
+<li>解决<ul>
+<li>线上服务 s1 和 s2 只从缓存中读取 token，token 的更新由一个异步的服务 asy-Master 定期更新，避免并发的更新</li>
+<li>缺点<ul>
+<li>读取服务和更新的服务会直接调用缓存实例，如果缓存实例变更，读的服务和写的服务配置同步变更，导致耦合，违背了两个服务不应访问同一服务的通用性原则，同时违反了 cache aside pattern 的淘汰而不是更新缓存的设计准则</li>
+</ul>
+</li>
+<li>数据存储在 DB，缓存应该淘汰，有时候，数据不在数据库，缓存需要更新，如调用第三方服务需要申请 token</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100642.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="32、缓存：究竟选redis，还是memcache？"><a href="#32、缓存：究竟选redis，还是memcache？" class="headerlink" title="32、缓存：究竟选redis，还是memcache？"></a>32、缓存：究竟选redis，还是memcache？</h1><ul>
+<li>no32，什么时候选 Redis，什么时候选 memcache？<ul>
+<li>选 Redis<ul>
+<li>1.复杂数据结构</li>
+<li>2.持久化<ul>
+<li>优点是，缓存挂了再重启，可以快速恢复，不需要 cache 的预热功能</li>
+<li>但不建议使用，因为可能会导致缓存和数据库不一致</li>
+</ul>
+</li>
+<li>3.天然高可用，支持主从复制，读写分离，提供了 sentinel 的集群管理工具，能够实现主从服务的监控，故障自动转移，mc 需要二次开发，但绝大多数缓存不需要做高可用</li>
+<li>4.存储内容比较大，mc 的 kv 存储的 value 最大只支持 1M</li>
+</ul>
+</li>
+<li>选 memcache<ul>
+<li>纯 kv</li>
+<li>原因：<ul>
+<li>1.预分配内存池</li>
+<li>2.redis 的 VM 机制更慢</li>
+<li>3.redis 的 CPU 计算复杂</li>
+<li>4.多线程可利用多核</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>其它<ul>
+<li>1.redis 源码可读性好</li>
+<li>2.redis 和 mc 都需要手动水平切分</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《沈剑架构师训练营》第7章 - 架构解耦</title>
     <url>/arch-sj-7/</url>
     <content><![CDATA[<h1 id="34、解耦：配置中心，与配置架构演进。"><a href="#34、解耦：配置中心，与配置架构演进。" class="headerlink" title="34、解耦：配置中心，与配置架构演进。"></a>34、解耦：配置中心，与配置架构演进。</h1><ul>
@@ -1386,108 +1557,6 @@
       </tags>
   </entry>
   <entry>
-    <title>六种不同的二分查找全总结</title>
-    <url>/binary-search/</url>
-    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
-<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
-<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
-<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
-<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
-<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
-</ul>
-</li>
-</ul>
-<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
-<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为什么while 中是&lt;而不是&lt;=<ul>
-<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
-<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
-<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
-</ul>
-</li>
-</ul>
-<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
-<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
-<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
-<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
-</ul>
-<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
-<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
-<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
-</ul>
-<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
-<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
-<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
-<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
-<li>循环判断规则为<code>left &lt;= right</code></li>
-<li>结束时<code>left == right+1</code></li>
-<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
-<li>初始化为<code>left = 0; right = nums.length</code></li>
-<li>循环判断规则为<code>left &lt; right</code></li>
-<li>结束时<code>left == right</code></li>
-<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
-<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
-<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
-<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
-<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
-</ul>
-</li>
-<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
-<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
-<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
-<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
-<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
-<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
-<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
-</ul>
-</li>
-</ul>
-<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
-<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>Python3<ul>
-<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
-<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
-<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
-<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
-</ul>
-</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>二分查找</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>类别不平衡问题的方法汇总</title>
     <url>/class-imbalance/</url>
     <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
@@ -1673,6 +1742,108 @@
         <tag>机器学习</tag>
         <tag>特征工程</tag>
         <tag>数据预处理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>六种不同的二分查找全总结</title>
+    <url>/binary-search/</url>
+    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
+<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
+<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
+<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
+<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
+<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
+<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while 中是&lt;而不是&lt;=<ul>
+<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
+<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
+<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
+<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
+<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
+<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
+<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
+<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
+<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
+<li>循环判断规则为<code>left &lt;= right</code></li>
+<li>结束时<code>left == right+1</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
+<li>初始化为<code>left = 0; right = nums.length</code></li>
+<li>循环判断规则为<code>left &lt; right</code></li>
+<li>结束时<code>left == right</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
+<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
+<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
+<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
+<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
+</ul>
+</li>
+<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
+<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
+<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
+<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
+<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
+<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
+<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
+</ul>
+</li>
+</ul>
+<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
+<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>Python3<ul>
+<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
+<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
+<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
+<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>二分查找</tag>
       </tags>
   </entry>
   <entry>
@@ -3117,177 +3288,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《沈剑架构师训练营》第6章 - 缓存架构</title>
-    <url>/arch-sj-6/</url>
-    <content><![CDATA[<h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
-<li>no27：什么是进程内缓存？好处？不足？<ul>
-<li>定义<ul>
-<li>将数据缓存在站点或者服务的进程内，如 map 或 leveldb，可存 json、html、object 等</li>
-</ul>
-</li>
-<li>好处<ul>
-<li>1.节省内网带宽</li>
-<li>2.时延更低</li>
-</ul>
-</li>
-<li>不足：一致性难以保证</li>
-</ul>
-</li>
-<li>no27：如何保证进程内缓存的一致性？<ul>
-<li>方案一，单节点通知其它节点<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183312.png"></li>
-<li>缺点<ul>
-<li>同一功能在集群内的多个节点相互耦合在一起，当节点比较多的时候，连接关系会相对比较复杂</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>方案二，MQ 解耦，通知其它节点<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183448.png"></li>
-<li>缺点<ul>
-<li>接触了结点耦合，但引入了 mq，增加系统复杂度</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>方案三，放弃实时一致性，定期从后端更新数据<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183706.png"></li>
-<li>缺点<ul>
-<li>必须一定程度上接受读旧数据</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no27：使用进程内缓存的场景是哪些？为什么不能频繁使用进程内缓存？<ul>
-<li>场景<ul>
-<li>1.只读数据</li>
-<li>2.并发极高，透传后端压力极大</li>
-<li>3.允许一定程度上数据不一致</li>
-</ul>
-</li>
-<li>原因<ul>
-<li>违背了「站点无状态、服务无状态」的设计准则</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="28、缓存：很多时候我们都用错了！"><a href="#28、缓存：很多时候我们都用错了！" class="headerlink" title="28、缓存：很多时候我们都用错了！"></a>28、缓存：很多时候我们都用错了！</h1><ul>
-<li>no28：缓存有哪 4 种误用的情况？<ul>
-<li>1.服务与服务之间不要通过缓存传递数据，数据传递使用 MQ 更合适<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916114648.png"></li>
-</ul>
-</li>
-<li>2.如果缓存挂掉，可能导致雪崩，此时要做高可用缓存，或者水平切分</li>
-<li>3.调用方不宜再单独使用缓存存储服务底层的数据，容易出现数据不一致，以及反向依赖.</li>
-<li>4.不同服务，缓存实例要做垂直拆分，不宜共用缓存<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916114908.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="29、缓存：互联网最佳实践！"><a href="#29、缓存：互联网最佳实践！" class="headerlink" title="29、缓存：互联网最佳实践！"></a>29、缓存：互联网最佳实践！</h1><ul>
-<li>no29：互联网缓存最佳实践 Cache Aside Pattern 是什么？<ul>
-<li>读实践<ul>
-<li>先缓存，命中返回，未命中读数据库，再设置缓存</li>
-<li><img src="https://img.shiqi-lu.tech/20210916205244.png"></li>
-</ul>
-</li>
-<li>写实践<ul>
-<li>淘汰缓存而不是修改缓存，先操作数据库，而不是先淘汰缓存</li>
-<li><img src="https://img.shiqi-lu.tech/20210916210847.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="30、缓存：一致性优化！"><a href="#30、缓存：一致性优化！" class="headerlink" title="30、缓存：一致性优化！"></a>30、缓存：一致性优化！</h1><ul>
-<li>no30：数据库主从、数据库缓存什么时候会发生数据不一致问题？<ul>
-<li>数据库主从：写后立即读，短时间内，读旧数据<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916212948.png"></li>
-</ul>
-</li>
-<li>数据库缓存：写后立即读，短时间内，旧数据入缓存<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916213008.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no30：缓存不一致的优化思路和两个方案是什么？<ul>
-<li>思路：在从库同步完成之后，如果有旧数据入缓存，应该及时把这个旧数据淘汰掉</li>
-<li>方案一：二次淘汰法(在从库异步淘汰，或服务中异步淘汰)<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916213215.png"></li>
-<li>通过工具订阅从库的 binlog，如 DTS 或 canal，或自己订阅和分析 binlog，然后从库执行异步淘汰缓存的操作</li>
-</ul>
-</li>
-<li>方案二：为允许 cache miss 的场景，设定超时时间</li>
-</ul>
-</li>
-</ul>
-<h1 id="31、缓存：并发更新的大坑！"><a href="#31、缓存：并发更新的大坑！" class="headerlink" title="31、缓存：并发更新的大坑！"></a>31、缓存：并发更新的大坑！</h1><ul>
-<li>no31：缓存并发更新获取 token 会出现什么问题？如何解决？<ul>
-<li>问题<ul>
-<li>两个并发请求的token申请，可能导致 token 迭代过期了</li>
-<li><img src="https://img.shiqi-lu.tech/20210917100503.png"></li>
-</ul>
-</li>
-<li>解决<ul>
-<li>线上服务 s1 和 s2 只从缓存中读取 token，token 的更新由一个异步的服务 asy-Master 定期更新，避免并发的更新</li>
-<li>缺点<ul>
-<li>读取服务和更新的服务会直接调用缓存实例，如果缓存实例变更，读的服务和写的服务配置同步变更，导致耦合，违背了两个服务不应访问同一服务的通用性原则，同时违反了 cache aside pattern 的淘汰而不是更新缓存的设计准则</li>
-</ul>
-</li>
-<li>数据存储在 DB，缓存应该淘汰，有时候，数据不在数据库，缓存需要更新，如调用第三方服务需要申请 token</li>
-<li><img src="https://img.shiqi-lu.tech/20210917100642.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="32、缓存：究竟选redis，还是memcache？"><a href="#32、缓存：究竟选redis，还是memcache？" class="headerlink" title="32、缓存：究竟选redis，还是memcache？"></a>32、缓存：究竟选redis，还是memcache？</h1><ul>
-<li>no32，什么时候选 Redis，什么时候选 memcache？<ul>
-<li>选 Redis<ul>
-<li>1.复杂数据结构</li>
-<li>2.持久化<ul>
-<li>优点是，缓存挂了再重启，可以快速恢复，不需要 cache 的预热功能</li>
-<li>但不建议使用，因为可能会导致缓存和数据库不一致</li>
-</ul>
-</li>
-<li>3.天然高可用，支持主从复制，读写分离，提供了 sentinel 的集群管理工具，能够实现主从服务的监控，故障自动转移，mc 需要二次开发，但绝大多数缓存不需要做高可用</li>
-<li>4.存储内容比较大，mc 的 kv 存储的 value 最大只支持 1M</li>
-</ul>
-</li>
-<li>选 memcache<ul>
-<li>纯 kv</li>
-<li>原因：<ul>
-<li>1.预分配内存池</li>
-<li>2.redis 的 VM 机制更慢</li>
-<li>3.redis 的 CPU 计算复杂</li>
-<li>4.多线程可利用多核</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>其它<ul>
-<li>1.redis 源码可读性好</li>
-<li>2.redis 和 mc 都需要手动水平切分</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>k8s培训第8课 集群调度</title>
     <url>/k8s-8/</url>
     <content><![CDATA[<ul>
@@ -4004,6 +4004,88 @@
       </tags>
   </entry>
   <entry>
+    <title>pytorch学习笔记</title>
+    <url>/pytorch-learning/</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
+<ul>
+<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
+<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
+<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
+<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
+<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+</ul>
+<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
+<ul>
+<li>Pytorch简介及环境配置</li>
+<li>Pytorch基础数据结构——张量</li>
+<li>张量操作与线性回归</li>
+<li>计算图与动态图机制</li>
+<li>autograd与逻辑回归</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
+<ul>
+<li>数据读取机制DataLoader与Dataset</li>
+<li>数据预处理transforms模块机制</li>
+<li>二十二种transforms数据预处理方法</li>
+<li>学会自定义transforms方法</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
+<ul>
+<li>nn.Module与网络模型构建步骤</li>
+<li>模型容器与AlexNet构建</li>
+<li>网络层中的卷积层</li>
+<li>网络层中的池化层、全连接层和激活函数层</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
+<ul>
+<li>权值初始化</li>
+<li>损失函数（一）</li>
+<li>Pytorch的14种损失函数</li>
+<li>优化器optimizer的概念</li>
+<li>torch.optim.SGD</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
+<ul>
+<li>学习率调整</li>
+<li>TensorBoard简介与安装</li>
+<li>TensorBoard使用（一）</li>
+<li>TensorBoard使用（二）</li>
+<li>hook函数与CAM</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
+<ul>
+<li>weight_decay</li>
+<li>dropout</li>
+<li>Batch Normalization</li>
+<li>Layer Normalization、Instance</li>
+<li>Normalization和Group Normalization</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
+<ul>
+<li>模型保存与加载</li>
+<li>Finetune</li>
+<li>GPU的使用</li>
+<li>Pytorch中常见报错</li>
+</ul>
+<p>Week8、9 PyTorch深度体验</p>
+<ul>
+<li>图像分类一瞥</li>
+<li>图像分割一瞥</li>
+<li>目标检测一瞥（上）</li>
+<li>目标检测一瞥（下）</li>
+<li>对抗生成网络一瞥</li>
+<li>循环神经网络一瞥</li>
+</ul>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《OFF学》读书笔记</title>
     <url>/off-time/</url>
     <content><![CDATA[<ul>
@@ -4252,88 +4334,6 @@
       </categories>
       <tags>
         <tag>休闲</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pytorch学习笔记</title>
-    <url>/pytorch-learning/</url>
-    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
-</ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
-</ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
-</ul>
-]]></content>
-      <categories>
-        <category>pytorch学习笔记</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
