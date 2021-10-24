@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ch15.套接字和标准I&#x2F;O，ch16. 关于I&#x2F;O流分离的其他内容，ch17.优于 select 的 epoll">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《TCP&#x2F;IP网络编程》第15-17章学习笔记">
+<meta property="og:url" content="http://shiqi-lu.tech/tcpip-network-programming-5/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="ch15.套接字和标准I&#x2F;O，ch16. 关于I&#x2F;O流分离的其他内容，ch17.优于 select 的 epoll">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-18T10:23:56.000Z">
+<meta property="article:modified_time" content="2021-07-18T10:23:56.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="网络">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/tcpip-network-programming-5/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《TCP/IP网络编程》第15-17章学习笔记 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">51</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-15-%E7%AB%A0-%E5%A5%97%E6%8E%A5%E5%AD%97%E5%92%8C%E6%A0%87%E5%87%86I-O"><span class="nav-text">第 15 章  套接字和标准I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#15-1-%E6%A0%87%E5%87%86I-O%E5%87%BD%E6%95%B0%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-text">15.1  标准I&#x2F;O函数的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-2-%E4%BD%BF%E7%94%A8%E6%A0%87%E5%87%86I-O%E5%87%BD%E6%95%B0"><span class="nav-text">15.2  使用标准I&#x2F;O函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-3-%E5%9F%BA%E4%BA%8E%E5%A5%97%E6%8E%A5%E5%AD%97%E7%9A%84%E6%A0%87%E5%87%86-I-O%E5%87%BD%E6%95%B0%E4%BD%BF%E7%94%A8"><span class="nav-text">15.3  基于套接字的标准 I&#x2F;O函数使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-16-%E7%AB%A0-%E5%85%B3%E4%BA%8EI-O%E6%B5%81%E5%88%86%E7%A6%BB%E7%9A%84%E5%85%B6%E4%BB%96%E5%86%85%E5%AE%B9"><span class="nav-text">第 16 章  关于I&#x2F;O流分离的其他内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#16-2-%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%A4%8D%E5%88%B6%E5%92%8C%E5%8D%8A%E5%85%B3%E9%97%AD"><span class="nav-text">16.2  文件描述符的复制和半关闭</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-17-%E7%AB%A0-%E4%BC%98%E4%BA%8E-select-%E7%9A%84-epoll"><span class="nav-text">第 17 章 优于 select 的 epoll</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#17-1-epoll-%E7%90%86%E8%A7%A3%E5%8F%8A%E5%BA%94%E7%94%A8"><span class="nav-text">17.1 epoll 理解及应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-2-%E6%9D%A1%E4%BB%B6%E8%A7%A6%E5%8F%91%E5%92%8C%E8%BE%B9%E7%BC%98%E8%A7%A6%E5%8F%91"><span class="nav-text">17.2 条件触发和边缘触发</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/tcpip-network-programming-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《TCP/IP网络编程》第15-17章学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-18 18:23:56" itemprop="dateCreated datePublished" datetime="2021-07-18T18:23:56+08:00">2021-07-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">网络</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/tcpip-network-programming-5/" class="post-meta-item leancloud_visitors" data-flag-title="《TCP/IP网络编程》第15-17章学习笔记" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/tcpip-network-programming-5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/tcpip-network-programming-5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>23k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>21 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">ch15.套接字和标准I/O，ch16. 关于I/O流分离的其他内容，ch17.优于 select 的 epoll</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>注：博主只关注编程实现的方面以及linux部分，部分网络原理讲解和windows实现部分跳过</p>
+<h1 id="第-15-章-套接字和标准I-O"><a href="#第-15-章-套接字和标准I-O" class="headerlink" title="第 15 章  套接字和标准I/O"></a>第 15 章  套接字和标准I/O</h1><h2 id="15-1-标准I-O函数的优点"><a href="#15-1-标准I-O函数的优点" class="headerlink" title="15.1  标准I/O函数的优点"></a>15.1  标准I/O函数的优点</h2><ul>
+<li>c15p247:标准 IO 函数和系统函数文件复制程序的性能对比<ul>
+<li>标准 IO 函数stdcpy.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 3</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FILE * fp1;</span><br><span class="line">    FILE * fp2;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line"></span><br><span class="line">    fp1 = fopen(<span class="string">&quot;news.txt&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    fp2 = fopen(<span class="string">&quot;cpy1.txt&quot;</span>, <span class="string">&quot;w&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (fgets(buf, BUF_SIZE, fp1) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">fputs</span>(buf, fp2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fclose(fp1);</span><br><span class="line">    fclose(fp2);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>系统函数syscpy.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 3</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd1, fd2;</span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line"></span><br><span class="line">    fd1 = open(<span class="string">&quot;news.txt&quot;</span>, O_RDONLY);</span><br><span class="line">    fd2 = open(<span class="string">&quot;cpy.txt&quot;</span>, O_WRONLY|O_CREAT|O_TRUNC);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ((len = read(fd1, buf, <span class="keyword">sizeof</span>(buf))) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        write(fd2, buf, len);</span><br><span class="line">    &#125;</span><br><span class="line">    close(fd1);</span><br><span class="line">    close(fd2);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行</li>
+<li>比对的时候发现问题，标准 IO 复制后的文件和原文件不对<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch15$ ll -h</span><br><span class="line">-rw-r--r--  1 shiqi shiqi 330M Aug  8 20:04 news.txt</span><br><span class="line">shiqi@pc:~/network/ch15$ gcc syscpy.c -o syscpy</span><br><span class="line">shiqi@pc:~/Devel/network/ch15$ time ./syscpy</span><br><span class="line">real	3m2.397s</span><br><span class="line">user	0m55.517s</span><br><span class="line">sys	2m6.619s</span><br><span class="line">shiqi@pc:~/network/ch15$ gcc stdcpy.c -o stdcpy</span><br><span class="line">shiqi@pc:~/network/ch15$ time ./stdcpy</span><br><span class="line">real	0m6.822s</span><br><span class="line">user	0m5.014s</span><br><span class="line">sys	0m0.208s</span><br><span class="line">shiqi@pc:~/network/ch15$ ll -h</span><br><span class="line">total 986M</span><br><span class="line">-rw-rw-r--  1 shiqi shiqi 327M Aug  8 20:11 cpy1.txt</span><br><span class="line">-rwxrwxrwx  1 shiqi shiqi 330M Aug  8 20:08 cpy.txt*</span><br><span class="line">-rw-r--r--  1 shiqi shiqi 330M Aug  8 20:04 news.txt</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="15-2-使用标准I-O函数"><a href="#15-2-使用标准I-O函数" class="headerlink" title="15.2  使用标准I/O函数"></a>15.2  使用标准I/O函数</h2><ul>
+<li>c15p249:将创建套接字返回的文件描述符转换为标准 IO 函数中使用的 FILE 结构体指针的 fdopen 函数原型<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function">FILE * <span class="title">fdopen</span><span class="params">(<span class="keyword">int</span> fildes, <span class="keyword">const</span> <span class="keyword">char</span> * mode)</span></span>;</span><br><span class="line"><span class="comment">// fildes: 需要转换的文件描述符</span></span><br><span class="line"><span class="comment">// mode: 将要创建的 FILE 结构体指针的模式(mode)信息</span></span><br><span class="line"><span class="comment">// 成功时返回转换的 FILE 结构体指针，失败时返回 NULL</span></span><br></pre></td></tr></table></figure></li>
+<li>c15p250:fdopen 的函数使用示例 desto.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FILE * fp;</span><br><span class="line">    <span class="keyword">int</span> fd = open(<span class="string">&quot;data.dat&quot;</span>, O_WRONLY|O_CREAT|O_TRUNC);</span><br><span class="line">    <span class="keyword">if</span> (fd == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">fputs</span>(<span class="string">&quot;file open error&quot;</span>, <span class="built_in">stdout</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fp = fdopen(fd, <span class="string">&quot;w&quot;</span>);</span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;Network C programming\n&quot;</span>, fp);</span><br><span class="line">    fclose(fp);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch15$ gcc desto.c -o desto</span><br><span class="line">shiqi@pc:~/network/ch15$ ./desto</span><br><span class="line">shiqi@pc:~/network/ch15$ chmod 755 data.dat</span><br><span class="line">shiqi@pc:~/network/ch15$ cat data.dat</span><br><span class="line">Network C programming</span><br></pre></td></tr></table></figure></li>
+<li>c15p250:将创建的标准 IO 函数中使用的 FILE 结构体指针转换为套接字返回的文件描述符的 fileno 函数原型<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fileno</span><span class="params">(FILE * stream)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回转换的 FILE 结构体指针，失败时返回 NULL</span></span><br></pre></td></tr></table></figure></li>
+<li>c15p251:fileno 的程序示例 todes.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FILE * fp;</span><br><span class="line">    <span class="keyword">int</span> fd = open(<span class="string">&quot;data.dat&quot;</span>, O_WRONLY|O_CREAT|O_TRUNC);</span><br><span class="line">    <span class="keyword">if</span> (fd == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">fputs</span>(<span class="string">&quot;file open error&quot;</span>, <span class="built_in">stdout</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;First file descriptor: %d\n&quot;</span>, fd);</span><br><span class="line">    fp = fdopen(fd, <span class="string">&quot;w&quot;</span>);</span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;TCP/IP SOCKET PROGRAMMING\n&quot;</span>, fp);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Second file descriptor: %d\n&quot;</span>, fileno(fp));</span><br><span class="line">    fclose(fp);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch15$ gcc todes.c -o todes</span><br><span class="line">shiqi@pc:~/network/ch15$ ./todes</span><br><span class="line">First file descriptor: 3</span><br><span class="line">Second file descriptor: 3</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="15-3-基于套接字的标准-I-O函数使用"><a href="#15-3-基于套接字的标准-I-O函数使用" class="headerlink" title="15.3  基于套接字的标准 I/O函数使用"></a>15.3  基于套接字的标准 I/O函数使用</h2><ul>
+<li>c15p256:基于标准 IO 函数分离流的目的？<ul>
+<li>为了将 FILE 指针按读模式和写模式加以区分</li>
+<li>可通过区分读写模式降低实现难度</li>
+<li>通过区分 IO 缓冲提高缓冲性能</li>
+</ul>
+</li>
+<li>c15p252:基于标准 IO 函数的回声服务端和客户端程序示例<ul>
+<li>服务端 echo_stdserv.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="keyword">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> str_len, i;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> clnt_adr_sz;</span><br><span class="line">    FILE * readfp;</span><br><span class="line">    FILE * writefp;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (serv_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    clnt_adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">        clnt_sock = accept(serv_sock, (struct sockaddr *)&amp;clnt_adr, &amp;clnt_adr_sz);</span><br><span class="line">        <span class="keyword">if</span> (clnt_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">            error_handling(<span class="string">&quot;accept() error&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Connected client %d \n&quot;</span>, i+<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        readfp = fdopen(clnt_sock, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">        writefp = fdopen(clnt_sock, <span class="string">&quot;w&quot;</span>);</span><br><span class="line">        <span class="keyword">while</span> (!feof(readfp)) &#123;</span><br><span class="line">            fgets(message, BUF_SIZE, readfp);</span><br><span class="line">            <span class="built_in">fputs</span>(message, writefp);</span><br><span class="line">            fflush(writefp);</span><br><span class="line">        &#125;</span><br><span class="line">        fclose(readfp);</span><br><span class="line">        fclose(writefp);</span><br><span class="line">    &#125;</span><br><span class="line">    close(serv_sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>客户端 echo_client<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="keyword">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> str_len;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>;</span></span><br><span class="line">    FILE * readfp;</span><br><span class="line">    FILE * writefp;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;IP&gt; &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">if</span> (connect(sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;connect() error!&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;Connceted........&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    readfp = fdopen(sock, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    writefp = fdopen(sock, <span class="string">&quot;w&quot;</span>);</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">fputs</span>(<span class="string">&quot;Input message(Q to quit): &quot;</span>, <span class="built_in">stdout</span>);</span><br><span class="line">        fgets(message, BUF_SIZE, <span class="built_in">stdin</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(message, <span class="string">&quot;q\n&quot;</span>) || !<span class="built_in">strcmp</span>(message, <span class="string">&quot;Q\n&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">fputs</span>(message, writefp);</span><br><span class="line">        fflush(writefp);</span><br><span class="line">        fgets(message, BUF_SIZE, readfp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Message from server: %s&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line">    close(sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch15$ gcc echo_stdserv.c -o serv</span><br><span class="line">shiqi@pc:~/network/ch15$ ./serv 9190</span><br><span class="line">Connected client 1</span><br><span class="line">^C</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch15$ gcc echo_client.c -o clnt</span><br><span class="line">shiqi@pc:~/network/ch15$ ./clnt 127.0.0.1 9190</span><br><span class="line">Connceted........</span><br><span class="line">Input message(Q to quit): uz</span><br><span class="line">Message from server: uz</span><br><span class="line">Input message(Q to quit): pdu</span><br><span class="line">Message from server: pdu</span><br><span class="line">Input message(Q to quit): q</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-16-章-关于I-O流分离的其他内容"><a href="#第-16-章-关于I-O流分离的其他内容" class="headerlink" title="第 16 章  关于I/O流分离的其他内容"></a>第 16 章  关于I/O流分离的其他内容</h1><h2 id="16-2-文件描述符的复制和半关闭"><a href="#16-2-文件描述符的复制和半关闭" class="headerlink" title="16.2  文件描述符的复制和半关闭"></a>16.2  文件描述符的复制和半关闭</h2><ul>
+<li>c16p261:文件描述符的复制函数原型 dup 和 dup2<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dup</span><span class="params">(<span class="keyword">int</span> fildes)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dup2</span><span class="params">(<span class="keyword">int</span> fildes, <span class="keyword">int</span> fildes2)</span></span>;</span><br><span class="line"><span class="comment">// fildes: 需要复制的文件描述符</span></span><br><span class="line"><span class="comment">// fildes2: 明确指定的文件描述符整数值</span></span><br><span class="line"><span class="comment">// 成功时返回复制的文件描述符，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>c16p262:dup的程序示例 dup.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> cfd1, cfd2;</span><br><span class="line">    <span class="keyword">char</span> str1[] = <span class="string">&quot;Hi~ \n&quot;</span>;</span><br><span class="line">    <span class="keyword">char</span> str2[] = <span class="string">&quot;It&#x27;s nice day~ \n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    cfd1 = dup(<span class="number">1</span>);</span><br><span class="line">    cfd2 = dup2(cfd1, <span class="number">7</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fd1=%d, fd2=%d\n&quot;</span>, cfd1, cfd2);</span><br><span class="line">    write(cfd1, str1, <span class="keyword">sizeof</span>(str1));</span><br><span class="line">    write(cfd2, str2, <span class="keyword">sizeof</span>(str2));</span><br><span class="line"></span><br><span class="line">    close(cfd1);</span><br><span class="line">    close(cfd2);</span><br><span class="line">    write(<span class="number">1</span>, str1, <span class="keyword">sizeof</span>(str1));</span><br><span class="line">    close(<span class="number">1</span>);</span><br><span class="line">    write(<span class="number">1</span>, str1, <span class="keyword">sizeof</span>(str2));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch16$ gcc dup.c -o dup</span><br><span class="line">shiqi@pc:~/network/ch16$ ./dup</span><br><span class="line">fd1=3, fd2=7</span><br><span class="line">Hi~</span><br><span class="line">It&#x27;s nice day~</span><br><span class="line">Hi~</span><br></pre></td></tr></table></figure></li>
+<li>c16p263:复制文件描述符后「流」分离的服务端客户端程序示例 sep_serv.c 和 sep_clnt.c，可通过服务器端的半关闭状态接收客户端最后发送的字符串<ul>
+<li>没做到流分离的服务端 sep_serv.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    FILE * readfp;</span><br><span class="line">    FILE * writefp;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> clnt_adr_sz;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE] = &#123;<span class="number">0</span>,&#125;;</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    bind(serv_sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    listen(serv_sock, <span class="number">5</span>);</span><br><span class="line">    clnt_adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">    clnt_sock = accept(serv_sock, (struct sockaddr *)&amp;clnt_adr, &amp;clnt_adr_sz);</span><br><span class="line"></span><br><span class="line">    readfp = fdopen(clnt_sock, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    writefp = fdopen(clnt_sock, <span class="string">&quot;w&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;FROM SERVER: Hi~ client?\n&quot;</span>, writefp);</span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;I love all of the world\n&quot;</span>, writefp);</span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;You are awesome!\n&quot;</span>, writefp);</span><br><span class="line">    fflush(writefp);</span><br><span class="line"></span><br><span class="line">    fclose(writefp);</span><br><span class="line">    fgets(buf, <span class="keyword">sizeof</span>(buf), readfp);</span><br><span class="line">    <span class="built_in">fputs</span>(buf, <span class="built_in">stdout</span>);</span><br><span class="line">    fclose(readfp);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>流分离的服务端 sep_serv2.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    FILE * readfp;</span><br><span class="line">    FILE * writefp;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> clnt_adr_sz;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE] = &#123;<span class="number">0</span>,&#125;;</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    bind(serv_sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    listen(serv_sock, <span class="number">5</span>);</span><br><span class="line">    clnt_adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">    clnt_sock = accept(serv_sock, (struct sockaddr *)&amp;clnt_adr, &amp;clnt_adr_sz);</span><br><span class="line"></span><br><span class="line">    readfp = fdopen(clnt_sock, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="comment">// 注意此处的 dup</span></span><br><span class="line">    writefp = fdopen(dup(clnt_sock), <span class="string">&quot;w&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;FROM SERVER: Hi~ client?\n&quot;</span>, writefp);</span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;I love all of the world\n&quot;</span>, writefp);</span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;You are awesome!\n&quot;</span>, writefp);</span><br><span class="line">    fflush(writefp);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 服务端进入半关闭状态，并向客户端发送 EOF</span></span><br><span class="line">    shutdown(fileno(writefp), SHUT_WR);</span><br><span class="line">    fclose(writefp);</span><br><span class="line">    fgets(buf, <span class="keyword">sizeof</span>(buf), readfp);</span><br><span class="line">    <span class="built_in">fputs</span>(buf, <span class="built_in">stdout</span>);</span><br><span class="line">    fclose(readfp);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>客户端 sep_clnt.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 1024</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_addr</span>;</span></span><br><span class="line"></span><br><span class="line">    FILE * readfp;</span><br><span class="line">    FILE * writefp;</span><br><span class="line"></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_addr));</span><br><span class="line">    serv_addr.sin_family = AF_INET;</span><br><span class="line">    serv_addr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_addr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    connect(sock, (struct sockaddr *)&amp;serv_addr, <span class="keyword">sizeof</span>(serv_addr));</span><br><span class="line">    readfp = fdopen(sock, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">    writefp = fdopen(sock, <span class="string">&quot;w&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (fgets(buf, <span class="keyword">sizeof</span>(buf), readfp) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">fputs</span>(buf, <span class="built_in">stdout</span>);</span><br><span class="line">        fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fputs</span>(<span class="string">&quot;FROM CLIENT: Thank you!\n&quot;</span>, writefp);</span><br><span class="line">    fflush(writefp);</span><br><span class="line">    fclose(writefp);</span><br><span class="line">    fclose(readfp);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch16$ gcc sep_serv.c -o serv</span><br><span class="line">shiqi@pc:~/network/ch16$ ./serv 9190</span><br><span class="line"></span><br><span class="line">shiqi@pc:~/network/ch16$ gcc sep_clnt.c -o clnt</span><br><span class="line">shiqi@pc:~/network/ch16$ ./clnt 127.0.0.1 9190</span><br><span class="line">FROM SERVER: Hi~ client?</span><br><span class="line">I love all of the world</span><br><span class="line">You are awesome!</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch16$ gcc sep_serv2.c -o serv</span><br><span class="line">shiqi@pc:~/network/ch16$ ./serv 9190</span><br><span class="line">FROM CLIENT: Thank you!</span><br><span class="line"></span><br><span class="line">shiqi@pc:~/network/ch16$ ./clnt 127.0.0.1 9190</span><br><span class="line">FROM SERVER: Hi~ client?</span><br><span class="line">I love all of the world</span><br><span class="line">You are awesome!</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-17-章-优于-select-的-epoll"><a href="#第-17-章-优于-select-的-epoll" class="headerlink" title="第 17 章 优于 select 的 epoll"></a>第 17 章 优于 select 的 epoll</h1><h2 id="17-1-epoll-理解及应用"><a href="#17-1-epoll-理解及应用" class="headerlink" title="17.1 epoll 理解及应用"></a>17.1 epoll 理解及应用</h2><ul>
+<li>c17p265:基于 select 的 I/O 复用技术速度慢的原因<ul>
+<li>调用 select 函数后常见的针对所有文件描述符的循环语句</li>
+<li>每次调用 select 函数时都需要向该函数传递监视对象信息</li>
+</ul>
+</li>
+<li>c17p266:epoll的优点<ul>
+<li>无需编写以监视状态变化为目的的针对所有文件描述符的循环语句</li>
+<li>调用对应于select函数的epoll_wait函数时无需每次传递监视对象信息</li>
+</ul>
+</li>
+<li>c17p267:epoll的3个函数<ul>
+<li>epoll_create: 创建保存epoll文件描述符的空间</li>
+<li>epoll_ctl: 向空间注册并注销文件描述符</li>
+<li>epoll_wait: 与select函数类似，等待文件描述符发生变化</li>
+<li>epoll 由操作系统负责保存监视对象文件描述符，因此需要向操作系统请求创建保存文件描述符的空间，此时用的函数就是 epoll_create</li>
+<li>为了添加和删除监视对象文件描述符，通过 epoll_ctl 函数请求操作系统完成</li>
+<li>epoll调用epoll_wait函数等待文件描述符的变化</li>
+</ul>
+</li>
+<li>c17p267:epoll中将发生变化的文件描述符单独集中到一起的epoll_event结构体<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> &#123;</span></span><br><span class="line">    <span class="keyword">__uint32_t</span> events;</span><br><span class="line">    <span class="keyword">epoll_data_t</span> data;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> epoll_data &#123;</span><br><span class="line">    <span class="keyword">void</span> * ptr;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line">    <span class="keyword">__uint32_t</span> u32;</span><br><span class="line">    <span class="keyword">__uint64_t</span> u64;</span><br><span class="line">&#125; <span class="keyword">epoll_data_t</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>声明epoll_event结构体数组后，传递给epoll_wait 函数时，发生变化的文件描述符信息将被填入数组</li>
+</ul>
+</li>
+<li>c17p268:epoll_create 的函数原型<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create</span><span class="params">(<span class="keyword">int</span> size)</span></span>;</span><br><span class="line"><span class="comment">// size: epoll实例的大小</span></span><br><span class="line"><span class="comment">// 成功时返回 epoll 的文件描述符，失败时返回 -1```</span></span><br><span class="line">    - 调用 epoll_create 函数时创建的文件描述符保存空间称为「epoll 例程」，通过参数 size 传递的值决定 epoll 例程的大小，但该值只是向操作系统提出的建议。换言之，size 并不用来决定 epoll 的大小，而仅供操作系统参考</span><br><span class="line">    - Linux <span class="number">2.6</span><span class="number">.8</span> 之后的内核将完全忽略传入 epoll_create 函数的 size 函数，因此内核会根据情况调整 epoll 例程大小</span><br><span class="line">    - epoll_create 函数创建的资源与套接字相同，也由操作系统管理。因此，该函数和创建套接字的情况相同，也会返回文件描述符，也就是说返回的文件描述符主要用于区分 epoll 例程。需要终止时，与其他文件描述符相同，也要调用 close 函数</span><br><span class="line">- c17p268:epoll_ctl 的函数原型</span><br><span class="line">    - 生成例程后，应在其内部注册监视对象文件描述符，此时使用 epoll_ctl 函数</span><br><span class="line">```c</span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="keyword">int</span> epfd, <span class="keyword">int</span> op, <span class="keyword">int</span> fd,</span></span></span><br><span class="line"><span class="function"><span class="params">              struct epoll_event *event)</span></span>;</span><br><span class="line"><span class="comment">// epfd: 用于注册监视对象的epoll例程的文件描述符</span></span><br><span class="line"><span class="comment">// op: 用于指定监视对象的添加、删除或更改等操作</span></span><br><span class="line"><span class="comment">// fd: 需要注册的监视对象文件描述符</span></span><br><span class="line"><span class="comment">// event: 监视对象的事件类型</span></span><br><span class="line"><span class="comment">// 成功时返回 0 ，失败时返回 -1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>用法举例：<ul>
+<li><code>epoll_ctl(A,EPOLL_CTL_ADD,B,C);</code>：epoll 例程 A 中注册文件描述符 B ，主要目的是为了监视参数 C 中的事件</li>
+<li><code>epoll_ctl(A,EPOLL_CTL_DEL,B,NULL);</code>：从 epoll 例程 A 中删除文件描述符 B</li>
+</ul>
+</li>
+<li>第二个参数op:<ul>
+<li>EPOLL_CTL_ADD：将文件描述符注册到epoll例程</li>
+<li>EPOLL_CTL_DEL：从epoll例程中删除文件描述符</li>
+<li>EPOLL_CTL_MOD：更改注册的文件描述符的关注事件发生情况</li>
+</ul>
+</li>
+<li>epoll_event结构体在epoll_ctl函数中的应用<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span></span><br><span class="line">...</span><br><span class="line">event.events = EPOLLIN;</span><br><span class="line">event.data.fd = sockfd;</span><br><span class="line">epoll_ctl(opfd, EPOLL_CTL_ADD, sockfd, &amp;event);</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+<li>上述代码将sockfd注册到epoll例程epfd中，并在需要读取数据的情况下产生相应事件。</li>
+</ul>
+</li>
+<li>Q:epoll_event成员events中可保存的常量和所指的事件类型<ul>
+<li>EPOLLIN: 需要读取数据的情况</li>
+<li>EPOLLOUT: 输出缓冲为空，可以立即发送数据的情况</li>
+<li>EPOLLPRI: 收到OOB数据的情况</li>
+<li>EPOLLRDHUP: 断开连接或半关闭的情况，在边缘触发方式下非常有用</li>
+<li>EPOLLERR: 发生错误的情况</li>
+<li>EPOLLET: 以边缘触发的方式得到事件通知</li>
+<li>EPOLLONESHOT: 发生一次事件后，相应文件描述符不再收到事件通知。因此需向epoll_ctl函数的第二个参数传递EPOLL_CTL_MOD，再次设置事件</li>
+<li>可通过位或运算同时传递多个上述参数</li>
+</ul>
+</li>
+<li>c17p270:epoll_wait 的函数原型<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event * events,</span></span></span><br><span class="line"><span class="function"><span class="params">               <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br><span class="line"><span class="comment">// epfd: 表示事件发生监视范围的epoll例程的文件描述符</span></span><br><span class="line"><span class="comment">// events: 保存发生事件的文件描述符集合的结构体地址值</span></span><br><span class="line"><span class="comment">// maxevents: 第二个参数中可以保存的最大事件数</span></span><br><span class="line"><span class="comment">// timeout: 以1/1000秒为单位的等待时间，传递-1时，</span></span><br><span class="line"><span class="comment">//          一直等待直到发生事件</span></span><br><span class="line"><span class="comment">// 成功时返回发生事件的文件描述符，失败时返回 -1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>调用方式：注意第二个参数所指缓冲需要动态分配<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> event_cnt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> *<span class="title">op_events</span>;</span></span><br><span class="line">...</span><br><span class="line"><span class="comment">// EPOLL_SIZE是宏常量</span></span><br><span class="line">ep_events = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct epoll_event)*EPOLL_SIZE);</span><br><span class="line">...</span><br><span class="line">event_cnt = epoll_wait(epfd, ep_events, EPOLL_SIZE, <span class="number">-1</span>);</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+<li>调用函数后，返回发生事件的文件描述符数，同时第二个参数指向的缓冲中保存发生事件的文件描述符集合</li>
+</ul>
+</li>
+<li>Q:epoll回声服务器端条件触发示例echo_epollserv.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 100</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EPOLL_SIZE 50</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> adr_sz;</span><br><span class="line">    <span class="keyword">int</span> str_len, i;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> *<span class="title">ep_events</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span></span><br><span class="line">    <span class="keyword">int</span> epfd, event_cnt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    epfd = epoll_create(EPOLL_SIZE);</span><br><span class="line">    ep_events = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct epoll_event)*EPOLL_SIZE);</span><br><span class="line"></span><br><span class="line">    event.events = EPOLLIN;</span><br><span class="line">    event.data.fd = serv_sock;</span><br><span class="line">    epoll_ctl(epfd, EPOLL_CTL_ADD, serv_sock, &amp;event);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        event_cnt = epoll_wait(epfd, ep_events, EPOLL_SIZE, <span class="number">-1</span>);</span><br><span class="line">        <span class="keyword">if</span> (event_cnt == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;epoll_wait() error&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; event_cnt; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (ep_events[i].data.fd == serv_sock) &#123;</span><br><span class="line">                adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">                clnt_sock = accept(serv_sock,</span><br><span class="line">                                   (struct sockaddr *)&amp;clnt_adr,</span><br><span class="line">                                   &amp;adr_sz);</span><br><span class="line">                event.events = EPOLLIN;</span><br><span class="line">                event.data.fd = clnt_sock;</span><br><span class="line">                epoll_ctl(epfd, EPOLL_CTL_ADD, clnt_sock, &amp;event);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;connected client: %d \n&quot;</span>, clnt_sock);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                str_len = read(ep_events[i].data.fd, buf, BUF_SIZE);</span><br><span class="line">                <span class="keyword">if</span> (str_len == <span class="number">0</span>) &#123;</span><br><span class="line">                    epoll_ctl(epfd, EPOLL_CTL_DEL,</span><br><span class="line">                              ep_events[i].data.fd, <span class="literal">NULL</span>);</span><br><span class="line">                    close(ep_events[i].data.fd);</span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">&quot;closed client: %d \n&quot;</span>, ep_events[i].data.fd);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    write(ep_events[i].data.fd, buf, str_len);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    close(serv_sock);</span><br><span class="line">    close(epfd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc echo_epollserv.c -o echo_epollserv</span><br><span class="line">shiqi@inspiron:~/network$ ./echo_epollserv 9190</span><br><span class="line">connected client: 5</span><br><span class="line">connected client: 6</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ ./eclient2 127.0.0.1 9190</span><br><span class="line">Connceted........</span><br><span class="line">Input message(Q to quit): xp</span><br><span class="line">Message from server: xp</span><br><span class="line">Input message(Q to quit): q</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="17-2-条件触发和边缘触发"><a href="#17-2-条件触发和边缘触发" class="headerlink" title="17.2 条件触发和边缘触发"></a>17.2 条件触发和边缘触发</h2><ul>
+<li>c17p274:条件触发(Level Trigger)和边缘触发(Edge Trigger)的特性<ul>
+<li>条件触发方式中，只要输入缓冲有数据就会一直通知该事件；只要输入缓冲中还剩有数据，就将以事件方式再次注册</li>
+<li>边缘触发中输入缓冲收到数据时仅注册 1 次该事件。即使输入缓冲中还留有数据，也不会再进行注册</li>
+</ul>
+</li>
+<li>c17p274:条件触发和边缘触发的程序示例比较 echo_EPLTserv.c<ul>
+<li>条件触发每次收到客户端数据时，都会注册该事件，并因此多次调用 epoll_wait 函数，切换为边缘触发后，仅注册一次事件</li>
+<li>服务端 echo_EPLTserv.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 减少缓冲大小以阻止服务器端一次性读取接收的数据</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EPOLL_SIZE 50</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> adr_sz;</span><br><span class="line">    <span class="keyword">int</span> str_len, i;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> *<span class="title">ep_events</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span></span><br><span class="line">    <span class="keyword">int</span> epfd, event_cnt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    epfd = epoll_create(EPOLL_SIZE);</span><br><span class="line">    ep_events = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct epoll_event)*EPOLL_SIZE);</span><br><span class="line"></span><br><span class="line">    event.events = EPOLLIN;</span><br><span class="line">    event.data.fd = serv_sock;</span><br><span class="line">    epoll_ctl(epfd, EPOLL_CTL_ADD, serv_sock, &amp;event);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        event_cnt = epoll_wait(epfd, ep_events, EPOLL_SIZE, <span class="number">-1</span>);</span><br><span class="line">        <span class="keyword">if</span> (event_cnt == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;epoll_wait() error&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; event_cnt; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (ep_events[i].data.fd == serv_sock) &#123;</span><br><span class="line">                adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">                clnt_sock = accept(serv_sock,</span><br><span class="line">                                   (struct sockaddr *)&amp;clnt_adr,</span><br><span class="line">                                   &amp;adr_sz);</span><br><span class="line">                event.events = EPOLLIN;</span><br><span class="line">                <span class="comment">//event.events = EPOLLIN | EPOLLET;</span></span><br><span class="line">                event.data.fd = clnt_sock;</span><br><span class="line">                epoll_ctl(epfd, EPOLL_CTL_ADD, clnt_sock, &amp;event);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;connected client: %d \n&quot;</span>, clnt_sock);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                str_len = read(ep_events[i].data.fd, buf, BUF_SIZE);</span><br><span class="line">                <span class="keyword">if</span> (str_len == <span class="number">0</span>) &#123;</span><br><span class="line">                    epoll_ctl(epfd, EPOLL_CTL_DEL,</span><br><span class="line">                              ep_events[i].data.fd, <span class="literal">NULL</span>);</span><br><span class="line">                    close(ep_events[i].data.fd);</span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">&quot;closed client: %d \n&quot;</span>, ep_events[i].data.fd);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    write(ep_events[i].data.fd, buf, str_len);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    close(serv_sock);</span><br><span class="line">    close(epfd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译测试<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">47@pc:~/network/ch17$ gcc echo_EPLTserv.c -o serv</span><br><span class="line">47@pc:~/network/ch17$ ./serv 9190</span><br><span class="line">return epoll_wait</span><br><span class="line">connected client: 5</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line"></span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">closed client: 5</span><br><span class="line"></span><br><span class="line">47@pc:~/network/ch04$ ./eclient 127.0.0.1 9190</span><br><span class="line">Connceted........</span><br><span class="line">Input message(Q to quit): eeeeeeeee</span><br><span class="line">Message from server: eeeeeeeee</span><br><span class="line">Input message(Q to quit): 12345678</span><br><span class="line">Message from server: 12345678Input message(Q to quit): 1234</span><br><span class="line">Message from server:</span><br><span class="line">Input message(Q to quit): 1</span><br><span class="line">Message from server: 1234</span><br><span class="line">Input message(Q to quit): 222</span><br><span class="line">Message from server: 1</span><br><span class="line">Input message(Q to quit): q</span><br></pre></td></tr></table></figure>
+<ul>
+<li>把代码 70 行取消注释，注释 69 行后<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">47@pc:~/network/ch17$ gcc echo_EPTLserv.c -o serv</span><br><span class="line">47@pc:~/network/ch17$ ./serv 9190</span><br><span class="line">return epoll_wait</span><br><span class="line">connected client: 5</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line"></span><br><span class="line">47@pc:~/network/ch04$ ./eclient 127.0.0.1 9190</span><br><span class="line">Connceted........</span><br><span class="line">Input message(Q to quit): 12345678</span><br><span class="line">Message from server: 1234Input message(Q to quit): 999999</span><br><span class="line">Message from server: 5678Input message(Q to quit): 9999999999esh</span><br><span class="line">Message from server:</span><br><span class="line">999Input message(Q to quit): 67890</span><br><span class="line">Message from server: 999</span><br><span class="line">Input message(Q to quit): q</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>c17p278:更改或读取文件属性的 fcntl 函数原型<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcntl</span><span class="params">(<span class="keyword">int</span> fieldes, <span class="keyword">int</span> cmd, ...)</span></span>;</span><br><span class="line"><span class="comment">// filedes: 属性更改目标的文件描述符</span></span><br><span class="line"><span class="comment">// cmd: 表示函数调用的目的</span></span><br><span class="line"><span class="comment">// 成功时返回 cmd 参数相关值，失败时返回-1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>fcntl 具有可变参数的形式，如果向第二个参数传递 F_GETFL，可以获得第一个参数所指的文件描述符属性(int 型)。反之，如果传递 F_SETTL，可以更改文件描述符属性</li>
+</ul>
+</li>
+<li>c17p278:将文件(套接字)改为非阻塞模式的代码<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> flag = fcntl(fd, F_GETFL, <span class="number">0</span>);</span><br><span class="line">fcntl(fd, F_SETFL, flag|O_NONBLOCK);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通过第一条语句获取之前设置的属性信息，通过第二条语句在此基础上添加非阻塞 O_ NONBLOCK 标志。调用 read &amp; write 函数时，无论是否存在数据，都会形成非阻塞文件(套接字)</li>
+</ul>
+</li>
+<li>c17p279:实现边缘触发的回声服务器的程序示例 echo_EPETserv.c<ul>
+<li>边缘触发接收数据仅注册 1 次事件，所以一旦发生输入相关事件就应该读取输入缓冲中的全部数据。其终止条件是验证输入缓冲是否为空：read 函数返回 -1，变量 errno 中的值为 EAGAIN时，说明没有数据可读</li>
+<li>echo_EPETserv.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EPOLL_SIZE 50</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setnonblockingmode</span><span class="params">(<span class="keyword">int</span> fd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> flag = fcntl(fd, F_GETFL, <span class="number">0</span>);</span><br><span class="line">    fcntl(fd, F_SETFL, flag|O_NONBLOCK);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> adr_sz;</span><br><span class="line">    <span class="keyword">int</span> str_len, i;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> *<span class="title">ep_events</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span></span><br><span class="line">    <span class="keyword">int</span> epfd, event_cnt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock, (struct sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    epfd = epoll_create(EPOLL_SIZE);</span><br><span class="line">    ep_events = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct epoll_event)*EPOLL_SIZE);</span><br><span class="line"></span><br><span class="line">    event.events = EPOLLIN;</span><br><span class="line">    event.data.fd = serv_sock;</span><br><span class="line">    epoll_ctl(epfd, EPOLL_CTL_ADD, serv_sock, &amp;event);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        event_cnt = epoll_wait(epfd, ep_events, EPOLL_SIZE, <span class="number">-1</span>);</span><br><span class="line">        <span class="keyword">if</span> (event_cnt == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;epoll_wait() error&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;return epoll_wait&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; event_cnt; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (ep_events[i].data.fd == serv_sock) &#123;</span><br><span class="line">                adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">                clnt_sock = accept(serv_sock,</span><br><span class="line">                                   (struct sockaddr *)&amp;clnt_adr,</span><br><span class="line">                                   &amp;adr_sz);</span><br><span class="line">                setnonblockingmode(clnt_sock);</span><br><span class="line">                event.events = EPOLLIN | EPOLLET;</span><br><span class="line">                event.data.fd = clnt_sock;</span><br><span class="line">                epoll_ctl(epfd, EPOLL_CTL_ADD, clnt_sock, &amp;event);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;connected client: %d \n&quot;</span>, clnt_sock);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">                    str_len = read(ep_events[i].data.fd, buf, BUF_SIZE);</span><br><span class="line">                    <span class="keyword">if</span> (str_len == <span class="number">0</span>) &#123;</span><br><span class="line">                        epoll_ctl(epfd, EPOLL_CTL_DEL,</span><br><span class="line">                                  ep_events[i].data.fd, <span class="literal">NULL</span>);</span><br><span class="line">                        close(ep_events[i].data.fd);</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">&quot;closed client: %d \n&quot;</span>, ep_events[i].data.fd);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (str_len &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (errno == EAGAIN) &#123;</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        write(ep_events[i].data.fd, buf, str_len);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    close(serv_sock);</span><br><span class="line">    close(epfd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">47@pc:~/Devel/network/ch17$ gcc echo_EPETserv.c -o serv</span><br><span class="line">47@pc:~/Devel/network/ch17$ ./serv 9190</span><br><span class="line">return epoll_wait</span><br><span class="line">connected client: 5</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">return epoll_wait</span><br><span class="line">closed client: 5</span><br><span class="line"></span><br><span class="line">47@pc:~/Devel/network/ch04$ ./eclient 127.0.0.1 9190</span><br><span class="line">Connceted........</span><br><span class="line">Input message(Q to quit): 123456789</span><br><span class="line">Message from server: 123456789</span><br><span class="line">Input message(Q to quit): 987ehem</span><br><span class="line">Message from server: 987ehem</span><br><span class="line">Input message(Q to quit): q</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>c17p282:边缘触发相比条件触发的优点是什么？<ul>
+<li>可以分离接收数据和处理数据的时间点</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/tcpip-network-programming-5/" title="《TCP&#x2F;IP网络编程》第15-17章学习笔记">http://shiqi-lu.tech/tcpip-network-programming-5/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/tcpip-network-programming-4/" rel="prev" title="《TCP/IP网络编程》第12-14章学习笔记">
+                  <i class="fa fa-chevron-left"></i> 《TCP/IP网络编程》第12-14章学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/tcpip-network-programming-6/" rel="next" title="《TCP/IP网络编程》第18、24章学习笔记">
+                  《TCP/IP网络编程》第18、24章学习笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/tcpip-network-programming-5/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
