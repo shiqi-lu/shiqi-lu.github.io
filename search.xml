@@ -178,6 +178,143 @@
       </tags>
   </entry>
   <entry>
+    <title>《沈剑架构师训练营》第3章 - 快速性能优化</title>
+    <url>/arch-sj-3/</url>
+    <content><![CDATA[<h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
+<li>no11：与静态页面、动态页面匹配的加速技术有哪些？<ul>
+<li>静态页面<ul>
+<li>CDN</li>
+<li>nginx</li>
+<li>squid/varnish</li>
+</ul>
+</li>
+<li>动态页面<ul>
+<li>分层架构</li>
+<li>服务化架构</li>
+<li>数据库，缓存架构</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no11：动静分离是什么？<ul>
+<li>静态页面与动态页面分开不同的系统访问的架构设计方法</li>
+<li><img src="https://img.shiqi-lu.tech/20210906113515.png"></li>
+<li>静态页面，几毫秒返回</li>
+<li>动态页面，几百毫秒返回</li>
+</ul>
+</li>
+<li>no11：「页面静态化」是什么？如何实施？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906113737.png"></li>
+<li>把网页内容提前生成相关的 html，用静态页面相关的加速技术来进行加速</li>
+<li>适合场景：返回页面结果集有限</li>
+<li>不适合场景：返回页面结果集数据量过大，如帖子，搜索等</li>
+</ul>
+</li>
+</ul>
+<h1 id="12、性能优化：读写分离，前台与后台分离"><a href="#12、性能优化：读写分离，前台与后台分离" class="headerlink" title="12、性能优化：读写分离，前台与后台分离"></a>12、性能优化：读写分离，前台与后台分离</h1><ul>
+<li>no12：什么是读写分离？能解决什么问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908205424.png"></li>
+<li>一主多从，读写分离，主从同步，是一种常见的数据库架构</li>
+<li>一般来说，主库，提供数据库的写服务，从库，提供数据库的读服务，主从之间通过某种机制来实现数据库的同步，如 MySQL 的 binlog，一个主从同步集群通常被称为一个「分组」</li>
+<li>能解决什么问题？<ul>
+<li>主要可以线性提升读的性能</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no12：什么是水平切分？能解决什么问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908205943.png"></li>
+<li>数据库水平切分后，数据库之间没有数据的重合，不需要同步</li>
+<li>能解决什么问题？<ul>
+<li>数据库存储容量提升</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no12：什么是前台？什么是后台？<ul>
+<li>前台，用户访问的对外系统</li>
+<li>后台，运营访问的对内系统</li>
+</ul>
+</li>
+</ul>
+<h1 id="13、本章小结：百万流量，这些技术够用了"><a href="#13、本章小结：百万流量，这些技术够用了" class="headerlink" title="13、本章小结：百万流量，这些技术够用了"></a>13、本章小结：百万流量，这些技术够用了</h1><ul>
+<li>no13：早期单体 ALL in one 架构，遇到什么问题？这阶段的优化思路是什么？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908211227.png"></li>
+<li>性能问题：访问人数多的时候，希望系统快一点</li>
+<li>耦合问题：当出现问题的时候，系统不要全部挂掉</li>
+<li>思路：<ul>
+<li>1.技术不炫技，以解决业务问题为导向</li>
+<li>2.系统改造尽可能小的架构方案</li>
+<li>3.以最快的速度，提升系统的性能，解决遇到的问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no13：单体架构演进：伪分布式，提升性能<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908211506.png"></li>
+<li>三大分离<ul>
+<li>动静分离</li>
+<li>读写分离(引发读写延时新问题)</li>
+<li>前台后台分离</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no13：单体架构演进：垂直拆分，解耦<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
+<li>业务垂直划分</li>
+<li>代码垂直划分(子系统解耦)</li>
+<li>数据库垂直划分(数据量降低,延时缓解)</li>
+<li>研发团队垂直拆分(专业化，效率提升)</li>
+</ul>
+</li>
+<li>no13：如何保证垂直拆分后，子系统的高可用？<ul>
+<li>使用反向代理</li>
+<li>子web系统的性能，不再受到单台机器资源限制，可以扩展</li>
+<li>子web系统，实现了高可用(伪集群-&gt;真集群) </li>
+<li><img src="https://img.shiqi-lu.tech/20210908212034.png"></li>
+</ul>
+</li>
+<li>no13：真集群后，反向代理如何做负载均衡？<ul>
+<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
+<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
+</ul>
+</li>
+<li>no13：反向代理，如何保证高可用？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908212221.png"></li>
+</ul>
+</li>
+<li>no13：反向代理技术出现之前，接入层如何扩展？<ul>
+<li>DNS 轮询</li>
+<li><img src="https://img.shiqi-lu.tech/20210908212329.png"></li>
+</ul>
+</li>
+<li>no13：使用多层反向代理后，如何做到继续提升性能？<ul>
+<li>DNS 轮询</li>
+<li><img src="https://img.shiqi-lu.tech/20210908212439.png"></li>
+</ul>
+</li>
+<li>no13：session 一致性如何保障？<ul>
+<li>session 同步法</li>
+<li>客户端存储法</li>
+<li>反向代理 hash 一致性</li>
+<li>后端统一存储法</li>
+</ul>
+</li>
+<li>no13：如何加速静态资源？<ul>
+<li>CDN</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《沈剑架构师训练营》第2章 - 接入层架构</title>
     <url>/arch-sj-2/</url>
     <content><![CDATA[<h1 id="6、接入层：反向代理，负载均衡，我有话要说"><a href="#6、接入层：反向代理，负载均衡，我有话要说" class="headerlink" title="6、接入层：反向代理，负载均衡，我有话要说"></a>6、接入层：反向代理，负载均衡，我有话要说</h1><ul>
@@ -407,131 +544,373 @@
       </tags>
   </entry>
   <entry>
-    <title>《沈剑架构师训练营》第3章 - 快速性能优化</title>
-    <url>/arch-sj-3/</url>
-    <content><![CDATA[<h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
-<li>no11：与静态页面、动态页面匹配的加速技术有哪些？<ul>
-<li>静态页面<ul>
-<li>CDN</li>
-<li>nginx</li>
-<li>squid/varnish</li>
+    <title>《沈剑架构师训练营》第4章 - 微服务架构</title>
+    <url>/arch-sj-4/</url>
+    <content><![CDATA[<h1 id="14、服务化：微服务架构，究竟解决什么问题？"><a href="#14、服务化：微服务架构，究竟解决什么问题？" class="headerlink" title="14、服务化：微服务架构，究竟解决什么问题？"></a>14、服务化：微服务架构，究竟解决什么问题？</h1><ul>
+<li>no14：在服务化前后的互联网的常见架构示意图<ul>
+<li>服务化前</li>
+<li><img src="https://img.shiqi-lu.tech/20210906114646.png"></li>
+<li>服务化后</li>
+<li><img src="https://img.shiqi-lu.tech/20210906200739.png"></li>
 </ul>
 </li>
-<li>动态页面<ul>
-<li>分层架构</li>
-<li>服务化架构</li>
-<li>数据库，缓存架构</li>
+<li>no14：没有服务化前的痛点<ul>
+<li>1.代码到处拷贝<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906114751.png"></li>
 </ul>
 </li>
+<li>2.底层复杂性扩散<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906114828.png"></li>
 </ul>
 </li>
-<li>no11：动静分离是什么？<ul>
-<li>静态页面与动态页面分开不同的系统访问的架构设计方法</li>
-<li><img src="https://img.shiqi-lu.tech/20210906113515.png"></li>
-<li>静态页面，几毫秒返回</li>
-<li>动态页面，几百毫秒返回</li>
+<li>3.公共库耦合</li>
+<li>4.SQL 质量无法保障<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906200420.png"></li>
 </ul>
 </li>
-<li>no11：「页面静态化」是什么？如何实施？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210906113737.png"></li>
-<li>把网页内容提前生成相关的 html，用静态页面相关的加速技术来进行加速</li>
-<li>适合场景：返回页面结果集有限</li>
-<li>不适合场景：返回页面结果集数据量过大，如帖子，搜索等</li>
-</ul>
-</li>
-</ul>
-<h1 id="12、性能优化：读写分离，前台与后台分离"><a href="#12、性能优化：读写分离，前台与后台分离" class="headerlink" title="12、性能优化：读写分离，前台与后台分离"></a>12、性能优化：读写分离，前台与后台分离</h1><ul>
-<li>no12：什么是读写分离？能解决什么问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908205424.png"></li>
-<li>一主多从，读写分离，主从同步，是一种常见的数据库架构</li>
-<li>一般来说，主库，提供数据库的写服务，从库，提供数据库的读服务，主从之间通过某种机制来实现数据库的同步，如 MySQL 的 binlog，一个主从同步集群通常被称为一个「分组」</li>
-<li>能解决什么问题？<ul>
-<li>主要可以线性提升读的性能</li>
+<li>5.不易扩展，数据库耦合<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906200628.png"></li>
 </ul>
 </li>
 </ul>
 </li>
-<li>no12：什么是水平切分？能解决什么问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908205943.png"></li>
-<li>数据库水平切分后，数据库之间没有数据的重合，不需要同步</li>
-<li>能解决什么问题？<ul>
-<li>数据库存储容量提升</li>
+<li>no14：服务化的好处<ul>
+<li>1.复用性，消除代码拷贝<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906200847.png"></li>
+</ul>
+</li>
+<li>2.专注性，防止复杂性扩散<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906200929.png"></li>
+</ul>
+</li>
+<li>3.解耦合，消除公共库耦合</li>
+<li>4.高质量，SQL 稳定性有保障<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906201132.png"></li>
+</ul>
+</li>
+<li>5.易扩展，消除数据库解耦合</li>
+<li>6.(最重要)高效，对业务调用方的研发效率提升了</li>
+</ul>
+</li>
+<li>no14：服务化后的潜在问题有哪些？<ul>
+<li>1.系统复杂性上升</li>
+<li>2.层次间依赖关系变得复杂</li>
+<li>3.运维，部署更麻烦</li>
+<li>4.监控变得更复杂</li>
+<li>5.定位问题更麻烦</li>
+</ul>
+</li>
+</ul>
+<h1 id="15、服务化：微服务架构，粒度多少合适？"><a href="#15、服务化：微服务架构，粒度多少合适？" class="headerlink" title="15、服务化：微服务架构，粒度多少合适？"></a>15、服务化：微服务架构，粒度多少合适？</h1><ul>
+<li>no15：微服务化架构粒度拆分实践一：统一服务层<ul>
+<li><img src="https://img.shiqi-lu.tech/20210907042437.png"></li>
+<li>业务不是特别复杂的时候，统一整个服务层，所有数据都通过一个统一的服务层来进行访问</li>
+<li>缺点：一旦代码出故障，就将影响整个服务</li>
+</ul>
+</li>
+<li>no15：微服务化架构粒度拆分实践二：一个子业务一个服务(最佳实践)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210907042536.png"></li>
+<li>在服务层进行垂直拆分，一个子业务抽象出一个服务，数据层也按照子业务垂直拆分</li>
+<li>当业务连接关系变得复杂时，加入网关分发层来消除这个网状关系，并在协议设计的时候加入一个协议号服务号，分发层通过协议号服务号将请求路由到相关的子业务服务</li>
+<li><img src="https://img.shiqi-lu.tech/20210907043051.png"></li>
+</ul>
+</li>
+<li>no15：微服务化架构粒度拆分实践三：一个数据库一个服务<ul>
+<li><img src="https://img.shiqi-lu.tech/20210907043722.png"></li>
+</ul>
+</li>
+<li>no15：微服务化架构粒度拆分实践四：一个接口一个服务<ul>
+<li><img src="https://img.shiqi-lu.tech/20210907044101.png"></li>
+<li>需要语言特性的支持，如 go 可以这么使用</li>
+</ul>
+</li>
+<li>no15：微服务化架构拆成细粒度优缺点<ul>
+<li>优点<ul>
+<li>服务能够独立部署，扩容缩容相对方便</li>
+<li>能更有效地提高资源利用率</li>
+<li>耦合度相对减小</li>
+<li>容错性相对更好</li>
+<li>扩展性也会更好</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>服务数量变多</li>
+<li>系统复杂性增加</li>
+<li>依赖关系复杂性增加</li>
+<li>运维复杂性增加</li>
+<li>监控更复杂</li>
+<li>定位问题更复杂</li>
 </ul>
 </li>
 </ul>
 </li>
-<li>no12：什么是前台？什么是后台？<ul>
-<li>前台，用户访问的对外系统</li>
-<li>后台，运营访问的对内系统</li>
+</ul>
+<h1 id="16、服务化：微服务架构，必须搞定高可用！"><a href="#16、服务化：微服务架构，必须搞定高可用！" class="headerlink" title="16、服务化：微服务架构，必须搞定高可用！"></a>16、服务化：微服务架构，必须搞定高可用！</h1><ul>
+<li>no16：高可用是什么？<ul>
+<li>减少系统不能提供服务的时间</li>
+</ul>
+</li>
+<li>no16：如何判断是否高可用？<ul>
+<li>随机关停一台线上服务器，如果对用户的服务不受影响，那么系统就是高可用的</li>
+</ul>
+</li>
+<li>no16：如何保障系统的高可用<ul>
+<li>1.集群化(冗余)</li>
+<li>2.故障自动转移</li>
+</ul>
+</li>
+<li>no16：常见微服务分层架构？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908092416.png"></li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「端」到「反向代理」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908092543.png"></li>
+<li>通过 keepalived + 虚 IP 来实现</li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「反向代理」到「站点应用」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908092644.png"></li>
+<li>通过站点层的冗余来实现</li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「站点应用」到「微服务」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908092931.png"></li>
+<li>通过服务层的冗余来实现，上游有服务连接池</li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「微服务」到「缓存」的高可用(memcache)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908093051.png"></li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「微服务」到「缓存」的高可用(redis)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908093155.png"></li>
+<li>但很多时候缓存不需要保证高可用，只要不「雪崩」压垮数据库就行<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908093429.png"></li>
+<li>将缓存进行水平切分，这也是个集群，但只是用来做分片，并不做数据冗余，在上游设置代理，即进行完水平切分的入口</li>
 </ul>
 </li>
 </ul>
-<h1 id="13、本章小结：百万流量，这些技术够用了"><a href="#13、本章小结：百万流量，这些技术够用了" class="headerlink" title="13、本章小结：百万流量，这些技术够用了"></a>13、本章小结：百万流量，这些技术够用了</h1><ul>
-<li>no13：早期单体 ALL in one 架构，遇到什么问题？这阶段的优化思路是什么？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908211227.png"></li>
-<li>性能问题：访问人数多的时候，希望系统快一点</li>
-<li>耦合问题：当出现问题的时候，系统不要全部挂掉</li>
-<li>思路：<ul>
-<li>1.技术不炫技，以解决业务问题为导向</li>
-<li>2.系统改造尽可能小的架构方案</li>
-<li>3.以最快的速度，提升系统的性能，解决遇到的问题</li>
+</li>
+<li>no16：微服务分层架构如何保证「微服务」到「数据库」的高可用<ul>
+<li>如果做了读写分离，必须保证</li>
+<li>「微服务」到「读库」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908094009.png"></li>
+<li>通过读库的冗余化集群实现的</li>
+</ul>
+</li>
+<li>「微服务」到「写库」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908094226.png"></li>
+<li>通过写库的冗余化集群实现的，如 MySQL 可通过设置双主相互同步</li>
 </ul>
 </li>
 </ul>
 </li>
-<li>no13：单体架构演进：伪分布式，提升性能<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908211506.png"></li>
-<li>三大分离<ul>
-<li>动静分离</li>
-<li>读写分离(引发读写延时新问题)</li>
-<li>前台后台分离</li>
+</ul>
+<h1 id="17、服务化：微服务架构，必须搞定高并发！"><a href="#17、服务化：微服务架构，必须搞定高并发！" class="headerlink" title="17、服务化：微服务架构，必须搞定高并发！"></a>17、服务化：微服务架构，必须搞定高并发！</h1><ul>
+<li>no17：什么是高并发？<ul>
+<li>通过设计方案，保证系统能够同时并行的处理很多用户的很多请求</li>
+</ul>
+</li>
+<li>no17：高并发相关的常见指标有哪些？<ul>
+<li>1.响应时间(Response Time)</li>
+<li>2.吞吐量(Throughput)</li>
+<li>3.每秒查询率 QPS(Query Per Second)</li>
+<li>4.并发用户数</li>
+</ul>
+</li>
+<li>no17：提升系统并发处理能力的方法论？<ul>
+<li>1.垂直扩展(Scale Up)<ul>
+<li>1.提升单机硬件性能</li>
+<li>2.提升单机架构性能</li>
+<li>业务早期建议使用，因为速度最快</li>
+</ul>
+</li>
+<li>2.水平扩展(Scale Out)</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908104829.png"></li>
+<li>要想做到整体的性能无限，就必须做到每一层都能够实现水平扩展性能无限</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构的反向代理层的水平扩展<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908104951.png"></li>
+<li>之前都是通过 lvs 和 f5 的垂直扩展的方式，这都是有性能上限的，反向代理的水平扩展是通过 DNS 轮询实现的，DNS server 对于同一个域名配置不同的 nginx 外网 IP</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构的站点应用层的水平扩展<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908105303.png"></li>
+<li>通过反向代理层实现</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构的微服务的水平扩展<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908105640.png"></li>
+<li>通过服务连接池去实现的，站点层通过 rpc client 调用下层的服务层 rpc server，rpc client 会建立多个服务连接，当服务称为瓶颈的时候，只要增加服务节点的数量，rpc client 会建立新的连接</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构的数据层(缓存，数据库)的水平扩展<ul>
+<li>需求<ul>
+<li>1.存储容量的扩展，无限容量</li>
+<li>2.处理能力的扩展，无限读性能，无限写性能</li>
+</ul>
+</li>
+<li>根据数据的范围水平切分<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908110251.png"></li>
+<li>优点<ul>
+<li>规则简单</li>
+<li>数据的均衡性比较好</li>
+<li>容易扩展</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>虽然保证数据层是均衡的，但读写请求不一定是均衡的</li>
 </ul>
 </li>
 </ul>
 </li>
-<li>no13：单体架构演进：垂直拆分，解耦<ul>
-<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
-<li>业务垂直划分</li>
-<li>代码垂直划分(子系统解耦)</li>
-<li>数据库垂直划分(数据量降低,延时缓解)</li>
-<li>研发团队垂直拆分(专业化，效率提升)</li>
+<li>按照哈希水平切分<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908110615.png"></li>
+<li>优点<ul>
+<li>规则简单</li>
+<li>数据均衡性非常好</li>
+<li>请求均衡性非常好</li>
 </ul>
 </li>
-<li>no13：如何保证垂直拆分后，子系统的高可用？<ul>
-<li>使用反向代理</li>
-<li>子web系统的性能，不再受到单台机器资源限制，可以扩展</li>
-<li>子web系统，实现了高可用(伪集群-&gt;真集群) </li>
-<li><img src="https://img.shiqi-lu.tech/20210908212034.png"></li>
+<li>缺点<ul>
+<li>不容易扩展，扩展可能需要进行数据迁移</li>
 </ul>
 </li>
-<li>no13：真集群后，反向代理如何做负载均衡？<ul>
-<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
-<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
 </ul>
 </li>
-<li>no13：反向代理，如何保证高可用？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908212221.png"></li>
 </ul>
 </li>
-<li>no13：反向代理技术出现之前，接入层如何扩展？<ul>
-<li>DNS 轮询</li>
-<li><img src="https://img.shiqi-lu.tech/20210908212329.png"></li>
+</ul>
+<h1 id="18、服务化：微服务架构，必须搞定负载均衡！"><a href="#18、服务化：微服务架构，必须搞定负载均衡！" class="headerlink" title="18、服务化：微服务架构，必须搞定负载均衡！"></a>18、服务化：微服务架构，必须搞定负载均衡！</h1><ul>
+<li>no18：什么是负载均衡<ul>
+<li>将请求或者数据均匀地分摊到多个操作单元上执行<ul>
+<li>1.同构，重点在于「均匀」</li>
+<li>2.异构，重点在于「负载与能力匹配」</li>
 </ul>
 </li>
-<li>no13：使用多层反向代理后，如何做到继续提升性能？<ul>
-<li>DNS 轮询</li>
-<li><img src="https://img.shiqi-lu.tech/20210908212439.png"></li>
 </ul>
 </li>
-<li>no13：session 一致性如何保障？<ul>
-<li>session 同步法</li>
-<li>客户端存储法</li>
-<li>反向代理 hash 一致性</li>
-<li>后端统一存储法</li>
+<li>no18：常见微服务分层架构，保证负载均衡的思路<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908104829.png"></li>
+<li>实现每个上游都实现对下游的均匀访问，即可实现系统整体的均匀分摊</li>
 </ul>
 </li>
-<li>no13：如何加速静态资源？<ul>
-<li>CDN</li>
+<li>no18：常见微服务分层架构，反向代理层的负载均衡<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908130356.png"></li>
+<li>DNS 服务器使用 DNS 轮询的方式，即可实现 Nginx 的负载均衡</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，站点应用层的负载均衡<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908130502.png"></li>
+<li>nginx 使用轮询的方式，将请求路由到多个站点应用的后端</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，微服务的负载均衡<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908135904.png"></li>
+<li>通过连接池实现的，可使用随机或轮询等方式保证多个微服务的下游的请求是均匀的</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，数据层(缓存，数据库)的负载均衡<ul>
+<li>1.数据，均衡</li>
+<li>2.请求，均衡</li>
+<li>按照数据范围水平切分<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908140119.png"></li>
+<li>数据负载是均衡的，水平负载未必均衡，如新用户可能更活跃</li>
+</ul>
+</li>
+<li>哈希水平切分<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908140647.png"></li>
+<li>数据、请求的负载都比较均衡，同构节点的服务器的均衡比较容易</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，异构服务器负载均衡，方案一：静态权重<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908141258.png"></li>
+<li>为下游每个微服务节点设置一个静态权重，表示微服务的处理能力，来调配连接池</li>
+<li>优点<ul>
+<li>简单粗暴</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>无法自适应地去调节</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，异构服务器负载均衡，方案二：动态权重<ul>
+<li>1.如何标识服务的处理能力？(下游的处理能力是由调用方决定的)</li>
+<li>2.如何设计动态权重？</li>
+<li>对每一个微服务的连接使用一个权重来标识，这个权重决定分配给每个微服务请求的概率，获得相应连接的概率，当下游每成功处理一个请求的时候，就认为下游的微服务的处理能力足够，增加权重(缓慢)，当微服务超时处理一个请求的时候，就认为下游的处理能力，可能要跟不上了，权重就减少(快速)</li>
+<li>可把权重的范围设置为[0，100]之间，初始值设置为 60，</li>
+</ul>
+</li>
+<li>no18：什么是过载保护？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908142320.png"></li>
+<li>如果不对微服务实施过载保护，随着上游的负载越来越高，在微服务的处理能力范围内，每秒处理的请求是越来越高的</li>
+<li>但是达到一个负载的极限时，外部负载持续的增加，它的处理能力会掉底，瞬间降为 0，即「雪崩」</li>
+<li><img src="https://img.shiqi-lu.tech/20210908142533.png"></li>
+<li>如果实施了过载保护，那么随着外部负载的增加，处理能力到达一个 max 值后，会保持相对稳定的一个值，系统不会被完全压垮</li>
+</ul>
+</li>
+<li>no18：如何实施过载保护？<ul>
+<li>1.静态权重(粗暴，不优雅)<ul>
+<li>给微服务的处理能力设置一个阈值，如果负载超过这个阈值，就将后续的请求全部抛弃</li>
+</ul>
+</li>
+<li>2.动态权重<ul>
+<li>1.连接表示服务，分值代表服务(连接)</li>
+<li>2.处理成功加小分，处理失败扣大分</li>
+<li>3.到达临界编译时，如有请求超时的时候，可判断快要处理不过来了，让它有请求处理失败的时候休息一会，再接下来 10 秒内不再给这个超时的服务器进行负载分配</li>
+<li>4.如果仍然连续地超时，可能判定这个服务器完全处理不过来了，如 fullGC，根据经验，fullGC 差不多一分钟之后能回过神，则一分钟后给它分配请求</li>
+<li>但如果整体负载超过了微服务集群的整体负载，最终还是要抛弃部分请求</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="20、服务化：连接池，高可用可扩展负载均衡都离不开他"><a href="#20、服务化：连接池，高可用可扩展负载均衡都离不开他" class="headerlink" title="20、服务化：连接池，高可用可扩展负载均衡都离不开他"></a>20、服务化：连接池，高可用可扩展负载均衡都离不开他</h1><ul>
+<li>no20：微服务分层架构中，连接池的位置<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908201431.png"></li>
+</ul>
+</li>
+<li>no20：高可用，故障转移，在连接池中是如何实现的？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908201526.png"></li>
+<li>当有节点失效时，连接池重试也连接不上，则连接池会把失败的连接剔除出去</li>
+</ul>
+</li>
+<li>no20：扩展性，服务发现，在连接池的实现<ul>
+<li>1.自动载入新服务节点的配置<ul>
+<li>方案一：监控配置文件，并重新载入<ul>
+<li>具体实现可以是启动一个进程，监控文件变化，循环检测文件 md5是否变化，如果变化则读取新服务节点的配置</li>
+</ul>
+</li>
+<li>方案二：配置中心回调，并重新载入<ul>
+<li>每当调用方站点集群向配置中心注册了下游所依赖的微服务集群的配置，如果微服务集群的节点发生了变化配置中心会给调用方的站点集群进行回调，会将变化后的节点通知站点集群，再实施连接池自动增删节点</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.动态连接池</li>
+</ul>
+</li>
+<li>no20：负载均衡，连接池的实现的三个方案<ul>
+<li>方案一：随机/轮询(同构服务器)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908203120.png"></li>
+</ul>
+</li>
+<li>方案二：静态权重法(异构服务器)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908204445.png"></li>
+</ul>
+</li>
+<li>方案二：动态权重法(异构服务器)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908204559.png"></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -544,105 +923,637 @@
       </tags>
   </entry>
   <entry>
-    <title>六种不同的二分查找全总结</title>
-    <url>/binary-search/</url>
-    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
-<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
-<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
-<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
-<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
-<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
+    <title>《沈剑架构师训练营》第5章 - 微服务架构</title>
+    <url>/arch-sj-5/</url>
+    <content><![CDATA[<h1 id="21、数据库：读性能要如何提升？"><a href="#21、数据库：读性能要如何提升？" class="headerlink" title="21、数据库：读性能要如何提升？"></a>21、数据库：读性能要如何提升？</h1><ul>
+<li>no21：数据库工程架构，要设计些什么呢？<ul>
+<li>1.根据「业务模式」设计库表结构</li>
+<li>2.根据「访问模式」设计索引结构</li>
 </ul>
 </li>
-</ul>
-<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
-<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为什么while 中是&lt;而不是&lt;=<ul>
-<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
-<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
-<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
+<li>no21：数据库工程架构必须要考虑哪 5 个因素？<ul>
+<li>读性能提升</li>
+<li>高可用</li>
+<li>一致性保障</li>
+<li>扩展性</li>
+<li>垂直拆分</li>
 </ul>
 </li>
-</ul>
-<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
-<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
-<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
-<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
-</ul>
-<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
-<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
-<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
-</ul>
-<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
-<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
-<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
-<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
-<li>循环判断规则为<code>left &lt;= right</code></li>
-<li>结束时<code>left == right+1</code></li>
-<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
+<li>no21：提升数据的读性能的方案一：建立索引<ul>
+<li>潜在问题<ul>
+<li>写性能降低</li>
+<li>索引占用内存大，buffer命中率降低， 读性能降低</li>
 </ul>
 </li>
-<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
-<li>初始化为<code>left = 0; right = nums.length</code></li>
-<li>循环判断规则为<code>left &lt; right</code></li>
-<li>结束时<code>left == right</code></li>
-<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
+<li>实践：可以为主实例不建立索引，从实例建立不同的索引<ul>
+<li><img src="https://img.shiqi-lu.tech/20210909103013.png"></li>
 </ul>
 </li>
 </ul>
 </li>
-<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
-<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
-<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
-<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
-<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
+<li>no21：提升数据的读性能的方案二：增加从库<ul>
+<li>分组架构，主要解决的，就是读性能提升的问题，但没有解决数据容量的扩展以及写高可用的问题，分组会引发主从一致性问题，从库越多，同步越慢，主从一致性的问题就越严重</li>
+<li><img src="https://img.shiqi-lu.tech/20210909103738.png"></li>
 </ul>
 </li>
-<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
-<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
-<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
-<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
-<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
-<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
-<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
+<li>no21：提升数据的读性能的方案三：增加缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210909104021.png"></li>
+<li>左边是服务化前，右边是服务化后，s 是从库，m 是主库</li>
 </ul>
 </li>
 </ul>
-<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
-<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>Python3<ul>
-<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
-<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
-<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
-<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
+<h1 id="22、数据库：垂直拆分与高可用"><a href="#22、数据库：垂直拆分与高可用" class="headerlink" title="22、数据库：垂直拆分与高可用"></a>22、数据库：垂直拆分与高可用</h1><ul>
+<li>no22：数据库垂直拆分的方法论是什么？<ul>
+<li>1.长度较短</li>
+<li>2.访问频率较高</li>
+<li>3.经常一起访问</li>
+<li>的属性放在主表里，原因是，数据库缓冲池，逻辑上，以 row 为单位缓冲数据</li>
+</ul>
+</li>
+<li>no22：数据库的高可用的思路和问题是什么？<ul>
+<li>数据库的高可用设计，也是冗余+故障自动转移</li>
+<li>但是，方法论上:数据库的冗余，会引发一致性问题！因为多个节点数据库没办法同时修改，中间会有个时间差，就有可能引发一致性的问题</li>
+</ul>
+</li>
+<li>no22：读库高可用的方案<ul>
+<li>读库高可用，冗余从库，可一主多从，主库会把主库的写序列通过 binlog 的方式同步给从库，重复执行相同的序列</li>
+<li><img src="https://img.shiqi-lu.tech/20210909211447.png"></li>
+</ul>
+</li>
+<li>no22：写库高可用的方案<ul>
+<li>写库高可用，冗余写库，</li>
+<li><img src="https://img.shiqi-lu.tech/20210909211821.png"></li>
+<li>1.双主同步一个节点对外提供读写服务，另一个节点是备份节点，他们之间使用相同的 vip，通过 keepalived 去检测</li>
+<li>2.在分组架构中加入一个双主节点，冗余写库，两边进行相互的同步，两个主库同时对线上提供服务</li>
 </ul>
 </li>
 </ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
+<h1 id="23、数据库：主从一致性，主主一致性如何保障？"><a href="#23、数据库：主从一致性，主主一致性如何保障？" class="headerlink" title="23、数据库：主从一致性，主主一致性如何保障？"></a>23、数据库：主从一致性，主主一致性如何保障？</h1><ul>
+<li>no23：主从数据冗余，主从数据不一致的情况是怎样？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164115.png"></li>
+<li>应用写一个数据后，在主从数据库同步完成前读同一个数据，造成数据不一致</li>
+</ul>
+</li>
+<li>no23：主从数据冗余，主从数据不一致的 3 个解决方案是什么？<ul>
+<li>方案一：忽略不计<ul>
+<li>中间时间估计约几百毫秒，业务允许的情况下，可不做处理</li>
+</ul>
+</li>
+<li>方案二：强制读主<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164509.png"></li>
+<li>都读写主库，然后使用缓存来提升读性能，但主库和缓存间也有一致性问题</li>
+</ul>
+</li>
+<li>方案三：选择性读主(需要缓存协助)<ul>
+<li>写操作过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164936.png"></li>
+<li>写完后，使用哪个库、哪个表、哪个主键拼接一个 key，设置到缓存里，并将这个 key 的时间记录为主从同步的时延</li>
+</ul>
+</li>
+<li>读操作过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911171749.png"></li>
+<li>先读缓存，如果没有，再读从库</li>
+<li>如果有，则读主库</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no23：主主数据冗余，为什么主主数据会不一致？<ul>
+<li>因为同时对外提供服务，并发的写入可能会造成数据同步失败，这个比主从的同步时延要严重，这个可能会造成数据丢失</li>
+<li><img src="https://img.shiqi-lu.tech/20210911172110.png"></li>
+</ul>
+</li>
+<li>no23：主主数据冗余，主主数据不一致的 3 种解决方案是什么？<ul>
+<li>方案一：数据库层面解决，不同初始值，相同递增步长<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911172541.png"></li>
+</ul>
+</li>
+<li>方案二：数据库上层应用程序控制 id 生成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911172828.png"></li>
+</ul>
+</li>
+<li>方案三：主主同时服务，升级为单主服务，影子主不服务<ul>
+<li>即keepalived+vip</li>
+<li><img src="https://img.shiqi-lu.tech/20210911173410.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="24、数据库：扩展性，要如何解决？"><a href="#24、数据库：扩展性，要如何解决？" class="headerlink" title="24、数据库：扩展性，要如何解决？"></a>24、数据库：扩展性，要如何解决？</h1><ul>
+<li>no24：数据库扩展性有哪些场景？<ul>
+<li>1.底层表结构变更<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911174223.png"></li>
+</ul>
+</li>
+<li>2.水平扩展，分库个数变化<ul>
+<li><img src="https://img.shiqi-lu.tech/20210912221639.png"></li>
+</ul>
+</li>
+<li>3.底层存储介质变化<ul>
+<li><img src="https://img.shiqi-lu.tech/20210912221613.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库进行扩展有哪五个方案？<ul>
+<li>1.停服扩展(离线，非高可用)</li>
+<li>2.pt-online-schema-change(在线表结构变更)(平滑)</li>
+<li>3.追日志方案(平滑)</li>
+<li>4.双写方案(平滑)</li>
+<li>5.秒级成倍扩容(平滑)</li>
+</ul>
+</li>
+<li>no24：数据库扩展的停服扩展的步骤是怎样的？优缺点是什么？<ul>
+<li>步骤<ul>
+<li>1.挂公告</li>
+<li>2.离线迁移数据</li>
+<li>3.切到新库</li>
+<li><img src="https://img.shiqi-lu.tech/20210912222521.png"></li>
+</ul>
+</li>
+<li>优点<ul>
+<li>直观和简单</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>对服务的可用性有影响</li>
+<li>必须在指定的时间完成升级，对技术人员压力非常大，一旦出现问题必须在规定时间内解决，否则只能回滚</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库扩展的pt-online-schema-change(在线表结构变更)步骤、注意事项是什么？<ul>
+<li>步骤<ul>
+<li>1.创建一个扩展字段后的新表</li>
+<li>2.在原表上创建三个触发器，对原表的所有写操作(insert、delete、update)都会对新表进行完全相同的操作</li>
+<li>3.工具会分批地将原表中的数据分段地导入到新表</li>
+<li>4.删除掉触发器，并将原表移走</li>
+<li>5.将新建的新表重命名</li>
+<li>整个过程不需要锁表，可以持续对外提供服务，rename 前是旧表，rename 前是新表</li>
+</ul>
+</li>
+<li>注意事项<ul>
+<li>1.变更过程中最重要的是处理冲突，原则是以触发器的最新数据为准，这要求被迁移的表必须有主键</li>
+<li>2.在变更额度过程中，由于写操作要新建触发器，所以如果原表已有非常多的触发器，这个方案就不可行，但通常会禁用触发器</li>
+<li>3.触发器的建立会影响原表的性能，这个操作必须在流量的低峰期进行</li>
+<li>4.只适合 MySQL，也只适合表结构变更</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库扩展的追日志方案的步骤是什么？<ul>
+<li>步骤<ul>
+<li>1.由旧库继续提供服务，并对服务进行一次升级，记录对旧库上的修改的日志，不需记录详细数据，只需记录哪个库哪个表哪个主键在什么时间被修改即可<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093745.png"></li>
+<li>风险小，写接口的数量有限，改动点较少，升级过程增加了一些日志，对业务功能没有任何的影响</li>
+</ul>
+</li>
+<li>2.研发数据迁移工具，将数据从旧库迁移到新库<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093810.png"></li>
+</ul>
+</li>
+<li>3.研发一个读取日志，看哪个库哪个表哪个主键发生了写操作，并将这些 key 从旧库再次覆盖到新库中，来对迁移数据过程里产生的数据差异进行追平，无论如何，当发生冲突时，以旧库中的数据为准，因为旧库的数据在实时更新<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093830.png"></li>
+</ul>
+</li>
+<li>4.研发数据比对工具，将旧库和新库的数据进行比对，直到数据完全一致，才能修改配置迁库<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914094907.png"></li>
+</ul>
+</li>
+<li>5.迁移流量，对旧库进行一次秒级的 readonly，等日志重放程序完全追上之后，秒级的进行一个流量的切换<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914094828.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="25、数据库：扩展性，平滑扩容方案？"><a href="#25、数据库：扩展性，平滑扩容方案？" class="headerlink" title="25、数据库：扩展性，平滑扩容方案？"></a>25、数据库：扩展性，平滑扩容方案？</h1><ul>
+<li>no25：数据库平滑迁移的双写方案的 4 个步骤<ul>
+<li>1.首先旧库提供服务，先对服务进行升级，对数据修改写接口，并在新库上进行相同的操作<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914101758.png"></li>
+</ul>
+</li>
+<li>2.研发数据迁移工具，对数据进行迁移<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102216.png"></li>
+</ul>
+</li>
+<li>3.数据比对<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102317.png"></li>
+</ul>
+</li>
+<li>4.流量迁移<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102405.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="26、数据库：水平切分，数据库秒级扩容！"><a href="#26、数据库：水平切分，数据库秒级扩容！" class="headerlink" title="26、数据库：水平切分，数据库秒级扩容！"></a>26、数据库：水平切分，数据库秒级扩容！</h1><ul>
+<li>no26：数据库水平切分，秒级成倍扩容的 3 个步骤<ul>
+<li>前提条件<ul>
+<li>实施了微服务的分层架构，大数据量进行了水平切分，高可用做了 keepalived 加 vip</li>
+</ul>
+</li>
+<li>步骤<ul>
+<li>1.修改配置(双虚 IP，微服务数据库路由)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914103537.png"></li>
+</ul>
+</li>
+<li>2.服务层 reload 配置，实例增倍完成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914104206.png"></li>
+<li>reload 配置方案<ul>
+<li>1.重启服务，读新文件</li>
+<li>2.配置中心给服务层发信号，重新读取配置文件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.收尾：解除旧双主同步，新增新的双主同步，删除冗余数据，数据量减半完成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914104102.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 ]]></content>
       <categories>
-        <category>数据结构与算法</category>
+        <category>架构</category>
       </categories>
       <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>二分查找</tag>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《沈剑架构师训练营》第6章 - 缓存架构</title>
+    <url>/arch-sj-6/</url>
+    <content><![CDATA[<h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
+<li>no27：什么是进程内缓存？好处？不足？<ul>
+<li>定义<ul>
+<li>将数据缓存在站点或者服务的进程内，如 map 或 leveldb，可存 json、html、object 等</li>
+</ul>
+</li>
+<li>好处<ul>
+<li>1.节省内网带宽</li>
+<li>2.时延更低</li>
+</ul>
+</li>
+<li>不足：一致性难以保证</li>
+</ul>
+</li>
+<li>no27：如何保证进程内缓存的一致性？<ul>
+<li>方案一，单节点通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183312.png"></li>
+<li>缺点<ul>
+<li>同一功能在集群内的多个节点相互耦合在一起，当节点比较多的时候，连接关系会相对比较复杂</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案二，MQ 解耦，通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183448.png"></li>
+<li>缺点<ul>
+<li>接触了结点耦合，但引入了 mq，增加系统复杂度</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案三，放弃实时一致性，定期从后端更新数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183706.png"></li>
+<li>缺点<ul>
+<li>必须一定程度上接受读旧数据</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no27：使用进程内缓存的场景是哪些？为什么不能频繁使用进程内缓存？<ul>
+<li>场景<ul>
+<li>1.只读数据</li>
+<li>2.并发极高，透传后端压力极大</li>
+<li>3.允许一定程度上数据不一致</li>
+</ul>
+</li>
+<li>原因<ul>
+<li>违背了「站点无状态、服务无状态」的设计准则</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="28、缓存：很多时候我们都用错了！"><a href="#28、缓存：很多时候我们都用错了！" class="headerlink" title="28、缓存：很多时候我们都用错了！"></a>28、缓存：很多时候我们都用错了！</h1><ul>
+<li>no28：缓存有哪 4 种误用的情况？<ul>
+<li>1.服务与服务之间不要通过缓存传递数据，数据传递使用 MQ 更合适<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114648.png"></li>
+</ul>
+</li>
+<li>2.如果缓存挂掉，可能导致雪崩，此时要做高可用缓存，或者水平切分</li>
+<li>3.调用方不宜再单独使用缓存存储服务底层的数据，容易出现数据不一致，以及反向依赖.</li>
+<li>4.不同服务，缓存实例要做垂直拆分，不宜共用缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114908.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="29、缓存：互联网最佳实践！"><a href="#29、缓存：互联网最佳实践！" class="headerlink" title="29、缓存：互联网最佳实践！"></a>29、缓存：互联网最佳实践！</h1><ul>
+<li>no29：互联网缓存最佳实践 Cache Aside Pattern 是什么？<ul>
+<li>读实践<ul>
+<li>先缓存，命中返回，未命中读数据库，再设置缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916205244.png"></li>
+</ul>
+</li>
+<li>写实践<ul>
+<li>淘汰缓存而不是修改缓存，先操作数据库，而不是先淘汰缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916210847.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="30、缓存：一致性优化！"><a href="#30、缓存：一致性优化！" class="headerlink" title="30、缓存：一致性优化！"></a>30、缓存：一致性优化！</h1><ul>
+<li>no30：数据库主从、数据库缓存什么时候会发生数据不一致问题？<ul>
+<li>数据库主从：写后立即读，短时间内，读旧数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916212948.png"></li>
+</ul>
+</li>
+<li>数据库缓存：写后立即读，短时间内，旧数据入缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213008.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no30：缓存不一致的优化思路和两个方案是什么？<ul>
+<li>思路：在从库同步完成之后，如果有旧数据入缓存，应该及时把这个旧数据淘汰掉</li>
+<li>方案一：二次淘汰法(在从库异步淘汰，或服务中异步淘汰)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213215.png"></li>
+<li>通过工具订阅从库的 binlog，如 DTS 或 canal，或自己订阅和分析 binlog，然后从库执行异步淘汰缓存的操作</li>
+</ul>
+</li>
+<li>方案二：为允许 cache miss 的场景，设定超时时间</li>
+</ul>
+</li>
+</ul>
+<h1 id="31、缓存：并发更新的大坑！"><a href="#31、缓存：并发更新的大坑！" class="headerlink" title="31、缓存：并发更新的大坑！"></a>31、缓存：并发更新的大坑！</h1><ul>
+<li>no31：缓存并发更新获取 token 会出现什么问题？如何解决？<ul>
+<li>问题<ul>
+<li>两个并发请求的token申请，可能导致 token 迭代过期了</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100503.png"></li>
+</ul>
+</li>
+<li>解决<ul>
+<li>线上服务 s1 和 s2 只从缓存中读取 token，token 的更新由一个异步的服务 asy-Master 定期更新，避免并发的更新</li>
+<li>缺点<ul>
+<li>读取服务和更新的服务会直接调用缓存实例，如果缓存实例变更，读的服务和写的服务配置同步变更，导致耦合，违背了两个服务不应访问同一服务的通用性原则，同时违反了 cache aside pattern 的淘汰而不是更新缓存的设计准则</li>
+</ul>
+</li>
+<li>数据存储在 DB，缓存应该淘汰，有时候，数据不在数据库，缓存需要更新，如调用第三方服务需要申请 token</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100642.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="32、缓存：究竟选redis，还是memcache？"><a href="#32、缓存：究竟选redis，还是memcache？" class="headerlink" title="32、缓存：究竟选redis，还是memcache？"></a>32、缓存：究竟选redis，还是memcache？</h1><ul>
+<li>no32，什么时候选 Redis，什么时候选 memcache？<ul>
+<li>选 Redis<ul>
+<li>1.复杂数据结构</li>
+<li>2.持久化<ul>
+<li>优点是，缓存挂了再重启，可以快速恢复，不需要 cache 的预热功能</li>
+<li>但不建议使用，因为可能会导致缓存和数据库不一致</li>
+</ul>
+</li>
+<li>3.天然高可用，支持主从复制，读写分离，提供了 sentinel 的集群管理工具，能够实现主从服务的监控，故障自动转移，mc 需要二次开发，但绝大多数缓存不需要做高可用</li>
+<li>4.存储内容比较大，mc 的 kv 存储的 value 最大只支持 1M</li>
+</ul>
+</li>
+<li>选 memcache<ul>
+<li>纯 kv</li>
+<li>原因：<ul>
+<li>1.预分配内存池</li>
+<li>2.redis 的 VM 机制更慢</li>
+<li>3.redis 的 CPU 计算复杂</li>
+<li>4.多线程可利用多核</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>其它<ul>
+<li>1.redis 源码可读性好</li>
+<li>2.redis 和 mc 都需要手动水平切分</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《沈剑架构师训练营》第7章 - 架构解耦</title>
+    <url>/arch-sj-7/</url>
+    <content><![CDATA[<h1 id="34、解耦：配置中心，与配置架构演进。"><a href="#34、解耦：配置中心，与配置架构演进。" class="headerlink" title="34、解耦：配置中心，与配置架构演进。"></a>34、解耦：配置中心，与配置架构演进。</h1><ul>
+<li>no34：配置文件架构有什么核心痛点？<ul>
+<li>1.上游痛：扩容的是下游，改配置重启的是上游(耦合，典型反向依赖)</li>
+<li>2.下游痛：不知道谁依赖于自己(难以实施服务治理)</li>
+</ul>
+</li>
+<li>no34：配置文件架构怎么解耦？<ul>
+<li>1.「配置私藏」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919152754.png"></li>
+<li>上游把下游的配置私藏在自己单独的配置文件里</li>
+<li>不足：例如需要扩容时，下游需要通知所有的上游调用方去修改各自私藏的配置，并重启上游，将连接连到新的集群节点上去，将流量从下线的节点迁走</li>
+</ul>
+</li>
+<li>2.「全局配置文件」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919153259.png"></li>
+<li>运维制定一系列配置文件规范，将通用的服务的配置放到 global.conf 全局配置文件里，调用方升级，不再读取本地的私有配置文件，而是读取全局配置文件去获取通用服务的配置，配合文件监控组件和动态连接池组件能够实现自动的扩容与缩容，但依然解决不了下游服务治理的问题</li>
+<li>优点<ul>
+<li>下游容量变化时只需修改一个地方，调用方重启后会自动读取新配置，对架构的改动较小</li>
+</ul>
+</li>
+<li>不足<ul>
+<li>如果调用方一直不重启，就没办法迁移</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.「配置中心」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919153652.png"></li>
+<li>由服务、zookeeper、后台配置文件和落地的数据库组成</li>
+<li>所有服务的配置都维护在配置中心里，所有调用方需要注册配置中心，去配置中心拉取相关的配置，此时全局调用关系图和服务治理，以及按照上游的调用方来限流，就容易实现</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="35、MQ，互联网架构解耦利器。"><a href="#35、MQ，互联网架构解耦利器。" class="headerlink" title="35、MQ，互联网架构解耦利器。"></a>35、MQ，互联网架构解耦利器。</h1><ul>
+<li>no35：什么时候不用 MQ？什么时候用 MQ？<ul>
+<li>不用<ul>
+<li>上游实时关注执行结果，通常采用 RPC</li>
+</ul>
+</li>
+<li>用<ul>
+<li>1.数据驱动的任务依赖，如下一个任务依赖上一个任务的执行结果</li>
+<li>2.上游不关心执行结果</li>
+<li>3.上游关注结果，但执行时间很长，如是离线处理或者跨公网调用的时候，经常使用回调网关加 mq 解耦的方案</li>
+<li>4.削峰填谷，流量控制，保护下游：使用 MQ 的拉取模式，消息的消费方根据自己的处理能力来拉取消息，可实现流量控制，能够达到自身保护的效果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="36、解耦：MQ，平滑迁移。"><a href="#36、解耦：MQ，平滑迁移。" class="headerlink" title="36、解耦：MQ，平滑迁移。"></a>36、解耦：MQ，平滑迁移。</h1><ul>
+<li>no36：如何实现 MQ 的平滑迁移？如何快速实现统一迁移？<ul>
+<li>步骤<ul>
+<li>1.消费方双向订阅<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161429.png"></li>
+</ul>
+</li>
+<li>2.生产方升级为新发布<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161457.png"></li>
+</ul>
+</li>
+<li>3.消费方下线旧订阅<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161530.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>快速实现统一迁移<ul>
+<li>浅浅地封装一层后，可简单地升级一下组件即可</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="37、解耦：IP耦合，公共库耦合，解耦实践。"><a href="#37、解耦：IP耦合，公共库耦合，解耦实践。" class="headerlink" title="37、解耦：IP耦合，公共库耦合，解耦实践。"></a>37、解耦：IP耦合，公共库耦合，解耦实践。</h1><ul>
+<li>no37：如何发现系统中的耦合？<ul>
+<li>查找「被动联动」的点</li>
+</ul>
+</li>
+<li>no37：「IP 耦合」如何解耦<ul>
+<li>使用内网域名来替代内网 IP</li>
+<li><img src="https://img.shiqi-lu.tech/20210919165206.png"></li>
+</ul>
+</li>
+<li>no37：「公共库耦合」如何解耦<ul>
+<li>1.代码各自拷贝一份</li>
+<li>2.垂直拆分，个性业务代码「上浮」<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919165326.png"></li>
+</ul>
+</li>
+<li>3.服务化，共性业务代码「下沉」<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919165415.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="38、解耦：数据库耦合，解耦实战！"><a href="#38、解耦：数据库耦合，解耦实战！" class="headerlink" title="38、解耦：数据库耦合，解耦实战！"></a>38、解耦：数据库耦合，解耦实战！</h1><ul>
+<li>no38：如何对「数据库耦合」进行解耦？<ul>
+<li>1.公共数据访问服务化，屏蔽底层数据访问的复杂性，屏蔽分库分表，屏蔽读写分离，屏蔽缓存与数据库，将数据私藏<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919171009.png"></li>
+</ul>
+</li>
+<li>2.个性数据访问，自己家的数据自己管理，要么通过 DAO 访问数据库，要么子业也建立个性化数据访问的服务，本质是垂直拆分</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《沈剑架构师训练营》第8章 - 架构分层</title>
+    <url>/arch-sj-8/</url>
+    <content><![CDATA[<h1 id="40、分层：互联网分层架构方法论"><a href="#40、分层：互联网分层架构方法论" class="headerlink" title="40、分层：互联网分层架构方法论"></a>40、分层：互联网分层架构方法论</h1><ul>
+<li>no40：互联网分层架构的的本质是什么？<ul>
+<li>这是一个「数据移动」，然后「被处理」，被「呈现」的过程</li>
+</ul>
+</li>
+<li>no40：数据移动过程中最重要的两点是什么？<ul>
+<li>1.数据传输的格式</li>
+<li>2.数据在各个层次的形态</li>
+</ul>
+</li>
+<li>no40：架构分层的方法论是什么？<ul>
+<li>1.让上游更高效地获取与处理数据，复用</li>
+<li>2.让下游能屏蔽数据的获取细节，封装</li>
+</ul>
+</li>
+</ul>
+<h1 id="41、分层：DAO与服务化。"><a href="#41、分层：DAO与服务化。" class="headerlink" title="41、分层：DAO与服务化。"></a>41、分层：DAO与服务化。</h1><ul>
+<li>no41：何时应该引入 DAO<ul>
+<li>为了屏蔽数据库数据细节时</li>
+</ul>
+</li>
+<li>no41：何时需要基础数据服务化分层<ul>
+<li>为了屏蔽垂直拆分，分库分表，缓存细节时</li>
+</ul>
+</li>
+</ul>
+<h1 id="42、分层：业务服务层，是否有必要？"><a href="#42、分层：业务服务层，是否有必要？" class="headerlink" title="42、分层：业务服务层，是否有必要？"></a>42、分层：业务服务层，是否有必要？</h1><ul>
+<li>no42：何时需引入业务服务层<ul>
+<li>为了屏蔽多个基础服务的调用时</li>
+<li><img src="https://img.shiqi-lu.tech/20210919175852.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919175921.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919180000.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="43、分层：前后端分离"><a href="#43、分层：前后端分离" class="headerlink" title="43、分层：前后端分离"></a>43、分层：前后端分离</h1><ul>
+<li>no43：什么时候需要前后端分离？<ul>
+<li>为了屏蔽端上多变，PC/H5/APP 等产品复杂性时，因为设备兼容性，折磨着 MVC 的工程师，PC/H5/APP 等前端展现变化的频率，远大于后端业务逻辑变化的频率</li>
+<li><img src="https://img.shiqi-lu.tech/20210919181925.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919181845.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919181858.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="44、分层：数据库中间件"><a href="#44、分层：数据库中间件" class="headerlink" title="44、分层：数据库中间件"></a>44、分层：数据库中间件</h1><ul>
+<li>no44：何时需要数据库中间件？<ul>
+<li>为了屏蔽数据库层面的复杂性时，如<ul>
+<li>有些数据需要路由到特定的水平切分库</li>
+<li>有些数据不确定落在哪一个水平切分库，就需要访问所有库</li>
+<li>有些数据需要访问全局的库，拿到数据的全局视野，到service层进行额外处理</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20210919184348.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919184210.png"></li>
+<li>引入数据库中间件，基于客户端<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919184234.png"></li>
+</ul>
+</li>
+<li>基于服务端，对上游而言，它就是数据库<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919184316.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
       </tags>
   </entry>
   <entry>
@@ -831,6 +1742,211 @@
         <tag>机器学习</tag>
         <tag>特征工程</tag>
         <tag>数据预处理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
+    <url>/distrib-principal-algo-1/</url>
+    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
+<li>Q：分布式技术涉及内容<ul>
+<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
+<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
+<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
+<li>Q:分布式的三个演进模式是什么？<ul>
+<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
+<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
+<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
+</ul>
+</li>
+<li>Q:分布式是什么？<ul>
+<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
+</ul>
+</li>
+<li>Q:判断采取数据并行还是任务并行的方式：<ul>
+<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
+<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
+</ul>
+</li>
+</ul>
+<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
+<li>Q:分布式系统的目的是什么？<ul>
+<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
+</ul>
+</li>
+<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
+<li>一个系统处理各种任务的能力</li>
+</ul>
+</li>
+<li>Q:分布式的3个性能指标是什么？<ul>
+<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
+</ul>
+</li>
+<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
+<li>系统在一定时间内可以处理的任务数</li>
+<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
+</ul>
+</li>
+<li>Q:QPS是什么？<ul>
+<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
+</ul>
+</li>
+<li>Q:TPS是什么？<ul>
+<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
+</ul>
+</li>
+<li>Q:BPS是什么？<ul>
+<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
+</ul>
+</li>
+<li>Q:响应时间是什么？<ul>
+<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
+</ul>
+</li>
+<li>Q:完成时间是什么？<ul>
+<li>系统真正完成一个请求或处理需要花费的时间</li>
+</ul>
+</li>
+<li>Q:资源占用是什么？<ul>
+<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
+</ul>
+</li>
+<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
+<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
+<li>满载资源占用：一个系统满额负载时的资源占用</li>
+</ul>
+</li>
+<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
+<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
+<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
+</ul>
+</li>
+<li>Q:系统可用性的两个指标是什么？<ul>
+<li>1.系统停止服务的时间与总的时间之比</li>
+<li>2.某功能的失败次数与总的请求次数之比</li>
+</ul>
+</li>
+<li>Q:可扩展性(Scalability)是什么?<ul>
+<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
+</ul>
+</li>
+<li>Q:有哪两种扩展系统的方法？<ul>
+<li>垂直/纵向扩展：增加单机的硬件能力</li>
+<li>水平/横向扩展：增加计算机数量</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>分布式</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>六种不同的二分查找全总结</title>
+    <url>/binary-search/</url>
+    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
+<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
+<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
+<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
+<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
+<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
+<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while 中是&lt;而不是&lt;=<ul>
+<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
+<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
+<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
+<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
+<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
+<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
+<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
+<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
+<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
+<li>循环判断规则为<code>left &lt;= right</code></li>
+<li>结束时<code>left == right+1</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
+<li>初始化为<code>left = 0; right = nums.length</code></li>
+<li>循环判断规则为<code>left &lt; right</code></li>
+<li>结束时<code>left == right</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
+<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
+<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
+<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
+<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
+</ul>
+</li>
+<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
+<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
+<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
+<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
+<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
+<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
+<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
+</ul>
+</li>
+</ul>
+<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
+<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>Python3<ul>
+<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
+<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
+<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
+<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>二分查找</tag>
       </tags>
   </entry>
   <entry>
@@ -1105,109 +2221,6 @@
       </categories>
       <tags>
         <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《分布式技术原理与算法解析》课前必读 学习笔记</title>
-    <url>/distrib-principal-algo-1/</url>
-    <content><![CDATA[<h1 id="开篇词-四纵四横，带你透彻理解分布式技术"><a href="#开篇词-四纵四横，带你透彻理解分布式技术" class="headerlink" title="开篇词 | 四纵四横，带你透彻理解分布式技术"></a>开篇词 | 四纵四横，带你透彻理解分布式技术</h1><ul>
-<li>Q：分布式技术涉及内容<ul>
-<li><img src="https://img.shiqi-lu.tech/20200905201734.png"></li>
-<li>按照业务的架构层次栈，自底向上按照资源、通信、数据与计算的维度，有4个技术层次：分布式资源池化、分布式通信、分布式数据存储于管理、分布式计算。即“在一定资源上，进行一定通信，通过一定计算，完成一定数据的加工和处理，从而对外提供特定的服务”</li>
-<li>四条纵向技术是，在分布式环境下，无论是资源、通信、数据还是计算，都需要去解决协同、调度、追踪高可用，还有部署问题</li>
-</ul>
-</li>
-</ul>
-<h1 id="01-分布式缘何而起：从单兵，到游击队，到集团军"><a href="#01-分布式缘何而起：从单兵，到游击队，到集团军" class="headerlink" title="01 | 分布式缘何而起：从单兵，到游击队，到集团军"></a>01 | 分布式缘何而起：从单兵，到游击队，到集团军</h1><ul>
-<li>Q:分布式的三个演进模式是什么？<ul>
-<li>单机模式：所有业务和数据均部署到同一台机器上。这种模式的好处是功能、代码和数据集中，便于维护、管理和执行，但计算效率是瓶颈。即单机模式性能受限，存在单点失效的问题</li>
-<li>数据并行（数据分布式）模式：对数据进行拆分，利用多台计算机并行执行多个相同任务，通过在相同的时间内完成多个相同任务，从而缩短所有任务的总体执行时间，但对提升单个任务的执行性能及降低时延无效</li>
-<li>任务并行（任务分布式）：单任务拆分成多个子任务，多个子任务并行执行，只要一个复杂任务重的任意子任务的执行时间变短了，那么这个业务的整体执行时间也就变短了。该模式在提高性能、扩展性、可维护性等的同事，也带来了设计上的复杂性问题，比如复杂任务的拆分</li>
-</ul>
-</li>
-<li>Q:分布式是什么？<ul>
-<li>将相同或相关的程序运行在多台计算机上，从而实现特定目标的一种计算方式</li>
-</ul>
-</li>
-<li>Q:判断采取数据并行还是任务并行的方式：<ul>
-<li>任务执行时间短，数据规模大，类型相同且无依赖：数据并行</li>
-<li>任务复杂、执行时间长，且任务可拆分成多个子任务：任务并行</li>
-</ul>
-</li>
-</ul>
-<h1 id="02-分布式系统的指标：啥是分布式的三围"><a href="#02-分布式系统的指标：啥是分布式的三围" class="headerlink" title="02 | 分布式系统的指标：啥是分布式的三围"></a>02 | 分布式系统的指标：啥是分布式的三围</h1><ul>
-<li>Q:分布式系统的目的是什么？<ul>
-<li>为了用廉价的、普通的机器解决单个计算机处理复杂、大规模数据和任务时存在的性能问题、资源瓶颈问题，以及可用性和扩展性问题，即用更多的机器，处理更多的数据和更复杂的任务</li>
-</ul>
-</li>
-<li>Q:分布式的性能(Performance)指标用来衡量什么？<ul>
-<li>一个系统处理各种任务的能力</li>
-</ul>
-</li>
-<li>Q:分布式的3个性能指标是什么？<ul>
-<li>吞吐量（Throughput）、响应时间（Response Time）、完成时间（Turnaround Time）</li>
-</ul>
-</li>
-<li>Q:吞吐量指的是什么？有哪3个指标？<ul>
-<li>系统在一定时间内可以处理的任务数</li>
-<li>QPS(Queries Per Second)、TPS(Transactions Per Second)、BPS(Bits Per Second)</li>
-</ul>
-</li>
-<li>Q:QPS是什么？<ul>
-<li>查询每秒数，用于衡量一个系统每秒处理的查询数。数值越高说明对读操作的支持越好</li>
-</ul>
-</li>
-<li>Q:TPS是什么？<ul>
-<li>事务每秒数，用于衡量一个系统每秒处理的事务数。数值越高说明对写操作的支持越好</li>
-</ul>
-</li>
-<li>Q:BPS是什么？<ul>
-<li>比特数每秒，用于衡量一个系统每秒处理的数据量。对于一些网络系统和数据管理系统，有的事务大需要写入更多数据，BPS更能客观反映系统吞吐量</li>
-</ul>
-</li>
-<li>Q:响应时间是什么？<ul>
-<li>系统相应一个请求或输入需要花费的时间，对于时延敏感的业务非常重要</li>
-</ul>
-</li>
-<li>Q:完成时间是什么？<ul>
-<li>系统真正完成一个请求或处理需要花费的时间</li>
-</ul>
-</li>
-<li>Q:资源占用是什么？<ul>
-<li>一个系统提供正常能力需要占用的硬件资源，如CPU、内存、硬盘等</li>
-</ul>
-</li>
-<li>Q:空载资源占用和满载资源占用分别是什么？<ul>
-<li>空载资源占用：一个系统在没有任何负载时的资源占用</li>
-<li>满载资源占用：一个系统满额负载时的资源占用</li>
-</ul>
-</li>
-<li>Q:可用性(Availability)和可靠性(Reliability)是什么？<ul>
-<li>可用性：系统在面对各种异常时可以正确提供服务的能力，即允许部分组件失效的情况下，一个系统对外仍能正常提供服务的概率</li>
-<li>可靠性：一个系统完全不出故障的概率，更多用在硬件领域</li>
-</ul>
-</li>
-<li>Q:系统可用性的两个指标是什么？<ul>
-<li>1.系统停止服务的时间与总的时间之比</li>
-<li>2.某功能的失败次数与总的请求次数之比</li>
-</ul>
-</li>
-<li>Q:可扩展性(Scalability)是什么?<ul>
-<li>分布式系统通过扩展集群机器规模提高系统性能（吞吐、响应时间、完成时间）、存储容量、计算能力的特性</li>
-</ul>
-</li>
-<li>Q:有哪两种扩展系统的方法？<ul>
-<li>垂直/纵向扩展：增加单机的硬件能力</li>
-<li>水平/横向扩展：增加计算机数量</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>分布式</category>
-      </categories>
-      <tags>
-        <tag>分布式</tag>
       </tags>
   </entry>
   <entry>

@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="包括如下目录学习笔记：14、服务化：微服务架构，究竟解决什么问题？15、服务化：微服务架构，粒度多少合适？16、服务化：微服务架构，必须搞定高可用！17、服务化：微服务架构，必须搞定高并发！18、服务化：微服务架构，必须搞定负载均衡！20、服务化：连接池，高可用可扩展负载均衡都离不开他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《沈剑架构师训练营》第4章 - 微服务架构">
+<meta property="og:url" content="http://shiqi-lu.tech/arch-sj-4/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="包括如下目录学习笔记：14、服务化：微服务架构，究竟解决什么问题？15、服务化：微服务架构，粒度多少合适？16、服务化：微服务架构，必须搞定高可用！17、服务化：微服务架构，必须搞定高并发！18、服务化：微服务架构，必须搞定负载均衡！20、服务化：连接池，高可用可扩展负载均衡都离不开他">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906114646.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906200739.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906114751.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906114828.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906200420.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906200628.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906200847.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906200929.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210906201132.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210907042437.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210907042536.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210907043051.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210907043722.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210907044101.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908092416.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908092543.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908092644.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908092931.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908093051.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908093155.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908093429.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908094009.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908094226.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908104829.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908104951.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908105303.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908105640.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908110251.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908110615.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908104829.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908130356.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908130502.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908135904.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908140119.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908140647.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908141258.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908142320.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908142533.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908201431.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908201526.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908203120.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908204445.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210908204559.png">
+<meta property="article:published_time" content="2021-09-21T07:09:00.000Z">
+<meta property="article:modified_time" content="2021-09-21T07:09:00.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210906114646.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/arch-sj-4/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《沈剑架构师训练营》第4章 - 微服务架构 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">44</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#14%E3%80%81%E6%9C%8D%E5%8A%A1%E5%8C%96%EF%BC%9A%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%EF%BC%8C%E7%A9%B6%E7%AB%9F%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-text">14、服务化：微服务架构，究竟解决什么问题？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#15%E3%80%81%E6%9C%8D%E5%8A%A1%E5%8C%96%EF%BC%9A%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%EF%BC%8C%E7%B2%92%E5%BA%A6%E5%A4%9A%E5%B0%91%E5%90%88%E9%80%82%EF%BC%9F"><span class="nav-text">15、服务化：微服务架构，粒度多少合适？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#16%E3%80%81%E6%9C%8D%E5%8A%A1%E5%8C%96%EF%BC%9A%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%EF%BC%8C%E5%BF%85%E9%A1%BB%E6%90%9E%E5%AE%9A%E9%AB%98%E5%8F%AF%E7%94%A8%EF%BC%81"><span class="nav-text">16、服务化：微服务架构，必须搞定高可用！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#17%E3%80%81%E6%9C%8D%E5%8A%A1%E5%8C%96%EF%BC%9A%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%EF%BC%8C%E5%BF%85%E9%A1%BB%E6%90%9E%E5%AE%9A%E9%AB%98%E5%B9%B6%E5%8F%91%EF%BC%81"><span class="nav-text">17、服务化：微服务架构，必须搞定高并发！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#18%E3%80%81%E6%9C%8D%E5%8A%A1%E5%8C%96%EF%BC%9A%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%EF%BC%8C%E5%BF%85%E9%A1%BB%E6%90%9E%E5%AE%9A%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%81"><span class="nav-text">18、服务化：微服务架构，必须搞定负载均衡！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#20%E3%80%81%E6%9C%8D%E5%8A%A1%E5%8C%96%EF%BC%9A%E8%BF%9E%E6%8E%A5%E6%B1%A0%EF%BC%8C%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%AF%E6%89%A9%E5%B1%95%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%83%BD%E7%A6%BB%E4%B8%8D%E5%BC%80%E4%BB%96"><span class="nav-text">20、服务化：连接池，高可用可扩展负载均衡都离不开他</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/arch-sj-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《沈剑架构师训练营》第4章 - 微服务架构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-09-21 15:09:00" itemprop="dateCreated datePublished" datetime="2021-09-21T15:09:00+08:00">2021-09-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/arch-sj-4/" class="post-meta-item leancloud_visitors" data-flag-title="《沈剑架构师训练营》第4章 - 微服务架构" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/arch-sj-4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/arch-sj-4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">包括如下目录学习笔记：14、服务化：微服务架构，究竟解决什么问题？15、服务化：微服务架构，粒度多少合适？16、服务化：微服务架构，必须搞定高可用！17、服务化：微服务架构，必须搞定高并发！18、服务化：微服务架构，必须搞定负载均衡！20、服务化：连接池，高可用可扩展负载均衡都离不开他</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="14、服务化：微服务架构，究竟解决什么问题？"><a href="#14、服务化：微服务架构，究竟解决什么问题？" class="headerlink" title="14、服务化：微服务架构，究竟解决什么问题？"></a>14、服务化：微服务架构，究竟解决什么问题？</h1><ul>
+<li>no14：在服务化前后的互联网的常见架构示意图<ul>
+<li>服务化前</li>
+<li><img src="https://img.shiqi-lu.tech/20210906114646.png"></li>
+<li>服务化后</li>
+<li><img src="https://img.shiqi-lu.tech/20210906200739.png"></li>
+</ul>
+</li>
+<li>no14：没有服务化前的痛点<ul>
+<li>1.代码到处拷贝<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906114751.png"></li>
+</ul>
+</li>
+<li>2.底层复杂性扩散<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906114828.png"></li>
+</ul>
+</li>
+<li>3.公共库耦合</li>
+<li>4.SQL 质量无法保障<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906200420.png"></li>
+</ul>
+</li>
+<li>5.不易扩展，数据库耦合<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906200628.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no14：服务化的好处<ul>
+<li>1.复用性，消除代码拷贝<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906200847.png"></li>
+</ul>
+</li>
+<li>2.专注性，防止复杂性扩散<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906200929.png"></li>
+</ul>
+</li>
+<li>3.解耦合，消除公共库耦合</li>
+<li>4.高质量，SQL 稳定性有保障<ul>
+<li><img src="https://img.shiqi-lu.tech/20210906201132.png"></li>
+</ul>
+</li>
+<li>5.易扩展，消除数据库解耦合</li>
+<li>6.(最重要)高效，对业务调用方的研发效率提升了</li>
+</ul>
+</li>
+<li>no14：服务化后的潜在问题有哪些？<ul>
+<li>1.系统复杂性上升</li>
+<li>2.层次间依赖关系变得复杂</li>
+<li>3.运维，部署更麻烦</li>
+<li>4.监控变得更复杂</li>
+<li>5.定位问题更麻烦</li>
+</ul>
+</li>
+</ul>
+<h1 id="15、服务化：微服务架构，粒度多少合适？"><a href="#15、服务化：微服务架构，粒度多少合适？" class="headerlink" title="15、服务化：微服务架构，粒度多少合适？"></a>15、服务化：微服务架构，粒度多少合适？</h1><ul>
+<li>no15：微服务化架构粒度拆分实践一：统一服务层<ul>
+<li><img src="https://img.shiqi-lu.tech/20210907042437.png"></li>
+<li>业务不是特别复杂的时候，统一整个服务层，所有数据都通过一个统一的服务层来进行访问</li>
+<li>缺点：一旦代码出故障，就将影响整个服务</li>
+</ul>
+</li>
+<li>no15：微服务化架构粒度拆分实践二：一个子业务一个服务(最佳实践)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210907042536.png"></li>
+<li>在服务层进行垂直拆分，一个子业务抽象出一个服务，数据层也按照子业务垂直拆分</li>
+<li>当业务连接关系变得复杂时，加入网关分发层来消除这个网状关系，并在协议设计的时候加入一个协议号服务号，分发层通过协议号服务号将请求路由到相关的子业务服务</li>
+<li><img src="https://img.shiqi-lu.tech/20210907043051.png"></li>
+</ul>
+</li>
+<li>no15：微服务化架构粒度拆分实践三：一个数据库一个服务<ul>
+<li><img src="https://img.shiqi-lu.tech/20210907043722.png"></li>
+</ul>
+</li>
+<li>no15：微服务化架构粒度拆分实践四：一个接口一个服务<ul>
+<li><img src="https://img.shiqi-lu.tech/20210907044101.png"></li>
+<li>需要语言特性的支持，如 go 可以这么使用</li>
+</ul>
+</li>
+<li>no15：微服务化架构拆成细粒度优缺点<ul>
+<li>优点<ul>
+<li>服务能够独立部署，扩容缩容相对方便</li>
+<li>能更有效地提高资源利用率</li>
+<li>耦合度相对减小</li>
+<li>容错性相对更好</li>
+<li>扩展性也会更好</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>服务数量变多</li>
+<li>系统复杂性增加</li>
+<li>依赖关系复杂性增加</li>
+<li>运维复杂性增加</li>
+<li>监控更复杂</li>
+<li>定位问题更复杂</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="16、服务化：微服务架构，必须搞定高可用！"><a href="#16、服务化：微服务架构，必须搞定高可用！" class="headerlink" title="16、服务化：微服务架构，必须搞定高可用！"></a>16、服务化：微服务架构，必须搞定高可用！</h1><ul>
+<li>no16：高可用是什么？<ul>
+<li>减少系统不能提供服务的时间</li>
+</ul>
+</li>
+<li>no16：如何判断是否高可用？<ul>
+<li>随机关停一台线上服务器，如果对用户的服务不受影响，那么系统就是高可用的</li>
+</ul>
+</li>
+<li>no16：如何保障系统的高可用<ul>
+<li>1.集群化(冗余)</li>
+<li>2.故障自动转移</li>
+</ul>
+</li>
+<li>no16：常见微服务分层架构？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908092416.png"></li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「端」到「反向代理」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908092543.png"></li>
+<li>通过 keepalived + 虚 IP 来实现</li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「反向代理」到「站点应用」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908092644.png"></li>
+<li>通过站点层的冗余来实现</li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「站点应用」到「微服务」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908092931.png"></li>
+<li>通过服务层的冗余来实现，上游有服务连接池</li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「微服务」到「缓存」的高可用(memcache)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908093051.png"></li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「微服务」到「缓存」的高可用(redis)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908093155.png"></li>
+<li>但很多时候缓存不需要保证高可用，只要不「雪崩」压垮数据库就行<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908093429.png"></li>
+<li>将缓存进行水平切分，这也是个集群，但只是用来做分片，并不做数据冗余，在上游设置代理，即进行完水平切分的入口</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no16：微服务分层架构如何保证「微服务」到「数据库」的高可用<ul>
+<li>如果做了读写分离，必须保证</li>
+<li>「微服务」到「读库」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908094009.png"></li>
+<li>通过读库的冗余化集群实现的</li>
+</ul>
+</li>
+<li>「微服务」到「写库」的高可用<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908094226.png"></li>
+<li>通过写库的冗余化集群实现的，如 MySQL 可通过设置双主相互同步</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="17、服务化：微服务架构，必须搞定高并发！"><a href="#17、服务化：微服务架构，必须搞定高并发！" class="headerlink" title="17、服务化：微服务架构，必须搞定高并发！"></a>17、服务化：微服务架构，必须搞定高并发！</h1><ul>
+<li>no17：什么是高并发？<ul>
+<li>通过设计方案，保证系统能够同时并行的处理很多用户的很多请求</li>
+</ul>
+</li>
+<li>no17：高并发相关的常见指标有哪些？<ul>
+<li>1.响应时间(Response Time)</li>
+<li>2.吞吐量(Throughput)</li>
+<li>3.每秒查询率 QPS(Query Per Second)</li>
+<li>4.并发用户数</li>
+</ul>
+</li>
+<li>no17：提升系统并发处理能力的方法论？<ul>
+<li>1.垂直扩展(Scale Up)<ul>
+<li>1.提升单机硬件性能</li>
+<li>2.提升单机架构性能</li>
+<li>业务早期建议使用，因为速度最快</li>
+</ul>
+</li>
+<li>2.水平扩展(Scale Out)</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908104829.png"></li>
+<li>要想做到整体的性能无限，就必须做到每一层都能够实现水平扩展性能无限</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构的反向代理层的水平扩展<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908104951.png"></li>
+<li>之前都是通过 lvs 和 f5 的垂直扩展的方式，这都是有性能上限的，反向代理的水平扩展是通过 DNS 轮询实现的，DNS server 对于同一个域名配置不同的 nginx 外网 IP</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构的站点应用层的水平扩展<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908105303.png"></li>
+<li>通过反向代理层实现</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构的微服务的水平扩展<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908105640.png"></li>
+<li>通过服务连接池去实现的，站点层通过 rpc client 调用下层的服务层 rpc server，rpc client 会建立多个服务连接，当服务称为瓶颈的时候，只要增加服务节点的数量，rpc client 会建立新的连接</li>
+</ul>
+</li>
+<li>no17：常见微服务分层架构的数据层(缓存，数据库)的水平扩展<ul>
+<li>需求<ul>
+<li>1.存储容量的扩展，无限容量</li>
+<li>2.处理能力的扩展，无限读性能，无限写性能</li>
+</ul>
+</li>
+<li>根据数据的范围水平切分<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908110251.png"></li>
+<li>优点<ul>
+<li>规则简单</li>
+<li>数据的均衡性比较好</li>
+<li>容易扩展</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>虽然保证数据层是均衡的，但读写请求不一定是均衡的</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>按照哈希水平切分<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908110615.png"></li>
+<li>优点<ul>
+<li>规则简单</li>
+<li>数据均衡性非常好</li>
+<li>请求均衡性非常好</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>不容易扩展，扩展可能需要进行数据迁移</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="18、服务化：微服务架构，必须搞定负载均衡！"><a href="#18、服务化：微服务架构，必须搞定负载均衡！" class="headerlink" title="18、服务化：微服务架构，必须搞定负载均衡！"></a>18、服务化：微服务架构，必须搞定负载均衡！</h1><ul>
+<li>no18：什么是负载均衡<ul>
+<li>将请求或者数据均匀地分摊到多个操作单元上执行<ul>
+<li>1.同构，重点在于「均匀」</li>
+<li>2.异构，重点在于「负载与能力匹配」</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，保证负载均衡的思路<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908104829.png"></li>
+<li>实现每个上游都实现对下游的均匀访问，即可实现系统整体的均匀分摊</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，反向代理层的负载均衡<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908130356.png"></li>
+<li>DNS 服务器使用 DNS 轮询的方式，即可实现 Nginx 的负载均衡</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，站点应用层的负载均衡<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908130502.png"></li>
+<li>nginx 使用轮询的方式，将请求路由到多个站点应用的后端</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，微服务的负载均衡<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908135904.png"></li>
+<li>通过连接池实现的，可使用随机或轮询等方式保证多个微服务的下游的请求是均匀的</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，数据层(缓存，数据库)的负载均衡<ul>
+<li>1.数据，均衡</li>
+<li>2.请求，均衡</li>
+<li>按照数据范围水平切分<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908140119.png"></li>
+<li>数据负载是均衡的，水平负载未必均衡，如新用户可能更活跃</li>
+</ul>
+</li>
+<li>哈希水平切分<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908140647.png"></li>
+<li>数据、请求的负载都比较均衡，同构节点的服务器的均衡比较容易</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，异构服务器负载均衡，方案一：静态权重<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908141258.png"></li>
+<li>为下游每个微服务节点设置一个静态权重，表示微服务的处理能力，来调配连接池</li>
+<li>优点<ul>
+<li>简单粗暴</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>无法自适应地去调节</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no18：常见微服务分层架构，异构服务器负载均衡，方案二：动态权重<ul>
+<li>1.如何标识服务的处理能力？(下游的处理能力是由调用方决定的)</li>
+<li>2.如何设计动态权重？</li>
+<li>对每一个微服务的连接使用一个权重来标识，这个权重决定分配给每个微服务请求的概率，获得相应连接的概率，当下游每成功处理一个请求的时候，就认为下游的微服务的处理能力足够，增加权重(缓慢)，当微服务超时处理一个请求的时候，就认为下游的处理能力，可能要跟不上了，权重就减少(快速)</li>
+<li>可把权重的范围设置为[0，100]之间，初始值设置为 60，</li>
+</ul>
+</li>
+<li>no18：什么是过载保护？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908142320.png"></li>
+<li>如果不对微服务实施过载保护，随着上游的负载越来越高，在微服务的处理能力范围内，每秒处理的请求是越来越高的</li>
+<li>但是达到一个负载的极限时，外部负载持续的增加，它的处理能力会掉底，瞬间降为 0，即「雪崩」</li>
+<li><img src="https://img.shiqi-lu.tech/20210908142533.png"></li>
+<li>如果实施了过载保护，那么随着外部负载的增加，处理能力到达一个 max 值后，会保持相对稳定的一个值，系统不会被完全压垮</li>
+</ul>
+</li>
+<li>no18：如何实施过载保护？<ul>
+<li>1.静态权重(粗暴，不优雅)<ul>
+<li>给微服务的处理能力设置一个阈值，如果负载超过这个阈值，就将后续的请求全部抛弃</li>
+</ul>
+</li>
+<li>2.动态权重<ul>
+<li>1.连接表示服务，分值代表服务(连接)</li>
+<li>2.处理成功加小分，处理失败扣大分</li>
+<li>3.到达临界编译时，如有请求超时的时候，可判断快要处理不过来了，让它有请求处理失败的时候休息一会，再接下来 10 秒内不再给这个超时的服务器进行负载分配</li>
+<li>4.如果仍然连续地超时，可能判定这个服务器完全处理不过来了，如 fullGC，根据经验，fullGC 差不多一分钟之后能回过神，则一分钟后给它分配请求</li>
+<li>但如果整体负载超过了微服务集群的整体负载，最终还是要抛弃部分请求</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="20、服务化：连接池，高可用可扩展负载均衡都离不开他"><a href="#20、服务化：连接池，高可用可扩展负载均衡都离不开他" class="headerlink" title="20、服务化：连接池，高可用可扩展负载均衡都离不开他"></a>20、服务化：连接池，高可用可扩展负载均衡都离不开他</h1><ul>
+<li>no20：微服务分层架构中，连接池的位置<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908201431.png"></li>
+</ul>
+</li>
+<li>no20：高可用，故障转移，在连接池中是如何实现的？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908201526.png"></li>
+<li>当有节点失效时，连接池重试也连接不上，则连接池会把失败的连接剔除出去</li>
+</ul>
+</li>
+<li>no20：扩展性，服务发现，在连接池的实现<ul>
+<li>1.自动载入新服务节点的配置<ul>
+<li>方案一：监控配置文件，并重新载入<ul>
+<li>具体实现可以是启动一个进程，监控文件变化，循环检测文件 md5是否变化，如果变化则读取新服务节点的配置</li>
+</ul>
+</li>
+<li>方案二：配置中心回调，并重新载入<ul>
+<li>每当调用方站点集群向配置中心注册了下游所依赖的微服务集群的配置，如果微服务集群的节点发生了变化配置中心会给调用方的站点集群进行回调，会将变化后的节点通知站点集群，再实施连接池自动增删节点</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.动态连接池</li>
+</ul>
+</li>
+<li>no20：负载均衡，连接池的实现的三个方案<ul>
+<li>方案一：随机/轮询(同构服务器)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908203120.png"></li>
+</ul>
+</li>
+<li>方案二：静态权重法(异构服务器)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908204445.png"></li>
+</ul>
+</li>
+<li>方案二：动态权重法(异构服务器)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210908204559.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/arch-sj-4/" title="《沈剑架构师训练营》第4章 - 微服务架构">http://shiqi-lu.tech/arch-sj-4/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/arch-sj-3/" rel="prev" title="《沈剑架构师训练营》第3章 - 快速性能优化">
+                  <i class="fa fa-chevron-left"></i> 《沈剑架构师训练营》第3章 - 快速性能优化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/arch-sj-5/" rel="next" title="《沈剑架构师训练营》第5章 - 微服务架构">
+                  《沈剑架构师训练营》第5章 - 微服务架构 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/arch-sj-4/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>

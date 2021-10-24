@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="包括如下目录学习笔记：34、解耦：配置中心，与配置架构演进。35、MQ，互联网架构解耦利器。36、解耦：MQ，平滑迁移。37、解耦：IP耦合，公共库耦合，解耦实践。38、解耦：数据库耦合，解耦实战！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《沈剑架构师训练营》第7章 - 架构解耦">
+<meta property="og:url" content="http://shiqi-lu.tech/arch-sj-7/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="包括如下目录学习笔记：34、解耦：配置中心，与配置架构演进。35、MQ，互联网架构解耦利器。36、解耦：MQ，平滑迁移。37、解耦：IP耦合，公共库耦合，解耦实践。38、解耦：数据库耦合，解耦实战！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919152754.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919153259.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919153652.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919161429.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919161457.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919161530.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919165206.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919165326.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919165415.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210919171009.png">
+<meta property="article:published_time" content="2021-10-09T03:46:00.000Z">
+<meta property="article:modified_time" content="2021-10-09T03:46:00.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210919152754.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/arch-sj-7/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《沈剑架构师训练营》第7章 - 架构解耦 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">44</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#34%E3%80%81%E8%A7%A3%E8%80%A6%EF%BC%9A%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%EF%BC%8C%E4%B8%8E%E9%85%8D%E7%BD%AE%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E3%80%82"><span class="nav-text">34、解耦：配置中心，与配置架构演进。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#35%E3%80%81MQ%EF%BC%8C%E4%BA%92%E8%81%94%E7%BD%91%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%80%A6%E5%88%A9%E5%99%A8%E3%80%82"><span class="nav-text">35、MQ，互联网架构解耦利器。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#36%E3%80%81%E8%A7%A3%E8%80%A6%EF%BC%9AMQ%EF%BC%8C%E5%B9%B3%E6%BB%91%E8%BF%81%E7%A7%BB%E3%80%82"><span class="nav-text">36、解耦：MQ，平滑迁移。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#37%E3%80%81%E8%A7%A3%E8%80%A6%EF%BC%9AIP%E8%80%A6%E5%90%88%EF%BC%8C%E5%85%AC%E5%85%B1%E5%BA%93%E8%80%A6%E5%90%88%EF%BC%8C%E8%A7%A3%E8%80%A6%E5%AE%9E%E8%B7%B5%E3%80%82"><span class="nav-text">37、解耦：IP耦合，公共库耦合，解耦实践。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#38%E3%80%81%E8%A7%A3%E8%80%A6%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E8%80%A6%E5%90%88%EF%BC%8C%E8%A7%A3%E8%80%A6%E5%AE%9E%E6%88%98%EF%BC%81"><span class="nav-text">38、解耦：数据库耦合，解耦实战！</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/arch-sj-7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《沈剑架构师训练营》第7章 - 架构解耦
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-10-09 11:46:00" itemprop="dateCreated datePublished" datetime="2021-10-09T11:46:00+08:00">2021-10-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/arch-sj-7/" class="post-meta-item leancloud_visitors" data-flag-title="《沈剑架构师训练营》第7章 - 架构解耦" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/arch-sj-7/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/arch-sj-7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">包括如下目录学习笔记：34、解耦：配置中心，与配置架构演进。35、MQ，互联网架构解耦利器。36、解耦：MQ，平滑迁移。37、解耦：IP耦合，公共库耦合，解耦实践。38、解耦：数据库耦合，解耦实战！</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="34、解耦：配置中心，与配置架构演进。"><a href="#34、解耦：配置中心，与配置架构演进。" class="headerlink" title="34、解耦：配置中心，与配置架构演进。"></a>34、解耦：配置中心，与配置架构演进。</h1><ul>
+<li>no34：配置文件架构有什么核心痛点？<ul>
+<li>1.上游痛：扩容的是下游，改配置重启的是上游(耦合，典型反向依赖)</li>
+<li>2.下游痛：不知道谁依赖于自己(难以实施服务治理)</li>
+</ul>
+</li>
+<li>no34：配置文件架构怎么解耦？<ul>
+<li>1.「配置私藏」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919152754.png"></li>
+<li>上游把下游的配置私藏在自己单独的配置文件里</li>
+<li>不足：例如需要扩容时，下游需要通知所有的上游调用方去修改各自私藏的配置，并重启上游，将连接连到新的集群节点上去，将流量从下线的节点迁走</li>
+</ul>
+</li>
+<li>2.「全局配置文件」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919153259.png"></li>
+<li>运维制定一系列配置文件规范，将通用的服务的配置放到 global.conf 全局配置文件里，调用方升级，不再读取本地的私有配置文件，而是读取全局配置文件去获取通用服务的配置，配合文件监控组件和动态连接池组件能够实现自动的扩容与缩容，但依然解决不了下游服务治理的问题</li>
+<li>优点<ul>
+<li>下游容量变化时只需修改一个地方，调用方重启后会自动读取新配置，对架构的改动较小</li>
+</ul>
+</li>
+<li>不足<ul>
+<li>如果调用方一直不重启，就没办法迁移</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.「配置中心」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919153652.png"></li>
+<li>由服务、zookeeper、后台配置文件和落地的数据库组成</li>
+<li>所有服务的配置都维护在配置中心里，所有调用方需要注册配置中心，去配置中心拉取相关的配置，此时全局调用关系图和服务治理，以及按照上游的调用方来限流，就容易实现</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="35、MQ，互联网架构解耦利器。"><a href="#35、MQ，互联网架构解耦利器。" class="headerlink" title="35、MQ，互联网架构解耦利器。"></a>35、MQ，互联网架构解耦利器。</h1><ul>
+<li>no35：什么时候不用 MQ？什么时候用 MQ？<ul>
+<li>不用<ul>
+<li>上游实时关注执行结果，通常采用 RPC</li>
+</ul>
+</li>
+<li>用<ul>
+<li>1.数据驱动的任务依赖，如下一个任务依赖上一个任务的执行结果</li>
+<li>2.上游不关心执行结果</li>
+<li>3.上游关注结果，但执行时间很长，如是离线处理或者跨公网调用的时候，经常使用回调网关加 mq 解耦的方案</li>
+<li>4.削峰填谷，流量控制，保护下游：使用 MQ 的拉取模式，消息的消费方根据自己的处理能力来拉取消息，可实现流量控制，能够达到自身保护的效果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="36、解耦：MQ，平滑迁移。"><a href="#36、解耦：MQ，平滑迁移。" class="headerlink" title="36、解耦：MQ，平滑迁移。"></a>36、解耦：MQ，平滑迁移。</h1><ul>
+<li>no36：如何实现 MQ 的平滑迁移？如何快速实现统一迁移？<ul>
+<li>步骤<ul>
+<li>1.消费方双向订阅<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161429.png"></li>
+</ul>
+</li>
+<li>2.生产方升级为新发布<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161457.png"></li>
+</ul>
+</li>
+<li>3.消费方下线旧订阅<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161530.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>快速实现统一迁移<ul>
+<li>浅浅地封装一层后，可简单地升级一下组件即可</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="37、解耦：IP耦合，公共库耦合，解耦实践。"><a href="#37、解耦：IP耦合，公共库耦合，解耦实践。" class="headerlink" title="37、解耦：IP耦合，公共库耦合，解耦实践。"></a>37、解耦：IP耦合，公共库耦合，解耦实践。</h1><ul>
+<li>no37：如何发现系统中的耦合？<ul>
+<li>查找「被动联动」的点</li>
+</ul>
+</li>
+<li>no37：「IP 耦合」如何解耦<ul>
+<li>使用内网域名来替代内网 IP</li>
+<li><img src="https://img.shiqi-lu.tech/20210919165206.png"></li>
+</ul>
+</li>
+<li>no37：「公共库耦合」如何解耦<ul>
+<li>1.代码各自拷贝一份</li>
+<li>2.垂直拆分，个性业务代码「上浮」<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919165326.png"></li>
+</ul>
+</li>
+<li>3.服务化，共性业务代码「下沉」<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919165415.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="38、解耦：数据库耦合，解耦实战！"><a href="#38、解耦：数据库耦合，解耦实战！" class="headerlink" title="38、解耦：数据库耦合，解耦实战！"></a>38、解耦：数据库耦合，解耦实战！</h1><ul>
+<li>no38：如何对「数据库耦合」进行解耦？<ul>
+<li>1.公共数据访问服务化，屏蔽底层数据访问的复杂性，屏蔽分库分表，屏蔽读写分离，屏蔽缓存与数据库，将数据私藏<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919171009.png"></li>
+</ul>
+</li>
+<li>2.个性数据访问，自己家的数据自己管理，要么通过 DAO 访问数据库，要么子业也建立个性化数据访问的服务，本质是垂直拆分</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/arch-sj-7/" title="《沈剑架构师训练营》第7章 - 架构解耦">http://shiqi-lu.tech/arch-sj-7/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/arch-sj-6/" rel="prev" title="《沈剑架构师训练营》第6章 - 缓存架构">
+                  <i class="fa fa-chevron-left"></i> 《沈剑架构师训练营》第6章 - 缓存架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/arch-sj-8/" rel="next" title="《沈剑架构师训练营》第8章 - 架构分层">
+                  《沈剑架构师训练营》第8章 - 架构分层 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/arch-sj-7/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>

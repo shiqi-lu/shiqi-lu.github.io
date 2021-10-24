@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="包括如下目录学习笔记：21、数据库：读性能要如何提升？22、数据库：垂直拆分与高可用。23、数据库：主从一致性，主主一致性如何保障？24、数据库：扩展性，要如何解决？25、数据库：扩展性，平滑扩容方案？26、数据库：水平切分，数据库秒级扩容！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《沈剑架构师训练营》第5章 - 微服务架构">
+<meta property="og:url" content="http://shiqi-lu.tech/arch-sj-5/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="包括如下目录学习笔记：21、数据库：读性能要如何提升？22、数据库：垂直拆分与高可用。23、数据库：主从一致性，主主一致性如何保障？24、数据库：扩展性，要如何解决？25、数据库：扩展性，平滑扩容方案？26、数据库：水平切分，数据库秒级扩容！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210909103013.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210909103738.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210909104021.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210909211447.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210909211821.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911164115.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911164509.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911164936.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911171749.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911172110.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911172541.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911172828.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911173410.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210911174223.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210912221639.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210912221613.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210912222521.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914093745.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914093810.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914093830.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914094907.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914094828.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914101758.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914102216.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914102317.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914102405.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914103537.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914104206.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210914104102.png">
+<meta property="article:published_time" content="2021-09-26T09:21:00.000Z">
+<meta property="article:modified_time" content="2021-09-26T09:21:00.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210909103013.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/arch-sj-5/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《沈剑架构师训练营》第5章 - 微服务架构 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">44</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#21%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9A%E8%AF%BB%E6%80%A7%E8%83%BD%E8%A6%81%E5%A6%82%E4%BD%95%E6%8F%90%E5%8D%87%EF%BC%9F"><span class="nav-text">21、数据库：读性能要如何提升？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#22%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9A%E5%9E%82%E7%9B%B4%E6%8B%86%E5%88%86%E4%B8%8E%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-text">22、数据库：垂直拆分与高可用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#23%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9A%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%8C%E4%B8%BB%E4%B8%BB%E4%B8%80%E8%87%B4%E6%80%A7%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%EF%BC%9F"><span class="nav-text">23、数据库：主从一致性，主主一致性如何保障？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#24%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9A%E6%89%A9%E5%B1%95%E6%80%A7%EF%BC%8C%E8%A6%81%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="nav-text">24、数据库：扩展性，要如何解决？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#25%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9A%E6%89%A9%E5%B1%95%E6%80%A7%EF%BC%8C%E5%B9%B3%E6%BB%91%E6%89%A9%E5%AE%B9%E6%96%B9%E6%A1%88%EF%BC%9F"><span class="nav-text">25、数据库：扩展性，平滑扩容方案？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#26%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9A%E6%B0%B4%E5%B9%B3%E5%88%87%E5%88%86%EF%BC%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%A7%92%E7%BA%A7%E6%89%A9%E5%AE%B9%EF%BC%81"><span class="nav-text">26、数据库：水平切分，数据库秒级扩容！</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/arch-sj-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《沈剑架构师训练营》第5章 - 微服务架构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-09-26 17:21:00" itemprop="dateCreated datePublished" datetime="2021-09-26T17:21:00+08:00">2021-09-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/arch-sj-5/" class="post-meta-item leancloud_visitors" data-flag-title="《沈剑架构师训练营》第5章 - 微服务架构" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/arch-sj-5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/arch-sj-5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">包括如下目录学习笔记：21、数据库：读性能要如何提升？22、数据库：垂直拆分与高可用。23、数据库：主从一致性，主主一致性如何保障？24、数据库：扩展性，要如何解决？25、数据库：扩展性，平滑扩容方案？26、数据库：水平切分，数据库秒级扩容！</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="21、数据库：读性能要如何提升？"><a href="#21、数据库：读性能要如何提升？" class="headerlink" title="21、数据库：读性能要如何提升？"></a>21、数据库：读性能要如何提升？</h1><ul>
+<li>no21：数据库工程架构，要设计些什么呢？<ul>
+<li>1.根据「业务模式」设计库表结构</li>
+<li>2.根据「访问模式」设计索引结构</li>
+</ul>
+</li>
+<li>no21：数据库工程架构必须要考虑哪 5 个因素？<ul>
+<li>读性能提升</li>
+<li>高可用</li>
+<li>一致性保障</li>
+<li>扩展性</li>
+<li>垂直拆分</li>
+</ul>
+</li>
+<li>no21：提升数据的读性能的方案一：建立索引<ul>
+<li>潜在问题<ul>
+<li>写性能降低</li>
+<li>索引占用内存大，buffer命中率降低， 读性能降低</li>
+</ul>
+</li>
+<li>实践：可以为主实例不建立索引，从实例建立不同的索引<ul>
+<li><img src="https://img.shiqi-lu.tech/20210909103013.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no21：提升数据的读性能的方案二：增加从库<ul>
+<li>分组架构，主要解决的，就是读性能提升的问题，但没有解决数据容量的扩展以及写高可用的问题，分组会引发主从一致性问题，从库越多，同步越慢，主从一致性的问题就越严重</li>
+<li><img src="https://img.shiqi-lu.tech/20210909103738.png"></li>
+</ul>
+</li>
+<li>no21：提升数据的读性能的方案三：增加缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210909104021.png"></li>
+<li>左边是服务化前，右边是服务化后，s 是从库，m 是主库</li>
+</ul>
+</li>
+</ul>
+<h1 id="22、数据库：垂直拆分与高可用"><a href="#22、数据库：垂直拆分与高可用" class="headerlink" title="22、数据库：垂直拆分与高可用"></a>22、数据库：垂直拆分与高可用</h1><ul>
+<li>no22：数据库垂直拆分的方法论是什么？<ul>
+<li>1.长度较短</li>
+<li>2.访问频率较高</li>
+<li>3.经常一起访问</li>
+<li>的属性放在主表里，原因是，数据库缓冲池，逻辑上，以 row 为单位缓冲数据</li>
+</ul>
+</li>
+<li>no22：数据库的高可用的思路和问题是什么？<ul>
+<li>数据库的高可用设计，也是冗余+故障自动转移</li>
+<li>但是，方法论上:数据库的冗余，会引发一致性问题！因为多个节点数据库没办法同时修改，中间会有个时间差，就有可能引发一致性的问题</li>
+</ul>
+</li>
+<li>no22：读库高可用的方案<ul>
+<li>读库高可用，冗余从库，可一主多从，主库会把主库的写序列通过 binlog 的方式同步给从库，重复执行相同的序列</li>
+<li><img src="https://img.shiqi-lu.tech/20210909211447.png"></li>
+</ul>
+</li>
+<li>no22：写库高可用的方案<ul>
+<li>写库高可用，冗余写库，</li>
+<li><img src="https://img.shiqi-lu.tech/20210909211821.png"></li>
+<li>1.双主同步一个节点对外提供读写服务，另一个节点是备份节点，他们之间使用相同的 vip，通过 keepalived 去检测</li>
+<li>2.在分组架构中加入一个双主节点，冗余写库，两边进行相互的同步，两个主库同时对线上提供服务</li>
+</ul>
+</li>
+</ul>
+<h1 id="23、数据库：主从一致性，主主一致性如何保障？"><a href="#23、数据库：主从一致性，主主一致性如何保障？" class="headerlink" title="23、数据库：主从一致性，主主一致性如何保障？"></a>23、数据库：主从一致性，主主一致性如何保障？</h1><ul>
+<li>no23：主从数据冗余，主从数据不一致的情况是怎样？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164115.png"></li>
+<li>应用写一个数据后，在主从数据库同步完成前读同一个数据，造成数据不一致</li>
+</ul>
+</li>
+<li>no23：主从数据冗余，主从数据不一致的 3 个解决方案是什么？<ul>
+<li>方案一：忽略不计<ul>
+<li>中间时间估计约几百毫秒，业务允许的情况下，可不做处理</li>
+</ul>
+</li>
+<li>方案二：强制读主<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164509.png"></li>
+<li>都读写主库，然后使用缓存来提升读性能，但主库和缓存间也有一致性问题</li>
+</ul>
+</li>
+<li>方案三：选择性读主(需要缓存协助)<ul>
+<li>写操作过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164936.png"></li>
+<li>写完后，使用哪个库、哪个表、哪个主键拼接一个 key，设置到缓存里，并将这个 key 的时间记录为主从同步的时延</li>
+</ul>
+</li>
+<li>读操作过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911171749.png"></li>
+<li>先读缓存，如果没有，再读从库</li>
+<li>如果有，则读主库</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no23：主主数据冗余，为什么主主数据会不一致？<ul>
+<li>因为同时对外提供服务，并发的写入可能会造成数据同步失败，这个比主从的同步时延要严重，这个可能会造成数据丢失</li>
+<li><img src="https://img.shiqi-lu.tech/20210911172110.png"></li>
+</ul>
+</li>
+<li>no23：主主数据冗余，主主数据不一致的 3 种解决方案是什么？<ul>
+<li>方案一：数据库层面解决，不同初始值，相同递增步长<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911172541.png"></li>
+</ul>
+</li>
+<li>方案二：数据库上层应用程序控制 id 生成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911172828.png"></li>
+</ul>
+</li>
+<li>方案三：主主同时服务，升级为单主服务，影子主不服务<ul>
+<li>即keepalived+vip</li>
+<li><img src="https://img.shiqi-lu.tech/20210911173410.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="24、数据库：扩展性，要如何解决？"><a href="#24、数据库：扩展性，要如何解决？" class="headerlink" title="24、数据库：扩展性，要如何解决？"></a>24、数据库：扩展性，要如何解决？</h1><ul>
+<li>no24：数据库扩展性有哪些场景？<ul>
+<li>1.底层表结构变更<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911174223.png"></li>
+</ul>
+</li>
+<li>2.水平扩展，分库个数变化<ul>
+<li><img src="https://img.shiqi-lu.tech/20210912221639.png"></li>
+</ul>
+</li>
+<li>3.底层存储介质变化<ul>
+<li><img src="https://img.shiqi-lu.tech/20210912221613.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库进行扩展有哪五个方案？<ul>
+<li>1.停服扩展(离线，非高可用)</li>
+<li>2.pt-online-schema-change(在线表结构变更)(平滑)</li>
+<li>3.追日志方案(平滑)</li>
+<li>4.双写方案(平滑)</li>
+<li>5.秒级成倍扩容(平滑)</li>
+</ul>
+</li>
+<li>no24：数据库扩展的停服扩展的步骤是怎样的？优缺点是什么？<ul>
+<li>步骤<ul>
+<li>1.挂公告</li>
+<li>2.离线迁移数据</li>
+<li>3.切到新库</li>
+<li><img src="https://img.shiqi-lu.tech/20210912222521.png"></li>
+</ul>
+</li>
+<li>优点<ul>
+<li>直观和简单</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>对服务的可用性有影响</li>
+<li>必须在指定的时间完成升级，对技术人员压力非常大，一旦出现问题必须在规定时间内解决，否则只能回滚</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库扩展的pt-online-schema-change(在线表结构变更)步骤、注意事项是什么？<ul>
+<li>步骤<ul>
+<li>1.创建一个扩展字段后的新表</li>
+<li>2.在原表上创建三个触发器，对原表的所有写操作(insert、delete、update)都会对新表进行完全相同的操作</li>
+<li>3.工具会分批地将原表中的数据分段地导入到新表</li>
+<li>4.删除掉触发器，并将原表移走</li>
+<li>5.将新建的新表重命名</li>
+<li>整个过程不需要锁表，可以持续对外提供服务，rename 前是旧表，rename 前是新表</li>
+</ul>
+</li>
+<li>注意事项<ul>
+<li>1.变更过程中最重要的是处理冲突，原则是以触发器的最新数据为准，这要求被迁移的表必须有主键</li>
+<li>2.在变更额度过程中，由于写操作要新建触发器，所以如果原表已有非常多的触发器，这个方案就不可行，但通常会禁用触发器</li>
+<li>3.触发器的建立会影响原表的性能，这个操作必须在流量的低峰期进行</li>
+<li>4.只适合 MySQL，也只适合表结构变更</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库扩展的追日志方案的步骤是什么？<ul>
+<li>步骤<ul>
+<li>1.由旧库继续提供服务，并对服务进行一次升级，记录对旧库上的修改的日志，不需记录详细数据，只需记录哪个库哪个表哪个主键在什么时间被修改即可<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093745.png"></li>
+<li>风险小，写接口的数量有限，改动点较少，升级过程增加了一些日志，对业务功能没有任何的影响</li>
+</ul>
+</li>
+<li>2.研发数据迁移工具，将数据从旧库迁移到新库<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093810.png"></li>
+</ul>
+</li>
+<li>3.研发一个读取日志，看哪个库哪个表哪个主键发生了写操作，并将这些 key 从旧库再次覆盖到新库中，来对迁移数据过程里产生的数据差异进行追平，无论如何，当发生冲突时，以旧库中的数据为准，因为旧库的数据在实时更新<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093830.png"></li>
+</ul>
+</li>
+<li>4.研发数据比对工具，将旧库和新库的数据进行比对，直到数据完全一致，才能修改配置迁库<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914094907.png"></li>
+</ul>
+</li>
+<li>5.迁移流量，对旧库进行一次秒级的 readonly，等日志重放程序完全追上之后，秒级的进行一个流量的切换<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914094828.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="25、数据库：扩展性，平滑扩容方案？"><a href="#25、数据库：扩展性，平滑扩容方案？" class="headerlink" title="25、数据库：扩展性，平滑扩容方案？"></a>25、数据库：扩展性，平滑扩容方案？</h1><ul>
+<li>no25：数据库平滑迁移的双写方案的 4 个步骤<ul>
+<li>1.首先旧库提供服务，先对服务进行升级，对数据修改写接口，并在新库上进行相同的操作<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914101758.png"></li>
+</ul>
+</li>
+<li>2.研发数据迁移工具，对数据进行迁移<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102216.png"></li>
+</ul>
+</li>
+<li>3.数据比对<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102317.png"></li>
+</ul>
+</li>
+<li>4.流量迁移<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102405.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="26、数据库：水平切分，数据库秒级扩容！"><a href="#26、数据库：水平切分，数据库秒级扩容！" class="headerlink" title="26、数据库：水平切分，数据库秒级扩容！"></a>26、数据库：水平切分，数据库秒级扩容！</h1><ul>
+<li>no26：数据库水平切分，秒级成倍扩容的 3 个步骤<ul>
+<li>前提条件<ul>
+<li>实施了微服务的分层架构，大数据量进行了水平切分，高可用做了 keepalived 加 vip</li>
+</ul>
+</li>
+<li>步骤<ul>
+<li>1.修改配置(双虚 IP，微服务数据库路由)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914103537.png"></li>
+</ul>
+</li>
+<li>2.服务层 reload 配置，实例增倍完成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914104206.png"></li>
+<li>reload 配置方案<ul>
+<li>1.重启服务，读新文件</li>
+<li>2.配置中心给服务层发信号，重新读取配置文件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.收尾：解除旧双主同步，新增新的双主同步，删除冗余数据，数据量减半完成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914104102.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/arch-sj-5/" title="《沈剑架构师训练营》第5章 - 微服务架构">http://shiqi-lu.tech/arch-sj-5/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/arch-sj-4/" rel="prev" title="《沈剑架构师训练营》第4章 - 微服务架构">
+                  <i class="fa fa-chevron-left"></i> 《沈剑架构师训练营》第4章 - 微服务架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/arch-sj-6/" rel="next" title="《沈剑架构师训练营》第6章 - 缓存架构">
+                  《沈剑架构师训练营》第6章 - 缓存架构 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/arch-sj-5/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>

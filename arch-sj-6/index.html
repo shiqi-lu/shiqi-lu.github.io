@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="包括如下目录学习笔记：27、缓存：进程内缓存要怎么玩？28、缓存：很多时候我们都用错了！29、缓存：互联网最佳实践！ 30、缓存：一致性优化！32、缓存：究竟选redis，还是memcache？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《沈剑架构师训练营》第6章 - 缓存架构">
+<meta property="og:url" content="http://shiqi-lu.tech/arch-sj-6/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="包括如下目录学习笔记：27、缓存：进程内缓存要怎么玩？28、缓存：很多时候我们都用错了！29、缓存：互联网最佳实践！ 30、缓存：一致性优化！32、缓存：究竟选redis，还是memcache？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210915183312.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210915183448.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210915183706.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210916114648.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210916114908.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210916205244.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210916210847.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210916212948.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210916213008.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210916213215.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210917100503.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210917100642.png">
+<meta property="article:published_time" content="2021-10-01T02:33:00.000Z">
+<meta property="article:modified_time" content="2021-10-01T02:33:00.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210915183312.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/arch-sj-6/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《沈剑架构师训练营》第6章 - 缓存架构 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">44</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#27%E3%80%81%E7%BC%93%E5%AD%98%EF%BC%9A%E8%BF%9B%E7%A8%8B%E5%86%85%E7%BC%93%E5%AD%98%E8%A6%81%E6%80%8E%E4%B9%88%E7%8E%A9%EF%BC%9F"><span class="nav-text">27、缓存：进程内缓存要怎么玩？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#28%E3%80%81%E7%BC%93%E5%AD%98%EF%BC%9A%E5%BE%88%E5%A4%9A%E6%97%B6%E5%80%99%E6%88%91%E4%BB%AC%E9%83%BD%E7%94%A8%E9%94%99%E4%BA%86%EF%BC%81"><span class="nav-text">28、缓存：很多时候我们都用错了！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#29%E3%80%81%E7%BC%93%E5%AD%98%EF%BC%9A%E4%BA%92%E8%81%94%E7%BD%91%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%EF%BC%81"><span class="nav-text">29、缓存：互联网最佳实践！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#30%E3%80%81%E7%BC%93%E5%AD%98%EF%BC%9A%E4%B8%80%E8%87%B4%E6%80%A7%E4%BC%98%E5%8C%96%EF%BC%81"><span class="nav-text">30、缓存：一致性优化！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#31%E3%80%81%E7%BC%93%E5%AD%98%EF%BC%9A%E5%B9%B6%E5%8F%91%E6%9B%B4%E6%96%B0%E7%9A%84%E5%A4%A7%E5%9D%91%EF%BC%81"><span class="nav-text">31、缓存：并发更新的大坑！</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#32%E3%80%81%E7%BC%93%E5%AD%98%EF%BC%9A%E7%A9%B6%E7%AB%9F%E9%80%89redis%EF%BC%8C%E8%BF%98%E6%98%AFmemcache%EF%BC%9F"><span class="nav-text">32、缓存：究竟选redis，还是memcache？</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/arch-sj-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《沈剑架构师训练营》第6章 - 缓存架构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-10-01 10:33:00" itemprop="dateCreated datePublished" datetime="2021-10-01T10:33:00+08:00">2021-10-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/arch-sj-6/" class="post-meta-item leancloud_visitors" data-flag-title="《沈剑架构师训练营》第6章 - 缓存架构" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/arch-sj-6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/arch-sj-6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">包括如下目录学习笔记：27、缓存：进程内缓存要怎么玩？28、缓存：很多时候我们都用错了！29、缓存：互联网最佳实践！ 30、缓存：一致性优化！32、缓存：究竟选redis，还是memcache？</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
+<li>no27：什么是进程内缓存？好处？不足？<ul>
+<li>定义<ul>
+<li>将数据缓存在站点或者服务的进程内，如 map 或 leveldb，可存 json、html、object 等</li>
+</ul>
+</li>
+<li>好处<ul>
+<li>1.节省内网带宽</li>
+<li>2.时延更低</li>
+</ul>
+</li>
+<li>不足：一致性难以保证</li>
+</ul>
+</li>
+<li>no27：如何保证进程内缓存的一致性？<ul>
+<li>方案一，单节点通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183312.png"></li>
+<li>缺点<ul>
+<li>同一功能在集群内的多个节点相互耦合在一起，当节点比较多的时候，连接关系会相对比较复杂</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案二，MQ 解耦，通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183448.png"></li>
+<li>缺点<ul>
+<li>接触了结点耦合，但引入了 mq，增加系统复杂度</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案三，放弃实时一致性，定期从后端更新数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183706.png"></li>
+<li>缺点<ul>
+<li>必须一定程度上接受读旧数据</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no27：使用进程内缓存的场景是哪些？为什么不能频繁使用进程内缓存？<ul>
+<li>场景<ul>
+<li>1.只读数据</li>
+<li>2.并发极高，透传后端压力极大</li>
+<li>3.允许一定程度上数据不一致</li>
+</ul>
+</li>
+<li>原因<ul>
+<li>违背了「站点无状态、服务无状态」的设计准则</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="28、缓存：很多时候我们都用错了！"><a href="#28、缓存：很多时候我们都用错了！" class="headerlink" title="28、缓存：很多时候我们都用错了！"></a>28、缓存：很多时候我们都用错了！</h1><ul>
+<li>no28：缓存有哪 4 种误用的情况？<ul>
+<li>1.服务与服务之间不要通过缓存传递数据，数据传递使用 MQ 更合适<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114648.png"></li>
+</ul>
+</li>
+<li>2.如果缓存挂掉，可能导致雪崩，此时要做高可用缓存，或者水平切分</li>
+<li>3.调用方不宜再单独使用缓存存储服务底层的数据，容易出现数据不一致，以及反向依赖.</li>
+<li>4.不同服务，缓存实例要做垂直拆分，不宜共用缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114908.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="29、缓存：互联网最佳实践！"><a href="#29、缓存：互联网最佳实践！" class="headerlink" title="29、缓存：互联网最佳实践！"></a>29、缓存：互联网最佳实践！</h1><ul>
+<li>no29：互联网缓存最佳实践 Cache Aside Pattern 是什么？<ul>
+<li>读实践<ul>
+<li>先缓存，命中返回，未命中读数据库，再设置缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916205244.png"></li>
+</ul>
+</li>
+<li>写实践<ul>
+<li>淘汰缓存而不是修改缓存，先操作数据库，而不是先淘汰缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916210847.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="30、缓存：一致性优化！"><a href="#30、缓存：一致性优化！" class="headerlink" title="30、缓存：一致性优化！"></a>30、缓存：一致性优化！</h1><ul>
+<li>no30：数据库主从、数据库缓存什么时候会发生数据不一致问题？<ul>
+<li>数据库主从：写后立即读，短时间内，读旧数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916212948.png"></li>
+</ul>
+</li>
+<li>数据库缓存：写后立即读，短时间内，旧数据入缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213008.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no30：缓存不一致的优化思路和两个方案是什么？<ul>
+<li>思路：在从库同步完成之后，如果有旧数据入缓存，应该及时把这个旧数据淘汰掉</li>
+<li>方案一：二次淘汰法(在从库异步淘汰，或服务中异步淘汰)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213215.png"></li>
+<li>通过工具订阅从库的 binlog，如 DTS 或 canal，或自己订阅和分析 binlog，然后从库执行异步淘汰缓存的操作</li>
+</ul>
+</li>
+<li>方案二：为允许 cache miss 的场景，设定超时时间</li>
+</ul>
+</li>
+</ul>
+<h1 id="31、缓存：并发更新的大坑！"><a href="#31、缓存：并发更新的大坑！" class="headerlink" title="31、缓存：并发更新的大坑！"></a>31、缓存：并发更新的大坑！</h1><ul>
+<li>no31：缓存并发更新获取 token 会出现什么问题？如何解决？<ul>
+<li>问题<ul>
+<li>两个并发请求的token申请，可能导致 token 迭代过期了</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100503.png"></li>
+</ul>
+</li>
+<li>解决<ul>
+<li>线上服务 s1 和 s2 只从缓存中读取 token，token 的更新由一个异步的服务 asy-Master 定期更新，避免并发的更新</li>
+<li>缺点<ul>
+<li>读取服务和更新的服务会直接调用缓存实例，如果缓存实例变更，读的服务和写的服务配置同步变更，导致耦合，违背了两个服务不应访问同一服务的通用性原则，同时违反了 cache aside pattern 的淘汰而不是更新缓存的设计准则</li>
+</ul>
+</li>
+<li>数据存储在 DB，缓存应该淘汰，有时候，数据不在数据库，缓存需要更新，如调用第三方服务需要申请 token</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100642.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="32、缓存：究竟选redis，还是memcache？"><a href="#32、缓存：究竟选redis，还是memcache？" class="headerlink" title="32、缓存：究竟选redis，还是memcache？"></a>32、缓存：究竟选redis，还是memcache？</h1><ul>
+<li>no32，什么时候选 Redis，什么时候选 memcache？<ul>
+<li>选 Redis<ul>
+<li>1.复杂数据结构</li>
+<li>2.持久化<ul>
+<li>优点是，缓存挂了再重启，可以快速恢复，不需要 cache 的预热功能</li>
+<li>但不建议使用，因为可能会导致缓存和数据库不一致</li>
+</ul>
+</li>
+<li>3.天然高可用，支持主从复制，读写分离，提供了 sentinel 的集群管理工具，能够实现主从服务的监控，故障自动转移，mc 需要二次开发，但绝大多数缓存不需要做高可用</li>
+<li>4.存储内容比较大，mc 的 kv 存储的 value 最大只支持 1M</li>
+</ul>
+</li>
+<li>选 memcache<ul>
+<li>纯 kv</li>
+<li>原因：<ul>
+<li>1.预分配内存池</li>
+<li>2.redis 的 VM 机制更慢</li>
+<li>3.redis 的 CPU 计算复杂</li>
+<li>4.多线程可利用多核</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>其它<ul>
+<li>1.redis 源码可读性好</li>
+<li>2.redis 和 mc 都需要手动水平切分</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/arch-sj-6/" title="《沈剑架构师训练营》第6章 - 缓存架构">http://shiqi-lu.tech/arch-sj-6/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/arch-sj-5/" rel="prev" title="《沈剑架构师训练营》第5章 - 微服务架构">
+                  <i class="fa fa-chevron-left"></i> 《沈剑架构师训练营》第5章 - 微服务架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/arch-sj-7/" rel="next" title="《沈剑架构师训练营》第7章 - 架构解耦">
+                  《沈剑架构师训练营》第7章 - 架构解耦 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/arch-sj-6/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
