@@ -1,183 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>《沈剑架构师训练营》第1章 - 技术选型</title>
-    <url>/arch-sj-1/</url>
-    <content><![CDATA[<h1 id="2、技术选型：创业初期，技术如何选型"><a href="#2、技术选型：创业初期，技术如何选型" class="headerlink" title="2、技术选型：创业初期，技术如何选型"></a>2、技术选型：创业初期，技术如何选型</h1><ul>
-<li>no2：创业初期架构特点、选型依据、选型建议是什么？<ul>
-<li>特点：<ul>
-<li>1.单机系统(All in one)</li>
-<li>2.程序耦合(All in one)</li>
-<li>3.逻辑核心是 CURD</li>
-</ul>
-</li>
-<li><img src="https://img.shiqi-lu.tech/20210823205116.png"></li>
-<li>主要依据：选择技术合伙人会的，熟悉的，是早期技术选型的</li>
-<li>选型建议：<ul>
-<li>PHP体系：Linux、Apache、MySQL、PHP</li>
-<li>Java 体系：Linux、Tomcat、MySQL、Java</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no2：创业初期工程师的主要矛盾是什么？如何解决？<ul>
-<li>矛盾：业务开发效率与质量低，CURD 频繁出错</li>
-<li>解决：尽早引入 DAO/ORM 技术</li>
-<li>DAO(Data Access Object)：像对象一样访问数据</li>
-<li>ORM(Object Relation Mapping)：简化数据库查询过程</li>
-<li><img src="https://img.shiqi-lu.tech/20210823205532.png"></li>
-</ul>
-</li>
-</ul>
-<h1 id="3、技术选型：框架组件要不要自研，什么时候自研？"><a href="#3、技术选型：框架组件要不要自研，什么时候自研？" class="headerlink" title="3、技术选型：框架组件要不要自研，什么时候自研？"></a>3、技术选型：框架组件要不要自研，什么时候自研？</h1><ul>
-<li>no3：框架组件要不要自研，什么时候自研？有哪 4 个观点？<ul>
-<li>1.早期不要自研，后期适当自定义</li>
-<li>2.随着规模的扩大，要控制技术栈</li>
-<li>3.建议浅浅的封装一层</li>
-<li>4.随着业务规模，研发团队进一步扩大，适当造一些轮子</li>
-</ul>
-</li>
-<li>no3：为什么说早期不建议自研？<ul>
-<li>1.早期的业务以快速迭代为最高优先级，快速实现功能，让公司活下来最重要</li>
-<li>2.技术栈选择技术合伙人最熟悉的<ul>
-<li>研发语言：熟PHP选PHP，熟Java选Java</li>
-<li>数据库：熟MySQL选MySQL，熟SQL-server选SQL-server</li>
-<li>框架组件：熟Ruby on Rails选ROR，熟ThinkPHP选ThinkPHP，熟SSH选SSH</li>
-</ul>
-</li>
-<li>3.此时技术栈的选择对合伙人的技术视野有要求，能在未来少踩坑</li>
-</ul>
-</li>
-<li>no3：为什么要控制技术栈？<ul>
-<li>1.绝对不能每个人想用什么就用什么，否则会造成混乱</li>
-<li>2.即使用开源，技术栈也尽量统一</li>
-</ul>
-</li>
-<li>no3：什么叫「浅浅封装一层」？好处是什么？<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">String <span class="title">Memcache::get</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::set</span><span class="params">(String key, String value)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::del</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function">String 58<span class="title">DaojiaKV::get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    String result = Memcache::get(key);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>好处<ul>
-<li>对调用方屏蔽底层实现细节</li>
-<li>当底层变化的时候，调用方改动很小</li>
-<li>能很方便实现统一的功能，如时间统计等</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no3：为什么说随着业务规模和研发团队的扩大可以适当造一些轮子？而不能全部使用开源？<ul>
-<li>不同技术团队，痛点是相似的</li>
-<li>开源解决不了全部个性化需求<ul>
-<li>有站点，监控服务的可用性，处理时间监控需求</li>
-<li>有告警需求</li>
-<li>有自动化发布，自动化运维需求</li>
-<li>有服务治理，服务自动发现需求</li>
-<li>有调用链跟踪需求</li>
-<li>有SQL监控需求</li>
-<li>有系统层面数据收集与可视化展现的需求</li>
-</ul>
-</li>
-<li>自研解决痛点，更贴合团队实际情况<ul>
-<li>开源框架/组件太重了，我们需要的可能只是一个轻量级的框架/组件</li>
-<li>开源框架/组件，只能满足我们的一部分需求</li>
-<li>不了解开源框架/组件的设计理念，要二次开发成本更高</li>
-<li>有些通用的需求是和业务紧密结合的，开源框架/组件可能满足不了</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="4、容量设计：流量高低，对架构究竟有什么影响？"><a href="#4、容量设计：流量高低，对架构究竟有什么影响？" class="headerlink" title="4、容量设计：流量高低，对架构究竟有什么影响？"></a>4、容量设计：流量高低，对架构究竟有什么影响？</h1><ul>
-<li>no4：什么时候要进行容量评估？<ul>
-<li>1.容量有质变性增长</li>
-<li>2.临时运营活动</li>
-<li>3.新系统上线</li>
-</ul>
-</li>
-<li>no4：哪些指标要进行容量预估？<ul>
-<li>看具体业务，对应到系统侧的主要矛盾是什么，如：</li>
-<li>1.数据量</li>
-<li>2.并发量，吞吐量</li>
-<li>3.带宽</li>
-<li>4.CPU/MEM/DISK 等</li>
-</ul>
-</li>
-<li>no4：如何进行容量评估(以吞吐量为例)<ul>
-<li>1.评估总访问量：询问产品、运营</li>
-<li>2.评估平均访问量：总量除以总时间，一天可算 4w 秒</li>
-<li>3.评估高峰 QPS：可根据业务曲线图来</li>
-<li>4.评估系统、单机极限 QPS：使用压测</li>
-<li>5.根据线上冗余度做决策：计算需求和线上冗余度差值</li>
-</ul>
-</li>
-</ul>
-<h1 id="5、伪分布式：你以为，多机就是分布式？"><a href="#5、伪分布式：你以为，多机就是分布式？" class="headerlink" title="5、伪分布式：你以为，多机就是分布式？"></a>5、伪分布式：你以为，多机就是分布式？</h1><ul>
-<li>no5：随着流量的提升，早期系统最先遇到的两大问题是什么？如何分析系统特点与瓶颈？<ul>
-<li>现象：人多的时候会卡(即慢，性能下降)，压力会导致宕机(即一挂全挂，耦合严重)</li>
-<li>瓶颈分析：网络带宽、内存、CPU 计算、磁盘 IO</li>
-<li>初步结论：ALL in one 导致单机资源称为瓶颈</li>
-</ul>
-</li>
-<li>no5：架构早期最快速地解决「单机资源瓶颈」问题的思路？做法？原因？<ul>
-<li>思路：<ul>
-<li>增加硬件资源(时间短)，避免大规模代码重构(时间长)</li>
-</ul>
-</li>
-<li>做法：<ul>
-<li>把「单机」变「多机」，用最小的成本，扩展资源</li>
-</ul>
-</li>
-<li>原因：<ul>
-<li>此时最大的成本，是时间成本</li>
-<li>能用“钱”解决的系统问题，往往不是问题</li>
-<li>老板最不愿见到的，是解决一个系统问题， 花很长的时间(市场和投资人等不起)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no5：「单机」变「多机」的伪分布式的「三大分离」应该怎么做？设计思路？没解决的问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210823225351.png"></li>
-<li>三大分离<ul>
-<li>1.读写分离(引发读写延时新问题)：将数据库的读写请求分散到不同的数据库机器上</li>
-<li>2.动静分离：将静态文件(css、jpg、静态页面)和动态生成的站点分离</li>
-<li>3.前台后台分离：前台即用户访问的系统，后台即运营使用的系统</li>
-</ul>
-</li>
-<li>设计思路：用最快的速度，增加硬件资源，提升系统性能，增加访问速度</li>
-<li>没解决的问题：<ul>
-<li>1.耦合问题：一个子系统挂了，仍然是全站挂</li>
-<li>2.主从延时新问题：读写分离只能提升读写性能，无法降低单库数据量</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no5：如何解决「三大分离」的耦合问题和读写延时问题？设计思路？如何操作？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
-<li>方案：业务垂直拆分，解耦</li>
-<li>操作：<ul>
-<li>1.业务垂直拆分</li>
-<li>2.代码垂直拆分(子系统耦合)</li>
-<li>3.数据库垂直拆分(数据量降低，延时缓解)</li>
-<li>4.研发团队垂直拆分(专业化，效率提升)</li>
-</ul>
-</li>
-<li>设计思路：用最快的速度，增加硬件资源，解耦</li>
-<li>垂直拆分，会随着业务越来越复杂，不断持续地进行</li>
-<li>存在问题<ul>
-<li>1.对同一个垂直站点子系统，仍然是一个「单体架构」，每一个业务都并不是高可用的，子系统的性能仍然受到单机资源的限制无法扩展</li>
-<li>2.子系统不是高可用的，只能保证一个挂了，另一个不受影响</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《沈剑架构师训练营》第2章 - 接入层架构</title>
     <url>/arch-sj-2/</url>
     <content><![CDATA[<h1 id="6、接入层：反向代理，负载均衡，我有话要说"><a href="#6、接入层：反向代理，负载均衡，我有话要说" class="headerlink" title="6、接入层：反向代理，负载均衡，我有话要说"></a>6、接入层：反向代理，负载均衡，我有话要说</h1><ul>
@@ -407,6 +230,183 @@
       </tags>
   </entry>
   <entry>
+    <title>《沈剑架构师训练营》第1章 - 技术选型</title>
+    <url>/arch-sj-1/</url>
+    <content><![CDATA[<h1 id="2、技术选型：创业初期，技术如何选型"><a href="#2、技术选型：创业初期，技术如何选型" class="headerlink" title="2、技术选型：创业初期，技术如何选型"></a>2、技术选型：创业初期，技术如何选型</h1><ul>
+<li>no2：创业初期架构特点、选型依据、选型建议是什么？<ul>
+<li>特点：<ul>
+<li>1.单机系统(All in one)</li>
+<li>2.程序耦合(All in one)</li>
+<li>3.逻辑核心是 CURD</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20210823205116.png"></li>
+<li>主要依据：选择技术合伙人会的，熟悉的，是早期技术选型的</li>
+<li>选型建议：<ul>
+<li>PHP体系：Linux、Apache、MySQL、PHP</li>
+<li>Java 体系：Linux、Tomcat、MySQL、Java</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no2：创业初期工程师的主要矛盾是什么？如何解决？<ul>
+<li>矛盾：业务开发效率与质量低，CURD 频繁出错</li>
+<li>解决：尽早引入 DAO/ORM 技术</li>
+<li>DAO(Data Access Object)：像对象一样访问数据</li>
+<li>ORM(Object Relation Mapping)：简化数据库查询过程</li>
+<li><img src="https://img.shiqi-lu.tech/20210823205532.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="3、技术选型：框架组件要不要自研，什么时候自研？"><a href="#3、技术选型：框架组件要不要自研，什么时候自研？" class="headerlink" title="3、技术选型：框架组件要不要自研，什么时候自研？"></a>3、技术选型：框架组件要不要自研，什么时候自研？</h1><ul>
+<li>no3：框架组件要不要自研，什么时候自研？有哪 4 个观点？<ul>
+<li>1.早期不要自研，后期适当自定义</li>
+<li>2.随着规模的扩大，要控制技术栈</li>
+<li>3.建议浅浅的封装一层</li>
+<li>4.随着业务规模，研发团队进一步扩大，适当造一些轮子</li>
+</ul>
+</li>
+<li>no3：为什么说早期不建议自研？<ul>
+<li>1.早期的业务以快速迭代为最高优先级，快速实现功能，让公司活下来最重要</li>
+<li>2.技术栈选择技术合伙人最熟悉的<ul>
+<li>研发语言：熟PHP选PHP，熟Java选Java</li>
+<li>数据库：熟MySQL选MySQL，熟SQL-server选SQL-server</li>
+<li>框架组件：熟Ruby on Rails选ROR，熟ThinkPHP选ThinkPHP，熟SSH选SSH</li>
+</ul>
+</li>
+<li>3.此时技术栈的选择对合伙人的技术视野有要求，能在未来少踩坑</li>
+</ul>
+</li>
+<li>no3：为什么要控制技术栈？<ul>
+<li>1.绝对不能每个人想用什么就用什么，否则会造成混乱</li>
+<li>2.即使用开源，技术栈也尽量统一</li>
+</ul>
+</li>
+<li>no3：什么叫「浅浅封装一层」？好处是什么？<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">String <span class="title">Memcache::get</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::set</span><span class="params">(String key, String value)</span></span></span><br><span class="line"><span class="function">String <span class="title">Memcache::del</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function">String 58<span class="title">DaojiaKV::get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    String result = Memcache::get(key);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>好处<ul>
+<li>对调用方屏蔽底层实现细节</li>
+<li>当底层变化的时候，调用方改动很小</li>
+<li>能很方便实现统一的功能，如时间统计等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no3：为什么说随着业务规模和研发团队的扩大可以适当造一些轮子？而不能全部使用开源？<ul>
+<li>不同技术团队，痛点是相似的</li>
+<li>开源解决不了全部个性化需求<ul>
+<li>有站点，监控服务的可用性，处理时间监控需求</li>
+<li>有告警需求</li>
+<li>有自动化发布，自动化运维需求</li>
+<li>有服务治理，服务自动发现需求</li>
+<li>有调用链跟踪需求</li>
+<li>有SQL监控需求</li>
+<li>有系统层面数据收集与可视化展现的需求</li>
+</ul>
+</li>
+<li>自研解决痛点，更贴合团队实际情况<ul>
+<li>开源框架/组件太重了，我们需要的可能只是一个轻量级的框架/组件</li>
+<li>开源框架/组件，只能满足我们的一部分需求</li>
+<li>不了解开源框架/组件的设计理念，要二次开发成本更高</li>
+<li>有些通用的需求是和业务紧密结合的，开源框架/组件可能满足不了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="4、容量设计：流量高低，对架构究竟有什么影响？"><a href="#4、容量设计：流量高低，对架构究竟有什么影响？" class="headerlink" title="4、容量设计：流量高低，对架构究竟有什么影响？"></a>4、容量设计：流量高低，对架构究竟有什么影响？</h1><ul>
+<li>no4：什么时候要进行容量评估？<ul>
+<li>1.容量有质变性增长</li>
+<li>2.临时运营活动</li>
+<li>3.新系统上线</li>
+</ul>
+</li>
+<li>no4：哪些指标要进行容量预估？<ul>
+<li>看具体业务，对应到系统侧的主要矛盾是什么，如：</li>
+<li>1.数据量</li>
+<li>2.并发量，吞吐量</li>
+<li>3.带宽</li>
+<li>4.CPU/MEM/DISK 等</li>
+</ul>
+</li>
+<li>no4：如何进行容量评估(以吞吐量为例)<ul>
+<li>1.评估总访问量：询问产品、运营</li>
+<li>2.评估平均访问量：总量除以总时间，一天可算 4w 秒</li>
+<li>3.评估高峰 QPS：可根据业务曲线图来</li>
+<li>4.评估系统、单机极限 QPS：使用压测</li>
+<li>5.根据线上冗余度做决策：计算需求和线上冗余度差值</li>
+</ul>
+</li>
+</ul>
+<h1 id="5、伪分布式：你以为，多机就是分布式？"><a href="#5、伪分布式：你以为，多机就是分布式？" class="headerlink" title="5、伪分布式：你以为，多机就是分布式？"></a>5、伪分布式：你以为，多机就是分布式？</h1><ul>
+<li>no5：随着流量的提升，早期系统最先遇到的两大问题是什么？如何分析系统特点与瓶颈？<ul>
+<li>现象：人多的时候会卡(即慢，性能下降)，压力会导致宕机(即一挂全挂，耦合严重)</li>
+<li>瓶颈分析：网络带宽、内存、CPU 计算、磁盘 IO</li>
+<li>初步结论：ALL in one 导致单机资源称为瓶颈</li>
+</ul>
+</li>
+<li>no5：架构早期最快速地解决「单机资源瓶颈」问题的思路？做法？原因？<ul>
+<li>思路：<ul>
+<li>增加硬件资源(时间短)，避免大规模代码重构(时间长)</li>
+</ul>
+</li>
+<li>做法：<ul>
+<li>把「单机」变「多机」，用最小的成本，扩展资源</li>
+</ul>
+</li>
+<li>原因：<ul>
+<li>此时最大的成本，是时间成本</li>
+<li>能用“钱”解决的系统问题，往往不是问题</li>
+<li>老板最不愿见到的，是解决一个系统问题， 花很长的时间(市场和投资人等不起)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no5：「单机」变「多机」的伪分布式的「三大分离」应该怎么做？设计思路？没解决的问题？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823225351.png"></li>
+<li>三大分离<ul>
+<li>1.读写分离(引发读写延时新问题)：将数据库的读写请求分散到不同的数据库机器上</li>
+<li>2.动静分离：将静态文件(css、jpg、静态页面)和动态生成的站点分离</li>
+<li>3.前台后台分离：前台即用户访问的系统，后台即运营使用的系统</li>
+</ul>
+</li>
+<li>设计思路：用最快的速度，增加硬件资源，提升系统性能，增加访问速度</li>
+<li>没解决的问题：<ul>
+<li>1.耦合问题：一个子系统挂了，仍然是全站挂</li>
+<li>2.主从延时新问题：读写分离只能提升读写性能，无法降低单库数据量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no5：如何解决「三大分离」的耦合问题和读写延时问题？设计思路？如何操作？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
+<li>方案：业务垂直拆分，解耦</li>
+<li>操作：<ul>
+<li>1.业务垂直拆分</li>
+<li>2.代码垂直拆分(子系统耦合)</li>
+<li>3.数据库垂直拆分(数据量降低，延时缓解)</li>
+<li>4.研发团队垂直拆分(专业化，效率提升)</li>
+</ul>
+</li>
+<li>设计思路：用最快的速度，增加硬件资源，解耦</li>
+<li>垂直拆分，会随着业务越来越复杂，不断持续地进行</li>
+<li>存在问题<ul>
+<li>1.对同一个垂直站点子系统，仍然是一个「单体架构」，每一个业务都并不是高可用的，子系统的性能仍然受到单机资源的限制无法扩展</li>
+<li>2.子系统不是高可用的，只能保证一个挂了，另一个不受影响</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《沈剑架构师训练营》第3章 - 快速性能优化</title>
     <url>/arch-sj-3/</url>
     <content><![CDATA[<h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
@@ -532,6 +532,274 @@
 </li>
 <li>no13：如何加速静态资源？<ul>
 <li>CDN</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《沈剑架构师训练营》第5章 - 微服务架构</title>
+    <url>/arch-sj-5/</url>
+    <content><![CDATA[<h1 id="21、数据库：读性能要如何提升？"><a href="#21、数据库：读性能要如何提升？" class="headerlink" title="21、数据库：读性能要如何提升？"></a>21、数据库：读性能要如何提升？</h1><ul>
+<li>no21：数据库工程架构，要设计些什么呢？<ul>
+<li>1.根据「业务模式」设计库表结构</li>
+<li>2.根据「访问模式」设计索引结构</li>
+</ul>
+</li>
+<li>no21：数据库工程架构必须要考虑哪 5 个因素？<ul>
+<li>读性能提升</li>
+<li>高可用</li>
+<li>一致性保障</li>
+<li>扩展性</li>
+<li>垂直拆分</li>
+</ul>
+</li>
+<li>no21：提升数据的读性能的方案一：建立索引<ul>
+<li>潜在问题<ul>
+<li>写性能降低</li>
+<li>索引占用内存大，buffer命中率降低， 读性能降低</li>
+</ul>
+</li>
+<li>实践：可以为主实例不建立索引，从实例建立不同的索引<ul>
+<li><img src="https://img.shiqi-lu.tech/20210909103013.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no21：提升数据的读性能的方案二：增加从库<ul>
+<li>分组架构，主要解决的，就是读性能提升的问题，但没有解决数据容量的扩展以及写高可用的问题，分组会引发主从一致性问题，从库越多，同步越慢，主从一致性的问题就越严重</li>
+<li><img src="https://img.shiqi-lu.tech/20210909103738.png"></li>
+</ul>
+</li>
+<li>no21：提升数据的读性能的方案三：增加缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210909104021.png"></li>
+<li>左边是服务化前，右边是服务化后，s 是从库，m 是主库</li>
+</ul>
+</li>
+</ul>
+<h1 id="22、数据库：垂直拆分与高可用"><a href="#22、数据库：垂直拆分与高可用" class="headerlink" title="22、数据库：垂直拆分与高可用"></a>22、数据库：垂直拆分与高可用</h1><ul>
+<li>no22：数据库垂直拆分的方法论是什么？<ul>
+<li>1.长度较短</li>
+<li>2.访问频率较高</li>
+<li>3.经常一起访问</li>
+<li>的属性放在主表里，原因是，数据库缓冲池，逻辑上，以 row 为单位缓冲数据</li>
+</ul>
+</li>
+<li>no22：数据库的高可用的思路和问题是什么？<ul>
+<li>数据库的高可用设计，也是冗余+故障自动转移</li>
+<li>但是，方法论上:数据库的冗余，会引发一致性问题！因为多个节点数据库没办法同时修改，中间会有个时间差，就有可能引发一致性的问题</li>
+</ul>
+</li>
+<li>no22：读库高可用的方案<ul>
+<li>读库高可用，冗余从库，可一主多从，主库会把主库的写序列通过 binlog 的方式同步给从库，重复执行相同的序列</li>
+<li><img src="https://img.shiqi-lu.tech/20210909211447.png"></li>
+</ul>
+</li>
+<li>no22：写库高可用的方案<ul>
+<li>写库高可用，冗余写库，</li>
+<li><img src="https://img.shiqi-lu.tech/20210909211821.png"></li>
+<li>1.双主同步一个节点对外提供读写服务，另一个节点是备份节点，他们之间使用相同的 vip，通过 keepalived 去检测</li>
+<li>2.在分组架构中加入一个双主节点，冗余写库，两边进行相互的同步，两个主库同时对线上提供服务</li>
+</ul>
+</li>
+</ul>
+<h1 id="23、数据库：主从一致性，主主一致性如何保障？"><a href="#23、数据库：主从一致性，主主一致性如何保障？" class="headerlink" title="23、数据库：主从一致性，主主一致性如何保障？"></a>23、数据库：主从一致性，主主一致性如何保障？</h1><ul>
+<li>no23：主从数据冗余，主从数据不一致的情况是怎样？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164115.png"></li>
+<li>应用写一个数据后，在主从数据库同步完成前读同一个数据，造成数据不一致</li>
+</ul>
+</li>
+<li>no23：主从数据冗余，主从数据不一致的 3 个解决方案是什么？<ul>
+<li>方案一：忽略不计<ul>
+<li>中间时间估计约几百毫秒，业务允许的情况下，可不做处理</li>
+</ul>
+</li>
+<li>方案二：强制读主<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164509.png"></li>
+<li>都读写主库，然后使用缓存来提升读性能，但主库和缓存间也有一致性问题</li>
+</ul>
+</li>
+<li>方案三：选择性读主(需要缓存协助)<ul>
+<li>写操作过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911164936.png"></li>
+<li>写完后，使用哪个库、哪个表、哪个主键拼接一个 key，设置到缓存里，并将这个 key 的时间记录为主从同步的时延</li>
+</ul>
+</li>
+<li>读操作过程<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911171749.png"></li>
+<li>先读缓存，如果没有，再读从库</li>
+<li>如果有，则读主库</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no23：主主数据冗余，为什么主主数据会不一致？<ul>
+<li>因为同时对外提供服务，并发的写入可能会造成数据同步失败，这个比主从的同步时延要严重，这个可能会造成数据丢失</li>
+<li><img src="https://img.shiqi-lu.tech/20210911172110.png"></li>
+</ul>
+</li>
+<li>no23：主主数据冗余，主主数据不一致的 3 种解决方案是什么？<ul>
+<li>方案一：数据库层面解决，不同初始值，相同递增步长<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911172541.png"></li>
+</ul>
+</li>
+<li>方案二：数据库上层应用程序控制 id 生成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911172828.png"></li>
+</ul>
+</li>
+<li>方案三：主主同时服务，升级为单主服务，影子主不服务<ul>
+<li>即keepalived+vip</li>
+<li><img src="https://img.shiqi-lu.tech/20210911173410.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="24、数据库：扩展性，要如何解决？"><a href="#24、数据库：扩展性，要如何解决？" class="headerlink" title="24、数据库：扩展性，要如何解决？"></a>24、数据库：扩展性，要如何解决？</h1><ul>
+<li>no24：数据库扩展性有哪些场景？<ul>
+<li>1.底层表结构变更<ul>
+<li><img src="https://img.shiqi-lu.tech/20210911174223.png"></li>
+</ul>
+</li>
+<li>2.水平扩展，分库个数变化<ul>
+<li><img src="https://img.shiqi-lu.tech/20210912221639.png"></li>
+</ul>
+</li>
+<li>3.底层存储介质变化<ul>
+<li><img src="https://img.shiqi-lu.tech/20210912221613.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库进行扩展有哪五个方案？<ul>
+<li>1.停服扩展(离线，非高可用)</li>
+<li>2.pt-online-schema-change(在线表结构变更)(平滑)</li>
+<li>3.追日志方案(平滑)</li>
+<li>4.双写方案(平滑)</li>
+<li>5.秒级成倍扩容(平滑)</li>
+</ul>
+</li>
+<li>no24：数据库扩展的停服扩展的步骤是怎样的？优缺点是什么？<ul>
+<li>步骤<ul>
+<li>1.挂公告</li>
+<li>2.离线迁移数据</li>
+<li>3.切到新库</li>
+<li><img src="https://img.shiqi-lu.tech/20210912222521.png"></li>
+</ul>
+</li>
+<li>优点<ul>
+<li>直观和简单</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>对服务的可用性有影响</li>
+<li>必须在指定的时间完成升级，对技术人员压力非常大，一旦出现问题必须在规定时间内解决，否则只能回滚</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库扩展的pt-online-schema-change(在线表结构变更)步骤、注意事项是什么？<ul>
+<li>步骤<ul>
+<li>1.创建一个扩展字段后的新表</li>
+<li>2.在原表上创建三个触发器，对原表的所有写操作(insert、delete、update)都会对新表进行完全相同的操作</li>
+<li>3.工具会分批地将原表中的数据分段地导入到新表</li>
+<li>4.删除掉触发器，并将原表移走</li>
+<li>5.将新建的新表重命名</li>
+<li>整个过程不需要锁表，可以持续对外提供服务，rename 前是旧表，rename 前是新表</li>
+</ul>
+</li>
+<li>注意事项<ul>
+<li>1.变更过程中最重要的是处理冲突，原则是以触发器的最新数据为准，这要求被迁移的表必须有主键</li>
+<li>2.在变更额度过程中，由于写操作要新建触发器，所以如果原表已有非常多的触发器，这个方案就不可行，但通常会禁用触发器</li>
+<li>3.触发器的建立会影响原表的性能，这个操作必须在流量的低峰期进行</li>
+<li>4.只适合 MySQL，也只适合表结构变更</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no24：数据库扩展的追日志方案的步骤是什么？<ul>
+<li>步骤<ul>
+<li>1.由旧库继续提供服务，并对服务进行一次升级，记录对旧库上的修改的日志，不需记录详细数据，只需记录哪个库哪个表哪个主键在什么时间被修改即可<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093745.png"></li>
+<li>风险小，写接口的数量有限，改动点较少，升级过程增加了一些日志，对业务功能没有任何的影响</li>
+</ul>
+</li>
+<li>2.研发数据迁移工具，将数据从旧库迁移到新库<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093810.png"></li>
+</ul>
+</li>
+<li>3.研发一个读取日志，看哪个库哪个表哪个主键发生了写操作，并将这些 key 从旧库再次覆盖到新库中，来对迁移数据过程里产生的数据差异进行追平，无论如何，当发生冲突时，以旧库中的数据为准，因为旧库的数据在实时更新<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914093830.png"></li>
+</ul>
+</li>
+<li>4.研发数据比对工具，将旧库和新库的数据进行比对，直到数据完全一致，才能修改配置迁库<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914094907.png"></li>
+</ul>
+</li>
+<li>5.迁移流量，对旧库进行一次秒级的 readonly，等日志重放程序完全追上之后，秒级的进行一个流量的切换<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914094828.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="25、数据库：扩展性，平滑扩容方案？"><a href="#25、数据库：扩展性，平滑扩容方案？" class="headerlink" title="25、数据库：扩展性，平滑扩容方案？"></a>25、数据库：扩展性，平滑扩容方案？</h1><ul>
+<li>no25：数据库平滑迁移的双写方案的 4 个步骤<ul>
+<li>1.首先旧库提供服务，先对服务进行升级，对数据修改写接口，并在新库上进行相同的操作<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914101758.png"></li>
+</ul>
+</li>
+<li>2.研发数据迁移工具，对数据进行迁移<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102216.png"></li>
+</ul>
+</li>
+<li>3.数据比对<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102317.png"></li>
+</ul>
+</li>
+<li>4.流量迁移<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914102405.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="26、数据库：水平切分，数据库秒级扩容！"><a href="#26、数据库：水平切分，数据库秒级扩容！" class="headerlink" title="26、数据库：水平切分，数据库秒级扩容！"></a>26、数据库：水平切分，数据库秒级扩容！</h1><ul>
+<li>no26：数据库水平切分，秒级成倍扩容的 3 个步骤<ul>
+<li>前提条件<ul>
+<li>实施了微服务的分层架构，大数据量进行了水平切分，高可用做了 keepalived 加 vip</li>
+</ul>
+</li>
+<li>步骤<ul>
+<li>1.修改配置(双虚 IP，微服务数据库路由)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914103537.png"></li>
+</ul>
+</li>
+<li>2.服务层 reload 配置，实例增倍完成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914104206.png"></li>
+<li>reload 配置方案<ul>
+<li>1.重启服务，读新文件</li>
+<li>2.配置中心给服务层发信号，重新读取配置文件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.收尾：解除旧双主同步，新增新的双主同步，删除冗余数据，数据量减半完成<ul>
+<li><img src="https://img.shiqi-lu.tech/20210914104102.png"></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -923,274 +1191,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《沈剑架构师训练营》第5章 - 微服务架构</title>
-    <url>/arch-sj-5/</url>
-    <content><![CDATA[<h1 id="21、数据库：读性能要如何提升？"><a href="#21、数据库：读性能要如何提升？" class="headerlink" title="21、数据库：读性能要如何提升？"></a>21、数据库：读性能要如何提升？</h1><ul>
-<li>no21：数据库工程架构，要设计些什么呢？<ul>
-<li>1.根据「业务模式」设计库表结构</li>
-<li>2.根据「访问模式」设计索引结构</li>
-</ul>
-</li>
-<li>no21：数据库工程架构必须要考虑哪 5 个因素？<ul>
-<li>读性能提升</li>
-<li>高可用</li>
-<li>一致性保障</li>
-<li>扩展性</li>
-<li>垂直拆分</li>
-</ul>
-</li>
-<li>no21：提升数据的读性能的方案一：建立索引<ul>
-<li>潜在问题<ul>
-<li>写性能降低</li>
-<li>索引占用内存大，buffer命中率降低， 读性能降低</li>
-</ul>
-</li>
-<li>实践：可以为主实例不建立索引，从实例建立不同的索引<ul>
-<li><img src="https://img.shiqi-lu.tech/20210909103013.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no21：提升数据的读性能的方案二：增加从库<ul>
-<li>分组架构，主要解决的，就是读性能提升的问题，但没有解决数据容量的扩展以及写高可用的问题，分组会引发主从一致性问题，从库越多，同步越慢，主从一致性的问题就越严重</li>
-<li><img src="https://img.shiqi-lu.tech/20210909103738.png"></li>
-</ul>
-</li>
-<li>no21：提升数据的读性能的方案三：增加缓存<ul>
-<li><img src="https://img.shiqi-lu.tech/20210909104021.png"></li>
-<li>左边是服务化前，右边是服务化后，s 是从库，m 是主库</li>
-</ul>
-</li>
-</ul>
-<h1 id="22、数据库：垂直拆分与高可用"><a href="#22、数据库：垂直拆分与高可用" class="headerlink" title="22、数据库：垂直拆分与高可用"></a>22、数据库：垂直拆分与高可用</h1><ul>
-<li>no22：数据库垂直拆分的方法论是什么？<ul>
-<li>1.长度较短</li>
-<li>2.访问频率较高</li>
-<li>3.经常一起访问</li>
-<li>的属性放在主表里，原因是，数据库缓冲池，逻辑上，以 row 为单位缓冲数据</li>
-</ul>
-</li>
-<li>no22：数据库的高可用的思路和问题是什么？<ul>
-<li>数据库的高可用设计，也是冗余+故障自动转移</li>
-<li>但是，方法论上:数据库的冗余，会引发一致性问题！因为多个节点数据库没办法同时修改，中间会有个时间差，就有可能引发一致性的问题</li>
-</ul>
-</li>
-<li>no22：读库高可用的方案<ul>
-<li>读库高可用，冗余从库，可一主多从，主库会把主库的写序列通过 binlog 的方式同步给从库，重复执行相同的序列</li>
-<li><img src="https://img.shiqi-lu.tech/20210909211447.png"></li>
-</ul>
-</li>
-<li>no22：写库高可用的方案<ul>
-<li>写库高可用，冗余写库，</li>
-<li><img src="https://img.shiqi-lu.tech/20210909211821.png"></li>
-<li>1.双主同步一个节点对外提供读写服务，另一个节点是备份节点，他们之间使用相同的 vip，通过 keepalived 去检测</li>
-<li>2.在分组架构中加入一个双主节点，冗余写库，两边进行相互的同步，两个主库同时对线上提供服务</li>
-</ul>
-</li>
-</ul>
-<h1 id="23、数据库：主从一致性，主主一致性如何保障？"><a href="#23、数据库：主从一致性，主主一致性如何保障？" class="headerlink" title="23、数据库：主从一致性，主主一致性如何保障？"></a>23、数据库：主从一致性，主主一致性如何保障？</h1><ul>
-<li>no23：主从数据冗余，主从数据不一致的情况是怎样？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210911164115.png"></li>
-<li>应用写一个数据后，在主从数据库同步完成前读同一个数据，造成数据不一致</li>
-</ul>
-</li>
-<li>no23：主从数据冗余，主从数据不一致的 3 个解决方案是什么？<ul>
-<li>方案一：忽略不计<ul>
-<li>中间时间估计约几百毫秒，业务允许的情况下，可不做处理</li>
-</ul>
-</li>
-<li>方案二：强制读主<ul>
-<li><img src="https://img.shiqi-lu.tech/20210911164509.png"></li>
-<li>都读写主库，然后使用缓存来提升读性能，但主库和缓存间也有一致性问题</li>
-</ul>
-</li>
-<li>方案三：选择性读主(需要缓存协助)<ul>
-<li>写操作过程<ul>
-<li><img src="https://img.shiqi-lu.tech/20210911164936.png"></li>
-<li>写完后，使用哪个库、哪个表、哪个主键拼接一个 key，设置到缓存里，并将这个 key 的时间记录为主从同步的时延</li>
-</ul>
-</li>
-<li>读操作过程<ul>
-<li><img src="https://img.shiqi-lu.tech/20210911171749.png"></li>
-<li>先读缓存，如果没有，再读从库</li>
-<li>如果有，则读主库</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no23：主主数据冗余，为什么主主数据会不一致？<ul>
-<li>因为同时对外提供服务，并发的写入可能会造成数据同步失败，这个比主从的同步时延要严重，这个可能会造成数据丢失</li>
-<li><img src="https://img.shiqi-lu.tech/20210911172110.png"></li>
-</ul>
-</li>
-<li>no23：主主数据冗余，主主数据不一致的 3 种解决方案是什么？<ul>
-<li>方案一：数据库层面解决，不同初始值，相同递增步长<ul>
-<li><img src="https://img.shiqi-lu.tech/20210911172541.png"></li>
-</ul>
-</li>
-<li>方案二：数据库上层应用程序控制 id 生成<ul>
-<li><img src="https://img.shiqi-lu.tech/20210911172828.png"></li>
-</ul>
-</li>
-<li>方案三：主主同时服务，升级为单主服务，影子主不服务<ul>
-<li>即keepalived+vip</li>
-<li><img src="https://img.shiqi-lu.tech/20210911173410.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="24、数据库：扩展性，要如何解决？"><a href="#24、数据库：扩展性，要如何解决？" class="headerlink" title="24、数据库：扩展性，要如何解决？"></a>24、数据库：扩展性，要如何解决？</h1><ul>
-<li>no24：数据库扩展性有哪些场景？<ul>
-<li>1.底层表结构变更<ul>
-<li><img src="https://img.shiqi-lu.tech/20210911174223.png"></li>
-</ul>
-</li>
-<li>2.水平扩展，分库个数变化<ul>
-<li><img src="https://img.shiqi-lu.tech/20210912221639.png"></li>
-</ul>
-</li>
-<li>3.底层存储介质变化<ul>
-<li><img src="https://img.shiqi-lu.tech/20210912221613.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no24：数据库进行扩展有哪五个方案？<ul>
-<li>1.停服扩展(离线，非高可用)</li>
-<li>2.pt-online-schema-change(在线表结构变更)(平滑)</li>
-<li>3.追日志方案(平滑)</li>
-<li>4.双写方案(平滑)</li>
-<li>5.秒级成倍扩容(平滑)</li>
-</ul>
-</li>
-<li>no24：数据库扩展的停服扩展的步骤是怎样的？优缺点是什么？<ul>
-<li>步骤<ul>
-<li>1.挂公告</li>
-<li>2.离线迁移数据</li>
-<li>3.切到新库</li>
-<li><img src="https://img.shiqi-lu.tech/20210912222521.png"></li>
-</ul>
-</li>
-<li>优点<ul>
-<li>直观和简单</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>对服务的可用性有影响</li>
-<li>必须在指定的时间完成升级，对技术人员压力非常大，一旦出现问题必须在规定时间内解决，否则只能回滚</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no24：数据库扩展的pt-online-schema-change(在线表结构变更)步骤、注意事项是什么？<ul>
-<li>步骤<ul>
-<li>1.创建一个扩展字段后的新表</li>
-<li>2.在原表上创建三个触发器，对原表的所有写操作(insert、delete、update)都会对新表进行完全相同的操作</li>
-<li>3.工具会分批地将原表中的数据分段地导入到新表</li>
-<li>4.删除掉触发器，并将原表移走</li>
-<li>5.将新建的新表重命名</li>
-<li>整个过程不需要锁表，可以持续对外提供服务，rename 前是旧表，rename 前是新表</li>
-</ul>
-</li>
-<li>注意事项<ul>
-<li>1.变更过程中最重要的是处理冲突，原则是以触发器的最新数据为准，这要求被迁移的表必须有主键</li>
-<li>2.在变更额度过程中，由于写操作要新建触发器，所以如果原表已有非常多的触发器，这个方案就不可行，但通常会禁用触发器</li>
-<li>3.触发器的建立会影响原表的性能，这个操作必须在流量的低峰期进行</li>
-<li>4.只适合 MySQL，也只适合表结构变更</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no24：数据库扩展的追日志方案的步骤是什么？<ul>
-<li>步骤<ul>
-<li>1.由旧库继续提供服务，并对服务进行一次升级，记录对旧库上的修改的日志，不需记录详细数据，只需记录哪个库哪个表哪个主键在什么时间被修改即可<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914093745.png"></li>
-<li>风险小，写接口的数量有限，改动点较少，升级过程增加了一些日志，对业务功能没有任何的影响</li>
-</ul>
-</li>
-<li>2.研发数据迁移工具，将数据从旧库迁移到新库<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914093810.png"></li>
-</ul>
-</li>
-<li>3.研发一个读取日志，看哪个库哪个表哪个主键发生了写操作，并将这些 key 从旧库再次覆盖到新库中，来对迁移数据过程里产生的数据差异进行追平，无论如何，当发生冲突时，以旧库中的数据为准，因为旧库的数据在实时更新<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914093830.png"></li>
-</ul>
-</li>
-<li>4.研发数据比对工具，将旧库和新库的数据进行比对，直到数据完全一致，才能修改配置迁库<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914094907.png"></li>
-</ul>
-</li>
-<li>5.迁移流量，对旧库进行一次秒级的 readonly，等日志重放程序完全追上之后，秒级的进行一个流量的切换<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914094828.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="25、数据库：扩展性，平滑扩容方案？"><a href="#25、数据库：扩展性，平滑扩容方案？" class="headerlink" title="25、数据库：扩展性，平滑扩容方案？"></a>25、数据库：扩展性，平滑扩容方案？</h1><ul>
-<li>no25：数据库平滑迁移的双写方案的 4 个步骤<ul>
-<li>1.首先旧库提供服务，先对服务进行升级，对数据修改写接口，并在新库上进行相同的操作<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914101758.png"></li>
-</ul>
-</li>
-<li>2.研发数据迁移工具，对数据进行迁移<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914102216.png"></li>
-</ul>
-</li>
-<li>3.数据比对<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914102317.png"></li>
-</ul>
-</li>
-<li>4.流量迁移<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914102405.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="26、数据库：水平切分，数据库秒级扩容！"><a href="#26、数据库：水平切分，数据库秒级扩容！" class="headerlink" title="26、数据库：水平切分，数据库秒级扩容！"></a>26、数据库：水平切分，数据库秒级扩容！</h1><ul>
-<li>no26：数据库水平切分，秒级成倍扩容的 3 个步骤<ul>
-<li>前提条件<ul>
-<li>实施了微服务的分层架构，大数据量进行了水平切分，高可用做了 keepalived 加 vip</li>
-</ul>
-</li>
-<li>步骤<ul>
-<li>1.修改配置(双虚 IP，微服务数据库路由)<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914103537.png"></li>
-</ul>
-</li>
-<li>2.服务层 reload 配置，实例增倍完成<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914104206.png"></li>
-<li>reload 配置方案<ul>
-<li>1.重启服务，读新文件</li>
-<li>2.配置中心给服务层发信号，重新读取配置文件</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>3.收尾：解除旧双主同步，新增新的双主同步，删除冗余数据，数据量减半完成<ul>
-<li><img src="https://img.shiqi-lu.tech/20210914104102.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《沈剑架构师训练营》第6章 - 缓存架构</title>
     <url>/arch-sj-6/</url>
     <content><![CDATA[<h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
@@ -1557,108 +1557,6 @@
       </tags>
   </entry>
   <entry>
-    <title>六种不同的二分查找全总结</title>
-    <url>/binary-search/</url>
-    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
-<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
-<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
-<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
-<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
-<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
-</ul>
-</li>
-</ul>
-<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
-<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>为什么while 中是&lt;而不是&lt;=<ul>
-<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
-<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
-<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
-</ul>
-</li>
-</ul>
-<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
-<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
-<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
-<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
-</ul>
-<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
-<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
-<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
-</ul>
-<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
-<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
-<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
-<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
-<li>循环判断规则为<code>left &lt;= right</code></li>
-<li>结束时<code>left == right+1</code></li>
-<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
-<li>初始化为<code>left = 0; right = nums.length</code></li>
-<li>循环判断规则为<code>left &lt; right</code></li>
-<li>结束时<code>left == right</code></li>
-<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
-<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
-<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
-<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
-<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
-</ul>
-</li>
-<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
-<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
-<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
-<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
-<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
-<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
-<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
-</ul>
-</li>
-</ul>
-<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
-<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>Python3<ul>
-<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
-<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
-<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
-<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
-</ul>
-</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>二分查找</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>类别不平衡问题的方法汇总</title>
     <url>/class-imbalance/</url>
     <content><![CDATA[<h1 id="类别不平衡问题-class-imbalance-是什么"><a href="#类别不平衡问题-class-imbalance-是什么" class="headerlink" title="类别不平衡问题(class-imbalance)是什么"></a>类别不平衡问题(class-imbalance)是什么</h1><ul>
@@ -1844,6 +1742,108 @@
         <tag>机器学习</tag>
         <tag>特征工程</tag>
         <tag>数据预处理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>六种不同的二分查找全总结</title>
+    <url>/binary-search/</url>
+    <content><![CDATA[<h1 id="寻找一个数的二分查找-搜索区间两端都闭"><a href="#寻找一个数的二分查找-搜索区间两端都闭" class="headerlink" title="寻找一个数的二分查找(搜索区间两端都闭)"></a>寻找一个数的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间是左闭右闭[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="comment">// 计算mid时需要防止溢出</span></span><br><span class="line">        <span class="keyword">int</span>  mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 停止的终止条件，找到了target</span></span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 终止时仍未找到target</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while循环的条件中是&lt;=，而不是&lt;？<ul>
+<li>因为初始化right的赋值是 nums.length - 1，即最后一个元素的索引，而不是 nums.length</li>
+<li>这两者会出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间[left, right]，后者相当于左闭右开区间[left, right)，因为索引大小为nums.length是越界的</li>
+<li>这个算法使用的是前者[left, right]两端都闭的区间。这个区间其实就是每次进行搜索的区间</li>
+<li>while(left &lt;= right)的终止条件是left == right + 1，写成区间的形式就是[right+1, right]，或者代个具体的数字进去[3,2]，可见这时区间为空，因为没有数组大于等于3且小于等于2。这时while循环终止是正确的，返回-1即可</li>
+<li>while(left &lt; right)的终止条件是left == right，写成区间的形式是[left, right]，或者代个具体的数字进去[2,2]，这时区间非空，还有一个数2，但此时while循环终止了。即2被漏掉了，索引2没有被搜索，如果这时直接返回-1就是错的</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找一个数的二分查找-搜索区间左闭右开"><a href="#寻找一个数的二分查找-搜索区间左闭右开" class="headerlink" title="寻找一个数的二分查找(搜索区间左闭右开)"></a>寻找一个数的二分查找(搜索区间左闭右开)</h1><ul>
+<li>当然，如果非要用while(left &lt; right)也可以，需要打一个补丁<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间左闭右开"><a href="#寻找左侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找左侧边界的二分查找(搜索区间左闭右开)"></a>寻找左侧边界的二分查找(搜索区间左闭右开)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 寻找到的左侧边界的索引下标i即，nums 中小于 target 的数有 i 个</span></span><br><span class="line"><span class="comment">// 换句话说，如果 target 要插入到 nums 应插入到位置 i</span></span><br><span class="line"><span class="comment">// 如对有序数组nums=[2,3,3,5,7]</span></span><br><span class="line"><span class="comment">// target=1，算法会返回0，含义是：nums中小于1的元素有0个</span></span><br><span class="line"><span class="comment">// target=3，算法会返回1，含义是：nums中小于3的元素有1个</span></span><br><span class="line"><span class="comment">// target=8，算法会返回5，含义是：nums中小于8的元素有5个</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为左闭右开[left, right)</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩右侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[left, mid)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了左侧边界，那后续只会变动 left,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止</span></span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid+1, right)，此时 mid 和左侧数已被排除</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid)，此时 mid 和右侧数已被排除</span></span><br><span class="line">            <span class="comment">// 但 right == mid，可保证若 target 不存在 nums 中时，</span></span><br><span class="line">            <span class="comment">// 最终返回下标在 target 该插入的地方</span></span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都大，数组已越界，需用长度来判断，</span></span><br><span class="line">    <span class="comment">//    其实left最大也就==长度，不会&gt;，此处是防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) </span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为什么while 中是&lt;而不是&lt;=<ul>
+<li>因为right = nums.length而不是nums.length-1。因此每次循环的「搜索区间」是[left, right)左闭右开</li>
+<li>while (left &lt; right)终止的条件是left == right，此时搜索区间[left, left)为空，所以可以正确终止</li>
+<li>对于搜索左右侧边界的二分查找，这种写法比较普遍</li>
+</ul>
+</li>
+</ul>
+<h1 id="寻找左侧边界的二分查找-搜索区间两端都闭"><a href="#寻找左侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找左侧边界的二分查找(搜索区间两端都闭)"></a>寻找左侧边界的二分查找(搜索区间两端都闭)</h1><ul>
+<li>可以，只要明白「搜索区间」的概念，就能有效避免漏掉元素</li>
+<li>因为要求搜索区间两端都闭，所以right应该初始化为<code>nums.length - 1</code>，while的终止条件应该是<code>left == right + 1</code>，即用&lt;=<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为[left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界，若此时已达到左侧边界，那此时 right 指向</span></span><br><span class="line">            <span class="comment">// 左侧边界-1的索引，以后只会收缩左侧边界，直到left == right+1</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[mid + 1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为[left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，此时若需返回target需插入的索引下标直接返回</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 检查越界情况和是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 返回 left 和 right+1均可</span></span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>之所以要检查越界情况，是因为由于while的退出条件是<code>left == right + 1</code>，所以当target比nums中所有元素都大时，会存在以下情况使得索引越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107173917.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间左闭右开"><a href="#寻找右侧边界的二分查找-搜索区间左闭右开" class="headerlink" title="寻找右侧边界的二分查找(搜索区间左闭右开)"></a>寻找右侧边界的二分查找(搜索区间左闭右开)</h1><ul>
+<li>只有两处和搜索左侧边界不同<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终止条件时，left == right</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 找到target时不要立即返回，而是收缩左侧边界</span></span><br><span class="line">            <span class="comment">// 在区间[mid+1, right)中继续搜索</span></span><br><span class="line">            <span class="comment">// 若此时 mid 已经达到了右侧边界，那后续只会变动 right,</span></span><br><span class="line">            <span class="comment">// 直到 left == right终止，此时 left 指向右侧边界+1的下标</span></span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="comment">// 即 while 循环结束时，nums[left] 一定不等于 target 了</span></span><br><span class="line">            <span class="comment">// 而 nums[left-1] 可能是 target</span></span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 不同点1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 达到终止条件时，left==right 指向的是右侧边界+1的下标</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回右侧边界</span></span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 不同点2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="寻找右侧边界的二分查找-搜索区间两端都闭"><a href="#寻找右侧边界的二分查找-搜索区间两端都闭" class="headerlink" title="寻找右侧边界的二分查找(搜索区间两端都闭)"></a>寻找右侧边界的二分查找(搜索区间两端都闭)</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 终止条件时，left == right + 1</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩左侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此时，left - 1 == right</span></span><br><span class="line">    <span class="comment">// left 的含义仍是指向的是右侧边界+1的下标，可返回 left-1 或 right</span></span><br><span class="line">    <span class="comment">// left 可返回的取值范围是[0, nums.length]闭区间</span></span><br><span class="line">    <span class="comment">// right 是指向右侧边界，取值范围是[-1, nums.length-1]闭区间</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 若需使 target 不存在 nums 中返回 -1, 则需分两种情况判断</span></span><br><span class="line">    <span class="comment">// 1. target 比所有数都小，此时 left == 0，&lt; 号为防御性编程</span></span><br><span class="line">    <span class="comment">// 2. target 指向的右侧边界不存在 nums 中</span></span><br><span class="line">    <span class="keyword">if</span> (left &lt;= <span class="number">0</span> || nums[left-<span class="number">1</span>] != target)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 或直接返回 right</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当target比所有元素都小时，right会被减到-1，所以需要在最后防止越界</li>
+<li><img src="https://img.shiqi-lu.tech/20201107192235.png?imageView2/2/h/150"></li>
+</ul>
+<h1 id="记忆六种二分查找的函数方法"><a href="#记忆六种二分查找的函数方法" class="headerlink" title="记忆六种二分查找的函数方法"></a>记忆六种二分查找的函数方法</h1><ul>
+<li>1.确定使用的是两端都闭还是左闭右开的写法<ul>
+<li>采用两端都闭的写法时(除在查找左侧和右侧边界外4种，查找一个数的左闭右开当作两端都闭)<ul>
+<li>初始化为<code>left = 0; right = nums.length - 1</code></li>
+<li>循环判断规则为<code>left &lt;= right</code></li>
+<li>结束时<code>left == right+1</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>采用左闭右开的写法时(仅在查找左侧和右侧边界)<ul>
+<li>初始化为<code>left = 0; right = nums.length</code></li>
+<li>循环判断规则为<code>left &lt; right</code></li>
+<li>结束时<code>left == right</code></li>
+<li>判断规则如下<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.确定哪种二分查找以及查找过程中mid的意义<ul>
+<li>查找一个数(两端都闭)+查找一个数(左闭右开)：判断当前mid是否为要找的数：是的话直接返回<code>return mid;</code></li>
+<li>寻找左侧边界(左闭右开)：此时均应该收缩右边界，因右为开区间，即把 right 当作新边界，<code>right = mid;</code></li>
+<li>寻找左侧边界(两端都闭)：此时均应该收缩右边界，因右为闭区间，需把 right-1 当作新边界，<code>right = mid - 1;</code></li>
+<li>寻找右侧边界(左闭右开+两端都闭)：此时均应该收缩左边界，左边均为闭区间，即<code>left = mid + 1;</code></li>
+</ul>
+</li>
+<li>3.确定哪种二分查找结束时left、right变量对应的意义和取值范围，以及不存在时需补判断的内容<ul>
+<li>查找一个数(两端都闭)：此时区间已被搜索完，直接返回-1即可</li>
+<li>查找一个数(左闭右开)：此时相比两端都闭，少判断了left元素，所以需补上：<code>return nums[left] == target ? left : -1;</code></li>
+<li>寻找左侧边界(左闭右开)：此时 left == right 为返回 target 需插入的索引下标，所以需返回<code>left</code>，left 取值范围是[0, nums.length]闭区间，所以需补判断<code>left &gt;= nums.length || nums[left] != target</code>成立返回-1</li>
+<li>寻找左侧边界(两端都闭)：除了结束时 left == right + 1 外，left 的意义、取值范围、补判断内容均同左闭右开</li>
+<li>寻找右侧边界(左闭右开)：此时 left == right 指向的是右侧边界+1的下标，所以需返回<code>left-1</code>，left取值范围是[0, nums.length]闭区间，需补判断<code>left &lt;= 0 || nums[left-1] != target</code>成立返回-1</li>
+<li>寻找右侧边界(两端都闭)：此时 left == right + 1，left 的意义、取值范围、补判断内容均同左闭右开，但此处可返回<code>left-1</code>或<code>right</code>，或以 right 判断<code>right &lt; 0 || nums[right] != target</code>也可</li>
+</ul>
+</li>
+</ul>
+<h1 id="现有语言的二分查找库函数调用"><a href="#现有语言的二分查找库函数调用" class="headerlink" title="现有语言的二分查找库函数调用"></a>现有语言的二分查找库函数调用</h1><ul>
+<li>C++<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 二分查找</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::binary_search(nums.begin(), nums.end(), 待查找数)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 找第一个大于待找元素的元素，事实等于找右侧边界+1</span></span><br><span class="line">    <span class="keyword">auto</span> upper = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (upper != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; upper &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), upper) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找第一个小于等于待找元素的元素，事实等于找左侧边界</span></span><br><span class="line">    <span class="keyword">auto</span> lower = <span class="built_in">std</span>::upper_bound(nums.begin(), nums.end(), 待查找数);</span><br><span class="line">    <span class="keyword">if</span> (lower != data.end()) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Found &quot;</span> &lt;&lt; lower &lt;&lt; <span class="string">&quot; at index &quot;</span> </span><br><span class="line">          &lt;&lt; <span class="built_in">std</span>::distance(data.begin(), lower) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 待查找数超过范围</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;not Found!\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>Python3<ul>
+<li>参考：<a href="https://docs.python.org/zh-cn/3.6/library/bisect.html">https://docs.python.org/zh-cn/3.6/library/bisect.html</a></li>
+<li>查找左侧边界并返回index：<code>bisect.bisect_left(a, x, lo=0, hi=len(a))</code></li>
+<li>查找右侧边界+1并返回index：<code>bisect.bisect(a, x, lo=0, hi=len(a))</code></li>
+<li>其中 a 是 list，x 为待查找的数，lo 和 hi 为 a 的上下界，拼合起来意思为：在数组a[lo, hi]中查找x，注意此处同python3列表是左闭右开</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485044&idx=1&sn=e6b95782141c17abe206bfe2323a4226&chksm=9bd7f87caca0716aa5add0ddddce0bfe06f1f878aafb35113644ebf0cf0bfe51659da1c1b733&scene=21#wechat_redirect">我作了首诗，保你闭着眼睛也能写对二分查找</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>二分查找</tag>
       </tags>
   </entry>
   <entry>
@@ -3056,6 +3056,104 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s培训第6课 Service</title>
+    <url>/k8s-6/</url>
+    <content><![CDATA[<ul>
+<li>Q:Service是什么？<ul>
+<li>k8s的service定义了这样一种抽象：一个pod的逻辑分组，一种可以访问它们的策略——通常称为微服务。这一组Pod能够被Service访问到，通常是通过Label Selector</li>
+<li>只提供4层负载均衡能力，而没有7层功能，有时可能需要更多的匹配规则来转发请求，此时4层负载均衡是不支持的</li>
+</ul>
+</li>
+<li>Q:Service有哪4种类型？<ul>
+<li>ClusterIp：默认类型，自动分配一个仅 Cluster 内部可以访问的虚拟 IP</li>
+<li>NodePort：在 ClusterIP 基础上为 Service 在每台机器上绑定一个端口，这样就可以通过<NodeIP>: NodePort 来访问该服务</li>
+<li>LoadBalancer：在 NodePort 的基础上，借助 cloud provider 创建一个外部负载均衡器，并将请求转发到<NodeIP>: NodePort</li>
+<li>ExternalName：把集群外部的服务引入到集群内部来，在集群内部直接使用。没有任何类型代理被创建， 这只有 kubernetes 1.7 或更高版本的 kube-dns 才支持</li>
+</ul>
+</li>
+<li>Q:Service的实现流程是怎样？<ul>
+<li><img src="https://img.shiqi-lu.tech/20201027163257.png"></li>
+<li>1.监听服务的端点是由apiserver完成的，通过kube-proxy监控，进行服务和端点信息的发现</li>
+<li>2.kube-proxy负责监控标签匹配的Pod的信息，并把它写入到iptables的规则里</li>
+<li>3.当客户端想去访问svc的时候，其实访问的是iptables，并导向后端的pod的信息，即iptables通过kube-proxy写入的</li>
+</ul>
+</li>
+<li>Q:service有哪3种代理模式？<ul>
+<li>userspace代理模式</li>
+<li><img src="https://img.shiqi-lu.tech/20201027171941.png"></li>
+<li>iptables代理模式</li>
+<li><img src="https://img.shiqi-lu.tech/20201027171954.png"></li>
+<li>ipvs代理模式</li>
+<li><img src="https://img.shiqi-lu.tech/20201027172005.png"></li>
+<li>ipvs模式下，kube-proxy会监视k8s service对象和endpoints，调用netlink接口以相应地创建ipvs规则并定期与k8s service对象和endpoints对象同步ipvs规则，以确保ipvs状态与期望一致。访问服务时，流量将被重定向到其中一个后端Pod</li>
+</ul>
+</li>
+<li>Q:ClusterIP的工作方式是什么？<ul>
+<li>ClustuerIP主要在每个node节点使用iptables，将发向clusterIP对应端口的数据，转发到kube-proxy中。然后kube-proxy自己内部实现负载均衡的方法，并可以查询到这个service下对应pod的地址和端口，进而把数据转发给对应的Pod的地址和端口</li>
+<li><img src="https://img.shiqi-lu.tech/20201027175214.png"></li>
+<li>为了实现图上的功能，主要需要以下几个组件的协同工作：<ul>
+<li>apiserver用户通过kubectl命令向apiserver发送创建service的命令，apiserver接收到请求后将数据存储到etcd中</li>
+<li>kube-proxy k8s的每个节点中都有一个叫做kube-proxy的进程，这个进程负责感知service，pod的变化，并将变化的信息写入本地的iptables规则中</li>
+<li>iptables使用NAT等技术将virtualIP的流量转至endpoint中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:ClusterIP的实验演示<ul>
+<li>创建deployment：myapp-deploy.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-deploy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">      <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">        <span class="attr">env:</span> <span class="string">test</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v2</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f myapp-deploy.yaml</span><br><span class="line">deployment.apps/myapp-deploy created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get pod</span><br><span class="line">NAME                           READY   STATUS              RESTARTS   AGE</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   0/1     ContainerCreating   0          22s</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   0/1     ContainerCreating   0          22s</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   0/1     ContainerCreating   0          22s</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   1/1     Running   0          62m   10.244.6.101   zhangliang   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   1/1     Running   0          62m   10.244.8.108   kongming     &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   1/1     Running   0          62m   10.244.4.51    laojun       &lt;none&gt;           &lt;none&gt;</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.244.6.101</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>创建service信息：myapp-service.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f myapp-service.yaml</span><br><span class="line">service/myapp created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">myapp   ClusterIP   10.101.48.92   &lt;none&gt;        80/TCP    20s</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc -n default</span><br><span class="line">NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes   ClusterIP   10.96.0.1    &lt;none&gt;        443/TCP   114d</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>可以使用命令：<code>ipvsadm -Ln</code>查看ipvs的情况</li>
+<li>查看服务轮训的情况<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:Headless Service是什么？<ul>
+<li>有时不需要或不想要负载均衡，以及单独的Service IP。遇到这种情况，可以通过制定ClusterIP(spec.clusterIP)的值为”None”来创建Headless Service。这类Service并不会分配Cluster IP，kube-proxy不会处理它们，而且平台也不会为它们进行负载均衡和路由器</li>
+<li>通过这个方式来解决clustername和podname变化问题，即通过它来绑定</li>
+</ul>
+</li>
+<li>Q:Headless Service的实验<ul>
+<li>创建myapp-svc-headless.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-headless</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">&quot;None&quot;</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">t:</span> <span class="number">8</span><span class="string">```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">myapp-svc-headless.yaml</span></span><br><span class="line"><span class="string">service/myapp-headless</span> <span class="string">created</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">svc</span></span><br><span class="line"><span class="string">NAME</span>             <span class="string">TYPE</span>        <span class="string">CLUSTER-IP</span>     <span class="string">EXTERNAL-IP</span>   <span class="string">PORT(S)</span>   <span class="string">AGE</span></span><br><span class="line"><span class="string">myapp</span>            <span class="string">ClusterIP</span>   <span class="number">10.101</span><span class="number">.48</span><span class="number">.92</span>   <span class="string">&lt;none&gt;</span>        <span class="number">80</span><span class="string">/TCP</span>    <span class="string">46m</span></span><br><span class="line"><span class="string">myapp-headless</span>   <span class="string">ClusterIP</span>   <span class="string">None</span>           <span class="string">&lt;none&gt;</span>        <span class="number">80</span><span class="string">/TCP</span>    <span class="string">3m11s```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">发现底下的地址为空</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pod</span> <span class="string">-n</span> <span class="string">kube-system</span> <span class="string">-o</span> <span class="string">wide</span></span><br><span class="line"><span class="string">NAME</span>                                            <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>     <span class="string">IP</span>              <span class="string">NODE</span>               <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">coredns-7ff77c879f-kdvsd</span>                        <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">1</span>          <span class="string">10d</span>     <span class="number">10.244</span><span class="number">.8</span><span class="number">.16</span>     <span class="string">kongming</span>           <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">coredns-7ff77c879f-vc9gn</span>                        <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">2</span>          <span class="string">10d</span>     <span class="number">10.244</span><span class="number">.1</span><span class="number">.116</span>    <span class="string">shennong</span>           <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">从coredns中找一个ip，下面这个命令试试来解析，格式是Service的名字+namespace+host</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">dig</span> <span class="string">-t</span> <span class="string">A</span> <span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">@10.244.8.16</span></span><br><span class="line"></span><br><span class="line"><span class="string">;</span> <span class="string">&lt;&lt;&gt;&gt;</span> <span class="string">DiG</span> <span class="number">9.11</span><span class="number">.3</span><span class="string">-1ubuntu1.13-Ubuntu</span> <span class="string">&lt;&lt;&gt;&gt;</span> <span class="string">-t</span> <span class="string">A</span> <span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">@10.244.8.16</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">global options:</span> <span class="string">+cmd</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">Got answer:</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WARNING:</span> <span class="string">.local</span> <span class="string">is</span> <span class="string">reserved</span> <span class="string">for</span> <span class="string">Multicast</span> <span class="string">DNS</span></span><br><span class="line"><span class="string">;;</span> <span class="string">You</span> <span class="string">are</span> <span class="string">currently</span> <span class="string">testing</span> <span class="string">what</span> <span class="string">happens</span> <span class="string">when</span> <span class="string">an</span> <span class="string">mDNS</span> <span class="string">query</span> <span class="string">is</span> <span class="string">leaked</span> <span class="string">to</span> <span class="string">DNS</span></span><br><span class="line"><span class="string">;;</span> <span class="string">-&gt;&gt;HEADER&lt;&lt;-</span> <span class="attr">opcode:</span> <span class="string">QUERY,</span> <span class="attr">status:</span> <span class="string">NOERROR,</span> <span class="attr">id:</span> <span class="number">54521</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">flags:</span> <span class="string">qr</span> <span class="string">aa</span> <span class="string">rd;</span> <span class="attr">QUERY:</span> <span class="number">1</span><span class="string">,</span> <span class="attr">ANSWER:</span> <span class="number">3</span><span class="string">,</span> <span class="attr">AUTHORITY:</span> <span class="number">0</span><span class="string">,</span> <span class="attr">ADDITIONAL:</span> <span class="number">1</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WARNING:</span> <span class="string">recursion</span> <span class="string">requested</span> <span class="string">but</span> <span class="string">not</span> <span class="string">available</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">OPT PSEUDOSECTION:</span></span><br><span class="line"><span class="string">;</span> <span class="attr">EDNS: version:</span> <span class="number">0</span><span class="string">,</span> <span class="string">flags:;</span> <span class="attr">udp:</span> <span class="number">4096</span></span><br><span class="line"><span class="string">;</span> <span class="attr">COOKIE:</span> <span class="string">a253bf35c4375eaf</span> <span class="string">(echoed)</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">QUESTION SECTION:</span></span><br><span class="line"><span class="string">;myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">IN</span> <span class="string">A</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">ANSWER SECTION:</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.4</span><span class="number">.51</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.6</span><span class="number">.101</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.8</span><span class="number">.108</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">Query time:</span> <span class="number">0</span> <span class="string">msec</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">SERVER:</span> <span class="number">10.244</span><span class="number">.8</span><span class="number">.16</span><span class="comment">#53(10.244.8.16)</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WHEN:</span> <span class="string">Tue</span> <span class="string">Oct</span> <span class="number">27</span> <span class="number">20</span><span class="string">:05:35</span> <span class="string">CST</span> <span class="number">2020</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">MSG SIZE  rcvd:</span> <span class="number">253</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pod</span> <span class="string">-o</span> <span class="string">wide</span></span><br><span class="line"><span class="string">NAME</span>                           <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>    <span class="string">IP</span>             <span class="string">NODE</span>         <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-lw9rr</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.6</span><span class="number">.101</span>   <span class="string">zhangliang</span>   <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-pqd8j</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.8</span><span class="number">.108</span>   <span class="string">kongming</span>     <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-stkdm</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.4</span><span class="number">.51</span>    <span class="string">laojun</span>       <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">虽然headless没有IP，但仍然可以通过访问域名的方式访问</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Q:NodePort是什么？</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">原理是在node上开了一个端口，将向该端口的流量导入到kube-proxy，然后由kube-proxy进一步给到对应的Pod</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">创建nodeport.yaml，除了type中不一样，其它几乎不变</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f nodeport.yaml</span><br><span class="line">service/myapp configured</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">myapp            NodePort    10.101.48.92   &lt;none&gt;        80:30707/TCP   64m</span><br><span class="line">myapp-headless   ClusterIP   None           &lt;none&gt;        80/TCP         21m</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl localhost:30707</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:LoadBalancer是什么？<ul>
+<li>和nodePort其实是同一种方式，区别在于loadBalancer比nodePort多了一步，就是可以调用cloud provider去创建LoadBalancer来向节点导流</li>
+<li><img src="https://img.shiqi-lu.tech/20201027202612.png"></li>
+</ul>
+</li>
+<li>Q:ExternalName是什么?<ul>
+<li>这种类型的Service通过返回CNAME和它的值，可以将服务映射到externalName字段的内容(例如:hub.atguigu.com)。ExternalName Service是Service的特例，它没有selector，也没有定义任何端口和endpoint。相反，对于运行在集群外部的服务，它通过返回该外部服务的别名这种方式来提供服务 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service-1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure></li>
+<li>当查询主机my-service-1.default.svc.cluster.local (SVC_NAME.NAMESPACE.svc.cluster.local)时，集群的DNS服务将返回一个值hub.atguigu.com的CNAME记录。访问这个服务的工作方式和其它的相同，唯一不同的是重定向发生在DNS层，而且不会进行代理或转发</li>
+</ul>
+</li>
+<li>Q:ExternalName的创建实验<ul>
+<li>创建ex.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service-1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl create -f ex.yaml</span><br><span class="line">service/my-service-1 created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME             TYPE           CLUSTER-IP     EXTERNAL-IP       PORT(S)        AGE</span><br><span class="line">my-service-1     ExternalName   &lt;none&gt;         hub.atguigu.com   &lt;none&gt;         9s</span><br><span class="line">myapp            NodePort       10.101.48.92   &lt;none&gt;            80:30707/TCP   91m</span><br><span class="line">myapp-headless   ClusterIP      None           &lt;none&gt;            80/TCP         47m</span><br><span class="line">shiqi-lu@k8s-master:~/6$ dig -t A my-service-1.shiqi-lu.svc.cluster.local. @10.244.8.16</span><br><span class="line"></span><br><span class="line">; &lt;&lt;&gt;&gt; DiG 9.11.3-1ubuntu1.13-Ubuntu &lt;&lt;&gt;&gt; -t A my-service-1.shiqi-lu.svc.cluster.local. @10.244.8.16</span><br><span class="line">;; global options: +cmd</span><br><span class="line">;; Got answer:</span><br><span class="line">;; WARNING: .local is reserved for Multicast DNS</span><br><span class="line">;; You are currently testing what happens when an mDNS query is leaked to DNS</span><br><span class="line">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 60219</span><br><span class="line">;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1</span><br><span class="line">;; WARNING: recursion requested but not available</span><br><span class="line"></span><br><span class="line">;; OPT PSEUDOSECTION:</span><br><span class="line">; EDNS: version: 0, flags:; udp: 4096</span><br><span class="line">; COOKIE: ed3b24efd39612a1 (echoed)</span><br><span class="line">;; QUESTION SECTION:</span><br><span class="line">;my-service-1.shiqi-lu.svc.cluster.local. IN A</span><br><span class="line"></span><br><span class="line">;; ANSWER SECTION:</span><br><span class="line">my-service-1.shiqi-lu.svc.cluster.local. 30 IN CNAME hub.atguigu.com.</span><br><span class="line"></span><br><span class="line">;; Query time: 39 msec</span><br><span class="line">;; SERVER: 10.244.8.16#53(10.244.8.16)</span><br><span class="line">;; WHEN: Tue Oct 27 20:45:03 CST 2020</span><br><span class="line">;; MSG SIZE  rcvd: 148</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:nginx-ingress的工作原理<ul>
+<li><img src="https://img.shiqi-lu.tech/20201027210932.png"></li>
+<li>客户端访问域名，ingress必须先绑定一个域名，不同域名访问nginx，nginx会反向代理，负载均衡选择后端的service，每个service会有一些容器</li>
+<li>nginx其实使用nodeport的方式</li>
+<li><img src="https://img.shiqi-lu.tech/20201027210938.png"></li>
+<li>首先k8s的apiserver和store建立监听状态，这里的监听方式是以协程的Pod的形式向apiserver发起连接的方案进行监听，如果发生新的数据写入，会被写入到updateChannel的循环队列里面，然后有一个nginxController的主进程会去监听这个循环队列里面的资源和事件，发生一个循环以后会更新一个事件，把它写入到我们的同步队列里去，等待被协程去更改配置文件，协程会定期的从队列里拉去执行添加的一些任务，如果有一些必要的直接需要去修改的，不需要去等待直接要更新的一些任务会自动发直接发送到SyncQueue协程，两个协程之间协商直接沟通，收取到所有的要更新的数据以后会去他去判断是否要进行一个重载(reload)，写入数据的这么一个方案，还是等等再去添加，如果有的话就会写入nginx主配置文件，然后重新载入nginx的一些数据，那如果不需要的话就等待后面去执行，直接发送构建的post的数据接口，也就是一些不需要存在的数据即可，最后以nginx模块去运行，那这就是nginx-ingress的进程以及协程的沟通方案</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s培训第7课 存储</title>
     <url>/k8s-7/</url>
     <content><![CDATA[<ul>
@@ -3179,104 +3277,6 @@
 <li>Q:如何安装nfs服务器<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nfs-common nfs-utils rpcbind</span><br><span class="line">mkdir /nfsdata</span><br><span class="line">chmod 666 /nfsdata</span><br><span class="line">chown nfsnobody /nfsdata</span><br><span class="line">cat /etc/exports</span><br><span class="line">      /nfsdata *(rw,no_root_squash,no_all_squash,sync)</span><br><span class="line">systemctl start rpcbind</span><br><span class="line">systemctl start nfs</span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载</span></span><br><span class="line">showmount -e xxx.xxx.xxx.xxx</span><br><span class="line">mount -t nfs xxx.xxx.xxx.xxx:/nfs /test</span><br><span class="line">umount /test</span><br></pre></td></tr></table></figure></li>
 <li>Q:部署PV<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfspv1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfs</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">10.66</span><span class="number">.66</span><span class="number">.10</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl create -f pv.yaml</span><br><span class="line">kubectl get pv```</span><br><span class="line">- Q:创建服务并使用pvc</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    name: web</span><br><span class="line">  clusterIP: None</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: web</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  serviceName: &quot;nginx&quot;</span><br><span class="line">  replicas: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: wangyanglinux/myapp:v2</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: web</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: www</span><br><span class="line">          mountPath: /usr/share/nginx/html</span><br><span class="line">  volumeClaimTemplates:</span><br><span class="line">  - metadata:</span><br><span class="line">      name: www</span><br><span class="line">    spec:</span><br><span class="line">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span><br><span class="line">      storageClassName: &quot;nfs&quot;</span><br><span class="line">      resources:</span><br><span class="line">        requests:</span><br><span class="line">          storage: 1Gi</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>k8s培训第6课 Service</title>
-    <url>/k8s-6/</url>
-    <content><![CDATA[<ul>
-<li>Q:Service是什么？<ul>
-<li>k8s的service定义了这样一种抽象：一个pod的逻辑分组，一种可以访问它们的策略——通常称为微服务。这一组Pod能够被Service访问到，通常是通过Label Selector</li>
-<li>只提供4层负载均衡能力，而没有7层功能，有时可能需要更多的匹配规则来转发请求，此时4层负载均衡是不支持的</li>
-</ul>
-</li>
-<li>Q:Service有哪4种类型？<ul>
-<li>ClusterIp：默认类型，自动分配一个仅 Cluster 内部可以访问的虚拟 IP</li>
-<li>NodePort：在 ClusterIP 基础上为 Service 在每台机器上绑定一个端口，这样就可以通过<NodeIP>: NodePort 来访问该服务</li>
-<li>LoadBalancer：在 NodePort 的基础上，借助 cloud provider 创建一个外部负载均衡器，并将请求转发到<NodeIP>: NodePort</li>
-<li>ExternalName：把集群外部的服务引入到集群内部来，在集群内部直接使用。没有任何类型代理被创建， 这只有 kubernetes 1.7 或更高版本的 kube-dns 才支持</li>
-</ul>
-</li>
-<li>Q:Service的实现流程是怎样？<ul>
-<li><img src="https://img.shiqi-lu.tech/20201027163257.png"></li>
-<li>1.监听服务的端点是由apiserver完成的，通过kube-proxy监控，进行服务和端点信息的发现</li>
-<li>2.kube-proxy负责监控标签匹配的Pod的信息，并把它写入到iptables的规则里</li>
-<li>3.当客户端想去访问svc的时候，其实访问的是iptables，并导向后端的pod的信息，即iptables通过kube-proxy写入的</li>
-</ul>
-</li>
-<li>Q:service有哪3种代理模式？<ul>
-<li>userspace代理模式</li>
-<li><img src="https://img.shiqi-lu.tech/20201027171941.png"></li>
-<li>iptables代理模式</li>
-<li><img src="https://img.shiqi-lu.tech/20201027171954.png"></li>
-<li>ipvs代理模式</li>
-<li><img src="https://img.shiqi-lu.tech/20201027172005.png"></li>
-<li>ipvs模式下，kube-proxy会监视k8s service对象和endpoints，调用netlink接口以相应地创建ipvs规则并定期与k8s service对象和endpoints对象同步ipvs规则，以确保ipvs状态与期望一致。访问服务时，流量将被重定向到其中一个后端Pod</li>
-</ul>
-</li>
-<li>Q:ClusterIP的工作方式是什么？<ul>
-<li>ClustuerIP主要在每个node节点使用iptables，将发向clusterIP对应端口的数据，转发到kube-proxy中。然后kube-proxy自己内部实现负载均衡的方法，并可以查询到这个service下对应pod的地址和端口，进而把数据转发给对应的Pod的地址和端口</li>
-<li><img src="https://img.shiqi-lu.tech/20201027175214.png"></li>
-<li>为了实现图上的功能，主要需要以下几个组件的协同工作：<ul>
-<li>apiserver用户通过kubectl命令向apiserver发送创建service的命令，apiserver接收到请求后将数据存储到etcd中</li>
-<li>kube-proxy k8s的每个节点中都有一个叫做kube-proxy的进程，这个进程负责感知service，pod的变化，并将变化的信息写入本地的iptables规则中</li>
-<li>iptables使用NAT等技术将virtualIP的流量转至endpoint中</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:ClusterIP的实验演示<ul>
-<li>创建deployment：myapp-deploy.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-deploy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">      <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">        <span class="attr">env:</span> <span class="string">test</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v2</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f myapp-deploy.yaml</span><br><span class="line">deployment.apps/myapp-deploy created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get pod</span><br><span class="line">NAME                           READY   STATUS              RESTARTS   AGE</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   0/1     ContainerCreating   0          22s</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   0/1     ContainerCreating   0          22s</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   0/1     ContainerCreating   0          22s</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE         NOMINATED NODE   READINESS GATES</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   1/1     Running   0          62m   10.244.6.101   zhangliang   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   1/1     Running   0          62m   10.244.8.108   kongming     &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   1/1     Running   0          62m   10.244.4.51    laojun       &lt;none&gt;           &lt;none&gt;</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.244.6.101</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>创建service信息：myapp-service.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f myapp-service.yaml</span><br><span class="line">service/myapp created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">myapp   ClusterIP   10.101.48.92   &lt;none&gt;        80/TCP    20s</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc -n default</span><br><span class="line">NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes   ClusterIP   10.96.0.1    &lt;none&gt;        443/TCP   114d</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>可以使用命令：<code>ipvsadm -Ln</code>查看ipvs的情况</li>
-<li>查看服务轮训的情况<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl 10.101.48.92/hostname.html</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:Headless Service是什么？<ul>
-<li>有时不需要或不想要负载均衡，以及单独的Service IP。遇到这种情况，可以通过制定ClusterIP(spec.clusterIP)的值为”None”来创建Headless Service。这类Service并不会分配Cluster IP，kube-proxy不会处理它们，而且平台也不会为它们进行负载均衡和路由器</li>
-<li>通过这个方式来解决clustername和podname变化问题，即通过它来绑定</li>
-</ul>
-</li>
-<li>Q:Headless Service的实验<ul>
-<li>创建myapp-svc-headless.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-headless</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">&quot;None&quot;</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">t:</span> <span class="number">8</span><span class="string">```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">myapp-svc-headless.yaml</span></span><br><span class="line"><span class="string">service/myapp-headless</span> <span class="string">created</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">svc</span></span><br><span class="line"><span class="string">NAME</span>             <span class="string">TYPE</span>        <span class="string">CLUSTER-IP</span>     <span class="string">EXTERNAL-IP</span>   <span class="string">PORT(S)</span>   <span class="string">AGE</span></span><br><span class="line"><span class="string">myapp</span>            <span class="string">ClusterIP</span>   <span class="number">10.101</span><span class="number">.48</span><span class="number">.92</span>   <span class="string">&lt;none&gt;</span>        <span class="number">80</span><span class="string">/TCP</span>    <span class="string">46m</span></span><br><span class="line"><span class="string">myapp-headless</span>   <span class="string">ClusterIP</span>   <span class="string">None</span>           <span class="string">&lt;none&gt;</span>        <span class="number">80</span><span class="string">/TCP</span>    <span class="string">3m11s```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">发现底下的地址为空</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pod</span> <span class="string">-n</span> <span class="string">kube-system</span> <span class="string">-o</span> <span class="string">wide</span></span><br><span class="line"><span class="string">NAME</span>                                            <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>     <span class="string">IP</span>              <span class="string">NODE</span>               <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">coredns-7ff77c879f-kdvsd</span>                        <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">1</span>          <span class="string">10d</span>     <span class="number">10.244</span><span class="number">.8</span><span class="number">.16</span>     <span class="string">kongming</span>           <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">coredns-7ff77c879f-vc9gn</span>                        <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">2</span>          <span class="string">10d</span>     <span class="number">10.244</span><span class="number">.1</span><span class="number">.116</span>    <span class="string">shennong</span>           <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">从coredns中找一个ip，下面这个命令试试来解析，格式是Service的名字+namespace+host</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```shell</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">dig</span> <span class="string">-t</span> <span class="string">A</span> <span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">@10.244.8.16</span></span><br><span class="line"></span><br><span class="line"><span class="string">;</span> <span class="string">&lt;&lt;&gt;&gt;</span> <span class="string">DiG</span> <span class="number">9.11</span><span class="number">.3</span><span class="string">-1ubuntu1.13-Ubuntu</span> <span class="string">&lt;&lt;&gt;&gt;</span> <span class="string">-t</span> <span class="string">A</span> <span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">@10.244.8.16</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">global options:</span> <span class="string">+cmd</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">Got answer:</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WARNING:</span> <span class="string">.local</span> <span class="string">is</span> <span class="string">reserved</span> <span class="string">for</span> <span class="string">Multicast</span> <span class="string">DNS</span></span><br><span class="line"><span class="string">;;</span> <span class="string">You</span> <span class="string">are</span> <span class="string">currently</span> <span class="string">testing</span> <span class="string">what</span> <span class="string">happens</span> <span class="string">when</span> <span class="string">an</span> <span class="string">mDNS</span> <span class="string">query</span> <span class="string">is</span> <span class="string">leaked</span> <span class="string">to</span> <span class="string">DNS</span></span><br><span class="line"><span class="string">;;</span> <span class="string">-&gt;&gt;HEADER&lt;&lt;-</span> <span class="attr">opcode:</span> <span class="string">QUERY,</span> <span class="attr">status:</span> <span class="string">NOERROR,</span> <span class="attr">id:</span> <span class="number">54521</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">flags:</span> <span class="string">qr</span> <span class="string">aa</span> <span class="string">rd;</span> <span class="attr">QUERY:</span> <span class="number">1</span><span class="string">,</span> <span class="attr">ANSWER:</span> <span class="number">3</span><span class="string">,</span> <span class="attr">AUTHORITY:</span> <span class="number">0</span><span class="string">,</span> <span class="attr">ADDITIONAL:</span> <span class="number">1</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WARNING:</span> <span class="string">recursion</span> <span class="string">requested</span> <span class="string">but</span> <span class="string">not</span> <span class="string">available</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">OPT PSEUDOSECTION:</span></span><br><span class="line"><span class="string">;</span> <span class="attr">EDNS: version:</span> <span class="number">0</span><span class="string">,</span> <span class="string">flags:;</span> <span class="attr">udp:</span> <span class="number">4096</span></span><br><span class="line"><span class="string">;</span> <span class="attr">COOKIE:</span> <span class="string">a253bf35c4375eaf</span> <span class="string">(echoed)</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">QUESTION SECTION:</span></span><br><span class="line"><span class="string">;myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="string">IN</span> <span class="string">A</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">ANSWER SECTION:</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.4</span><span class="number">.51</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.6</span><span class="number">.101</span></span><br><span class="line"><span class="string">myapp-headless.shiqi-lu.svc.cluster.local.</span> <span class="number">30</span> <span class="string">IN</span> <span class="string">A</span> <span class="number">10.244</span><span class="number">.8</span><span class="number">.108</span></span><br><span class="line"></span><br><span class="line"><span class="string">;;</span> <span class="attr">Query time:</span> <span class="number">0</span> <span class="string">msec</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">SERVER:</span> <span class="number">10.244</span><span class="number">.8</span><span class="number">.16</span><span class="comment">#53(10.244.8.16)</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">WHEN:</span> <span class="string">Tue</span> <span class="string">Oct</span> <span class="number">27</span> <span class="number">20</span><span class="string">:05:35</span> <span class="string">CST</span> <span class="number">2020</span></span><br><span class="line"><span class="string">;;</span> <span class="attr">MSG SIZE  rcvd:</span> <span class="number">253</span></span><br><span class="line"><span class="string">shiqi-lu@k8s-master:~/6$</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">pod</span> <span class="string">-o</span> <span class="string">wide</span></span><br><span class="line"><span class="string">NAME</span>                           <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>    <span class="string">IP</span>             <span class="string">NODE</span>         <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-lw9rr</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.6</span><span class="number">.101</span>   <span class="string">zhangliang</span>   <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-pqd8j</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.8</span><span class="number">.108</span>   <span class="string">kongming</span>     <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">myapp-deploy-c7b5fb585-stkdm</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">122m</span>   <span class="number">10.244</span><span class="number">.4</span><span class="number">.51</span>    <span class="string">laojun</span>       <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;```</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">虽然headless没有IP，但仍然可以通过访问域名的方式访问</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Q:NodePort是什么？</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">原理是在node上开了一个端口，将向该端口的流量导入到kube-proxy，然后由kube-proxy进一步给到对应的Pod</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">创建nodeport.yaml，除了type中不一样，其它几乎不变</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">```yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stabel</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl apply -f nodeport.yaml</span><br><span class="line">service/myapp configured</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">myapp            NodePort    10.101.48.92   &lt;none&gt;        80:30707/TCP   64m</span><br><span class="line">myapp-headless   ClusterIP   None           &lt;none&gt;        80/TCP         21m</span><br><span class="line">shiqi-lu@k8s-master:~/6$ curl localhost:30707</span><br><span class="line">Hello MyApp | Version: v2 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:LoadBalancer是什么？<ul>
-<li>和nodePort其实是同一种方式，区别在于loadBalancer比nodePort多了一步，就是可以调用cloud provider去创建LoadBalancer来向节点导流</li>
-<li><img src="https://img.shiqi-lu.tech/20201027202612.png"></li>
-</ul>
-</li>
-<li>Q:ExternalName是什么?<ul>
-<li>这种类型的Service通过返回CNAME和它的值，可以将服务映射到externalName字段的内容(例如:hub.atguigu.com)。ExternalName Service是Service的特例，它没有selector，也没有定义任何端口和endpoint。相反，对于运行在集群外部的服务，它通过返回该外部服务的别名这种方式来提供服务 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service-1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure></li>
-<li>当查询主机my-service-1.default.svc.cluster.local (SVC_NAME.NAMESPACE.svc.cluster.local)时，集群的DNS服务将返回一个值hub.atguigu.com的CNAME记录。访问这个服务的工作方式和其它的相同，唯一不同的是重定向发生在DNS层，而且不会进行代理或转发</li>
-</ul>
-</li>
-<li>Q:ExternalName的创建实验<ul>
-<li>创建ex.yaml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service-1</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/6$ kubectl create -f ex.yaml</span><br><span class="line">service/my-service-1 created</span><br><span class="line">shiqi-lu@k8s-master:~/6$ kubectl get svc</span><br><span class="line">NAME             TYPE           CLUSTER-IP     EXTERNAL-IP       PORT(S)        AGE</span><br><span class="line">my-service-1     ExternalName   &lt;none&gt;         hub.atguigu.com   &lt;none&gt;         9s</span><br><span class="line">myapp            NodePort       10.101.48.92   &lt;none&gt;            80:30707/TCP   91m</span><br><span class="line">myapp-headless   ClusterIP      None           &lt;none&gt;            80/TCP         47m</span><br><span class="line">shiqi-lu@k8s-master:~/6$ dig -t A my-service-1.shiqi-lu.svc.cluster.local. @10.244.8.16</span><br><span class="line"></span><br><span class="line">; &lt;&lt;&gt;&gt; DiG 9.11.3-1ubuntu1.13-Ubuntu &lt;&lt;&gt;&gt; -t A my-service-1.shiqi-lu.svc.cluster.local. @10.244.8.16</span><br><span class="line">;; global options: +cmd</span><br><span class="line">;; Got answer:</span><br><span class="line">;; WARNING: .local is reserved for Multicast DNS</span><br><span class="line">;; You are currently testing what happens when an mDNS query is leaked to DNS</span><br><span class="line">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 60219</span><br><span class="line">;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1</span><br><span class="line">;; WARNING: recursion requested but not available</span><br><span class="line"></span><br><span class="line">;; OPT PSEUDOSECTION:</span><br><span class="line">; EDNS: version: 0, flags:; udp: 4096</span><br><span class="line">; COOKIE: ed3b24efd39612a1 (echoed)</span><br><span class="line">;; QUESTION SECTION:</span><br><span class="line">;my-service-1.shiqi-lu.svc.cluster.local. IN A</span><br><span class="line"></span><br><span class="line">;; ANSWER SECTION:</span><br><span class="line">my-service-1.shiqi-lu.svc.cluster.local. 30 IN CNAME hub.atguigu.com.</span><br><span class="line"></span><br><span class="line">;; Query time: 39 msec</span><br><span class="line">;; SERVER: 10.244.8.16#53(10.244.8.16)</span><br><span class="line">;; WHEN: Tue Oct 27 20:45:03 CST 2020</span><br><span class="line">;; MSG SIZE  rcvd: 148</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:nginx-ingress的工作原理<ul>
-<li><img src="https://img.shiqi-lu.tech/20201027210932.png"></li>
-<li>客户端访问域名，ingress必须先绑定一个域名，不同域名访问nginx，nginx会反向代理，负载均衡选择后端的service，每个service会有一些容器</li>
-<li>nginx其实使用nodeport的方式</li>
-<li><img src="https://img.shiqi-lu.tech/20201027210938.png"></li>
-<li>首先k8s的apiserver和store建立监听状态，这里的监听方式是以协程的Pod的形式向apiserver发起连接的方案进行监听，如果发生新的数据写入，会被写入到updateChannel的循环队列里面，然后有一个nginxController的主进程会去监听这个循环队列里面的资源和事件，发生一个循环以后会更新一个事件，把它写入到我们的同步队列里去，等待被协程去更改配置文件，协程会定期的从队列里拉去执行添加的一些任务，如果有一些必要的直接需要去修改的，不需要去等待直接要更新的一些任务会自动发直接发送到SyncQueue协程，两个协程之间协商直接沟通，收取到所有的要更新的数据以后会去他去判断是否要进行一个重载(reload)，写入数据的这么一个方案，还是等等再去添加，如果有的话就会写入nginx主配置文件，然后重新载入nginx的一些数据，那如果不需要的话就等待后面去执行，直接发送构建的post的数据接口，也就是一些不需要存在的数据即可，最后以nginx模块去运行，那这就是nginx-ingress的进程以及协程的沟通方案</li>
-</ul>
 </li>
 </ul>
 ]]></content>
@@ -4001,6 +4001,49 @@
         <tag>数据库</tag>
         <tag>MongoDB</tag>
         <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我的leetcode刷题方法</title>
+    <url>/my-leetcode-method/</url>
+    <content><![CDATA[<ul>
+<li>最小闭环：学习、思考、记录、复习<ul>
+<li>新题先思考，旧题默念各种解法，尝试做一下，注意要计时做</li>
+<li>研究题解并简要记录题目和关键解法和关键代码，要调整到最适合自己理解和记住的最优代码和思路</li>
+<li>把题解在对应板块进行汇总</li>
+<li>总结完必须再提交一次所有搞懂的题解，计时，熟练度必须达到🐎，掌握必须达到🆗或🆒</li>
+<li>有创新和小改动的，发表题解</li>
+<li>粘贴到笔记本中，导出anki</li>
+<li>anki复习即可</li>
+</ul>
+</li>
+<li>标题记录掌握程度和熟练程度，同时metadata里面添加每一次的做题日期、做题时长、整理后做题时长<ul>
+<li>熟练程度：至少隔一周且未看题解前评估，看完题解后，必须能达到🐎<ul>
+<li>🐢表示勉强的很卡顿的写出来</li>
+<li>🐇表示需要略思考其中几个点略卡顿写出来，E10，M15，H20</li>
+<li>🐎表示非常纯熟能一气呵成写出来，E5，M10，H15</li>
+<li>整理后必须达到E3，M5，H8内，且整理后写题必须按照思路写而不是背，并把每个语句和每个变量的意义都能说出来</li>
+</ul>
+</li>
+<li>掌握程度<ul>
+<li>💯表示能不看题解的情况下，隔了一段时间没做，仍能分析并写出最优解(或已学会的最优解)</li>
+<li>🆒表示整理并背诵完毕，一题多解均能说并写出来(包括暴力和最优等)，并能分析时间/空间复杂度</li>
+<li>🆗(仅在有多种解题方法使用)表示整理并背诵其中的一种题解思路，能说并写出来和分析时间复杂度，但不能理解并写出所有解法</li>
+<li>🆕表示能在看完题解的情况下，默写/仿写出来其中的一种解法，此时未整理</li>
+<li>🆖表示看着题解写出来了，但仍不理解题解的意思，有很多模糊的地方</li>
+<li>🤨存在有一个解法学不懂，或者不必要去学</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
