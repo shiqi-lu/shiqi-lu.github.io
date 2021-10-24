@@ -544,177 +544,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《沈剑架构师训练营》第6章 - 缓存架构</title>
-    <url>/arch-sj-6/</url>
-    <content><![CDATA[<h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
-<li>no27：什么是进程内缓存？好处？不足？<ul>
-<li>定义<ul>
-<li>将数据缓存在站点或者服务的进程内，如 map 或 leveldb，可存 json、html、object 等</li>
-</ul>
-</li>
-<li>好处<ul>
-<li>1.节省内网带宽</li>
-<li>2.时延更低</li>
-</ul>
-</li>
-<li>不足：一致性难以保证</li>
-</ul>
-</li>
-<li>no27：如何保证进程内缓存的一致性？<ul>
-<li>方案一，单节点通知其它节点<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183312.png"></li>
-<li>缺点<ul>
-<li>同一功能在集群内的多个节点相互耦合在一起，当节点比较多的时候，连接关系会相对比较复杂</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>方案二，MQ 解耦，通知其它节点<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183448.png"></li>
-<li>缺点<ul>
-<li>接触了结点耦合，但引入了 mq，增加系统复杂度</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>方案三，放弃实时一致性，定期从后端更新数据<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183706.png"></li>
-<li>缺点<ul>
-<li>必须一定程度上接受读旧数据</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no27：使用进程内缓存的场景是哪些？为什么不能频繁使用进程内缓存？<ul>
-<li>场景<ul>
-<li>1.只读数据</li>
-<li>2.并发极高，透传后端压力极大</li>
-<li>3.允许一定程度上数据不一致</li>
-</ul>
-</li>
-<li>原因<ul>
-<li>违背了「站点无状态、服务无状态」的设计准则</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="28、缓存：很多时候我们都用错了！"><a href="#28、缓存：很多时候我们都用错了！" class="headerlink" title="28、缓存：很多时候我们都用错了！"></a>28、缓存：很多时候我们都用错了！</h1><ul>
-<li>no28：缓存有哪 4 种误用的情况？<ul>
-<li>1.服务与服务之间不要通过缓存传递数据，数据传递使用 MQ 更合适<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916114648.png"></li>
-</ul>
-</li>
-<li>2.如果缓存挂掉，可能导致雪崩，此时要做高可用缓存，或者水平切分</li>
-<li>3.调用方不宜再单独使用缓存存储服务底层的数据，容易出现数据不一致，以及反向依赖.</li>
-<li>4.不同服务，缓存实例要做垂直拆分，不宜共用缓存<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916114908.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="29、缓存：互联网最佳实践！"><a href="#29、缓存：互联网最佳实践！" class="headerlink" title="29、缓存：互联网最佳实践！"></a>29、缓存：互联网最佳实践！</h1><ul>
-<li>no29：互联网缓存最佳实践 Cache Aside Pattern 是什么？<ul>
-<li>读实践<ul>
-<li>先缓存，命中返回，未命中读数据库，再设置缓存</li>
-<li><img src="https://img.shiqi-lu.tech/20210916205244.png"></li>
-</ul>
-</li>
-<li>写实践<ul>
-<li>淘汰缓存而不是修改缓存，先操作数据库，而不是先淘汰缓存</li>
-<li><img src="https://img.shiqi-lu.tech/20210916210847.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="30、缓存：一致性优化！"><a href="#30、缓存：一致性优化！" class="headerlink" title="30、缓存：一致性优化！"></a>30、缓存：一致性优化！</h1><ul>
-<li>no30：数据库主从、数据库缓存什么时候会发生数据不一致问题？<ul>
-<li>数据库主从：写后立即读，短时间内，读旧数据<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916212948.png"></li>
-</ul>
-</li>
-<li>数据库缓存：写后立即读，短时间内，旧数据入缓存<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916213008.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no30：缓存不一致的优化思路和两个方案是什么？<ul>
-<li>思路：在从库同步完成之后，如果有旧数据入缓存，应该及时把这个旧数据淘汰掉</li>
-<li>方案一：二次淘汰法(在从库异步淘汰，或服务中异步淘汰)<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916213215.png"></li>
-<li>通过工具订阅从库的 binlog，如 DTS 或 canal，或自己订阅和分析 binlog，然后从库执行异步淘汰缓存的操作</li>
-</ul>
-</li>
-<li>方案二：为允许 cache miss 的场景，设定超时时间</li>
-</ul>
-</li>
-</ul>
-<h1 id="31、缓存：并发更新的大坑！"><a href="#31、缓存：并发更新的大坑！" class="headerlink" title="31、缓存：并发更新的大坑！"></a>31、缓存：并发更新的大坑！</h1><ul>
-<li>no31：缓存并发更新获取 token 会出现什么问题？如何解决？<ul>
-<li>问题<ul>
-<li>两个并发请求的token申请，可能导致 token 迭代过期了</li>
-<li><img src="https://img.shiqi-lu.tech/20210917100503.png"></li>
-</ul>
-</li>
-<li>解决<ul>
-<li>线上服务 s1 和 s2 只从缓存中读取 token，token 的更新由一个异步的服务 asy-Master 定期更新，避免并发的更新</li>
-<li>缺点<ul>
-<li>读取服务和更新的服务会直接调用缓存实例，如果缓存实例变更，读的服务和写的服务配置同步变更，导致耦合，违背了两个服务不应访问同一服务的通用性原则，同时违反了 cache aside pattern 的淘汰而不是更新缓存的设计准则</li>
-</ul>
-</li>
-<li>数据存储在 DB，缓存应该淘汰，有时候，数据不在数据库，缓存需要更新，如调用第三方服务需要申请 token</li>
-<li><img src="https://img.shiqi-lu.tech/20210917100642.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="32、缓存：究竟选redis，还是memcache？"><a href="#32、缓存：究竟选redis，还是memcache？" class="headerlink" title="32、缓存：究竟选redis，还是memcache？"></a>32、缓存：究竟选redis，还是memcache？</h1><ul>
-<li>no32，什么时候选 Redis，什么时候选 memcache？<ul>
-<li>选 Redis<ul>
-<li>1.复杂数据结构</li>
-<li>2.持久化<ul>
-<li>优点是，缓存挂了再重启，可以快速恢复，不需要 cache 的预热功能</li>
-<li>但不建议使用，因为可能会导致缓存和数据库不一致</li>
-</ul>
-</li>
-<li>3.天然高可用，支持主从复制，读写分离，提供了 sentinel 的集群管理工具，能够实现主从服务的监控，故障自动转移，mc 需要二次开发，但绝大多数缓存不需要做高可用</li>
-<li>4.存储内容比较大，mc 的 kv 存储的 value 最大只支持 1M</li>
-</ul>
-</li>
-<li>选 memcache<ul>
-<li>纯 kv</li>
-<li>原因：<ul>
-<li>1.预分配内存池</li>
-<li>2.redis 的 VM 机制更慢</li>
-<li>3.redis 的 CPU 计算复杂</li>
-<li>4.多线程可利用多核</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>其它<ul>
-<li>1.redis 源码可读性好</li>
-<li>2.redis 和 mc 都需要手动水平切分</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《沈剑架构师训练营》第4章 - 微服务架构</title>
     <url>/arch-sj-4/</url>
     <content><![CDATA[<h1 id="14、服务化：微服务架构，究竟解决什么问题？"><a href="#14、服务化：微服务架构，究竟解决什么问题？" class="headerlink" title="14、服务化：微服务架构，究竟解决什么问题？"></a>14、服务化：微服务架构，究竟解决什么问题？</h1><ul>
@@ -1348,6 +1177,177 @@
 <li><img src="https://img.shiqi-lu.tech/20210914104102.png"></li>
 </ul>
 </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《沈剑架构师训练营》第6章 - 缓存架构</title>
+    <url>/arch-sj-6/</url>
+    <content><![CDATA[<h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
+<li>no27：什么是进程内缓存？好处？不足？<ul>
+<li>定义<ul>
+<li>将数据缓存在站点或者服务的进程内，如 map 或 leveldb，可存 json、html、object 等</li>
+</ul>
+</li>
+<li>好处<ul>
+<li>1.节省内网带宽</li>
+<li>2.时延更低</li>
+</ul>
+</li>
+<li>不足：一致性难以保证</li>
+</ul>
+</li>
+<li>no27：如何保证进程内缓存的一致性？<ul>
+<li>方案一，单节点通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183312.png"></li>
+<li>缺点<ul>
+<li>同一功能在集群内的多个节点相互耦合在一起，当节点比较多的时候，连接关系会相对比较复杂</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案二，MQ 解耦，通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183448.png"></li>
+<li>缺点<ul>
+<li>接触了结点耦合，但引入了 mq，增加系统复杂度</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案三，放弃实时一致性，定期从后端更新数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183706.png"></li>
+<li>缺点<ul>
+<li>必须一定程度上接受读旧数据</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no27：使用进程内缓存的场景是哪些？为什么不能频繁使用进程内缓存？<ul>
+<li>场景<ul>
+<li>1.只读数据</li>
+<li>2.并发极高，透传后端压力极大</li>
+<li>3.允许一定程度上数据不一致</li>
+</ul>
+</li>
+<li>原因<ul>
+<li>违背了「站点无状态、服务无状态」的设计准则</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="28、缓存：很多时候我们都用错了！"><a href="#28、缓存：很多时候我们都用错了！" class="headerlink" title="28、缓存：很多时候我们都用错了！"></a>28、缓存：很多时候我们都用错了！</h1><ul>
+<li>no28：缓存有哪 4 种误用的情况？<ul>
+<li>1.服务与服务之间不要通过缓存传递数据，数据传递使用 MQ 更合适<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114648.png"></li>
+</ul>
+</li>
+<li>2.如果缓存挂掉，可能导致雪崩，此时要做高可用缓存，或者水平切分</li>
+<li>3.调用方不宜再单独使用缓存存储服务底层的数据，容易出现数据不一致，以及反向依赖.</li>
+<li>4.不同服务，缓存实例要做垂直拆分，不宜共用缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114908.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="29、缓存：互联网最佳实践！"><a href="#29、缓存：互联网最佳实践！" class="headerlink" title="29、缓存：互联网最佳实践！"></a>29、缓存：互联网最佳实践！</h1><ul>
+<li>no29：互联网缓存最佳实践 Cache Aside Pattern 是什么？<ul>
+<li>读实践<ul>
+<li>先缓存，命中返回，未命中读数据库，再设置缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916205244.png"></li>
+</ul>
+</li>
+<li>写实践<ul>
+<li>淘汰缓存而不是修改缓存，先操作数据库，而不是先淘汰缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916210847.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="30、缓存：一致性优化！"><a href="#30、缓存：一致性优化！" class="headerlink" title="30、缓存：一致性优化！"></a>30、缓存：一致性优化！</h1><ul>
+<li>no30：数据库主从、数据库缓存什么时候会发生数据不一致问题？<ul>
+<li>数据库主从：写后立即读，短时间内，读旧数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916212948.png"></li>
+</ul>
+</li>
+<li>数据库缓存：写后立即读，短时间内，旧数据入缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213008.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no30：缓存不一致的优化思路和两个方案是什么？<ul>
+<li>思路：在从库同步完成之后，如果有旧数据入缓存，应该及时把这个旧数据淘汰掉</li>
+<li>方案一：二次淘汰法(在从库异步淘汰，或服务中异步淘汰)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213215.png"></li>
+<li>通过工具订阅从库的 binlog，如 DTS 或 canal，或自己订阅和分析 binlog，然后从库执行异步淘汰缓存的操作</li>
+</ul>
+</li>
+<li>方案二：为允许 cache miss 的场景，设定超时时间</li>
+</ul>
+</li>
+</ul>
+<h1 id="31、缓存：并发更新的大坑！"><a href="#31、缓存：并发更新的大坑！" class="headerlink" title="31、缓存：并发更新的大坑！"></a>31、缓存：并发更新的大坑！</h1><ul>
+<li>no31：缓存并发更新获取 token 会出现什么问题？如何解决？<ul>
+<li>问题<ul>
+<li>两个并发请求的token申请，可能导致 token 迭代过期了</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100503.png"></li>
+</ul>
+</li>
+<li>解决<ul>
+<li>线上服务 s1 和 s2 只从缓存中读取 token，token 的更新由一个异步的服务 asy-Master 定期更新，避免并发的更新</li>
+<li>缺点<ul>
+<li>读取服务和更新的服务会直接调用缓存实例，如果缓存实例变更，读的服务和写的服务配置同步变更，导致耦合，违背了两个服务不应访问同一服务的通用性原则，同时违反了 cache aside pattern 的淘汰而不是更新缓存的设计准则</li>
+</ul>
+</li>
+<li>数据存储在 DB，缓存应该淘汰，有时候，数据不在数据库，缓存需要更新，如调用第三方服务需要申请 token</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100642.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="32、缓存：究竟选redis，还是memcache？"><a href="#32、缓存：究竟选redis，还是memcache？" class="headerlink" title="32、缓存：究竟选redis，还是memcache？"></a>32、缓存：究竟选redis，还是memcache？</h1><ul>
+<li>no32，什么时候选 Redis，什么时候选 memcache？<ul>
+<li>选 Redis<ul>
+<li>1.复杂数据结构</li>
+<li>2.持久化<ul>
+<li>优点是，缓存挂了再重启，可以快速恢复，不需要 cache 的预热功能</li>
+<li>但不建议使用，因为可能会导致缓存和数据库不一致</li>
+</ul>
+</li>
+<li>3.天然高可用，支持主从复制，读写分离，提供了 sentinel 的集群管理工具，能够实现主从服务的监控，故障自动转移，mc 需要二次开发，但绝大多数缓存不需要做高可用</li>
+<li>4.存储内容比较大，mc 的 kv 存储的 value 最大只支持 1M</li>
+</ul>
+</li>
+<li>选 memcache<ul>
+<li>纯 kv</li>
+<li>原因：<ul>
+<li>1.预分配内存池</li>
+<li>2.redis 的 VM 机制更慢</li>
+<li>3.redis 的 CPU 计算复杂</li>
+<li>4.多线程可利用多核</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>其它<ul>
+<li>1.redis 源码可读性好</li>
+<li>2.redis 和 mc 都需要手动水平切分</li>
 </ul>
 </li>
 </ul>
@@ -2677,68 +2677,6 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s培训第4课 资源清单</title>
-    <url>/k8s-4/</url>
-    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
-<ul>
-<li>Q:集群资源有哪些分类？<ul>
-<li>名称空间级别<ul>
-<li>工作负载型资源(workload): Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
-<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress</li>
-<li>配置与存储型资源：Volume(存储卷)、CSI(容器存储接口，可扩展各种第三方存储卷)</li>
-<li>特殊类型的存储卷：ConfigMap(当配置中心来使用的资源类型)、Secret(保存敏感数据)、DownwardAPI(把外部环境中的信息输出给容器)</li>
-</ul>
-</li>
-<li>集群级别：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
-<li>元数据级别：HPA、PodTemplate、LimitRange</li>
-</ul>
-</li>
-<li>Q:容器报错后如何处理？<ul>
-<li><code>kubectl describe pod myapp-pod</code></li>
-<li>若有多个容器需要用-c指定，查看日志</li>
-<li><code>kubectl log myapp-pod -c test</code></li>
-</ul>
-</li>
-<li>Q:initContainer模板是什么？<ul>
-<li>initContainers里面会按照顺序依次往下执行</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup mydb; do echo waiting for mydb; sleep 2; done;&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-就绪检测模板？readinessProbe-httpget</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-exec</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;touch /tmp/live ; sleep 60; rm -rf /tmp/live; sleep 3600&quot;</span>]</span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;test&quot;</span>,<span class="string">&quot;-e&quot;</span>,<span class="string">&quot;/tmp/live&quot;</span>]</span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-httpget</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:检测探针-存活检测模板？livenessProbe-tcp</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Q:启动、退出动作pod模板</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">postStart:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the postStart handler &gt; /usr/share/message&quot;</span>]</span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the poststop handler &gt; /usr/share/message&quot;</span>]</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>怎样获得高质量睡眠</title>
     <url>/high-quality-sleep/</url>
     <content><![CDATA[<ul>
@@ -2863,6 +2801,68 @@
       </categories>
       <tags>
         <tag>休闲</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s培训第4课 资源清单</title>
+    <url>/k8s-4/</url>
+    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
+<ul>
+<li>Q:集群资源有哪些分类？<ul>
+<li>名称空间级别<ul>
+<li>工作负载型资源(workload): Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
+<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress</li>
+<li>配置与存储型资源：Volume(存储卷)、CSI(容器存储接口，可扩展各种第三方存储卷)</li>
+<li>特殊类型的存储卷：ConfigMap(当配置中心来使用的资源类型)、Secret(保存敏感数据)、DownwardAPI(把外部环境中的信息输出给容器)</li>
+</ul>
+</li>
+<li>集群级别：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
+<li>元数据级别：HPA、PodTemplate、LimitRange</li>
+</ul>
+</li>
+<li>Q:容器报错后如何处理？<ul>
+<li><code>kubectl describe pod myapp-pod</code></li>
+<li>若有多个容器需要用-c指定，查看日志</li>
+<li><code>kubectl log myapp-pod -c test</code></li>
+</ul>
+</li>
+<li>Q:initContainer模板是什么？<ul>
+<li>initContainers里面会按照顺序依次往下执行</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">  <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup mydb; do echo waiting for mydb; sleep 2; done;&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-就绪检测模板？readinessProbe-httpget</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-exec</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;touch /tmp/live ; sleep 60; rm -rf /tmp/live; sleep 3600&quot;</span>]</span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;test&quot;</span>,<span class="string">&quot;-e&quot;</span>,<span class="string">&quot;/tmp/live&quot;</span>]</span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-httpget</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:检测探针-存活检测模板？livenessProbe-tcp</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Q:启动、退出动作pod模板</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">postStart:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the postStart handler &gt; /usr/share/message&quot;</span>]</span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;echo Hello from the poststop handler &gt; /usr/share/message&quot;</span>]</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
@@ -3154,6 +3154,224 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s培训第7课 存储</title>
+    <url>/k8s-7/</url>
+    <content><![CDATA[<ul>
+<li>Q:Configmap是什么？<ul>
+<li>许多应用程序会从配置文件、命令行参数或环境变量中读取配置信息。ConﬁgMap API 给我们提供了向容器中注入配置信息的机制，ConﬁgMap 可以被用来保存单个属性，也可以用来保存整个配置文件或者 JSON 二进制大对象</li>
+</ul>
+</li>
+<li>Q:如何使用目录或文件创建ConfigMap？<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/7$ ls dir</span><br><span class="line">game.properties  ui.properties</span><br><span class="line">shiqi-lu@k8s-master:~/7$ cat dir/game.properties</span><br><span class="line">game,,,,</span><br><span class="line">shiqi-lu@k8s-master:~/7$ cat dir/ui.properties</span><br><span class="line">ui,,,</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl create configmap t-config --from-file=dir</span><br><span class="line">configmap/t-config created</span><br></pre></td></tr></table></figure></li>
+<li>Q:如何查看已创建的ConfigMap?<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get cm</span><br><span class="line">NAME       DATA   AGE</span><br><span class="line">t-config   2      113s</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get cm t-config</span><br><span class="line">NAME       DATA   AGE</span><br><span class="line">t-config   2      2m</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get cm t-config -o yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  game.properties: |</span><br><span class="line">    game,,,,</span><br><span class="line">  ui.properties: |</span><br><span class="line">    ui,,,</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: &quot;2020-09-22T06:21:50Z&quot;</span><br><span class="line">  managedFields:</span><br><span class="line">  - apiVersion: v1</span><br><span class="line">    fieldsType: FieldsV1</span><br><span class="line">    fieldsV1:</span><br><span class="line">      f:data:</span><br><span class="line">        .: &#123;&#125;</span><br><span class="line">        f:game.properties: &#123;&#125;</span><br><span class="line">        f:ui.properties: &#123;&#125;</span><br><span class="line">    manager: kubectl</span><br><span class="line">    operation: Update</span><br><span class="line">    time: &quot;2020-09-22T06:21:50Z&quot;</span><br><span class="line">  name: t-config</span><br><span class="line">  namespace: shiqi-lu</span><br><span class="line">  resourceVersion: &quot;20138794&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/shiqi-lu/configmaps/t-config</span><br><span class="line">  uid: 631fa2ae-7f55-46d2-9db3-e14222e61de6</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–from-file这个参数可以使用多次</li>
+</ul>
+</li>
+<li>Q:如何使用字面值创建Configmap？<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/7$  kubectl create configmap sp-config --from-literal=special.how=very --from-literal=special.typen=charm</span><br><span class="line">configmap/sp-config created</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get configmap special-config</span><br><span class="line">Error from server (NotFound): configmaps &quot;special-config&quot; not found</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get configmap sp-config</span><br><span class="line">NAME        DATA   AGE</span><br><span class="line">sp-config   2      25s</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get configmap sp-config -o yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  special.how: very</span><br><span class="line">  special.typen: charm</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: &quot;2020-09-22T06:31:17Z&quot;</span><br><span class="line">  managedFields:</span><br><span class="line">  - apiVersion: v1</span><br><span class="line">    fieldsType: FieldsV1</span><br><span class="line">    fieldsV1:</span><br><span class="line">      f:data:</span><br><span class="line">        .: &#123;&#125;</span><br><span class="line">        f:special.how: &#123;&#125;</span><br><span class="line">        f:special.typen: &#123;&#125;</span><br><span class="line">    manager: kubectl</span><br><span class="line">    operation: Update</span><br><span class="line">    time: &quot;2020-09-22T06:31:17Z&quot;</span><br><span class="line">  name: sp-config</span><br><span class="line">  namespace: shiqi-lu</span><br><span class="line">  resourceVersion: &quot;20140688&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/shiqi-lu/configmaps/sp-config</span><br><span class="line">  uid: b10fedc2-7131-4f8b-a168-135cd6d1e021</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–from-literal参数可使用多次</li>
+</ul>
+</li>
+<li>Q:如何以资源清单的方式创建Configmap？创建字面值<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">env-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">log_level:</span> <span class="string">INFO</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:如何在Pod中使用Configmap中的值？<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dapi-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;env&quot;</span> ]</span><br><span class="line">    <span class="attr">env:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPECIAL_LEVEL_KEY</span></span><br><span class="line">        <span class="attr">valueFrom:</span></span><br><span class="line">          <span class="attr">configMapKeyRef:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">sp-config</span></span><br><span class="line">            <span class="attr">key:</span> <span class="string">special.how</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPECIAL_TYPE_KEY</span></span><br><span class="line">        <span class="attr">valueFrom:</span></span><br><span class="line">          <span class="attr">configMapKeyRef:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">            <span class="attr">key:</span> <span class="string">special.type</span></span><br><span class="line">    <span class="attr">envFrom:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">configMapRef:</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">env-config</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:如何把configmap中的文件填入数据卷中？<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">special.how:</span> <span class="string">very</span></span><br><span class="line">  <span class="attr">special.type:</span> <span class="string">charm</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dapi-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">      <span class="attr">command:</span> [ <span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;cat /etc/config/special.how&quot;</span> ]</span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">        <span class="attr">mountPath:</span> <span class="string">/etc/config</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">      <span class="attr">configMap:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:如何修改ConfigMap？<ul>
+<li><code>kubectl edit configmap log-config</code></li>
+</ul>
+</li>
+<li>Q:Secret的作用是什么？<ul>
+<li>解决密码、token、密钥等敏感数据的配置问题，而不需要把这些敏感数据暴露到镜像或Pod Spec中。Secret可以以Volume或者环境变量的方式使用</li>
+</ul>
+</li>
+<li>Q:Secret有哪三种类型？<ul>
+<li>Service Account：用来访问k8s api，由k8s自动创建，并且会自动挂载到Pod的<code>/run/secrets/kubernetes.io/serviceaccount</code>目录中</li>
+<li>Opaque：base64编码格式的Secret，用来存储密码、密钥等</li>
+<li>kubernetes.io/dockerconﬁgjson：用来存储私有docker registry的认证信息</li>
+</ul>
+</li>
+<li>Q:ServiceAccount的实践<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~$ kubectl run nginx --image nginx</span><br><span class="line">pod/nginx created</span><br><span class="line">shiqi-lu@k8s-master:~$ kubectl get pods</span><br><span class="line">NAME                           READY   STATUS              RESTARTS   AGE</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   1/1     Running             0          20h</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   1/1     Running             0          20h</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   1/1     Running             0          20h</span><br><span class="line">nginx                          0/1     ContainerCreating   0          14s</span><br><span class="line">shiqi-lu@k8s-master:~$ kubectl exec nginx ls /run/secrets/kubernetes.io/serviceaccount</span><br><span class="line">kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl kubectl exec [POD] -- [COMMAND] instead.</span><br><span class="line">ca.crt</span><br><span class="line">namespace</span><br><span class="line">token</span><br></pre></td></tr></table></figure></li>
+<li>Q:Opaque Secret的实践<ul>
+<li>Opaque 类型的数据是一个 map 类型，要求 value 是 base64 编码格式<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~$ echo -n &quot;admin&quot; | base64</span><br><span class="line">YWRtaW4=</span><br><span class="line">shiqi-lu@k8s-master:~$ echo -n &quot;1f2d1e2e67df&quot; | base64</span><br><span class="line">MWYyZDFlMmU2N2Rm```</span><br><span class="line">    - 创建secrets.yml</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  name: mysecret</span><br><span class="line">type: Opaque</span><br><span class="line">data:</span><br><span class="line">  password: MWYyZDFlMmU2N2Rm</span><br><span class="line">  username: YWRtaW4=</span><br></pre></td></tr></table></figure></li>
+<li>将Secret挂载到Volume中<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">seret-test</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">seret-test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">secrets</span></span><br><span class="line">    <span class="attr">secret:</span></span><br><span class="line">      <span class="attr">secretName:</span> <span class="string">mysecret</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">db</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">secrets</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">&quot;</span></span><br><span class="line"><span class="string">      readOnly: true</span></span><br></pre></td></tr></table></figure></li>
+<li>将Secret导出到环境变量中<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">pod-deployment</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TEST_USER</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">secretKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">mysecret</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">username</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TEST_PASSWORD</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">secretKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">mysecret</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:kubernetes.io/dockerconﬁgjson的实践<ul>
+<li>使用 Kuberctl 创建 docker registry 认证的 secret<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl create secret docker-registry myregistrykey --docker-server=DOCKER_REGISTRY_SERVER -docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL</span></span><br><span class="line">secret &quot;myregistrykey&quot; created.</span><br></pre></td></tr></table></figure></li>
+<li>在创建Pod的时候，通过<code>imagePullSecrets</code>来引用刚创建的<code>myregistrykey</code><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">roc/awangyang:v1</span></span><br><span class="line">  <span class="attr">imagePullSecrets:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myregistrykey</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:emptyDir是什么？<ul>
+<li>当Pod被分配给节点时，首先创建emptyDir卷，并且只要该Pod在该结点上运行，该卷就会存在。正如卷的名字所述，它最初是空的。Pod中的容器可以读取和写入emptyDir卷中的相同文件，尽管该卷可以挂载到每个容器中的相同或不同路径上。当出于任何原因从节点中删除Pod时，emptyDir中的数据将被永久删除</li>
+<li>用法有：<ul>
+<li>暂存空间，例如用于基于磁盘的合并排序</li>
+<li>用作长时间计算崩溃恢复时的检查点</li>
+<li>Web服务器容器提供鞥数据时，保存内容管理器容器提取的文件<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pd</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">k8s.gcr.io/test-webserver</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/cache</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">cache-volume</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cache-volume</span></span><br><span class="line">    <span class="attr">emptyDir:</span> &#123;&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:hostPath是什么？<ul>
+<li>hostPath卷将主机节点的文件系统中的文件或目录挂载到集群中</li>
+<li>hostPath的用途：<ul>
+<li>运行需要访问Docker内部的容器；使用/var/lib/docker的hostPath</li>
+<li>在容器中运行cAdvisor；使用/dev/cgroups的hostPath</li>
+<li>允许pod指定给定的hostPath是否应该在pod运行之前存在，是否应该创建，以及它应该以什么形式存在</li>
+</ul>
+</li>
+<li>除了所需的path，用户还可以为hostPath卷指定type</li>
+<li><img src="https://img.shiqi-lu.tech/20201028153031.png"></li>
+<li>使用这种卷类型时请注意，因为<ul>
+<li>由于每个节点上的文件都不同，具有相同配置(例如从podTemplate创建的)的pod在不同节点上的行为可能会有所不同</li>
+<li>当k8s按照计划添加资源感知调度时，将无法考虑hostPath使用的资源</li>
+<li>在底层主机上创建的文件或目录只能由root写入。所以需要在特权容器中以root身份运行进程，或修改主机上的文件权限以便写入hostPath卷<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pd</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">k8s.gcr.io/test-webserver</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/test-pd</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">test-volume</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-volume</span></span><br><span class="line">    <span class="attr">hostPath:</span></span><br><span class="line">    <span class="comment"># directory location on host</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/data</span></span><br><span class="line">    <span class="comment"># this field is optional</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">Directory</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:PV是什么？<ul>
+<li>是由管理员设置的存储，它是群集的一部分。就像节点是集群中的资源一样，PV也是集群中的资源。PV是Volume之类的卷插件，但具有独立于使用PV的Pod的生命周期。此API对象包含存储实现的细节，即NFS、iSCSI或特定于云供应商的存储系统</li>
+</ul>
+</li>
+<li>Q:PVC是什么？<ul>
+<li>是用户存储的请求。它与Pod相似。Pod消耗节点资源，PVC消耗PV资源。Pod可以请求特定级别的资源（CPU和内存）。声明可以请求特定的大小和访问模式（例如，可以以读/写一次或只读多次模式挂载）</li>
+</ul>
+</li>
+<li>Q:持久化卷声明(PVC)的保护<ul>
+<li>PVC 保护的目的是确保由 pod 正在使用的 PVC 不会从系统中移除，因为如果被移除的话可能会导致数据丢失</li>
+<li>当启用PVC 保护 alpha 功能时，如果用户删除了一个 pod 正在使用的 PVC，则该 PVC 不会被立即删除。PVC 的 删除将被推迟，直到 PVC 不再被任何 pod 使用</li>
+</ul>
+</li>
+<li>Q:PV访问模式<ul>
+<li>PersistentVolume 可以以资源提供者支持的任何方式挂载到主机上。如下表所示，供应商具有不同的功能，每个 PV 的访问模式都将被设置为该卷支持的特定模式。例如，NFS 可以支持多个读/写客户端，但特定的 NFS PV 可能 以只读方式导出到服务器上。每个 PV 都有一套自己的用来描述特定功能的访问模式<ul>
+<li>ReadWriteOnce——该卷可以被单个节点以读/写模式挂载</li>
+<li>ReadOnlyMany——该卷可以被多个节点以只读模式挂载</li>
+<li>ReadWriteMany——该卷可以被多个节点以读/写模式挂载</li>
+</ul>
+</li>
+<li>在命令行中，访问模式缩写为：<ul>
+<li>RWO - ReadWriteOnce</li>
+<li>ROX - ReadOnlyMany</li>
+<li>RWX - ReadWriteMany</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:PV的回收策略有哪些<ul>
+<li>Retain（保留）——手动回收</li>
+<li>Recycle（回收）——基本擦除（ rm -rf /thevolume/* ）</li>
+<li>Delete（删除）——关联的存储资产（例如 AWS EBS、GCE PD、Azure Disk 和 OpenStack Cinder 卷） 将被删除</li>
+<li>当前，只有 NFS 和 HostPath 支持回收策略。AWS EBS、GCE PD、Azure Disk 和 Cinder 卷支持删除策略</li>
+</ul>
+</li>
+<li>Q:PV的状态<ul>
+<li>卷可以处于以下的某种状态：</li>
+<li>Available（可用）——一块空闲资源还没有被任何声明绑定</li>
+<li>Bound（已绑定）——卷已经被声明绑定</li>
+<li>Released（已释放）——声明被删除，但是资源还未被集群重新声明</li>
+<li>Failed（失败）——该卷的自动回收失败</li>
+<li>命令行会显示绑定到 PV 的 PVC 的名称</li>
+</ul>
+</li>
+<li>Q:如何安装nfs服务器<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nfs-common nfs-utils rpcbind</span><br><span class="line">mkdir /nfsdata</span><br><span class="line">chmod 666 /nfsdata</span><br><span class="line">chown nfsnobody /nfsdata</span><br><span class="line">cat /etc/exports</span><br><span class="line">      /nfsdata *(rw,no_root_squash,no_all_squash,sync)</span><br><span class="line">systemctl start rpcbind</span><br><span class="line">systemctl start nfs</span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载</span></span><br><span class="line">showmount -e xxx.xxx.xxx.xxx</span><br><span class="line">mount -t nfs xxx.xxx.xxx.xxx:/nfs /test</span><br><span class="line">umount /test</span><br></pre></td></tr></table></figure></li>
+<li>Q:部署PV<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfspv1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfs</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">10.66</span><span class="number">.66</span><span class="number">.10</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl create -f pv.yaml</span><br><span class="line">kubectl get pv```</span><br><span class="line">- Q:创建服务并使用pvc</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    name: web</span><br><span class="line">  clusterIP: None</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: web</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  serviceName: &quot;nginx&quot;</span><br><span class="line">  replicas: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: wangyanglinux/myapp:v2</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: web</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: www</span><br><span class="line">          mountPath: /usr/share/nginx/html</span><br><span class="line">  volumeClaimTemplates:</span><br><span class="line">  - metadata:</span><br><span class="line">      name: www</span><br><span class="line">    spec:</span><br><span class="line">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span><br><span class="line">      storageClassName: &quot;nfs&quot;</span><br><span class="line">      resources:</span><br><span class="line">        requests:</span><br><span class="line">          storage: 1Gi</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s培训第8课 集群调度</title>
+    <url>/k8s-8/</url>
+    <content><![CDATA[<ul>
+<li>Q:Scheduler是什么？<ul>
+<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
+<li>公平：如何保证每个节点都能被分配资源</li>
+<li>资源高效利用：集群所有资源最大化被使用</li>
+<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
+<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
+</ul>
+</li>
+<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
+</ul>
+</li>
+<li>Q: k8s的调度过程是怎样<ul>
+<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
+<li>Predicate 有一系列的算法可以使用：<ul>
+<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
+<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
+<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
+<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
+<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
+</ul>
+</li>
+<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
+<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
+<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
+<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
+<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
+</ul>
+</li>
+<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
+</ul>
+</li>
+<li>Q:结点亲和性<ul>
+<li>pod.spec.nodeAﬃnity<ul>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
+</ul>
+</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>键值运算关系<ul>
+<li>In：label 的值在某个列表中</li>
+<li>NotIn：label 的值不在某个列表中</li>
+<li>Gt：label 的值大于某个值</li>
+<li>Lt：label 的值小于某个值</li>
+<li>Exists：某个 label 存在</li>
+<li>DoesNotExist：某个 label 不存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Pod亲和性<ul>
+<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:亲和性/反亲和性调度策略比较<ul>
+<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
+</ul>
+</li>
+<li>Q:给节点打标签<ul>
+<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
+</ul>
+</li>
+<li>Q:k8s指定调度节点<ul>
+<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
+<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>海量数据处理</title>
     <url>/mass-data-processing/</url>
     <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
@@ -3283,90 +3501,6 @@
         <tag>数据结构</tag>
         <tag>算法</tag>
         <tag>海量数据</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>k8s培训第8课 集群调度</title>
-    <url>/k8s-8/</url>
-    <content><![CDATA[<ul>
-<li>Q:Scheduler是什么？<ul>
-<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
-<li>公平：如何保证每个节点都能被分配资源</li>
-<li>资源高效利用：集群所有资源最大化被使用</li>
-<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
-<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
-</ul>
-</li>
-<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
-</ul>
-</li>
-<li>Q: k8s的调度过程是怎样<ul>
-<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
-<li>Predicate 有一系列的算法可以使用：<ul>
-<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
-<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
-<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
-<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
-<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
-</ul>
-</li>
-<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
-<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
-<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
-<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
-<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
-</ul>
-</li>
-<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
-</ul>
-</li>
-<li>Q:结点亲和性<ul>
-<li>pod.spec.nodeAﬃnity<ul>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
-</ul>
-</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>键值运算关系<ul>
-<li>In：label 的值在某个列表中</li>
-<li>NotIn：label 的值不在某个列表中</li>
-<li>Gt：label 的值大于某个值</li>
-<li>Lt：label 的值小于某个值</li>
-<li>Exists：某个 label 存在</li>
-<li>DoesNotExist：某个 label 不存在</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:Pod亲和性<ul>
-<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:亲和性/反亲和性调度策略比较<ul>
-<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
-</ul>
-</li>
-<li>Q:给节点打标签<ul>
-<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
-</ul>
-</li>
-<li>Q:k8s指定调度节点<ul>
-<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
-<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
@@ -3867,140 +4001,6 @@
         <tag>数据库</tag>
         <tag>MongoDB</tag>
         <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>k8s培训第7课 存储</title>
-    <url>/k8s-7/</url>
-    <content><![CDATA[<ul>
-<li>Q:Configmap是什么？<ul>
-<li>许多应用程序会从配置文件、命令行参数或环境变量中读取配置信息。ConﬁgMap API 给我们提供了向容器中注入配置信息的机制，ConﬁgMap 可以被用来保存单个属性，也可以用来保存整个配置文件或者 JSON 二进制大对象</li>
-</ul>
-</li>
-<li>Q:如何使用目录或文件创建ConfigMap？<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/7$ ls dir</span><br><span class="line">game.properties  ui.properties</span><br><span class="line">shiqi-lu@k8s-master:~/7$ cat dir/game.properties</span><br><span class="line">game,,,,</span><br><span class="line">shiqi-lu@k8s-master:~/7$ cat dir/ui.properties</span><br><span class="line">ui,,,</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl create configmap t-config --from-file=dir</span><br><span class="line">configmap/t-config created</span><br></pre></td></tr></table></figure></li>
-<li>Q:如何查看已创建的ConfigMap?<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get cm</span><br><span class="line">NAME       DATA   AGE</span><br><span class="line">t-config   2      113s</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get cm t-config</span><br><span class="line">NAME       DATA   AGE</span><br><span class="line">t-config   2      2m</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get cm t-config -o yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  game.properties: |</span><br><span class="line">    game,,,,</span><br><span class="line">  ui.properties: |</span><br><span class="line">    ui,,,</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: &quot;2020-09-22T06:21:50Z&quot;</span><br><span class="line">  managedFields:</span><br><span class="line">  - apiVersion: v1</span><br><span class="line">    fieldsType: FieldsV1</span><br><span class="line">    fieldsV1:</span><br><span class="line">      f:data:</span><br><span class="line">        .: &#123;&#125;</span><br><span class="line">        f:game.properties: &#123;&#125;</span><br><span class="line">        f:ui.properties: &#123;&#125;</span><br><span class="line">    manager: kubectl</span><br><span class="line">    operation: Update</span><br><span class="line">    time: &quot;2020-09-22T06:21:50Z&quot;</span><br><span class="line">  name: t-config</span><br><span class="line">  namespace: shiqi-lu</span><br><span class="line">  resourceVersion: &quot;20138794&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/shiqi-lu/configmaps/t-config</span><br><span class="line">  uid: 631fa2ae-7f55-46d2-9db3-e14222e61de6</span><br></pre></td></tr></table></figure>
-<ul>
-<li>–from-file这个参数可以使用多次</li>
-</ul>
-</li>
-<li>Q:如何使用字面值创建Configmap？<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~/7$  kubectl create configmap sp-config --from-literal=special.how=very --from-literal=special.typen=charm</span><br><span class="line">configmap/sp-config created</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get configmap special-config</span><br><span class="line">Error from server (NotFound): configmaps &quot;special-config&quot; not found</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get configmap sp-config</span><br><span class="line">NAME        DATA   AGE</span><br><span class="line">sp-config   2      25s</span><br><span class="line">shiqi-lu@k8s-master:~/7$ kubectl get configmap sp-config -o yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  special.how: very</span><br><span class="line">  special.typen: charm</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: &quot;2020-09-22T06:31:17Z&quot;</span><br><span class="line">  managedFields:</span><br><span class="line">  - apiVersion: v1</span><br><span class="line">    fieldsType: FieldsV1</span><br><span class="line">    fieldsV1:</span><br><span class="line">      f:data:</span><br><span class="line">        .: &#123;&#125;</span><br><span class="line">        f:special.how: &#123;&#125;</span><br><span class="line">        f:special.typen: &#123;&#125;</span><br><span class="line">    manager: kubectl</span><br><span class="line">    operation: Update</span><br><span class="line">    time: &quot;2020-09-22T06:31:17Z&quot;</span><br><span class="line">  name: sp-config</span><br><span class="line">  namespace: shiqi-lu</span><br><span class="line">  resourceVersion: &quot;20140688&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/shiqi-lu/configmaps/sp-config</span><br><span class="line">  uid: b10fedc2-7131-4f8b-a168-135cd6d1e021</span><br></pre></td></tr></table></figure>
-<ul>
-<li>–from-literal参数可使用多次</li>
-</ul>
-</li>
-<li>Q:如何以资源清单的方式创建Configmap？创建字面值<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">env-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">log_level:</span> <span class="string">INFO</span></span><br></pre></td></tr></table></figure></li>
-<li>Q:如何在Pod中使用Configmap中的值？<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dapi-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;env&quot;</span> ]</span><br><span class="line">    <span class="attr">env:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPECIAL_LEVEL_KEY</span></span><br><span class="line">        <span class="attr">valueFrom:</span></span><br><span class="line">          <span class="attr">configMapKeyRef:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">sp-config</span></span><br><span class="line">            <span class="attr">key:</span> <span class="string">special.how</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPECIAL_TYPE_KEY</span></span><br><span class="line">        <span class="attr">valueFrom:</span></span><br><span class="line">          <span class="attr">configMapKeyRef:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">            <span class="attr">key:</span> <span class="string">special.type</span></span><br><span class="line">    <span class="attr">envFrom:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">configMapRef:</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">env-config</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure></li>
-<li>Q:如何把configmap中的文件填入数据卷中？<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">special.how:</span> <span class="string">very</span></span><br><span class="line">  <span class="attr">special.type:</span> <span class="string">charm</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dapi-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">      <span class="attr">command:</span> [ <span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;cat /etc/config/special.how&quot;</span> ]</span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">        <span class="attr">mountPath:</span> <span class="string">/etc/config</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">      <span class="attr">configMap:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure></li>
-<li>Q:如何修改ConfigMap？<ul>
-<li><code>kubectl edit configmap log-config</code></li>
-</ul>
-</li>
-<li>Q:Secret的作用是什么？<ul>
-<li>解决密码、token、密钥等敏感数据的配置问题，而不需要把这些敏感数据暴露到镜像或Pod Spec中。Secret可以以Volume或者环境变量的方式使用</li>
-</ul>
-</li>
-<li>Q:Secret有哪三种类型？<ul>
-<li>Service Account：用来访问k8s api，由k8s自动创建，并且会自动挂载到Pod的<code>/run/secrets/kubernetes.io/serviceaccount</code>目录中</li>
-<li>Opaque：base64编码格式的Secret，用来存储密码、密钥等</li>
-<li>kubernetes.io/dockerconﬁgjson：用来存储私有docker registry的认证信息</li>
-</ul>
-</li>
-<li>Q:ServiceAccount的实践<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~$ kubectl run nginx --image nginx</span><br><span class="line">pod/nginx created</span><br><span class="line">shiqi-lu@k8s-master:~$ kubectl get pods</span><br><span class="line">NAME                           READY   STATUS              RESTARTS   AGE</span><br><span class="line">myapp-deploy-c7b5fb585-lw9rr   1/1     Running             0          20h</span><br><span class="line">myapp-deploy-c7b5fb585-pqd8j   1/1     Running             0          20h</span><br><span class="line">myapp-deploy-c7b5fb585-stkdm   1/1     Running             0          20h</span><br><span class="line">nginx                          0/1     ContainerCreating   0          14s</span><br><span class="line">shiqi-lu@k8s-master:~$ kubectl exec nginx ls /run/secrets/kubernetes.io/serviceaccount</span><br><span class="line">kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl kubectl exec [POD] -- [COMMAND] instead.</span><br><span class="line">ca.crt</span><br><span class="line">namespace</span><br><span class="line">token</span><br></pre></td></tr></table></figure></li>
-<li>Q:Opaque Secret的实践<ul>
-<li>Opaque 类型的数据是一个 map 类型，要求 value 是 base64 编码格式<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">shiqi-lu@k8s-master:~$ echo -n &quot;admin&quot; | base64</span><br><span class="line">YWRtaW4=</span><br><span class="line">shiqi-lu@k8s-master:~$ echo -n &quot;1f2d1e2e67df&quot; | base64</span><br><span class="line">MWYyZDFlMmU2N2Rm```</span><br><span class="line">    - 创建secrets.yml</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  name: mysecret</span><br><span class="line">type: Opaque</span><br><span class="line">data:</span><br><span class="line">  password: MWYyZDFlMmU2N2Rm</span><br><span class="line">  username: YWRtaW4=</span><br></pre></td></tr></table></figure></li>
-<li>将Secret挂载到Volume中<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">seret-test</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">seret-test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">secrets</span></span><br><span class="line">    <span class="attr">secret:</span></span><br><span class="line">      <span class="attr">secretName:</span> <span class="string">mysecret</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">db</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">secrets</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">&quot;</span></span><br><span class="line"><span class="string">      readOnly: true</span></span><br></pre></td></tr></table></figure></li>
-<li>将Secret导出到环境变量中<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">pod-deployment</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TEST_USER</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">secretKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">mysecret</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">username</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TEST_PASSWORD</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">secretKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">mysecret</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:kubernetes.io/dockerconﬁgjson的实践<ul>
-<li>使用 Kuberctl 创建 docker registry 认证的 secret<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl create secret docker-registry myregistrykey --docker-server=DOCKER_REGISTRY_SERVER -docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL</span></span><br><span class="line">secret &quot;myregistrykey&quot; created.</span><br></pre></td></tr></table></figure></li>
-<li>在创建Pod的时候，通过<code>imagePullSecrets</code>来引用刚创建的<code>myregistrykey</code><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">roc/awangyang:v1</span></span><br><span class="line">  <span class="attr">imagePullSecrets:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myregistrykey</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:emptyDir是什么？<ul>
-<li>当Pod被分配给节点时，首先创建emptyDir卷，并且只要该Pod在该结点上运行，该卷就会存在。正如卷的名字所述，它最初是空的。Pod中的容器可以读取和写入emptyDir卷中的相同文件，尽管该卷可以挂载到每个容器中的相同或不同路径上。当出于任何原因从节点中删除Pod时，emptyDir中的数据将被永久删除</li>
-<li>用法有：<ul>
-<li>暂存空间，例如用于基于磁盘的合并排序</li>
-<li>用作长时间计算崩溃恢复时的检查点</li>
-<li>Web服务器容器提供鞥数据时，保存内容管理器容器提取的文件<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pd</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">k8s.gcr.io/test-webserver</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/cache</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">cache-volume</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cache-volume</span></span><br><span class="line">    <span class="attr">emptyDir:</span> &#123;&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:hostPath是什么？<ul>
-<li>hostPath卷将主机节点的文件系统中的文件或目录挂载到集群中</li>
-<li>hostPath的用途：<ul>
-<li>运行需要访问Docker内部的容器；使用/var/lib/docker的hostPath</li>
-<li>在容器中运行cAdvisor；使用/dev/cgroups的hostPath</li>
-<li>允许pod指定给定的hostPath是否应该在pod运行之前存在，是否应该创建，以及它应该以什么形式存在</li>
-</ul>
-</li>
-<li>除了所需的path，用户还可以为hostPath卷指定type</li>
-<li><img src="https://img.shiqi-lu.tech/20201028153031.png"></li>
-<li>使用这种卷类型时请注意，因为<ul>
-<li>由于每个节点上的文件都不同，具有相同配置(例如从podTemplate创建的)的pod在不同节点上的行为可能会有所不同</li>
-<li>当k8s按照计划添加资源感知调度时，将无法考虑hostPath使用的资源</li>
-<li>在底层主机上创建的文件或目录只能由root写入。所以需要在特权容器中以root身份运行进程，或修改主机上的文件权限以便写入hostPath卷<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pd</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">k8s.gcr.io/test-webserver</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/test-pd</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">test-volume</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-volume</span></span><br><span class="line">    <span class="attr">hostPath:</span></span><br><span class="line">    <span class="comment"># directory location on host</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/data</span></span><br><span class="line">    <span class="comment"># this field is optional</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">Directory</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:PV是什么？<ul>
-<li>是由管理员设置的存储，它是群集的一部分。就像节点是集群中的资源一样，PV也是集群中的资源。PV是Volume之类的卷插件，但具有独立于使用PV的Pod的生命周期。此API对象包含存储实现的细节，即NFS、iSCSI或特定于云供应商的存储系统</li>
-</ul>
-</li>
-<li>Q:PVC是什么？<ul>
-<li>是用户存储的请求。它与Pod相似。Pod消耗节点资源，PVC消耗PV资源。Pod可以请求特定级别的资源（CPU和内存）。声明可以请求特定的大小和访问模式（例如，可以以读/写一次或只读多次模式挂载）</li>
-</ul>
-</li>
-<li>Q:持久化卷声明(PVC)的保护<ul>
-<li>PVC 保护的目的是确保由 pod 正在使用的 PVC 不会从系统中移除，因为如果被移除的话可能会导致数据丢失</li>
-<li>当启用PVC 保护 alpha 功能时，如果用户删除了一个 pod 正在使用的 PVC，则该 PVC 不会被立即删除。PVC 的 删除将被推迟，直到 PVC 不再被任何 pod 使用</li>
-</ul>
-</li>
-<li>Q:PV访问模式<ul>
-<li>PersistentVolume 可以以资源提供者支持的任何方式挂载到主机上。如下表所示，供应商具有不同的功能，每个 PV 的访问模式都将被设置为该卷支持的特定模式。例如，NFS 可以支持多个读/写客户端，但特定的 NFS PV 可能 以只读方式导出到服务器上。每个 PV 都有一套自己的用来描述特定功能的访问模式<ul>
-<li>ReadWriteOnce——该卷可以被单个节点以读/写模式挂载</li>
-<li>ReadOnlyMany——该卷可以被多个节点以只读模式挂载</li>
-<li>ReadWriteMany——该卷可以被多个节点以读/写模式挂载</li>
-</ul>
-</li>
-<li>在命令行中，访问模式缩写为：<ul>
-<li>RWO - ReadWriteOnce</li>
-<li>ROX - ReadOnlyMany</li>
-<li>RWX - ReadWriteMany</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:PV的回收策略有哪些<ul>
-<li>Retain（保留）——手动回收</li>
-<li>Recycle（回收）——基本擦除（ rm -rf /thevolume/* ）</li>
-<li>Delete（删除）——关联的存储资产（例如 AWS EBS、GCE PD、Azure Disk 和 OpenStack Cinder 卷） 将被删除</li>
-<li>当前，只有 NFS 和 HostPath 支持回收策略。AWS EBS、GCE PD、Azure Disk 和 Cinder 卷支持删除策略</li>
-</ul>
-</li>
-<li>Q:PV的状态<ul>
-<li>卷可以处于以下的某种状态：</li>
-<li>Available（可用）——一块空闲资源还没有被任何声明绑定</li>
-<li>Bound（已绑定）——卷已经被声明绑定</li>
-<li>Released（已释放）——声明被删除，但是资源还未被集群重新声明</li>
-<li>Failed（失败）——该卷的自动回收失败</li>
-<li>命令行会显示绑定到 PV 的 PVC 的名称</li>
-</ul>
-</li>
-<li>Q:如何安装nfs服务器<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nfs-common nfs-utils rpcbind</span><br><span class="line">mkdir /nfsdata</span><br><span class="line">chmod 666 /nfsdata</span><br><span class="line">chown nfsnobody /nfsdata</span><br><span class="line">cat /etc/exports</span><br><span class="line">      /nfsdata *(rw,no_root_squash,no_all_squash,sync)</span><br><span class="line">systemctl start rpcbind</span><br><span class="line">systemctl start nfs</span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载</span></span><br><span class="line">showmount -e xxx.xxx.xxx.xxx</span><br><span class="line">mount -t nfs xxx.xxx.xxx.xxx:/nfs /test</span><br><span class="line">umount /test</span><br></pre></td></tr></table></figure></li>
-<li>Q:部署PV<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfspv1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfs</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">10.66</span><span class="number">.66</span><span class="number">.10</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl create -f pv.yaml</span><br><span class="line">kubectl get pv```</span><br><span class="line">- Q:创建服务并使用pvc</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    name: web</span><br><span class="line">  clusterIP: None</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: web</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  serviceName: &quot;nginx&quot;</span><br><span class="line">  replicas: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: wangyanglinux/myapp:v2</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: web</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: www</span><br><span class="line">          mountPath: /usr/share/nginx/html</span><br><span class="line">  volumeClaimTemplates:</span><br><span class="line">  - metadata:</span><br><span class="line">      name: www</span><br><span class="line">    spec:</span><br><span class="line">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span><br><span class="line">      storageClassName: &quot;nfs&quot;</span><br><span class="line">      resources:</span><br><span class="line">        requests:</span><br><span class="line">          storage: 1Gi</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
