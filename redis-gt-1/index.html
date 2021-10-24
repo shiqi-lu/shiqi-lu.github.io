@@ -22,33 +22,34 @@
     var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了">
+  <meta name="description" content="2.数据结构：快速的Redis有哪些慢操作？3.高性能IO模型：为什么单线程Redis能那么快？4.AOF日志：宕机了，Redis如何避免数据丢失？5.内存快照：宕机后，Redis如何实现快速恢复？">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《沈剑架构师训练营》第3章 - 快速性能优化">
-<meta property="og:url" content="http://shiqi-lu.tech/arch-sj-3/index.html">
+<meta property="og:title" content="《Redis核心技术与实战》基础篇2-5">
+<meta property="og:url" content="http://shiqi-lu.tech/redis-gt-1/index.html">
 <meta property="og:site_name" content="每天净瞎搞">
-<meta property="og:description" content="包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了">
+<meta property="og:description" content="2.数据结构：快速的Redis有哪些慢操作？3.高性能IO模型：为什么单线程Redis能那么快？4.AOF日志：宕机了，Redis如何避免数据丢失？5.内存快照：宕机后，Redis如何实现快速恢复？">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210906113515.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210906113737.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908205424.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908205943.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908211227.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908211506.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210823230403.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212034.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212221.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212329.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212439.png">
-<meta property="article:published_time" content="2021-09-14T13:08:00.000Z">
-<meta property="article:modified_time" content="2021-09-14T12:08:00.000Z">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210507163031.png?imageView2/2/w/300">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210130161930.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210507113941.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210507114739.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210130162617.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210130204646.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210130205858.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210130225834.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210131101541.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210619182408.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210131104239.png">
+<meta property="article:published_time" content="2021-08-08T13:19:18.000Z">
+<meta property="article:modified_time" content="2021-08-08T13:19:18.000Z">
 <meta property="article:author" content="Shiqi Lu">
-<meta property="article:tag" content="架构">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210906113515.png">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210507163031.png?imageView2/2/w/300">
 
 
-<link rel="canonical" href="http://shiqi-lu.tech/arch-sj-3/">
+<link rel="canonical" href="http://shiqi-lu.tech/redis-gt-1/">
 
 
 <script data-pjax class="page-configurations">
@@ -61,7 +62,7 @@
   };
 </script>
 
-  <title>《沈剑架构师训练营》第3章 - 快速性能优化 | 每天净瞎搞</title>
+  <title>《Redis核心技术与实战》基础篇2-5 | 每天净瞎搞</title>
   
 
 
@@ -217,7 +218,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11%E3%80%81%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%9A%E5%8A%A8%E9%9D%99%E5%88%86%E7%A6%BB%EF%BC%8C%E4%BA%92%E8%81%94%E7%BD%91%E4%BC%98%E5%8C%96%E5%88%A9%E5%99%A8%EF%BC%9F"><span class="nav-text">11、性能优化：动静分离，互联网优化利器？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12%E3%80%81%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%9A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%EF%BC%8C%E5%89%8D%E5%8F%B0%E4%B8%8E%E5%90%8E%E5%8F%B0%E5%88%86%E7%A6%BB"><span class="nav-text">12、性能优化：读写分离，前台与后台分离</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#13%E3%80%81%E6%9C%AC%E7%AB%A0%E5%B0%8F%E7%BB%93%EF%BC%9A%E7%99%BE%E4%B8%87%E6%B5%81%E9%87%8F%EF%BC%8C%E8%BF%99%E4%BA%9B%E6%8A%80%E6%9C%AF%E5%A4%9F%E7%94%A8%E4%BA%86"><span class="nav-text">13、本章小结：百万流量，这些技术够用了</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#02%E4%B8%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%BF%AB%E9%80%9F%E7%9A%84Redis%E6%9C%89%E5%93%AA%E4%BA%9B%E6%85%A2%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="nav-text">02丨数据结构：快速的Redis有哪些慢操作？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#03%E4%B8%A8%E9%AB%98%E6%80%A7%E8%83%BDIO%E6%A8%A1%E5%9E%8B%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8D%95%E7%BA%BF%E7%A8%8BRedis%E8%83%BD%E9%82%A3%E4%B9%88%E5%BF%AB%EF%BC%9F"><span class="nav-text">03丨高性能IO模型：为什么单线程Redis能那么快？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#04%E4%B8%A8AOF%E6%97%A5%E5%BF%97%EF%BC%9A%E5%AE%95%E6%9C%BA%E4%BA%86%EF%BC%8CRedis%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%EF%BC%9F"><span class="nav-text">04丨AOF日志：宕机了，Redis如何避免数据丢失？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#05%E4%B8%A8%E5%86%85%E5%AD%98%E5%BF%AB%E7%85%A7%EF%BC%9A%E5%AE%95%E6%9C%BA%E5%90%8E%EF%BC%8CRedis%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%BF%AB%E9%80%9F%E6%81%A2%E5%A4%8D%EF%BC%9F"><span class="nav-text">05丨内存快照：宕机后，Redis如何实现快速恢复？</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -300,7 +301,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/arch-sj-3/">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/redis-gt-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
@@ -316,7 +317,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《沈剑架构师训练营》第3章 - 快速性能优化
+          《Redis核心技术与实战》基础篇2-5
         </h1>
 
         <div class="post-meta-container">
@@ -326,9 +327,8 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-09-14 21:08:00 / 修改时间：20:08:00" itemprop="dateCreated datePublished" datetime="2021-09-14T21:08:00+08:00">2021-09-14</time>
+      <time title="创建时间：2021-08-08 21:19:18" itemprop="dateCreated datePublished" datetime="2021-08-08T21:19:18+08:00">2021-08-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -336,12 +336,12 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+          <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
         </span>
     </span>
 
   
-    <span id="/arch-sj-3/" class="post-meta-item leancloud_visitors" data-flag-title="《沈剑架构师训练营》第3章 - 快速性能优化" title="阅读次数">
+    <span id="/redis-gt-1/" class="post-meta-item leancloud_visitors" data-flag-title="《Redis核心技术与实战》基础篇2-5" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -356,8 +356,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/arch-sj-3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/arch-sj-3/" itemprop="commentCount"></span>
+    <a title="valine" href="/redis-gt-1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/redis-gt-1/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -369,18 +369,18 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
+      <span>3.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
-            <div class="post-description">包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了</div>
+            <div class="post-description">2.数据结构：快速的Redis有哪些慢操作？3.高性能IO模型：为什么单线程Redis能那么快？4.AOF日志：宕机了，Redis如何避免数据丢失？5.内存快照：宕机后，Redis如何实现快速恢复？</div>
         </div>
       </header>
 
@@ -388,129 +388,156 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
-<li>no11：与静态页面、动态页面匹配的加速技术有哪些？<ul>
-<li>静态页面<ul>
-<li>CDN</li>
-<li>nginx</li>
-<li>squid/varnish</li>
+        <h1 id="02丨数据结构：快速的Redis有哪些慢操作？"><a href="#02丨数据结构：快速的Redis有哪些慢操作？" class="headerlink" title="02丨数据结构：快速的Redis有哪些慢操作？"></a>02丨数据结构：快速的Redis有哪些慢操作？</h1><ul>
+<li>Q:Redis的数据类型分别对应底层哪些数据结构？<ul>
+<li>String：简单动态字符串</li>
+<li>List：压缩列表、双向链表</li>
+<li>Hash：压缩列表、哈希表</li>
+<li>Set：整数数组、哈希表</li>
+<li>Sorted Set：压缩列表、跳表</li>
+<li><img src="https://img.shiqi-lu.tech/20210507163031.png?imageView2/2/w/300"></li>
+<li><img src="https://img.shiqi-lu.tech/20210130161930.png"></li>
 </ul>
 </li>
-<li>动态页面<ul>
-<li>分层架构</li>
-<li>服务化架构</li>
-<li>数据库，缓存架构</li>
+<li>Q:Redis的键和值使用什么结构组织？<ul>
+<li>使用一个全局哈希表，其实是一个数组，数组的每个元素称为一个哈希桶，每个哈希桶中保存了键值对数据</li>
+<li>哈希桶中的 entry 元素中保存了 *key 和 *value 指针，分别指向了实际的键和值</li>
+<li><img src="https://img.shiqi-lu.tech/20210507113941.png"></li>
 </ul>
 </li>
+<li>Q:Redis如何解决哈希冲突？<ul>
+<li>哈希冲突是，由于哈希桶的个数通常少于 key 的数量，计算两个 key 的哈希值正好落在同一个哈希桶中</li>
+<li>解决：使用链式哈希，即同一个哈希桶中的多个元素用一个链表来保存，它们之间依次用指针连接，该链表也叫哈希冲突链</li>
+<li><img src="https://img.shiqi-lu.tech/20210507114739.png"></li>
 </ul>
 </li>
-<li>no11：动静分离是什么？<ul>
-<li>静态页面与动态页面分开不同的系统访问的架构设计方法</li>
-<li><img src="https://img.shiqi-lu.tech/20210906113515.png"></li>
-<li>静态页面，几毫秒返回</li>
-<li>动态页面，几百毫秒返回</li>
+<li>Q:rehash是什么？<ul>
+<li>增加现有的哈希桶数量，让逐渐增多的 entry 元素能在更多的桶之间分散保存，减少单个桶中的元素数量，从而减少单个桶中的冲突</li>
 </ul>
 </li>
-<li>no11：「页面静态化」是什么？如何实施？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210906113737.png"></li>
-<li>把网页内容提前生成相关的 html，用静态页面相关的加速技术来进行加速</li>
-<li>适合场景：返回页面结果集有限</li>
-<li>不适合场景：返回页面结果集数据量过大，如帖子，搜索等</li>
+<li>Q:Redis 使 rehash 更高效的方法是什么？<ul>
+<li>默认使用了两个全局哈希表：哈希表 1 和哈希表 2</li>
+<li>一开始默认使用哈希表 1，此时的哈希表 2 并没有被分配空间。随着数据逐步增多，Redis 开始执行 rehash</li>
+<li>rehash 完毕后从哈希表 1 切换到哈希表 2，用增大的哈希表 2 保存更多数据，而原来的哈希表 1 留作下一次 rehash 扩容备用</li>
 </ul>
 </li>
-</ul>
-<h1 id="12、性能优化：读写分离，前台与后台分离"><a href="#12、性能优化：读写分离，前台与后台分离" class="headerlink" title="12、性能优化：读写分离，前台与后台分离"></a>12、性能优化：读写分离，前台与后台分离</h1><ul>
-<li>no12：什么是读写分离？能解决什么问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908205424.png"></li>
-<li>一主多从，读写分离，主从同步，是一种常见的数据库架构</li>
-<li>一般来说，主库，提供数据库的写服务，从库，提供数据库的读服务，主从之间通过某种机制来实现数据库的同步，如 MySQL 的 binlog，一个主从同步集群通常被称为一个「分组」</li>
-<li>能解决什么问题？<ul>
-<li>主要可以线性提升读的性能</li>
+<li>Q:rehash 的步骤是什么？<ul>
+<li>1.给哈希表2分配更大的空间，例如是当前哈希表1大小的两倍</li>
+<li>2.把哈希表1中的数据重新映射并拷贝到哈希表2中</li>
+<li>3.释放哈希表1的空间</li>
 </ul>
 </li>
-</ul>
-</li>
-<li>no12：什么是水平切分？能解决什么问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908205943.png"></li>
-<li>数据库水平切分后，数据库之间没有数据的重合，不需要同步</li>
-<li>能解决什么问题？<ul>
-<li>数据库存储容量提升</li>
+<li>Q:渐进式 rehash 是什么？<ul>
+<li>在第二步拷贝数据时，redis仍然正常处理客户端请求，每处理一个请求时，从哈希表1中的第一个索引位置开始，顺带着将这个索引位置上的所有entries拷贝到哈希表2中。等处理下一个请求时，再顺带拷贝哈希表1中的下一个索引位置的entries</li>
+<li><img src="https://img.shiqi-lu.tech/20210130162617.png"></li>
 </ul>
 </li>
 </ul>
+<h1 id="03丨高性能IO模型：为什么单线程Redis能那么快？"><a href="#03丨高性能IO模型：为什么单线程Redis能那么快？" class="headerlink" title="03丨高性能IO模型：为什么单线程Redis能那么快？"></a>03丨高性能IO模型：为什么单线程Redis能那么快？</h1><ul>
+<li>Q:Redis单线程指的是什么？<ul>
+<li>Redis的网络IO和键值对读写是由一个线程来完成的，这也是Redis对外提供键值存储服务的主要流程</li>
+</ul>
 </li>
-<li>no12：什么是前台？什么是后台？<ul>
-<li>前台，用户访问的对外系统</li>
-<li>后台，运营访问的对内系统</li>
+<li>Q:单线程Redis速度快的原因是什么？<ul>
+<li>1.大部分操作在内存上完成，加上采用的高效的数据结构(哈希表和跳表)</li>
+<li>2.采用了多路复用机制，使其在网络IO操作中能并发处理大量的客户端请求</li>
 </ul>
 </li>
 </ul>
-<h1 id="13、本章小结：百万流量，这些技术够用了"><a href="#13、本章小结：百万流量，这些技术够用了" class="headerlink" title="13、本章小结：百万流量，这些技术够用了"></a>13、本章小结：百万流量，这些技术够用了</h1><ul>
-<li>no13：早期单体 ALL in one 架构，遇到什么问题？这阶段的优化思路是什么？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908211227.png"></li>
-<li>性能问题：访问人数多的时候，希望系统快一点</li>
-<li>耦合问题：当出现问题的时候，系统不要全部挂掉</li>
-<li>思路：<ul>
-<li>1.技术不炫技，以解决业务问题为导向</li>
-<li>2.系统改造尽可能小的架构方案</li>
-<li>3.以最快的速度，提升系统的性能，解决遇到的问题</li>
+<h1 id="04丨AOF日志：宕机了，Redis如何避免数据丢失？"><a href="#04丨AOF日志：宕机了，Redis如何避免数据丢失？" class="headerlink" title="04丨AOF日志：宕机了，Redis如何避免数据丢失？"></a>04丨AOF日志：宕机了，Redis如何避免数据丢失？</h1><ul>
+<li>Q:Redis持久化的两大机制是什么？<ul>
+<li>AOF日志和RDB快照</li>
+</ul>
+</li>
+<li>Q:AOF(Append Only File)的持久化是怎样的<ul>
+<li>Redis 执行完一个写命令后，将写命令以协议文本的形式追加到 AOF 缓冲区末尾，再通过同步策略来决定是否将 AOF 缓冲区中的内容写入 &amp; 同步到 AOF 日志</li>
+<li>只有命令能执行成功，才会被记录到日志中。不会阻塞当前的写操作</li>
+</ul>
+</li>
+<li>Q:AOF日记的记录内容是怎样的？<ul>
+<li>以<code>set testkey testvalue</code>为例</li>
+<li><code>*3</code>表示当前命令有三个部分，每部分都是有<code>$+数字</code>开头，后面紧跟着具体的命令、键、值，此处的数字表示这部分中的命令、键和值一共有多少字节</li>
+<li><img src="https://img.shiqi-lu.tech/20210130204646.png"></li>
+</ul>
+</li>
+<li>Q:AOF的两个潜在风险是什么？<ul>
+<li>1.如果刚执行完一个命令，还没有来得及记日志就宕机了，那么这个命令和相应的数据就有丢失的风险</li>
+<li>2.AOF虽然避免了对当前命令的阻塞，但可能会给下一个操作带来阻塞风险，这是因为，AOF日志也是在主线程中执行的，如果在把日志文件写入磁盘时，磁盘写压力大，就会导致写盘很慢，进而导致后续的操作也无法执行</li>
+</ul>
+</li>
+<li>Q:AOF日志有哪三种写回策略？(即配置项 appendfsync 的三个可选值)<ul>
+<li>Always,同步写回：每个写命令执行完，立马将所有内容写入并同到 AOF 日志</li>
+<li>Everysec,每秒写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，如果上次同步 AOF 日志的时间距离现在超过 1 秒，那么对 AOF 日志进行同步</li>
+<li>No,操作系统控制的写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，但并不对 AOF 日志进行同步，何时同步由操作系统来决定</li>
+</ul>
+</li>
+<li>Q:Redis 中的写入并同步到 AOF 日志的写入和同步的区别是什么<ul>
+<li>当写回策略为 always 的时候，Redis 源码逻辑为先调用 write 函数写入 AOF 日志文件，紧接着调用 fdatasync 函数对 AOF 日志文件进行同步，确保写入的内容同步到硬盘成功</li>
+<li>当调用 write 函数的时候，数据只是写到了内存缓冲区中，用 fdatasync 函数可以强制让操作系统立即将内存缓冲区中的数据同步到硬盘中</li>
+</ul>
+</li>
+<li>Q:AOF日志三种写回策略的优劣是什么？<ul>
+<li>同步写回：基本不丢数据，但在每一个写命令后都有一个慢速的落盘操作，不可避免地会影响主线程性能</li>
+<li>每秒写回：采用一秒写回一次的频率，避免了「同步写回」的性能开销，虽然减少了对系统性能的影响，但若发生宕机，上一秒内未落盘的命令操作仍然会丢失</li>
+<li>操作系统控制的写回：在写完缓冲区后，可以继续执行后续的命令，但是落盘的时机已经不在Redis手中了，只有AOF记录没有写回磁盘，一旦宕机对应的数据就丢失了</li>
+<li><img src="https://img.shiqi-lu.tech/20210130205858.png"></li>
+</ul>
+</li>
+<li>Q:AOF文件过大带来的3个性能问题是什么？<ul>
+<li>1.文件系统本身对文件大小有限制， 无法保存过大的文件</li>
+<li>2.如果文件太大，之后再往里面追加命令记录的话，效率也会变低</li>
+<li>3.如果发生宕机，AOF 中记录的命令要一个个被重新执行，用于故障恢复，如果日志文件太大，整个恢复过程就会非常缓慢</li>
+</ul>
+</li>
+<li>Q:AOF重写机制是什么？<ul>
+<li>在重写时，Redis根据数据库的现状创建一个新的AOF文件。</li>
+<li>即读取数据库中的所有键值对，然后对每一个键值对用一条命令记录它的写入</li>
+</ul>
+</li>
+<li>Q:为什么重写机制可以把日志文件变小？<ul>
+<li>当一个键值对被多条写命令反复修改时，AOF文件会记录相应的多条命令</li>
+<li>但在重写时，根据这个键值对当前的最新状态，为它生成对应的写入命令。这样，一个键值对在重写日志中只用一条命令即可</li>
+<li>在日志恢复时，只用执行这条命令，就可以直接完成这个键值对的写入了</li>
+<li><img src="https://img.shiqi-lu.tech/20210130225834.png"></li>
+</ul>
+</li>
+<li>Q:重写的过程是怎样的？<ul>
+<li>由后台线程bgrewriteaof完成，是为了避免阻塞主线程，导致数据库性能下降</li>
+<li>一个拷贝<ul>
+<li>每次执行重写时，主线程fork出后台的bgrewriteaof子进程。fork会把主线程的内存拷贝一份给bgrewriteaof子进程，这里包含了数据库的最新数据</li>
+<li>bgrewriteaof子进程在不影响主线程的情况下，逐一把拷贝的数据写成操作，记入重写日志</li>
+</ul>
+</li>
+<li>两处日志<ul>
+<li>1.正在使用的AOF日志：因主进程未阻塞，仍然可以处理新来的操作。此时若有写操作，Redis会把这个操作写到它的缓冲区。这样一来，即使宕机了，这个AOF日志的操作仍然是齐全的，可以用于恢复</li>
+<li>2.新的AOF重写日志：这个操作也会被写到重写日志的缓冲区。这样，重写日志也不会丢失最新的操作。等到拷贝数据的所有操作记录重写完成后，重写日志记录的这些最新操作也会写入新的AOF文件，以保证数据库最新状态的记录。此时即可用新的AOF文件替代旧文件了</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20210131101541.png"></li>
 </ul>
 </li>
 </ul>
-</li>
-<li>no13：单体架构演进：伪分布式，提升性能<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908211506.png"></li>
-<li>三大分离<ul>
-<li>动静分离</li>
-<li>读写分离(引发读写延时新问题)</li>
-<li>前台后台分离</li>
+<h1 id="05丨内存快照：宕机后，Redis如何实现快速恢复？"><a href="#05丨内存快照：宕机后，Redis如何实现快速恢复？" class="headerlink" title="05丨内存快照：宕机后，Redis如何实现快速恢复？"></a>05丨内存快照：宕机后，Redis如何实现快速恢复？</h1><ul>
+<li>Q:RDB的持久化是怎样的？<ul>
+<li>作用是将某个时间点上的数据库状态保存到 RDB 文件中，RDB 文件是一个压缩的二进制文件，通过它可以还原某个时刻数据库的状态。由于 RDB 文件是保存在硬盘上的，所以即使 Redis 崩溃或者退出，只要 RDB 文件存在，就可以用它来还原数据库的状态</li>
 </ul>
 </li>
+<li>Q:生成RDB文件的两个命令是什么？<ul>
+<li>save：在主线程执行，会导致阻塞，直到 RDB 文件生成完毕，在进程阻塞期间，Redis 不能处理任何命令请求</li>
+<li>bgsave：创建一个子进程，专门用于写入RDB文件，避免了主线程的阻塞(默认配置)</li>
 </ul>
 </li>
-<li>no13：单体架构演进：垂直拆分，解耦<ul>
-<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
-<li>业务垂直划分</li>
-<li>代码垂直划分(子系统解耦)</li>
-<li>数据库垂直划分(数据量降低,延时缓解)</li>
-<li>研发团队垂直拆分(专业化，效率提升)</li>
+<li>Q:bgsave做快照时如何保证数据可修改？<ul>
+<li>借助操作系统提供的写时复制技术(Copy-On-Write, COW)</li>
+<li>bgsave子进程是由主线程fork生成的，可以共享主线程的所有内存数据。bgsave子进程运行后，开始读取主线程的内存数据，并把它们写入RDB文件</li>
+<li>若主线程对这些数据也是读操作(图中键值对A)，主线程和bgsave子线程互不影响</li>
+<li>若主线程要修改一块数据(图中键值对C)，那这块数据会被复制一份，生成该数据的副本C’。然后，主线程在这个数据副本上修改，同时，bgsave子进程会把原来的数据写入RDB文件</li>
+<li><img src="https://img.shiqi-lu.tech/20210619182408.png"></li>
 </ul>
 </li>
-<li>no13：如何保证垂直拆分后，子系统的高可用？<ul>
-<li>使用反向代理</li>
-<li>子web系统的性能，不再受到单台机器资源限制，可以扩展</li>
-<li>子web系统，实现了高可用(伪集群-&gt;真集群) </li>
-<li><img src="https://img.shiqi-lu.tech/20210908212034.png"></li>
-</ul>
-</li>
-<li>no13：真集群后，反向代理如何做负载均衡？<ul>
-<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
-<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
-</ul>
-</li>
-<li>no13：反向代理，如何保证高可用？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908212221.png"></li>
-</ul>
-</li>
-<li>no13：反向代理技术出现之前，接入层如何扩展？<ul>
-<li>DNS 轮询</li>
-<li><img src="https://img.shiqi-lu.tech/20210908212329.png"></li>
-</ul>
-</li>
-<li>no13：使用多层反向代理后，如何做到继续提升性能？<ul>
-<li>DNS 轮询</li>
-<li><img src="https://img.shiqi-lu.tech/20210908212439.png"></li>
-</ul>
-</li>
-<li>no13：session 一致性如何保障？<ul>
-<li>session 同步法</li>
-<li>客户端存储法</li>
-<li>反向代理 hash 一致性</li>
-<li>后端统一存储法</li>
-</ul>
-</li>
-<li>no13：如何加速静态资源？<ul>
-<li>CDN</li>
+<li>Q:混合使用AOF日志和内存快照的方法是什么？<ul>
+<li>内存快照以一定的频率执行，在两次快照之间，使用AOF日志记录这期间的所有命令操作</li>
+<li><img src="https://img.shiqi-lu.tech/20210131104239.png"></li>
 </ul>
 </li>
 </ul>
@@ -549,7 +576,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://shiqi-lu.tech/arch-sj-3/" title="《沈剑架构师训练营》第3章 - 快速性能优化">http://shiqi-lu.tech/arch-sj-3/</a>
+      <a href="http://shiqi-lu.tech/redis-gt-1/" title="《Redis核心技术与实战》基础篇2-5">http://shiqi-lu.tech/redis-gt-1/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -558,20 +585,21 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/arch-sj-2/" rel="prev" title="《沈剑架构师训练营》第2章 - 接入层架构">
-                  <i class="fa fa-chevron-left"></i> 《沈剑架构师训练营》第2章 - 接入层架构
+                <a href="/tcpip-network-programming-6/" rel="prev" title="《TCP/IP网络编程》第18、24章学习笔记">
+                  <i class="fa fa-chevron-left"></i> 《TCP/IP网络编程》第18、24章学习笔记
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/arch-sj-4/" rel="next" title="《沈剑架构师训练营》第4章 - 微服务架构">
-                  《沈剑架构师训练营》第4章 - 微服务架构 <i class="fa fa-chevron-right"></i>
+                <a href="/redis-gt-2/" rel="next" title="《Redis核心技术与实战》基础篇6-9">
+                  《Redis核心技术与实战》基础篇6-9 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -721,7 +749,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({
       el  : '#valine-comments',
-      path: "/arch-sj-3/",
+      path: "/redis-gt-1/",
     }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
     ));
   }, window.Valine);

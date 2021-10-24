@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="6.数据同步：主从库如何实现数据一致？7.哨兵机制：主库挂了，如何不间断服务？8.哨兵集群：哨兵挂了，主从库还能切换吗？9.切片集群：数据增多了，是该加内存还是加实例？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Redis核心技术与实战》基础篇6-9">
+<meta property="og:url" content="http://shiqi-lu.tech/redis-gt-2/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="6.数据同步：主从库如何实现数据一致？7.哨兵机制：主库挂了，如何不间断服务？8.哨兵集群：哨兵挂了，主从库还能切换吗？9.切片集群：数据增多了，是该加内存还是加实例？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210131104851.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210131105418.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210131145526.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210131145707.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210703104615.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210704133431.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210704150035.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210704150435.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210704150703.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210704151434.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210704211831.png">
+<meta property="article:published_time" content="2021-08-17T14:33:18.000Z">
+<meta property="article:modified_time" content="2021-08-17T14:33:18.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210131104851.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/redis-gt-2/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《Redis核心技术与实战》基础篇6-9 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：CS/AI/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#06%E4%B8%A8%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%EF%BC%9A%E4%B8%BB%E4%BB%8E%E5%BA%93%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%EF%BC%9F"><span class="nav-text">06丨数据同步：主从库如何实现数据一致？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#07%E4%B8%A8%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6%EF%BC%9A%E4%B8%BB%E5%BA%93%E6%8C%82%E4%BA%86%EF%BC%8C%E5%A6%82%E4%BD%95%E4%B8%8D%E9%97%B4%E6%96%AD%E6%9C%8D%E5%8A%A1%EF%BC%9F"><span class="nav-text">07丨哨兵机制：主库挂了，如何不间断服务？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#08-%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%EF%BC%9A%E5%93%A8%E5%85%B5%E6%8C%82%E4%BA%86%EF%BC%8C%E4%B8%BB%E4%BB%8E%E5%BA%93%E8%BF%98%E8%83%BD%E5%88%87%E6%8D%A2%E5%90%97%EF%BC%9F"><span class="nav-text">08 | 哨兵集群：哨兵挂了，主从库还能切换吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#09-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%A4%9A%E4%BA%86%EF%BC%8C%E6%98%AF%E8%AF%A5%E5%8A%A0%E5%86%85%E5%AD%98%E8%BF%98%E6%98%AF%E5%8A%A0%E5%AE%9E%E4%BE%8B%EF%BC%9F"><span class="nav-text">09 | 切片集群：数据增多了，是该加内存还是加实例？</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/redis-gt-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《Redis核心技术与实战》基础篇6-9
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-17 22:33:18" itemprop="dateCreated datePublished" datetime="2021-08-17T22:33:18+08:00">2021-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/redis-gt-2/" class="post-meta-item leancloud_visitors" data-flag-title="《Redis核心技术与实战》基础篇6-9" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/redis-gt-2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/redis-gt-2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">6.数据同步：主从库如何实现数据一致？7.哨兵机制：主库挂了，如何不间断服务？8.哨兵集群：哨兵挂了，主从库还能切换吗？9.切片集群：数据增多了，是该加内存还是加实例？</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="06丨数据同步：主从库如何实现数据一致？"><a href="#06丨数据同步：主从库如何实现数据一致？" class="headerlink" title="06丨数据同步：主从库如何实现数据一致？"></a>06丨数据同步：主从库如何实现数据一致？</h1><ul>
+<li>Q:Redis的主从库和读写分离是怎样的？<ul>
+<li>读操作：主从库都可接收</li>
+<li>写操作：首先到主库执行，然后，主库将写操作同步给从库</li>
+<li><img src="https://img.shiqi-lu.tech/20210131104851.png"></li>
+</ul>
+</li>
+<li>Q:如何设置主从库？<ul>
+<li>通过replicaof(redis5.0之前是slaveof)</li>
+<li>如现在有实例 1（ip：172.16.19.3）和实例 2（ip：172.16.19.5），我们在实例 2 上 执行以下这个命令后，实例 2 就变成了实例 1 的从库，并从实例 1 上复制数据：</li>
+<li><code>replicaof 172.16.19.3 6379</code></li>
+</ul>
+</li>
+<li>Q:主从库间数据第一次同步的三个阶段是怎样？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210131105418.png"></li>
+<li>第一阶段：主从库间建立连接、协商同步，为全量复制做准备<ul>
+<li>从库和主库建立起连接，并告诉主库即将进行同步，主库确认回复后，主从库间就可以开始同步了</li>
+<li>即从库给主库发送psync命令，表示要进行数据同步，主库根据这个命令的参数来启动复制。psync命令包含了主库的runID和复制进度offset两个参数<ul>
+<li>runID，是每个Redis实例启动时都会自动生成的一个随机ID，用来唯一标记这个实例。当从库和主库第一次复制时，因为不知道主库的runID，所以将runID设为？</li>
+<li>offset，此时设为-1，表示第一次复制</li>
+</ul>
+</li>
+<li>主库收到psync命令后，会用FULLRESYNC相应命令带上两个参数：主库runID和主库目前的复制进度offset，返回给从库。从库收到响应后，会记录下这两个参数</li>
+<li>FULLRESYNC 响应表示第一次复制采用的全量复制，也就是说， 主库会把当前所有的数据都复制给从库</li>
+</ul>
+</li>
+<li>第二阶段：主库将所有数据同步给从库。从库收到数据后，在本地完成数据加载。这个过程依赖于内存快照生成的RDB文件<ul>
+<li>主库执行bgsave命令，生成RDB文件，接着将文件发给从库。从库收到RDB文件后，会先清空当前数据库，然后加载RDB文件。这是因为从库在通过replicaof命令开始和主库同步前，可能保存了其它数据。为了避免之前数据的影响，从库需要先把当前数据库清空</li>
+<li>在主库将数据同步给从库的过程中，主库不会被阻塞，仍然可以正常接收请求。这些请求中的写操作并没有记录到刚刚生成的 RDB 文件中。为了保证主从库的数据一致性，主库会在内存中用专门的 replication buffer，记录 RDB 文件生成后收到的所有写操作。</li>
+</ul>
+</li>
+<li>第三阶段：主库会把第二阶段执行过程中新收到的写命令，再发送给从库<ul>
+<li>当主库完成 RDB 文件发送后，就会把此时 replication buffer 中的修 改操作发给从库，从库再重新执行这些操作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:主从库在命令传播时网络断了之后的处理方法？<ul>
+<li>采用增量复制的方式继续同步</li>
+</ul>
+</li>
+<li>Q:增量复制时，主从库之间的同步方式是怎样？<ul>
+<li>当主从库断连后，主库会把断连期间收到的写操作命令，写入replication buffer，同时也会把这些操作命令也写入repl_backlog_buffer这个缓冲区</li>
+<li>repl_backlog_buffer是一个环形缓冲区，主库会记录自己写到的位置，从库则会记录自己已经读到的位置</li>
+<li>刚开始的时候，主库和从库的写读位置在一起，这算是它们的起始位置。随着主库不断接 收新的写操作，它在缓冲区中的写位置会逐步偏离起始位置，我们通常用偏移量来衡量这 个偏移距离的大小，对主库来说，对应的偏移量就是 master_repl_offset。主库接收的新写操作越多，这个值就会越大</li>
+<li>同样，从库在复制完写操作命令后，它在缓冲区中的读位置也开始逐步偏移刚才的起始位 置，此时，从库已复制的偏移量 slave_repl_offset 也在不断增加。正常情况下，这两个偏 移量基本相等</li>
+<li><img src="https://img.shiqi-lu.tech/20210131145526.png"></li>
+<li>主从库的连接恢复之后，从库首先会给主库发送 psync 命令，并把自己当前的 slave_repl_offset 发给主库，主库会判断自己的 master_repl_offset 和 slave_repl_offset 之间的差距</li>
+<li>在网络断连阶段，主库可能会收到新的写操作命令，所以，一般来说，master_repl_offset 会大于 slave_repl_offset。此时，主库只用把 master_repl_offset 和 slave_repl_offset 之间的命令操作同步给从库就行</li>
+<li><img src="https://img.shiqi-lu.tech/20210131145707.png"></li>
+<li>注意，因为repl_backlog_buffer是一个环形缓冲区，所以在缓冲区写满后，主库会继续写入，此时，就会覆盖掉之前写入的操作。如果从库的读取速度比较慢，就有可能导致从库还未读取的操作被主库新写的操作覆盖了，这会导致主从库间的数据不一致</li>
+<li>这种情况可调整repl_backlog_size这个参数，这个参数和所需的缓冲空间大小有关。缓冲空间的计算公式是：缓冲空间大小=主库写入命令速度<em>操作大小-主从库间网络传输命令速度</em>操作大小</li>
+<li>在实际应用中，可把空间扩大一倍，即repl_backlog_size = 缓冲空间大小*2</li>
+</ul>
+</li>
+</ul>
+<h1 id="07丨哨兵机制：主库挂了，如何不间断服务？"><a href="#07丨哨兵机制：主库挂了，如何不间断服务？" class="headerlink" title="07丨哨兵机制：主库挂了，如何不间断服务？"></a>07丨哨兵机制：主库挂了，如何不间断服务？</h1><ul>
+<li>gt7:哨兵机制是什么？<ul>
+<li>哨兵其实是一个运行在特殊模式下的Redis进程，和主从库同时运行</li>
+<li>用于实现主从库自动切换，有效解决主从复制模式下故障转移的监控、选主、通知三个问题</li>
+</ul>
+</li>
+<li>gt7:哨兵机制的基本流程是怎样<ul>
+<li>监控：哨兵进程在运行时，周期性地给所有的主从库发送PING命令，检测它们是否仍在运行<ul>
+<li>如果从库没有在规定时间内响应哨兵的 PING 命令，哨兵就会把它标记为「下线状态」</li>
+<li>如果主库没有在规定时间内响应哨兵的 PING 命令，哨兵就会判定主库下线，然后开始自动切换主库的流程</li>
+</ul>
+</li>
+<li>选主：主库挂了后，哨兵就从多个从库里按照一定的规则选择一个从库实例作为新主库</li>
+<li>通知：哨兵会把新主库的连接信息发给其它从库，让它们执行 replicaof 命令，和新主库建立连接，并进行数据复制。同时，哨兵会把新主库的连接信息通知给客户端，让它们把请求操作发到新主库上</li>
+<li><img src="https://img.shiqi-lu.tech/20210703104615.png"></li>
+</ul>
+</li>
+<li>gt7:主观下线是什么？<ul>
+<li>哨兵进程会使用 PING 命令检测它自己和主、从库的网络连接情况，用来判断实例的状态。如果哨兵发现主库或从库对 PING 命令的响应超时了。哨兵就会先把它标记为「主观下线」</li>
+</ul>
+</li>
+<li>gt7:在什么情况下，哨兵会对主库故障产生误判<ul>
+<li>集群网络压力较大、网络拥塞，或是主库本身压力较大的情况下</li>
+</ul>
+</li>
+<li>gt7:什么时候会判断客观下线？<ul>
+<li>当有 N 个哨兵实例时，最好要有 N/2 + 1 个实例判断主库为「主观下线」，才能最终判定主库为「客观下线」</li>
+</ul>
+</li>
+<li>gt7:如何选定新主库？<ul>
+<li>筛选+打分</li>
+<li><img src="https://img.shiqi-lu.tech/20210704133431.png"></li>
+<li>筛选：检查从库当前在线状态和它之前的网络连接状态<ul>
+<li>通过配置项 down-after-miliseconds * 10，down-after-miliseconds 是认定主从库锻炼的最大连接超时时间。如果在该时间内，主从节点都没有通过网络联系上，可认为主从节点断连了。如果发生断连的次数超过 10 次，说明这个从库的网络状况不好，不适合作为新主库</li>
+</ul>
+</li>
+<li>打分：按照从库优先级、从库复制进度和从库ID号进行三轮打分<ul>
+<li>1.优先级最高的从库得分高：通过 slave-priority 给从库设置不同优先级</li>
+<li>2.和旧主库同步程度最接近的从库得分高：即找从库的slave_repl_offset最接近master_repl_offset的从库</li>
+<li>3.ID号小的从库得分高：</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="08-哨兵集群：哨兵挂了，主从库还能切换吗？"><a href="#08-哨兵集群：哨兵挂了，主从库还能切换吗？" class="headerlink" title="08 | 哨兵集群：哨兵挂了，主从库还能切换吗？"></a>08 | 哨兵集群：哨兵挂了，主从库还能切换吗？</h1><ul>
+<li>gt8:哨兵实例之间是怎样互相发现的？<ul>
+<li>基于 Redis 的 pub/sub (发布/订阅)机制</li>
+<li>哨兵只需和主库建立起连接，就可以在主库上发布信息了，如发布它自己的连接信息(IP和端口)。同时，也可从主库上订阅消息，获得其它哨兵发布的连接信息。</li>
+<li>当多个哨兵实例都在主库上做了发布和订阅操作后，它们之间就能知道彼此的 IP 地址和端口</li>
+<li>在主从集群中，不同哨兵通过主库上名为<code>__sentinel__:hello</code>的频道来相互发现，实现互相通信的</li>
+<li><img src="https://img.shiqi-lu.tech/20210704150035.png"></li>
+</ul>
+</li>
+<li>gt8:哨兵是如何知道从库的 IP 地址和端口的呢？<ul>
+<li>哨兵向主库发送 INFO 命令，主库就把从库列表返回给哨兵</li>
+<li>哨兵根据从库列表中的连接信息，和每个从库建立连接，并在这个连接上持续地对从库进行监控</li>
+<li><img src="https://img.shiqi-lu.tech/20210704150435.png"></li>
+</ul>
+</li>
+<li>gt8:客户端如何通过监控了解哨兵进行主从切换的过程？<ul>
+<li>客户端从哨兵的不同频道订阅消息</li>
+<li><img src="https://img.shiqi-lu.tech/20210704150703.png"></li>
+</ul>
+</li>
+<li>gt8:主库故障以后，哨兵集群有多个实例，怎么确定由哪个哨兵来进行实际的主从切换呢？</li>
+<li>gt8:判断主库「客观下线」的过程是怎样？<ul>
+<li>任何一个实例只要自身判断主库「主观下线」后，就会给其它实例发送 is-master-down-by-addr 命令</li>
+<li>其它实例会根据自己和主库的连接情况，响应Y(赞成)或N(反对)</li>
+<li><img src="https://img.shiqi-lu.tech/20210704151434.png"></li>
+<li>一个哨兵获得了仲裁所需的赞成票数后，就可标记主库为「客观下线」。<ul>
+<li>这个所需的赞成票数是通过哨兵配置文件中的 quorum 配置项设定的 quorum 配置项设定的</li>
+</ul>
+</li>
+<li>此时，这个哨兵可以再给其它哨兵发送命令，表明希望由自己来实现主从切换，并让所有其它哨兵投票，即「Leader 选举」</li>
+<li>在投票过程中，任何一个想成为 Leader 的哨兵，要满足两个条件：<ul>
+<li>1.拿到半数以上的赞成票</li>
+<li>2.拿到的赞成票数同时还需要大于等于哨兵配置文件中的 quorum 值</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="09-切片集群：数据增多了，是该加内存还是加实例？"><a href="#09-切片集群：数据增多了，是该加内存还是加实例？" class="headerlink" title="09 | 切片集群：数据增多了，是该加内存还是加实例？"></a>09 | 切片集群：数据增多了，是该加内存还是加实例？</h1><ul>
+<li>gt9:Redis Cluster 数据切片和实例的对应关系是怎样？<ul>
+<li>采用哈希槽(Hash Slot)，一个切片集群共有 16384 个哈希槽，每个键值对都会根据它的 key，映射到一个哈希槽中<ul>
+<li>映射过程为：</li>
+<li>1.根据键值对的 key，按照 CRC16 算法计算一个 16bit 的值</li>
+<li>2.用这个 16 bit 值对 16384 取模，每个模数代表一个相应编号的哈希槽</li>
+</ul>
+</li>
+<li>使用<code>cluster create</code>命令时，Redis 会自动把这些槽平均分布在集群实例上，可以使用 cluster meet 命令手动建立实例间的连接，形成集群，再使用 cluster addslots 命令，指定每个实例上的哈希槽个数。但手动分配时，需要把 16384 个槽都分配完</li>
+<li><img src="https://img.shiqi-lu.tech/20210704211831.png"></li>
+</ul>
+</li>
+<li>gt9:客户端如何定位数据在切片集群的哪个实例上？<ul>
+<li>Redis 实例会把自己的哈希槽信息发给和它相连接的其它实例，来完成哈希槽分配信息的扩散。当实例之间相互连接后，每个实例就有所有哈希槽的映射关系了</li>
+<li>客户端和集群实例建立连接后，实例会把哈希槽的分配信息发给客户端</li>
+<li>客户端收到哈希槽信息后，会把哈希槽信息缓存在本地</li>
+</ul>
+</li>
+<li>gt9:若集群中，实例和哈希槽的对应关系改变了，客户端如何感知？<ul>
+<li>Redis Cluster 提供了一种重定向机制，客户端把一个键值对的操作请求发给一个实例时，如果这个实例上并没有这个键值对映射的哈希槽，那么，这个实例就会给客户端返回 MOVED 命令响应结果，其中包含新实例的访问地址</li>
+<li><code>plain text GET hello:key (error) MOVED 13320 172.16.19.5:6379</code></li>
+</ul>
+</li>
+<li>gt9:如果数据只有一部分迁移到新实例，客户端请求重定向操作会怎样？<ul>
+<li>收到一条 ASK 报错信息</li>
+<li><code>plain text GET hello:key (error) ASK 13320 172.16.19.5:6379</code></li>
+<li>ASK 命令表示客户端请求的键值对所在的哈希槽 13320，在 172.16.19.5 这个实例上，但是这个哈希槽正在迁移</li>
+<li>此时客户端需要先给 172.16.19.5 这个实例发送一个 ASKING 命令，然后在发送 GET 命令以读取数据</li>
+<li>ASK 命令不会更新客户端缓存的哈希槽分配信息，即只让客户端能给新实例发送一次请求。MOVED 命令会更改本地缓存，让后续命令都发往新实例</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/redis-gt-2/" title="《Redis核心技术与实战》基础篇6-9">http://shiqi-lu.tech/redis-gt-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/redis-gt-1/" rel="prev" title="《Redis核心技术与实战》基础篇2-5">
+                  <i class="fa fa-chevron-left"></i> 《Redis核心技术与实战》基础篇2-5
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/arch-sj-1/" rel="next" title="《沈剑架构师训练营》第1章 - 技术选型">
+                  《沈剑架构师训练营》第1章 - 技术选型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/redis-gt-2/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
