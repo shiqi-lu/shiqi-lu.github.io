@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ch9.套接字的多种可选项，ch10.多进程服务器端，ch11.进程间通信">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《TCP&#x2F;IP网络编程》第9-11章学习笔记">
+<meta property="og:url" content="http://shiqi-lu.tech/tcpip-network-programming-3/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="ch9.套接字的多种可选项，ch10.多进程服务器端，ch11.进程间通信">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210623205237.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210625213956.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210217162244.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210626184246.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210626191027.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210626192821.png">
+<meta property="article:published_time" content="2021-07-04T09:44:38.000Z">
+<meta property="article:modified_time" content="2021-07-04T09:44:38.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210623205237.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/tcpip-network-programming-3/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《TCP/IP网络编程》第9-11章学习笔记 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：AI/CS/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-9-%E7%AB%A0-%E5%A5%97%E6%8E%A5%E5%AD%97%E7%9A%84%E5%A4%9A%E7%A7%8D%E5%8F%AF%E9%80%89%E9%A1%B9"><span class="nav-text">第 9 章 套接字的多种可选项</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#9-1-%E5%A5%97%E6%8E%A5%E5%AD%97%E5%8F%AF%E9%80%89%E9%A1%B9%E5%92%8C-I-O-%E7%BC%93%E5%86%B2%E5%A4%A7%E5%B0%8F"><span class="nav-text">9.1 套接字可选项和 I&#x2F;O 缓冲大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-2-SO-REUSEADDR"><span class="nav-text">9.2 SO_REUSEADDR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-3-TCP-NODELAY"><span class="nav-text">9.3 TCP_NODELAY</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-10-%E7%AB%A0-%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF"><span class="nav-text">第 10 章 多进程服务器端</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#10-1-%E8%BF%9B%E7%A8%8B%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%BA%94%E7%94%A8"><span class="nav-text">10.1 进程概念及应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-2-%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B"><span class="nav-text">10.2 进程和僵尸进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-3-%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86"><span class="nav-text">10.3 信号处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-4-%E5%9F%BA%E4%BA%8E%E5%A4%9A%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">10.4  基于多任务的并发服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-5-%E5%88%86%E5%89%B2TCP%E7%9A%84I-O%E7%A8%8B%E5%BA%8F"><span class="nav-text">10.5  分割TCP的I&#x2F;O程序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC11%E7%AB%A0-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-text">第11章  进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#11-1-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">11.1  进程间通信的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-2-%E8%BF%90%E7%94%A8%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-text">11.2  运用进程间通信</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916143240.jpg" title="WeChatOA → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916143240.jpg" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChatOA</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/tcpip-network-programming-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《TCP/IP网络编程》第9-11章学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-04 17:44:38" itemprop="dateCreated datePublished" datetime="2021-07-04T17:44:38+08:00">2021-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">网络</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/tcpip-network-programming-3/" class="post-meta-item leancloud_visitors" data-flag-title="《TCP/IP网络编程》第9-11章学习笔记" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/tcpip-network-programming-3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/tcpip-network-programming-3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>26k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>23 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">ch9.套接字的多种可选项，ch10.多进程服务器端，ch11.进程间通信</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>注：博主只关注编程实现的方面以及linux部分，部分网络原理讲解和windows实现部分跳过</p>
+<h1 id="第-9-章-套接字的多种可选项"><a href="#第-9-章-套接字的多种可选项" class="headerlink" title="第 9 章 套接字的多种可选项"></a>第 9 章 套接字的多种可选项</h1><h2 id="9-1-套接字可选项和-I-O-缓冲大小"><a href="#9-1-套接字可选项和-I-O-缓冲大小" class="headerlink" title="9.1 套接字可选项和 I/O 缓冲大小"></a>9.1 套接字可选项和 I/O 缓冲大小</h2><ul>
+<li>Q:套接字有哪些常用设置选项？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210623205237.png"></li>
+</ul>
+</li>
+<li>Q:用于读取套接字可选项的函数getsockopt<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getsockopt</span><span class="params">(<span class="keyword">int</span> sock, <span class="keyword">int</span> level, <span class="keyword">int</span> optname,</span></span></span><br><span class="line"><span class="function"><span class="params">               <span class="keyword">void</span> *optval, <span class="keyword">socklen_t</span> *optlen)</span></span>;</span><br><span class="line"><span class="comment">// sock：用于查看选项套接字文件描述符</span></span><br><span class="line"><span class="comment">// level：要查看的可选项的协议层</span></span><br><span class="line"><span class="comment">// optname：要查看的可选项名</span></span><br><span class="line"><span class="comment">// optval：保存查看结果的缓冲地址值</span></span><br><span class="line"><span class="comment">// optlen：向第四个参数optval传递的缓冲大小。调用函数后，</span></span><br><span class="line"><span class="comment">//        该变量中保存通过第四个参数返回的可选项信息的字节数</span></span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:用于更改套接字可选项的函数setsockopt<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sock, <span class="keyword">int</span> level, <span class="keyword">int</span> optname,</span></span></span><br><span class="line"><span class="function"><span class="params">               <span class="keyword">const</span> <span class="keyword">void</span> *optval, <span class="keyword">socklen_t</span> optlen)</span></span>;</span><br><span class="line"><span class="comment">// sock：用于更改选项套接字文件描述符</span></span><br><span class="line"><span class="comment">// level：要更改的可选项的协议层</span></span><br><span class="line"><span class="comment">// optname：要更改的可选项名</span></span><br><span class="line"><span class="comment">// optval：保存要更改的选项信息的缓冲地址值</span></span><br><span class="line"><span class="comment">// optlen：向第四个参数optval传递的可选项信息的字节数</span></span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:用协议层为SOL_SOCKET、名为SO_TYPE的可选项查看套接字类型(TCP或UDP)的程序示例sock_type.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> * message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> tcp_sock, udp_sock;</span><br><span class="line">    <span class="keyword">int</span> sock_type;</span><br><span class="line">    <span class="keyword">socklen_t</span> optlen;</span><br><span class="line">    <span class="keyword">int</span> state;</span><br><span class="line"></span><br><span class="line">    optlen = <span class="keyword">sizeof</span>(sock_type);</span><br><span class="line">    <span class="comment">// 分别生成TCP、UDP套接字</span></span><br><span class="line">    tcp_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    udp_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 输出创建TCP、UDP套接字时传入的SOCK_STREAM、SOCK_DGRAM</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;SOCK_STREAM: %d\n&quot;</span>, SOCK_STREAM);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;SOCK_DGRAM: %d\n&quot;</span>, SOCK_DGRAM);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取套接字类型信息</span></span><br><span class="line">    <span class="comment">// 如果是TCP套接字，将获得SOCK_STREAM常数值1</span></span><br><span class="line">    state = getsockopt(tcp_sock, SOL_SOCKET, SO_TYPE,</span><br><span class="line">                       (<span class="keyword">void</span>*)&amp;sock_type, &amp;optlen);</span><br><span class="line">    <span class="keyword">if</span> (state) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;getsockopt() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Socket type one: %d\n&quot;</span>, sock_type);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果是UDP套接字，则获得SOCK_DGRAM的常数值2</span></span><br><span class="line">    state = getsockopt(tcp_sock, SOL_SOCKET, SO_TYPE,</span><br><span class="line">                       (<span class="keyword">void</span>*)&amp;sock_type, &amp;optlen);</span><br><span class="line">    <span class="keyword">if</span> (state) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;getsockopt() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Socket type two: %d\n&quot;</span>, sock_type);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch09$ gcc sock_type.c -o socktype</span><br><span class="line">shiqi@pc:~/network/ch09$ ./socktype</span><br><span class="line">SOCK_STREAM: 1</span><br><span class="line">SOCK_DGRAM: 2</span><br><span class="line">Socket type one: 1</span><br><span class="line">Socket type two: 1</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:读取创建套接字时默认的I/O缓冲大小的实例程序get_buf.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> * message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="keyword">int</span> snd_buf, rcv_buf, state;</span><br><span class="line">    <span class="keyword">socklen_t</span> len;</span><br><span class="line"></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    len = <span class="keyword">sizeof</span>(snd_buf);</span><br><span class="line">    state = getsockopt(sock, SOL_SOCKET, SO_SNDBUF,</span><br><span class="line">                       (<span class="keyword">void</span> *)&amp;snd_buf, &amp;len);</span><br><span class="line">    <span class="keyword">if</span> (state) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;getsockopt() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Output buffer size: %d\n&quot;</span>, snd_buf);</span><br><span class="line"></span><br><span class="line">    len = <span class="keyword">sizeof</span>(rcv_buf);</span><br><span class="line">    state = getsockopt(sock, SOL_SOCKET, SO_RCVBUF,</span><br><span class="line">                       (<span class="keyword">void</span> *)&amp;rcv_buf, &amp;len);</span><br><span class="line">    <span class="keyword">if</span> (state) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;getsockopt() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Input buffer size: %d\n&quot;</span>, rcv_buf);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch09$ gcc get_buf.c -o getbuf</span><br><span class="line">shiqi@pc:~/network/ch09$ ./getbuf</span><br><span class="line">Output buffer size: 16384</span><br><span class="line">Input buffer size: 131072</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:更改套接字I/O缓冲大小的示例程序set_buf.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> * message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="keyword">int</span> snd_buf = <span class="number">1024</span>*<span class="number">3</span>, rcv_buf = <span class="number">1024</span>*<span class="number">3</span>;</span><br><span class="line">    <span class="keyword">int</span> state;</span><br><span class="line">    <span class="keyword">socklen_t</span> len;</span><br><span class="line"></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 更改 I/O 接收缓冲大小</span></span><br><span class="line">    state = setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (<span class="keyword">void</span> *)&amp;rcv_buf, <span class="keyword">sizeof</span>(rcv_buf));</span><br><span class="line">    <span class="keyword">if</span> (state) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;setockopt() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更改 I/O 发送缓冲大小</span></span><br><span class="line">    state = setsockopt(sock, SOL_SOCKET, SO_SNDBUF, (<span class="keyword">void</span> *)&amp;snd_buf, <span class="keyword">sizeof</span>(snd_buf));</span><br><span class="line">    <span class="keyword">if</span> (state) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;setockopt() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    len = <span class="keyword">sizeof</span>(snd_buf);</span><br><span class="line">    <span class="comment">// 读取 I/O 发送缓冲大小</span></span><br><span class="line">    state = getsockopt(sock, SOL_SOCKET, SO_SNDBUF,</span><br><span class="line">                       (<span class="keyword">void</span> *)&amp;snd_buf, &amp;len);</span><br><span class="line">    <span class="keyword">if</span> (state) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;getsockopt() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Output buffer size: %d\n&quot;</span>, snd_buf);</span><br><span class="line"></span><br><span class="line">    len = <span class="keyword">sizeof</span>(rcv_buf);</span><br><span class="line">    <span class="comment">// 读取 I/O 接收缓冲大小</span></span><br><span class="line">    state = getsockopt(sock, SOL_SOCKET, SO_RCVBUF,</span><br><span class="line">                       (<span class="keyword">void</span> *)&amp;rcv_buf, &amp;len);</span><br><span class="line">    <span class="keyword">if</span> (state) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;getsockopt() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Input buffer size: %d\n&quot;</span>, rcv_buf);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch09$ gcc set_buf.c -o setbuf</span><br><span class="line">shiqi@pc:~/network/ch09$ ./setbuf</span><br><span class="line">Output buffer size: 6144</span><br><span class="line">Input buffer size: 6144</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="9-2-SO-REUSEADDR"><a href="#9-2-SO-REUSEADDR" class="headerlink" title="9.2 SO_REUSEADDR"></a>9.2 SO_REUSEADDR</h2><ul>
+<li>Q:Time-wait状态下，服务器发生bind() error错误程序示例reuseadr_eserver.c<ul>
+<li>如果在服务器端和客户端已建立连接的状态下，向服务器端控制台输入CTRL+C，即强制关闭服务器端。相当于模拟服务器端向客户端发送 FIN 消息。以这种方式终止程序，服务端若用统一端口号重新运行，将输出「bind() error」，无法再次运行，这种情况下，大约过3分钟即可重新运行服务器端</li>
+<li>解决方案可在套接字的可选项中更改 SO_REUSEADDR 为1，可将 Time-wait 状态下的套接字端口号重新分配给新的套接字，把程序中的注释去掉即可<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TRUE 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FALSE 0</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> * message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="keyword">char</span> message[<span class="number">30</span>];</span><br><span class="line">    <span class="keyword">int</span> option, str_len;</span><br><span class="line">    <span class="keyword">socklen_t</span> optlen, clnt_adr_sz;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (serv_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    optlen = sizeof(option);</span></span><br><span class="line"><span class="comment">    option = TRUE;</span></span><br><span class="line"><span class="comment">    setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR,</span></span><br><span class="line"><span class="comment">               (void *)&amp;option, optlen);</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock,</span><br><span class="line">             (struct sockaddr *)&amp;serv_adr,</span><br><span class="line">             <span class="keyword">sizeof</span>(serv_adr))) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    clnt_adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">    clnt_sock = accept(serv_sock,</span><br><span class="line">                       (struct sockaddr *)&amp;clnt_adr,</span><br><span class="line">                       &amp;clnt_adr_sz);</span><br><span class="line">    <span class="keyword">while</span> ((str_len = read(clnt_sock,</span><br><span class="line">                           message,</span><br><span class="line">                           <span class="keyword">sizeof</span>(message))) != <span class="number">0</span>) &#123;</span><br><span class="line">        write(clnt_sock, message, str_len);</span><br><span class="line">        write(<span class="number">1</span>, message, str_len);</span><br><span class="line">    &#125;</span><br><span class="line">    close(clnt_sock);</span><br><span class="line">    close(serv_sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行，客户端使用第四章的客户端即可<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch09$ gcc reuseadr_eserver.c -o eserver</span><br><span class="line">shiqi@pc:~/network/ch09$ ./eserver 9898</span><br><span class="line">mmu</span><br><span class="line">^C</span><br><span class="line">shiqi@pc:~/network/ch09$ ./eserver 9898</span><br><span class="line">bind() error</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="9-3-TCP-NODELAY"><a href="#9-3-TCP-NODELAY" class="headerlink" title="9.3 TCP_NODELAY"></a>9.3 TCP_NODELAY</h2><ul>
+<li>Q:Naggle算法是什么？<ul>
+<li><img src="https://img.shiqi-lu.tech/20210625213956.png"></li>
+<li>TCP 套接字默认使用 Nagle 算法交换数据，只有收到前一数据的 ACK 消息时，Nagle算法才发送下一数据，在此之前会最大限度地进行缓冲</li>
+<li>如左图，为了发送字符串「Nagle」, 将其传递到输出缓冲。这时头字符「N」之前没有其他数据(没有需接收的ACK )，因此立即传输。之后开始等待字符「N」的ACK消息，等待过程中，剩下的「agle」填入输出缓冲。接下来，收到字符「N」的ACK消息后，将输出缓冲的「agle」装入一个数据包发送。也就是说，共需传递4个数据包以传输1个字符串</li>
+<li>右图是未使用Nagle算法时发送字符串「Nagle」的过程。假设字符「N」到「e」依序传到输出缓冲。此时的发送过程与ACK接收与否无关，因此数据到达输出缓冲后将立即被发送出去，可以看到，发送字符串「Nagle」时共需10个数据包</li>
+<li>由此可知，不使用Nagle算法将对网络流量(Traffic:指网络负载或混杂程度)产生负面影响。即使只传输1个字节的数据，其头信息都有可能是几十个字节。因此，为了提高网络传输效率，必须使用Nagle算法</li>
+</ul>
+</li>
+<li>Q:什么时候可以禁用 Nagle 算法？<ul>
+<li>网络流量并未受太大影响时，不使用Nagle算法要比使用它时传输速度快</li>
+<li>最典型的是「传输大文件数据」，将文件数据传入输出缓冲不会花太多时间，因此，即便不使用 Nagle 算法，也会在装满输出缓冲时传输数据包。这不仅不会增加数据包的数量，反而会在无需等待 ACK 的前提下连续传输，因此可以大大提高传输速度</li>
+<li>一般情况下，不使用 Nagle 算法可以提高传输速度。但如果无条件放弃使用 Nagle 算法，就会增加过多的网络流量，反而会影响传输。因此，未准确判断数据特性时不应禁用 Nagle 算法</li>
+</ul>
+</li>
+<li>Q:如何禁用 Nagle 算法<ul>
+<li>把套接字可选项 TCP_NODELAY 改为1(True)即可<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> opt_val = <span class="number">1</span>;</span><br><span class="line">setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,</span><br><span class="line">           (<span class="keyword">void</span> *)&amp;opt_val, <span class="keyword">sizeof</span>(opt_val));</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:如何查看 Nagle 算法的设置状态<ul>
+<li>查看 TCP_NODELAY 的值，如果正在使用 Nagle 算法，opt_val 变量中会保存 0，禁用保存 1<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> opt_val;</span><br><span class="line"><span class="keyword">socklen_t</span> opt_len;</span><br><span class="line">opt_len = <span class="keyword">sizeof</span>(opt_val);</span><br><span class="line">getsockopt(sock, IPPROTO_TCP, TCP_NODELAY,</span><br><span class="line">           (<span class="keyword">void</span> *)&amp;opt_val, &amp;opt_len);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-10-章-多进程服务器端"><a href="#第-10-章-多进程服务器端" class="headerlink" title="第 10 章 多进程服务器端"></a>第 10 章 多进程服务器端</h1><h2 id="10-1-进程概念及应用"><a href="#10-1-进程概念及应用" class="headerlink" title="10.1 进程概念及应用"></a>10.1 进程概念及应用</h2><ul>
+<li>Q:具有代表性的并发服务端的实现模型和方法<ul>
+<li>多进程服务器：通过创建多个进程提供服务</li>
+<li>多路复用服务器：通过捆绑并统一管理 I/O 对象提供服务</li>
+<li>多线程服务器：通过生成与客户端等量的线程提供服务</li>
+</ul>
+</li>
+<li>Q:通过fork函数创建进程<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回进程ID, 失败时返回 -1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>fork函数将创建调用的进程副本。即并非根据完全不同的程序创建进程，而是复制正在运行的、调用 fork 函数的进程。</li>
+<li>两个进程都将执行fork函数调用后的语句(准确说是fork函数返回后)。但因通过同一个进程、复制相同的内存空间，之后的程序流要根据fork函数的返回值加以区分</li>
+<li>父进程(Parent Process)，即原进程，为调用fork函数的主体：fork函数返回子进程ID</li>
+<li>子进程(Child Process)，即通过父进程调用 fork 函数复制出的进程：fork函数返回0</li>
+<li><img src="https://img.shiqi-lu.tech/20210217162244.png"></li>
+</ul>
+</li>
+<li>Q:fork函数示意fork.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> gval = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">int</span> lval = <span class="number">20</span>;</span><br><span class="line">    ++gval, lval += <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 子进程</span></span><br><span class="line">        gval += <span class="number">2</span>, lval += <span class="number">2</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 父进程</span></span><br><span class="line">        gval -= <span class="number">2</span>, lval -= <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Child Proc: [%d,%d] \n&quot;</span>, gval, lval);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Parent Proc: [%d,%d] \n&quot;</span>, gval, lval);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc fork.c -o fork</span><br><span class="line">shiqi@inspiron:~/network$ ./fork</span><br><span class="line">Parent Proc: [9,23]</span><br><span class="line">Child Proc: [13,27]</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="10-2-进程和僵尸进程"><a href="#10-2-进程和僵尸进程" class="headerlink" title="10.2 进程和僵尸进程"></a>10.2 进程和僵尸进程</h2><ul>
+<li>Q:产生僵尸进程的原因<ul>
+<li>调用fork函数产生子进程的两种终止方式<ul>
+<li>传递参数并调用exit函数</li>
+<li>main函数中执行return语句并返回值</li>
+</ul>
+</li>
+<li>向 exit 函数传递的参数值和 main 函数的 return 语句返回的值都回传递给操作系统。而操作系统不会销毁子进程，直到把这些值传递给产生该子进程的父进程，处在这种状态下的进程就是僵尸进程</li>
+<li>即将子进程变成僵尸进程的是操作系统</li>
+<li>僵尸进程被销毁的时机是，操作系统向创建子进程的父进程传递子进程的 exit 参数值或 return 语句的返回值后</li>
+<li>操作系统不会主动把这些值传递给父进程。只有父进程主动发起请求（函数调用）的时候，操作系统才会传递该值，即如果父进程未主动要求获得子进程结束状态值，操作系统将一直保存，并让子进程长时间处于僵尸进程状态</li>
+</ul>
+</li>
+<li>Q:创建僵尸进程示例zombie.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//子进程</span></span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;Hi, I am a child process&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 父进程</span></span><br><span class="line">        <span class="comment">// 输出子进程ID，可通过该值查看子进程状态（是否为僵尸进程）</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Child Process ID: %d \n&quot;</span>, pid);</span><br><span class="line">        <span class="comment">// 如果父进程终止，处于僵尸状态的子进程将同时销毁</span></span><br><span class="line">        <span class="comment">// 因此延缓父进程的执行以验证僵尸进程</span></span><br><span class="line">        sleep(<span class="number">30</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;End child proess&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;End parent process&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc zombie.c -o zombie</span><br><span class="line">shiqi@inspiron:~/network$ ./zombie</span><br><span class="line">Child Process ID: 24767</span><br><span class="line">Hi, I am a child process</span><br><span class="line">End child proess</span><br><span class="line">End parent process</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(base) shiqi@inspiron:~/network$ ps aux</span><br><span class="line">USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">shiqi    24766  0.0  0.0   4504   720 pts/1    S+   16:42   0:00 ./zombie</span><br><span class="line">shiqi    24767  0.0  0.0      0     0 pts/1    Z+   16:42   0:00 [zombie] &lt;defunct&gt;</span><br></pre></td></tr></table></figure></li>
+<li>Q:销毁僵尸进程 1：利用 wait 函数<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">wait</span><span class="params">(<span class="keyword">int</span> * statloc)</span></span>;</span><br><span class="line"><span class="comment">// 成功时返回终止的子进程 ID ,失败时返回 -1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>调用此函数时如果已有子进程终止，那么子进程终止时传递的返回值（exit 函数的参数返回值，main 函数的 return 返回值）将保存到该函数的参数所指的内存空间。但函数参数指向的单元中还包含其他信息，因此需要用下列宏进行分离<ul>
+<li>WIFEXITED：子进程正常终止时返回真</li>
+<li>WEXITSTATUS：返回子进程的返回值</li>
+</ul>
+</li>
+<li>即向 wait 函数传递变量 status 的地址时，调用 wait 函数后应编写如下代码：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">    <span class="comment">// 是正常终止的吗？</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Normal termination!&quot;</span>);</span><br><span class="line">    <span class="comment">// 获取返回值</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Child pass num: %d&quot;</span>, WEXITSTATUS(status));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>调用 wait 函数时，如果没有已经终止的子进程，那么程序将阻塞（Blocking）直到有子进程终止，因此要谨慎调用该函数</li>
+</ul>
+</li>
+<li>Q:wait函数示例wait.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line">    <span class="comment">// 这里的子进程将通过 return 语句终止</span></span><br><span class="line">    <span class="keyword">pid_t</span> pid = fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">3</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Child PID: %d \n&quot;</span>, pid);</span><br><span class="line">        <span class="comment">// 这里的子进程将通过 exit() 函数终止</span></span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">7</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Child PID: %d \n&quot;</span>, pid);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 之前终止的子进程相关信息将被保存到 status 中</span></span><br><span class="line">            <span class="comment">// 同时相关子进程被完全销毁</span></span><br><span class="line">            wait(&amp;status);</span><br><span class="line">            <span class="comment">// 通过 WIFEXITED 来验证子进程是否正常终止</span></span><br><span class="line">            <span class="comment">// 如果正常终止，则调用 WEXITSTATUS 宏输出子进程返回值</span></span><br><span class="line">            <span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Child send one: %d \n&quot;</span>, WEXITSTATUS(status));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 因为之前创建了两个进程，所以再次调用 wait 函数和宏</span></span><br><span class="line">            wait(&amp;status);</span><br><span class="line">            <span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Child send two: %d \n&quot;</span>, WEXITSTATUS(status));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 暂停父进程，此时可查看子进程的状态</span></span><br><span class="line">            sleep(<span class="number">30</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shiqi@inspiron:~/network$ gcc wait.c -o wait</span><br><span class="line">shiqi@inspiron:~/network$ ./wait</span><br><span class="line">Child PID: 24876</span><br><span class="line">Child PID: 24877</span><br><span class="line">Child send one: 3</span><br><span class="line">Child send two: 7</span><br></pre></td></tr></table></figure></li>
+<li>Q:销毁僵尸进程 2：使用 waitpid 函数<ul>
+<li>waitpid可以防止阻塞<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">waitpid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> * statloc, <span class="keyword">int</span> options)</span></span>;</span><br><span class="line"><span class="comment">// pid: 等待终止的目标子进程的ID，若传递-1，则与wait函数相同</span></span><br><span class="line"><span class="comment">//      可以等待任意子进程终止</span></span><br><span class="line"><span class="comment">// statloc: 与wait函数的statloc参数一样</span></span><br><span class="line"><span class="comment">// options: 传递头文件 sys/wait.h 中声明的常量WNOHANG,</span></span><br><span class="line"><span class="comment">//          即使没有终止的子进程也不会进入阻塞状态，</span></span><br><span class="line"><span class="comment">//          而是返回0并退出函数</span></span><br><span class="line"><span class="comment">// 成功时返回终止的子进程ID 或 0 ，失败时返回 -1</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:waitpid函数示例waitpid.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line">    <span class="comment">// 这里的子进程将通过 return 语句终止</span></span><br><span class="line">    <span class="keyword">pid_t</span> pid = fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">3</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Child PID: %d \n&quot;</span>, pid);</span><br><span class="line">        <span class="comment">// 这里的子进程将通过 exit() 函数终止</span></span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">7</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Child PID: %d \n&quot;</span>, pid);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 之前终止的子进程相关信息将被保存到 status 中</span></span><br><span class="line">            <span class="comment">// 同时相关子进程被完全销毁</span></span><br><span class="line">            wait(&amp;status);</span><br><span class="line">            <span class="comment">// 通过 WIFEXITED 来验证子进程是否正常终止</span></span><br><span class="line">            <span class="comment">// 如果正常终止，则调用 WEXITSTATUS 宏输出子进程返回值</span></span><br><span class="line">            <span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Child send one: %d \n&quot;</span>, WEXITSTATUS(status));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 因为之前创建了两个进程，所以再次调用 wait 函数和宏</span></span><br><span class="line">            wait(&amp;status);</span><br><span class="line">            <span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Child send two: %d \n&quot;</span>, WEXITSTATUS(status));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 暂停父进程，此时可查看子进程的状态</span></span><br><span class="line">            sleep(<span class="number">30</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network$ gcc waitpid.c -o waitpid</span><br><span class="line">shiqi@pc:~/network$ ./waitpid</span><br><span class="line">sleep 3 sec.</span><br><span class="line">sleep 3 sec.</span><br><span class="line">sleep 3 sec.</span><br><span class="line">sleep 3 sec.</span><br><span class="line">sleep 3 sec.</span><br><span class="line">Child send 24</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<h2 id="10-3-信号处理"><a href="#10-3-信号处理" class="headerlink" title="10.3 信号处理"></a>10.3 信号处理</h2><ul>
+<li>Q:信号注册函数原型signal<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="keyword">void</span> (*signal(<span class="keyword">int</span> signo, <span class="keyword">void</span> (*func)(<span class="keyword">int</span>)))(<span class="keyword">int</span>);</span><br><span class="line"><span class="comment">// 为了在产生信号时调用，返回之前注册的函数指针</span></span><br><span class="line"><span class="comment">// 函数名: signal</span></span><br><span class="line"><span class="comment">// 参数: int signo, void(*func)(int)</span></span><br><span class="line"><span class="comment">// 返回类型: 参数为int型，返回void型函数指针```</span></span><br><span class="line">    - 第一个参数是特殊情况信息，第二个参数为特殊情况下将要调用的函数的地址值(指针)。发生第一个参数代表的情况时，调用第二个参数所指的函数</span><br><span class="line">    - 可以在 signal 函数中注册的部分特殊情况和对应的函数</span><br><span class="line">        - SIGALRM：已到通过调用 alarm 函数注册时间</span><br><span class="line">        - SIGINT：输入 ctrl+c</span><br><span class="line">        - SIGCHLD：子进程终止</span><br><span class="line">- Q:alarm函数原型</span><br><span class="line">```c</span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">alarm</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> seconds)</span></span>;</span><br><span class="line"><span class="comment">// 返回 0 或以秒为单位的距 SIGALRM 信号发生所剩时间</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果调用该函数的同时向它传递一个正整形参数，相应时间后(以秒为单位)将产生 SIGALRM 信号</li>
+<li>若向该函数传递为 0 ，则之前对 SIGALRM 信号的预约将取消</li>
+<li>如果通过该函数预约信号后未指定该信号对应的处理函数，则（通过调用 signal 函数）终止进程，不做任何处理</li>
+</ul>
+</li>
+<li>Q:信号处理示例signal.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 信号处理器(Handler)</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">timeout</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sig == SIGALRM) &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;Time out!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 每隔2秒重复产生 SIGALRM 信号</span></span><br><span class="line">    alarm(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">keycontrol</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sig == SIGINT) &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;CTRL+C pressed&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="comment">// 注册 SIGALRM、SIGINT 信号及相应处理器</span></span><br><span class="line">    signal(SIGALRM, timeout);</span><br><span class="line">    signal(SIGINT, keycontrol);</span><br><span class="line">    alarm(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">3</span>; ++i) &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;wait...&quot;</span>);</span><br><span class="line">        sleep(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>产生信号时，将唤醒由于调用 sleep 函数而进入阻塞状态的进程，进程一旦被唤醒，就不会再进入睡眠状态，即使还未到 sleep 函数中规定的时间也是如此</li>
+<li>编译运行，第一次运行是没有任何输入的运行结果，第二次在运行过程中输入CTRL+C<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch10$ gcc signal.c -o signal</span><br><span class="line">shiqi@pc:~/network/ch10$ ./signal</span><br><span class="line">wait...</span><br><span class="line">Time out!</span><br><span class="line">wait...</span><br><span class="line">Time out!</span><br><span class="line">wait...</span><br><span class="line">Time out!</span><br><span class="line">shiqi@pc:~/network/ch10$ ./signal</span><br><span class="line">wait...</span><br><span class="line">^CCTRL+C pressed</span><br><span class="line">wait...</span><br><span class="line">^CCTRL+C pressed</span><br><span class="line">wait...</span><br><span class="line">Time out!</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:信号处理函数sigaction<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigaction</span><span class="params">(<span class="keyword">int</span> signo, <span class="keyword">const</span> struct sigaction * act,</span></span></span><br><span class="line"><span class="function"><span class="params">              struct sigaction * oldact)</span></span>;</span><br><span class="line"><span class="comment">// signo：传递信号信息，同signal函数</span></span><br><span class="line"><span class="comment">// act：对应于第一个参数的信号处理函数（信号处理器）信息</span></span><br><span class="line"><span class="comment">// oldact：通过此参数获取之前注册的信号处理函数指针，若不需要则传递0</span></span><br><span class="line"><span class="comment">// 成功时返回 0 ，失败时返回 -1```</span></span><br><span class="line">    - 需要声明并初始化 sigaction 结构体变量来调用 sigaction</span><br><span class="line">    - ```c</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> &#123;</span></span><br><span class="line">    <span class="keyword">void</span> (*sa_handler)(<span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">sigset_t</span> sa_mask;</span><br><span class="line">    <span class="keyword">int</span> sa_flags;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// sa_handler：保存信号处理函数的指针值</span></span><br><span class="line"><span class="comment">// sa_mask和sa_flags：用于指定信号相关的选项和特性，</span></span><br><span class="line"><span class="comment">//                   所有位均初始化为0即可</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:sigaction函数的程序示例<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">timeout</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sig == SIGALRM) &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;Time out!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    alarm(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为了注册信号处理函数，声明 sigaction 结构体变量</span></span><br><span class="line">    <span class="comment">// 并在 sa_handler 成员中保存函数指针值</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">act</span>;</span></span><br><span class="line">    act.sa_handler = timeout;</span><br><span class="line">    <span class="comment">// sigemptyset 函数将 sa_mask 成员的所有位初始化为0</span></span><br><span class="line">    sigemptyset(&amp;act.sa_mask);</span><br><span class="line">    act.sa_flags = <span class="number">0</span>;</span><br><span class="line">    sigaction(SIGALRM, &amp;act, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注册 SIGALRM 信号的处理器。</span></span><br><span class="line">    <span class="comment">// 调用 alarm 函数预约2秒后发生 SIGALRM 信号</span></span><br><span class="line">    alarm(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; ++i) &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;wait...&quot;</span>);</span><br><span class="line">        sleep(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch10$ gcc sigaction.c -o sigaction</span><br><span class="line">shiqi@pc:~/network/ch10$ ./sigaction</span><br><span class="line">wait...</span><br><span class="line">Time out!</span><br><span class="line">wait...</span><br><span class="line">Time out!</span><br><span class="line">wait...</span><br><span class="line">Time out!</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:使用信号处理技术消灭僵尸进程的示例程序remove_zombie.c<ul>
+<li>使用子进程终止时会向父进程产生SIGCHLD信号的特性<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">read_childproc</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line">    <span class="keyword">pid_t</span> id = waitpid(<span class="number">-1</span>, &amp;status, WNOHANG);</span><br><span class="line">    <span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Removed proc id: %d \n&quot;</span>, id);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Child send: %d \n&quot;</span>, WEXITSTATUS(status));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">act</span>;</span></span><br><span class="line">    act.sa_handler = read_childproc;</span><br><span class="line">    sigemptyset(&amp;act.sa_mask);</span><br><span class="line">    act.sa_flags = <span class="number">0</span>;</span><br><span class="line">    sigaction(SIGCHLD, &amp;act, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 子进程执行区域</span></span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;Hi, I&#x27;m child process&quot;</span>);</span><br><span class="line">        sleep(<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">12</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 父进程执行区域</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Child proc id: %d\n&quot;</span>, pid);</span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 另一子程序执行区域</span></span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;Hi! I&#x27;m child process2&quot;</span>);</span><br><span class="line">            sleep(<span class="number">5</span>);</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">24</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> i;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Child proc id: %d\n&quot;</span>, pid);</span><br><span class="line">            <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">                <span class="built_in">puts</span>(<span class="string">&quot;wait...&quot;</span>);</span><br><span class="line">                sleep(<span class="number">5</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch10$ gcc remove_zombie.c -o zombie</span><br><span class="line">shiqi@pc:~/network/ch10$ ./zombie</span><br><span class="line">Child proc id: 24086</span><br><span class="line">Hi, I&#x27;m child process</span><br><span class="line">Child proc id: 24087</span><br><span class="line">wait...</span><br><span class="line">Hi! I&#x27;m child process2</span><br><span class="line">wait...</span><br><span class="line">Removed proc id: 24087</span><br><span class="line">Child send: 24</span><br><span class="line">wait...</span><br><span class="line">Removed proc id: 24086</span><br><span class="line">Child send: 12</span><br><span class="line">wait...</span><br><span class="line">wait...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="10-4-基于多任务的并发服务器"><a href="#10-4-基于多任务的并发服务器" class="headerlink" title="10.4  基于多任务的并发服务器"></a>10.4  基于多任务的并发服务器</h2><ul>
+<li>Q:基于进程的并发服务器模型是怎样的？实现步骤是怎样<ul>
+<li><img src="https://img.shiqi-lu.tech/20210626184246.png"></li>
+<li>每当有客户端请求服务(连接请求)时，回声服务器端都创建子进程以提供服务</li>
+<li>1.回声服务器端(父进程)通过调用 accept 函数受理连接请求</li>
+<li>2.此时获取的套接字文件描述符创建并传递给子进程</li>
+<li>3.子进程利用传递来的文件描述符提供服务</li>
+</ul>
+</li>
+<li>Q:实现并发服务器的基于多进程实现的回声服务器echo_mpserv.c<ul>
+<li>注意，在调用 fork 函数后，要将无关的套接字文件描述符关掉</li>
+<li><img src="https://img.shiqi-lu.tech/20210626191027.png"><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">read_childproc</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line">    pid = waitpid(<span class="number">-1</span>, &amp;status, WNOHANG);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;removed proc id: %d \n&quot;</span>, pid);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">act</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> adr_sz;</span><br><span class="line">    <span class="keyword">int</span> str_len, state;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage: %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 防止产生僵尸进程</span></span><br><span class="line">    act.sa_handler = read_childproc;</span><br><span class="line">    sigemptyset(&amp;act.sa_mask);</span><br><span class="line">    act.sa_flags = <span class="number">0</span>;</span><br><span class="line">    state = sigaction(SIGCHLD, &amp;act, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock,</span><br><span class="line">             (struct sockaddr *)&amp;serv_adr,</span><br><span class="line">             <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        adr_sz  = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">        <span class="comment">// 这个套接字fork之后，父子进程均会有</span></span><br><span class="line">        clnt_sock = accept(serv_sock,</span><br><span class="line">                           (struct sockaddr *)&amp;clnt_adr,</span><br><span class="line">                           &amp;adr_sz);</span><br><span class="line">        <span class="keyword">if</span> (clnt_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;new client connected...&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span> (pid == <span class="number">-1</span>) &#123;</span><br><span class="line">            close(clnt_sock);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 子进程运行区域</span></span><br><span class="line">            <span class="comment">// 服务器套接字文件描述符同样也传递到子进程中</span></span><br><span class="line">            close(serv_sock);</span><br><span class="line">            <span class="keyword">while</span> ((str_len = read(clnt_sock, buf, BUF_SIZE)) != <span class="number">0</span>) &#123;</span><br><span class="line">                write(clnt_sock, buf, str_len);</span><br><span class="line">            &#125;</span><br><span class="line">            close(clnt_sock);</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;client disconnected...&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            close(clnt_sock);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    close(serv_sock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行</li>
+<li>服务端<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch10$ gcc echo_mpserv.c -o mpserv</span><br><span class="line">shiqi@pc:~/network/ch10$ ./mpserv 9190</span><br><span class="line">new client connected...</span><br><span class="line">new client connected...</span><br><span class="line">client disconnected...</span><br><span class="line">removed proc id: 24342</span><br><span class="line">client disconnected...</span><br><span class="line">removed proc id: 24227</span><br></pre></td></tr></table></figure></li>
+<li>客户端1<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch04$ ./eclient 127.0.0.1 9190</span><br><span class="line">Connceted........</span><br><span class="line">Input message(Q to quit): zz</span><br><span class="line">Message from server: zz</span><br><span class="line">Input message(Q to quit): ad</span><br><span class="line">Message from server: ad</span><br><span class="line">Input message(Q to quit): q</span><br></pre></td></tr></table></figure></li>
+<li>客户端2<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch04$ ./eclient 127.0.0.1 9190</span><br><span class="line">Connceted........</span><br><span class="line">Input message(Q to quit): zmmz</span><br><span class="line">Message from server: zmmz</span><br><span class="line">Input message(Q to quit): q</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="10-5-分割TCP的I-O程序"><a href="#10-5-分割TCP的I-O程序" class="headerlink" title="10.5  分割TCP的I/O程序"></a>10.5  分割TCP的I/O程序</h2><ul>
+<li>Q:分割I/O程序是什么？<ul>
+<li>分割数据收发过程，分割后，不同进程分别负责输入和输出</li>
+<li>优点：</li>
+<li>1.程序的实现更简单</li>
+<li>2.提高频繁交换数据的程序性能</li>
+<li><img src="https://img.shiqi-lu.tech/20210626192821.png"></li>
+<li>图10-6左侧演示的是之前的回声客户端数据交换方式，右侧演示的是分割IO后的客户端数据传输方式。服务器端相同，不同的是客户端区域。分割I/O后的客户端发送数据时不必考虑接收数据的情况，因此可以连续发送数据，由此提高同一时间内传输的数据量。这种差异在网速较慢时尤为明显</li>
+</ul>
+</li>
+<li>Q:回声客户端的I/O程序分割示例echo_mpclient.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">read_routine</span><span class="params">(<span class="keyword">int</span> sock, <span class="keyword">char</span> *buf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> str_len = read(sock, buf, BUF_SIZE);</span><br><span class="line">        <span class="keyword">if</span> (str_len == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        buf[str_len] = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Message from server: %s&quot;</span>, buf);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">write_routine</span><span class="params">(<span class="keyword">int</span> sock, <span class="keyword">char</span> *buf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        fgets(buf, BUF_SIZE, <span class="built_in">stdin</span>);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(buf, <span class="string">&quot;q\n&quot;</span>) || !<span class="built_in">strcmp</span>(buf, <span class="string">&quot;Q\n&quot;</span>)) &#123;</span><br><span class="line">            <span class="comment">// 调用shutdown函数向服务器端传递EOF</span></span><br><span class="line">            <span class="comment">// return后即可调用主函数的close函数传递EOF</span></span><br><span class="line">            <span class="comment">// 因为主函数的fork函数复制了文件描述符，</span></span><br><span class="line">            <span class="comment">// 无法通过1次close函数调用传递EOF，</span></span><br><span class="line">            <span class="comment">// 因此需要通过shutdown函数另外传递</span></span><br><span class="line">            shutdown(sock, SHUT_WR);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        write(sock, buf, <span class="built_in">strlen</span>(buf));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;IP&gt; &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (connect(sock,</span><br><span class="line">                (struct sockaddr *)&amp;serv_adr,</span><br><span class="line">                <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;connect() error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        write_routine(sock, buf);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        read_routine(sock, buf);</span><br><span class="line">    &#125;</span><br><span class="line">    close(sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行，服务端可用本章的echo_mpserv.c<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch10$ gcc echo_mpclient.c -o mpclient</span><br><span class="line">shiqi@pc:~/network/ch10$ ./mpclient 127.0.0.1 9190</span><br><span class="line">px</span><br><span class="line">Message from server: px</span><br><span class="line">rt</span><br><span class="line">Message from server: rt</span><br><span class="line">q</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第11章-进程间通信"><a href="#第11章-进程间通信" class="headerlink" title="第11章  进程间通信"></a>第11章  进程间通信</h1><h2 id="11-1-进程间通信的基本概念"><a href="#11-1-进程间通信的基本概念" class="headerlink" title="11.1  进程间通信的基本概念"></a>11.1  进程间通信的基本概念</h2><ul>
+<li>Q:创建管道的pipe函数原型<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pipe</span><span class="params">(<span class="keyword">int</span> filedes[<span class="number">2</span>])</span></span>;</span><br><span class="line"><span class="comment">// filedes[0]：通过管道接收数据时使用的文件描述符，即管道出口</span></span><br><span class="line"><span class="comment">// filedes[1]：通过管道传输数据时使用的文件描述符，即管道入口</span></span><br><span class="line"><span class="comment">// 成功时返回0，失败时返回-1</span></span><br></pre></td></tr></table></figure></li>
+<li>Q:pipe函数的示例程序pipe1.c，父进程与子进程进行数据交换<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fds[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">char</span> str[] = <span class="string">&quot;Who are you?&quot;</span>;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line"></span><br><span class="line">    pipe(fds);</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        write(fds[<span class="number">1</span>], str, <span class="keyword">sizeof</span>(str));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        read(fds[<span class="number">0</span>], buf, BUF_SIZE);</span><br><span class="line">        <span class="built_in">puts</span>(buf);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch11$ gcc pipe1.c -o pipe</span><br><span class="line">shiqi@pc:~/network/ch11$ ./pipe</span><br><span class="line">Who are you?```</span><br><span class="line">- Q:2个进程使用1个管道进行双向数据交换的程序示例pipe2.c</span><br><span class="line">    - ```c</span><br><span class="line"><span class="meta">#</span><span class="bash">include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">include &lt;unistd.h&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">define BUF_SIZE 30</span></span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    int fds[2];</span><br><span class="line">    char str1[] = &quot;Who are you?&quot;;</span><br><span class="line">    char str2[] = &quot;Thank you for your message&quot;;</span><br><span class="line">    char buf[BUF_SIZE];</span><br><span class="line">    pid_t pid;</span><br><span class="line"></span><br><span class="line">    pipe(fds);</span><br><span class="line">    pid = fork();</span><br><span class="line">    if (pid == 0) &#123;</span><br><span class="line">        write(fds[1], str1, sizeof(str1));</span><br><span class="line">        // 这个不能注释，注释后，下一个read会把管道内数据取走</span><br><span class="line">        // 而父进程则阻塞在read函数中无限等待</span><br><span class="line">        sleep(2);</span><br><span class="line">        read(fds[0], buf, BUF_SIZE);</span><br><span class="line">        printf(&quot;Child proc output: %s\n&quot;, buf);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        read(fds[0], buf, BUF_SIZE);</span><br><span class="line">        printf(&quot;Parent proc output: %s\n&quot;, buf);</span><br><span class="line">        write(fds[1], str2, sizeof(str2));</span><br><span class="line">        sleep(3);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch11$ gcc pipe2.c -o pipe2</span><br><span class="line">shiqi@pc:~/network/ch11$ ./pipe2</span><br><span class="line">Parent proc output: Who are you?</span><br><span class="line">Child proc output: Thank you for your message</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:2个进程使用2个管道进行双向数据交换的程序示例pipe3.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fds1[<span class="number">2</span>], fds2[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">char</span> str1[] = <span class="string">&quot;Who are you?&quot;</span>;</span><br><span class="line">    <span class="keyword">char</span> str2[] = <span class="string">&quot;Thank you for your message&quot;</span>;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line"></span><br><span class="line">    pipe(fds1);</span><br><span class="line">    pipe(fds2);</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        write(fds1[<span class="number">1</span>], str1, <span class="keyword">sizeof</span>(str1));</span><br><span class="line">        read(fds2[<span class="number">0</span>], buf, BUF_SIZE);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Child proc output: %s\n&quot;</span>, buf);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        read(fds1[<span class="number">0</span>], buf, BUF_SIZE);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Parent proc output: %s\n&quot;</span>, buf);</span><br><span class="line">        write(fds2[<span class="number">1</span>], str2, <span class="keyword">sizeof</span>(str2));</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch11$ gcc pipe3.c -o pipe3</span><br><span class="line">shiqi@pc:~/network/ch11$ ./pipe3</span><br><span class="line">Parent proc output: Who are you?</span><br><span class="line">Child proc output: Thank you for your message</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="11-2-运用进程间通信"><a href="#11-2-运用进程间通信" class="headerlink" title="11.2  运用进程间通信"></a>11.2  运用进程间通信</h2><ul>
+<li>Q:使用多进程的回声服务器端，并将回声客户端传输的字符串按序保持到文件中的程序示例echo_storeserv.c<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">error_handling</span><span class="params">(<span class="keyword">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">read_childproc</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line">    pid = waitpid(<span class="number">-1</span>, &amp;status, WNOHANG);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;removed proc id: %d \n&quot;</span>, pid);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="keyword">int</span> fds[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">act</span>;</span></span><br><span class="line">    <span class="keyword">socklen_t</span> adr_sz;</span><br><span class="line">    <span class="keyword">int</span> str_len, state;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    act.sa_handler = read_childproc;</span><br><span class="line">    sigemptyset(&amp;act.sa_mask);</span><br><span class="line">    act.sa_flags = <span class="number">0</span>;</span><br><span class="line">    state = sigaction(SIGCHLD, &amp;act, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock,</span><br><span class="line">             (struct sockaddr *)&amp;serv_adr,</span><br><span class="line">             <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    pipe(fds);</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        FILE * fp = fopen(<span class="string">&quot;echomsg.txt&quot;</span>, <span class="string">&quot;wt&quot;</span>);</span><br><span class="line">        <span class="keyword">char</span> msgbuf[BUF_SIZE];</span><br><span class="line">        <span class="keyword">int</span> i, len;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i) &#123;</span><br><span class="line">            len = read(fds[<span class="number">0</span>], msgbuf, BUF_SIZE);</span><br><span class="line">            fwrite((<span class="keyword">void</span> *)msgbuf, <span class="number">1</span>, len, fp);</span><br><span class="line">        &#125;</span><br><span class="line">        fclose(fp);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">        clnt_sock = accept(serv_sock,</span><br><span class="line">                           (struct sockaddr *)&amp;clnt_adr,</span><br><span class="line">                           &amp;adr_sz);</span><br><span class="line">        <span class="keyword">if</span> (clnt_sock == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;new client connected...&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">            close(serv_sock);</span><br><span class="line">            <span class="keyword">while</span> ((str_len = read(clnt_sock, buf, BUF_SIZE)) != <span class="number">0</span>) &#123;</span><br><span class="line">                write(clnt_sock, buf, str_len);</span><br><span class="line">                write(fds[<span class="number">1</span>], buf, str_len);</span><br><span class="line">            &#125;</span><br><span class="line">            close(clnt_sock);</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;client disconnected...&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            close(clnt_sock);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编译运行<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">shiqi@pc:~/network/ch11$ gcc echo_storeserv.c -o serv</span><br><span class="line">shiqi@pc:~/network/ch11$ ./serv 9190</span><br><span class="line">new client connected...</span><br><span class="line">client disconnected...</span><br><span class="line">removed proc id: 25075</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/tcpip-network-programming-3/" title="《TCP&#x2F;IP网络编程》第9-11章学习笔记">http://shiqi-lu.tech/tcpip-network-programming-3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/tcpip-network-programming-2/" rel="prev" title="《TCP/IP网络编程》第6-8章学习笔记">
+                  <i class="fa fa-chevron-left"></i> 《TCP/IP网络编程》第6-8章学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/arch-sj-1/" rel="next" title="《沈剑架构师训练营》第1章 - 技术选型">
+                  《沈剑架构师训练营》第1章 - 技术选型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/tcpip-network-programming-3/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
