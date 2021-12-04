@@ -1,113 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>《秒杀系统架构设计》学习</title>
-    <url>/arch-miao-sha/</url>
-    <content><![CDATA[<ul>
-<li>QQ 业务特点：细粒度数据查询<ul>
-<li>即使并发量很大，锁冲突其实不大，数据水平切分后，因为带上了 uid，gid 等字段，用户层面几乎没有锁冲突</li>
-</ul>
-</li>
-<li>weibo业务特点:读多写少，有少量读写锁冲突<ul>
-<li>微博的核心业务是feed流:<ul>
-<li>发消息，写操作</li>
-<li>刷消息，读操作</li>
-</ul>
-</li>
-<li>微博业务显然是读多写少的，在用户刷消息时，自己feed流里的消息，是由别人发出的。</li>
-</ul>
-</li>
-<li>秒杀业务特点:数据量少，写多读多,极大锁冲突<ul>
-<li>12306的核心业务是:<ul>
-<li>查票，读操作</li>
-<li>买票，写操作</li>
-</ul>
-</li>
-<li>stock(id, num) //核心数据结构：某一列车有多少张余票</li>
-<li>在用户量很大，并发量很大时，有极大的锁冲突。</li>
-</ul>
-</li>
-<li>方向上“降低数据层锁冲突”，具体两大要点:<ul>
-<li>(1)降读：用缓存</li>
-<li>(2)降写：把请求拦截在系统上游</li>
-</ul>
-</li>
-<li>用缓存降低数据层读请求，不展开<ul>
-<li>秒杀买票，这是一个典型的读多写少的业务场景:<ul>
-<li>车次查询，读，量大</li>
-<li>余票查询，读，量大</li>
-<li>下单和支付，写，量小</li>
-</ul>
-</li>
-<li>一趟火车2000张票，200w个 人同时来买，最多2000个人下单成功，其他人都是查询库存，写.</li>
-<li>比例只有0.1%，读比例占99.9%，非常适合使用缓存来优化。</li>
-</ul>
-</li>
-<li>如何将请求，拦截在系统上游?<ul>
-<li>先看看上下游分层架构，秒杀业务，常见的系统分层架构如何?<ul>
-<li>浏览器-&gt;站点-&gt;服务-&gt;数据</li>
-</ul>
-</li>
-<li>第一层，端上的请求拦截(浏览器/APP)，可以做一些限速策略，限制用户在 X 秒内只能做一次请求</li>
-<li>第二层，站点层的请求拦截，使用 session，用户 uid 或 token 等识别同一用户，进行限速拦截，高级一点可以返回页面缓存，即返回上一次的内容</li>
-<li>第三层，服务层的请求拦截，知道了业务层的抗压能力和库存，可以根据此进行限速，使用消息队列或内存中的队列</li>
-<li>第四层，数据库闲庭信步，基本不需要做什么，因为到这里访问量应该很低了</li>
-</ul>
-</li>
-<li>(1)按照上面的优化方案,其实压力最大的反而是站点层，假设真实有效的请求数是每秒100w，这部分的压力怎么处理?<ul>
-<li>站点层的扩容非常容易，测算出机器的处理能力，直接加机器即可，此外其实不需要所有的请求都处理返回，可以服务降级，把大部分的请求失败掉即可，保护系统是最优先原则</li>
-</ul>
-</li>
-<li>(2)站点层限速，是个每个uid的请求计数放到redis里么?吞吐量很大情况下，高并发访问redis，网络带宽会不会成为瓶颈?<ul>
-<li>redis 可以做水平切分，如果担心网络带宽，可以使用内存队列</li>
-</ul>
-</li>
-<li>任何脱离业务的架构设计都是耍流氓，产品+技术，不可分割，产品上，能够如何“优化”，以简化系统架构设计呢?<ul>
-<li>case 1 下单与支付分离<ul>
-<li>一般来说，下单和支付放在同一个流程里，能够提高转化率。</li>
-<li>对于秒杀场景，产品上，下单流程和支付流程异步，放在两个环节里，能够降低数据库写压力。</li>
-<li>12306， 下单成功后，系统占住库存，45分钟之内支付即可。</li>
-</ul>
-</li>
-<li>case 2 分城市用户规则差异化<ul>
-<li>一般来说，所有用户规则相同，体验会更好。</li>
-<li>对于秒杀场景，产品上，不同地域分时售票，虽然不是所有用户规则相同，但能够极大降低系统压力。</li>
-<li>北京9:00开始售票，上海9:30开始售票，广州XX开始售票，能够分担系统压力。</li>
-</ul>
-</li>
-<li>case 3 按钮只能点一次<ul>
-<li>秒杀场景，由于短时间内并发较大，系统返回较慢，用户心情十分焦急，可能会频繁点击按钮，对系统造成压力。</li>
-<li>产品上可以优化为，一旦点击，不管系统是否返回，按钮立刻置灰，不给用户机会频繁点击。</li>
-</ul>
-</li>
-<li>case 4 库存显示粒度加粗<ul>
-<li>一般来说，显示具体的库存数量，能够加强用户体验。</li>
-<li>对于秒杀场景，产品上，只显示有/无车票，而不是显示具体票数目，能够降低缓存淘汰率。</li>
-<li>显示库存会淘汰N次，显示有无只会淘汰1次。更多的，用户关注是否有票，而不是票有几张。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>总结<ul>
-<li>一、秒杀业务为什么难?数据量并不大，但锁冲突巨大</li>
-<li>二、系统架构优化，方向上，降低数据层锁冲突<ul>
-<li>(1) 降读:用缓存</li>
-<li>(2) 降写:把请求拦截在系统上游</li>
-</ul>
-</li>
-<li>三、架构难度大，产品要折衷</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《沈剑架构师训练营》第1章 - 技术选型</title>
     <url>/arch-sj-1/</url>
     <content><![CDATA[<h1 id="2、技术选型：创业初期，技术如何选型"><a href="#2、技术选型：创业初期，技术如何选型" class="headerlink" title="2、技术选型：创业初期，技术如何选型"></a>2、技术选型：创业初期，技术如何选型</h1><ul>
@@ -273,6 +166,113 @@
 <li>2.子系统不是高可用的，只能保证一个挂了，另一个不受影响</li>
 </ul>
 </li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《秒杀系统架构设计》学习</title>
+    <url>/arch-miao-sha/</url>
+    <content><![CDATA[<ul>
+<li>QQ 业务特点：细粒度数据查询<ul>
+<li>即使并发量很大，锁冲突其实不大，数据水平切分后，因为带上了 uid，gid 等字段，用户层面几乎没有锁冲突</li>
+</ul>
+</li>
+<li>weibo业务特点:读多写少，有少量读写锁冲突<ul>
+<li>微博的核心业务是feed流:<ul>
+<li>发消息，写操作</li>
+<li>刷消息，读操作</li>
+</ul>
+</li>
+<li>微博业务显然是读多写少的，在用户刷消息时，自己feed流里的消息，是由别人发出的。</li>
+</ul>
+</li>
+<li>秒杀业务特点:数据量少，写多读多,极大锁冲突<ul>
+<li>12306的核心业务是:<ul>
+<li>查票，读操作</li>
+<li>买票，写操作</li>
+</ul>
+</li>
+<li>stock(id, num) //核心数据结构：某一列车有多少张余票</li>
+<li>在用户量很大，并发量很大时，有极大的锁冲突。</li>
+</ul>
+</li>
+<li>方向上“降低数据层锁冲突”，具体两大要点:<ul>
+<li>(1)降读：用缓存</li>
+<li>(2)降写：把请求拦截在系统上游</li>
+</ul>
+</li>
+<li>用缓存降低数据层读请求，不展开<ul>
+<li>秒杀买票，这是一个典型的读多写少的业务场景:<ul>
+<li>车次查询，读，量大</li>
+<li>余票查询，读，量大</li>
+<li>下单和支付，写，量小</li>
+</ul>
+</li>
+<li>一趟火车2000张票，200w个 人同时来买，最多2000个人下单成功，其他人都是查询库存，写.</li>
+<li>比例只有0.1%，读比例占99.9%，非常适合使用缓存来优化。</li>
+</ul>
+</li>
+<li>如何将请求，拦截在系统上游?<ul>
+<li>先看看上下游分层架构，秒杀业务，常见的系统分层架构如何?<ul>
+<li>浏览器-&gt;站点-&gt;服务-&gt;数据</li>
+</ul>
+</li>
+<li>第一层，端上的请求拦截(浏览器/APP)，可以做一些限速策略，限制用户在 X 秒内只能做一次请求</li>
+<li>第二层，站点层的请求拦截，使用 session，用户 uid 或 token 等识别同一用户，进行限速拦截，高级一点可以返回页面缓存，即返回上一次的内容</li>
+<li>第三层，服务层的请求拦截，知道了业务层的抗压能力和库存，可以根据此进行限速，使用消息队列或内存中的队列</li>
+<li>第四层，数据库闲庭信步，基本不需要做什么，因为到这里访问量应该很低了</li>
+</ul>
+</li>
+<li>(1)按照上面的优化方案,其实压力最大的反而是站点层，假设真实有效的请求数是每秒100w，这部分的压力怎么处理?<ul>
+<li>站点层的扩容非常容易，测算出机器的处理能力，直接加机器即可，此外其实不需要所有的请求都处理返回，可以服务降级，把大部分的请求失败掉即可，保护系统是最优先原则</li>
+</ul>
+</li>
+<li>(2)站点层限速，是个每个uid的请求计数放到redis里么?吞吐量很大情况下，高并发访问redis，网络带宽会不会成为瓶颈?<ul>
+<li>redis 可以做水平切分，如果担心网络带宽，可以使用内存队列</li>
+</ul>
+</li>
+<li>任何脱离业务的架构设计都是耍流氓，产品+技术，不可分割，产品上，能够如何“优化”，以简化系统架构设计呢?<ul>
+<li>case 1 下单与支付分离<ul>
+<li>一般来说，下单和支付放在同一个流程里，能够提高转化率。</li>
+<li>对于秒杀场景，产品上，下单流程和支付流程异步，放在两个环节里，能够降低数据库写压力。</li>
+<li>12306， 下单成功后，系统占住库存，45分钟之内支付即可。</li>
+</ul>
+</li>
+<li>case 2 分城市用户规则差异化<ul>
+<li>一般来说，所有用户规则相同，体验会更好。</li>
+<li>对于秒杀场景，产品上，不同地域分时售票，虽然不是所有用户规则相同，但能够极大降低系统压力。</li>
+<li>北京9:00开始售票，上海9:30开始售票，广州XX开始售票，能够分担系统压力。</li>
+</ul>
+</li>
+<li>case 3 按钮只能点一次<ul>
+<li>秒杀场景，由于短时间内并发较大，系统返回较慢，用户心情十分焦急，可能会频繁点击按钮，对系统造成压力。</li>
+<li>产品上可以优化为，一旦点击，不管系统是否返回，按钮立刻置灰，不给用户机会频繁点击。</li>
+</ul>
+</li>
+<li>case 4 库存显示粒度加粗<ul>
+<li>一般来说，显示具体的库存数量，能够加强用户体验。</li>
+<li>对于秒杀场景，产品上，只显示有/无车票，而不是显示具体票数目，能够降低缓存淘汰率。</li>
+<li>显示库存会淘汰N次，显示有无只会淘汰1次。更多的，用户关注是否有票，而不是票有几张。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>总结<ul>
+<li>一、秒杀业务为什么难?数据量并不大，但锁冲突巨大</li>
+<li>二、系统架构优化，方向上，降低数据层锁冲突<ul>
+<li>(1) 降读:用缓存</li>
+<li>(2) 降写:把请求拦截在系统上游</li>
+</ul>
+</li>
+<li>三、架构难度大，产品要折衷</li>
 </ul>
 </li>
 </ul>
@@ -3395,90 +3395,6 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s培训第8课 集群调度</title>
-    <url>/k8s-8/</url>
-    <content><![CDATA[<ul>
-<li>Q:Scheduler是什么？<ul>
-<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
-<li>公平：如何保证每个节点都能被分配资源</li>
-<li>资源高效利用：集群所有资源最大化被使用</li>
-<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
-<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
-</ul>
-</li>
-<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
-</ul>
-</li>
-<li>Q: k8s的调度过程是怎样<ul>
-<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
-<li>Predicate 有一系列的算法可以使用：<ul>
-<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
-<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
-<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
-<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
-<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
-</ul>
-</li>
-<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
-<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
-<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
-<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
-<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
-</ul>
-</li>
-<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
-</ul>
-</li>
-<li>Q:结点亲和性<ul>
-<li>pod.spec.nodeAﬃnity<ul>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
-</ul>
-</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>键值运算关系<ul>
-<li>In：label 的值在某个列表中</li>
-<li>NotIn：label 的值不在某个列表中</li>
-<li>Gt：label 的值大于某个值</li>
-<li>Lt：label 的值小于某个值</li>
-<li>Exists：某个 label 存在</li>
-<li>DoesNotExist：某个 label 不存在</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:Pod亲和性<ul>
-<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:亲和性/反亲和性调度策略比较<ul>
-<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
-</ul>
-</li>
-<li>Q:给节点打标签<ul>
-<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
-</ul>
-</li>
-<li>Q:k8s指定调度节点<ul>
-<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
-<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>海量数据处理</title>
     <url>/mass-data-processing/</url>
     <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
@@ -3608,6 +3524,90 @@
         <tag>数据结构</tag>
         <tag>算法</tag>
         <tag>海量数据</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s培训第8课 集群调度</title>
+    <url>/k8s-8/</url>
+    <content><![CDATA[<ul>
+<li>Q:Scheduler是什么？<ul>
+<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
+<li>公平：如何保证每个节点都能被分配资源</li>
+<li>资源高效利用：集群所有资源最大化被使用</li>
+<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
+<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
+</ul>
+</li>
+<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
+</ul>
+</li>
+<li>Q: k8s的调度过程是怎样<ul>
+<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
+<li>Predicate 有一系列的算法可以使用：<ul>
+<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
+<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
+<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
+<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
+<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
+</ul>
+</li>
+<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
+<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
+<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
+<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
+<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
+</ul>
+</li>
+<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
+</ul>
+</li>
+<li>Q:结点亲和性<ul>
+<li>pod.spec.nodeAﬃnity<ul>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
+</ul>
+</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>键值运算关系<ul>
+<li>In：label 的值在某个列表中</li>
+<li>NotIn：label 的值不在某个列表中</li>
+<li>Gt：label 的值大于某个值</li>
+<li>Lt：label 的值小于某个值</li>
+<li>Exists：某个 label 存在</li>
+<li>DoesNotExist：某个 label 不存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Pod亲和性<ul>
+<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:亲和性/反亲和性调度策略比较<ul>
+<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
+</ul>
+</li>
+<li>Q:给节点打标签<ul>
+<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
+</ul>
+</li>
+<li>Q:k8s指定调度节点<ul>
+<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
+<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
@@ -3904,6 +3904,49 @@
       </tags>
   </entry>
   <entry>
+    <title>我的leetcode刷题方法</title>
+    <url>/my-leetcode-method/</url>
+    <content><![CDATA[<ul>
+<li>最小闭环：学习、思考、记录、复习<ul>
+<li>新题先思考，旧题默念各种解法，尝试做一下，注意要计时做</li>
+<li>研究题解并简要记录题目和关键解法和关键代码，要调整到最适合自己理解和记住的最优代码和思路</li>
+<li>把题解在对应板块进行汇总</li>
+<li>总结完必须再提交一次所有搞懂的题解，计时，熟练度必须达到🐎，掌握必须达到🆗或🆒</li>
+<li>有创新和小改动的，发表题解</li>
+<li>粘贴到笔记本中，导出anki</li>
+<li>anki复习即可</li>
+</ul>
+</li>
+<li>标题记录掌握程度和熟练程度，同时metadata里面添加每一次的做题日期、做题时长、整理后做题时长<ul>
+<li>熟练程度：至少隔一周且未看题解前评估，看完题解后，必须能达到🐎<ul>
+<li>🐢表示勉强的很卡顿的写出来</li>
+<li>🐇表示需要略思考其中几个点略卡顿写出来，E10，M15，H20</li>
+<li>🐎表示非常纯熟能一气呵成写出来，E5，M10，H15</li>
+<li>整理后必须达到E3，M5，H8内，且整理后写题必须按照思路写而不是背，并把每个语句和每个变量的意义都能说出来</li>
+</ul>
+</li>
+<li>掌握程度<ul>
+<li>💯表示能不看题解的情况下，隔了一段时间没做，仍能分析并写出最优解(或已学会的最优解)</li>
+<li>🆒表示整理并背诵完毕，一题多解均能说并写出来(包括暴力和最优等)，并能分析时间/空间复杂度</li>
+<li>🆗(仅在有多种解题方法使用)表示整理并背诵其中的一种题解思路，能说并写出来和分析时间复杂度，但不能理解并写出所有解法</li>
+<li>🆕表示能在看完题解的情况下，默写/仿写出来其中的一种解法，此时未整理</li>
+<li>🆖表示看着题解写出来了，但仍不理解题解的意思，有很多模糊的地方</li>
+<li>🤨存在有一个解法学不懂，或者不必要去学</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《左手MongoDB，右手Redis》第5章 Redis快速入门</title>
     <url>/mongodb-redis5/</url>
     <content><![CDATA[<ul>
@@ -4108,49 +4151,6 @@
         <tag>数据库</tag>
         <tag>MongoDB</tag>
         <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>我的leetcode刷题方法</title>
-    <url>/my-leetcode-method/</url>
-    <content><![CDATA[<ul>
-<li>最小闭环：学习、思考、记录、复习<ul>
-<li>新题先思考，旧题默念各种解法，尝试做一下，注意要计时做</li>
-<li>研究题解并简要记录题目和关键解法和关键代码，要调整到最适合自己理解和记住的最优代码和思路</li>
-<li>把题解在对应板块进行汇总</li>
-<li>总结完必须再提交一次所有搞懂的题解，计时，熟练度必须达到🐎，掌握必须达到🆗或🆒</li>
-<li>有创新和小改动的，发表题解</li>
-<li>粘贴到笔记本中，导出anki</li>
-<li>anki复习即可</li>
-</ul>
-</li>
-<li>标题记录掌握程度和熟练程度，同时metadata里面添加每一次的做题日期、做题时长、整理后做题时长<ul>
-<li>熟练程度：至少隔一周且未看题解前评估，看完题解后，必须能达到🐎<ul>
-<li>🐢表示勉强的很卡顿的写出来</li>
-<li>🐇表示需要略思考其中几个点略卡顿写出来，E10，M15，H20</li>
-<li>🐎表示非常纯熟能一气呵成写出来，E5，M10，H15</li>
-<li>整理后必须达到E3，M5，H8内，且整理后写题必须按照思路写而不是背，并把每个语句和每个变量的意义都能说出来</li>
-</ul>
-</li>
-<li>掌握程度<ul>
-<li>💯表示能不看题解的情况下，隔了一段时间没做，仍能分析并写出最优解(或已学会的最优解)</li>
-<li>🆒表示整理并背诵完毕，一题多解均能说并写出来(包括暴力和最优等)，并能分析时间/空间复杂度</li>
-<li>🆗(仅在有多种解题方法使用)表示整理并背诵其中的一种题解思路，能说并写出来和分析时间复杂度，但不能理解并写出所有解法</li>
-<li>🆕表示能在看完题解的情况下，默写/仿写出来其中的一种解法，此时未整理</li>
-<li>🆖表示看着题解写出来了，但仍不理解题解的意思，有很多模糊的地方</li>
-<li>🤨存在有一个解法学不懂，或者不必要去学</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -4612,171 +4612,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《Redis核心技术与实战》基础篇2-5</title>
-    <url>/redis-gt-1/</url>
-    <content><![CDATA[<h1 id="02丨数据结构：快速的Redis有哪些慢操作？"><a href="#02丨数据结构：快速的Redis有哪些慢操作？" class="headerlink" title="02丨数据结构：快速的Redis有哪些慢操作？"></a>02丨数据结构：快速的Redis有哪些慢操作？</h1><ul>
-<li>Q:Redis的数据类型分别对应底层哪些数据结构？<ul>
-<li>String：简单动态字符串</li>
-<li>List：压缩列表、双向链表</li>
-<li>Hash：压缩列表、哈希表</li>
-<li>Set：整数数组、哈希表</li>
-<li>Sorted Set：压缩列表、跳表</li>
-<li><img src="https://img.shiqi-lu.tech/20210507163031.png?imageView2/2/w/300"></li>
-<li><img src="https://img.shiqi-lu.tech/20210130161930.png"></li>
-</ul>
-</li>
-<li>Q:Redis的键和值使用什么结构组织？<ul>
-<li>使用一个全局哈希表，其实是一个数组，数组的每个元素称为一个哈希桶，每个哈希桶中保存了键值对数据</li>
-<li>哈希桶中的 entry 元素中保存了 *key 和 *value 指针，分别指向了实际的键和值</li>
-<li><img src="https://img.shiqi-lu.tech/20210507113941.png"></li>
-</ul>
-</li>
-<li>Q:Redis如何解决哈希冲突？<ul>
-<li>哈希冲突是，由于哈希桶的个数通常少于 key 的数量，计算两个 key 的哈希值正好落在同一个哈希桶中</li>
-<li>解决：使用链式哈希，即同一个哈希桶中的多个元素用一个链表来保存，它们之间依次用指针连接，该链表也叫哈希冲突链</li>
-<li><img src="https://img.shiqi-lu.tech/20210507114739.png"></li>
-</ul>
-</li>
-<li>Q:rehash是什么？<ul>
-<li>增加现有的哈希桶数量，让逐渐增多的 entry 元素能在更多的桶之间分散保存，减少单个桶中的元素数量，从而减少单个桶中的冲突</li>
-</ul>
-</li>
-<li>Q:Redis 使 rehash 更高效的方法是什么？<ul>
-<li>默认使用了两个全局哈希表：哈希表 1 和哈希表 2</li>
-<li>一开始默认使用哈希表 1，此时的哈希表 2 并没有被分配空间。随着数据逐步增多，Redis 开始执行 rehash</li>
-<li>rehash 完毕后从哈希表 1 切换到哈希表 2，用增大的哈希表 2 保存更多数据，而原来的哈希表 1 留作下一次 rehash 扩容备用</li>
-</ul>
-</li>
-<li>Q:rehash 的步骤是什么？<ul>
-<li>1.给哈希表2分配更大的空间，例如是当前哈希表1大小的两倍</li>
-<li>2.把哈希表1中的数据重新映射并拷贝到哈希表2中</li>
-<li>3.释放哈希表1的空间</li>
-</ul>
-</li>
-<li>Q:渐进式 rehash 是什么？<ul>
-<li>在第二步拷贝数据时，redis仍然正常处理客户端请求，每处理一个请求时，从哈希表1中的第一个索引位置开始，顺带着将这个索引位置上的所有entries拷贝到哈希表2中。等处理下一个请求时，再顺带拷贝哈希表1中的下一个索引位置的entries</li>
-<li><img src="https://img.shiqi-lu.tech/20210130162617.png"></li>
-</ul>
-</li>
-</ul>
-<h1 id="03丨高性能IO模型：为什么单线程Redis能那么快？"><a href="#03丨高性能IO模型：为什么单线程Redis能那么快？" class="headerlink" title="03丨高性能IO模型：为什么单线程Redis能那么快？"></a>03丨高性能IO模型：为什么单线程Redis能那么快？</h1><ul>
-<li>Q:Redis单线程指的是什么？<ul>
-<li>Redis的网络IO和键值对读写是由一个线程来完成的，这也是Redis对外提供键值存储服务的主要流程</li>
-</ul>
-</li>
-<li>Q:单线程Redis速度快的原因是什么？<ul>
-<li>1.大部分操作在内存上完成，加上采用的高效的数据结构(哈希表和跳表)</li>
-<li>2.采用了多路复用机制，使其在网络IO操作中能并发处理大量的客户端请求</li>
-</ul>
-</li>
-</ul>
-<h1 id="04丨AOF日志：宕机了，Redis如何避免数据丢失？"><a href="#04丨AOF日志：宕机了，Redis如何避免数据丢失？" class="headerlink" title="04丨AOF日志：宕机了，Redis如何避免数据丢失？"></a>04丨AOF日志：宕机了，Redis如何避免数据丢失？</h1><ul>
-<li>Q:Redis持久化的两大机制是什么？<ul>
-<li>AOF日志和RDB快照</li>
-</ul>
-</li>
-<li>Q:AOF(Append Only File)的持久化是怎样的<ul>
-<li>Redis 执行完一个写命令后，将写命令以协议文本的形式追加到 AOF 缓冲区末尾，再通过同步策略来决定是否将 AOF 缓冲区中的内容写入 &amp; 同步到 AOF 日志</li>
-<li>只有命令能执行成功，才会被记录到日志中。不会阻塞当前的写操作</li>
-</ul>
-</li>
-<li>Q:AOF日记的记录内容是怎样的？<ul>
-<li>以<code>set testkey testvalue</code>为例</li>
-<li><code>*3</code>表示当前命令有三个部分，每部分都是有<code>$+数字</code>开头，后面紧跟着具体的命令、键、值，此处的数字表示这部分中的命令、键和值一共有多少字节</li>
-<li><img src="https://img.shiqi-lu.tech/20210130204646.png"></li>
-</ul>
-</li>
-<li>Q:AOF的两个潜在风险是什么？<ul>
-<li>1.如果刚执行完一个命令，还没有来得及记日志就宕机了，那么这个命令和相应的数据就有丢失的风险</li>
-<li>2.AOF虽然避免了对当前命令的阻塞，但可能会给下一个操作带来阻塞风险，这是因为，AOF日志也是在主线程中执行的，如果在把日志文件写入磁盘时，磁盘写压力大，就会导致写盘很慢，进而导致后续的操作也无法执行</li>
-</ul>
-</li>
-<li>Q:AOF日志有哪三种写回策略？(即配置项 appendfsync 的三个可选值)<ul>
-<li>Always,同步写回：每个写命令执行完，立马将所有内容写入并同到 AOF 日志</li>
-<li>Everysec,每秒写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，如果上次同步 AOF 日志的时间距离现在超过 1 秒，那么对 AOF 日志进行同步</li>
-<li>No,操作系统控制的写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，但并不对 AOF 日志进行同步，何时同步由操作系统来决定</li>
-</ul>
-</li>
-<li>Q:Redis 中的写入并同步到 AOF 日志的写入和同步的区别是什么<ul>
-<li>当写回策略为 always 的时候，Redis 源码逻辑为先调用 write 函数写入 AOF 日志文件，紧接着调用 fdatasync 函数对 AOF 日志文件进行同步，确保写入的内容同步到硬盘成功</li>
-<li>当调用 write 函数的时候，数据只是写到了内存缓冲区中，用 fdatasync 函数可以强制让操作系统立即将内存缓冲区中的数据同步到硬盘中</li>
-</ul>
-</li>
-<li>Q:AOF日志三种写回策略的优劣是什么？<ul>
-<li>同步写回：基本不丢数据，但在每一个写命令后都有一个慢速的落盘操作，不可避免地会影响主线程性能</li>
-<li>每秒写回：采用一秒写回一次的频率，避免了「同步写回」的性能开销，虽然减少了对系统性能的影响，但若发生宕机，上一秒内未落盘的命令操作仍然会丢失</li>
-<li>操作系统控制的写回：在写完缓冲区后，可以继续执行后续的命令，但是落盘的时机已经不在Redis手中了，只有AOF记录没有写回磁盘，一旦宕机对应的数据就丢失了</li>
-<li><img src="https://img.shiqi-lu.tech/20210130205858.png"></li>
-</ul>
-</li>
-<li>Q:AOF文件过大带来的3个性能问题是什么？<ul>
-<li>1.文件系统本身对文件大小有限制， 无法保存过大的文件</li>
-<li>2.如果文件太大，之后再往里面追加命令记录的话，效率也会变低</li>
-<li>3.如果发生宕机，AOF 中记录的命令要一个个被重新执行，用于故障恢复，如果日志文件太大，整个恢复过程就会非常缓慢</li>
-</ul>
-</li>
-<li>Q:AOF重写机制是什么？<ul>
-<li>在重写时，Redis根据数据库的现状创建一个新的AOF文件。</li>
-<li>即读取数据库中的所有键值对，然后对每一个键值对用一条命令记录它的写入</li>
-</ul>
-</li>
-<li>Q:为什么重写机制可以把日志文件变小？<ul>
-<li>当一个键值对被多条写命令反复修改时，AOF文件会记录相应的多条命令</li>
-<li>但在重写时，根据这个键值对当前的最新状态，为它生成对应的写入命令。这样，一个键值对在重写日志中只用一条命令即可</li>
-<li>在日志恢复时，只用执行这条命令，就可以直接完成这个键值对的写入了</li>
-<li><img src="https://img.shiqi-lu.tech/20210130225834.png"></li>
-</ul>
-</li>
-<li>Q:重写的过程是怎样的？<ul>
-<li>由后台线程bgrewriteaof完成，是为了避免阻塞主线程，导致数据库性能下降</li>
-<li>一个拷贝<ul>
-<li>每次执行重写时，主线程fork出后台的bgrewriteaof子进程。fork会把主线程的内存拷贝一份给bgrewriteaof子进程，这里包含了数据库的最新数据</li>
-<li>bgrewriteaof子进程在不影响主线程的情况下，逐一把拷贝的数据写成操作，记入重写日志</li>
-</ul>
-</li>
-<li>两处日志<ul>
-<li>1.正在使用的AOF日志：因主进程未阻塞，仍然可以处理新来的操作。此时若有写操作，Redis会把这个操作写到它的缓冲区。这样一来，即使宕机了，这个AOF日志的操作仍然是齐全的，可以用于恢复</li>
-<li>2.新的AOF重写日志：这个操作也会被写到重写日志的缓冲区。这样，重写日志也不会丢失最新的操作。等到拷贝数据的所有操作记录重写完成后，重写日志记录的这些最新操作也会写入新的AOF文件，以保证数据库最新状态的记录。此时即可用新的AOF文件替代旧文件了</li>
-</ul>
-</li>
-<li><img src="https://img.shiqi-lu.tech/20210131101541.png"></li>
-</ul>
-</li>
-</ul>
-<h1 id="05丨内存快照：宕机后，Redis如何实现快速恢复？"><a href="#05丨内存快照：宕机后，Redis如何实现快速恢复？" class="headerlink" title="05丨内存快照：宕机后，Redis如何实现快速恢复？"></a>05丨内存快照：宕机后，Redis如何实现快速恢复？</h1><ul>
-<li>Q:RDB的持久化是怎样的？<ul>
-<li>作用是将某个时间点上的数据库状态保存到 RDB 文件中，RDB 文件是一个压缩的二进制文件，通过它可以还原某个时刻数据库的状态。由于 RDB 文件是保存在硬盘上的，所以即使 Redis 崩溃或者退出，只要 RDB 文件存在，就可以用它来还原数据库的状态</li>
-</ul>
-</li>
-<li>Q:生成RDB文件的两个命令是什么？<ul>
-<li>save：在主线程执行，会导致阻塞，直到 RDB 文件生成完毕，在进程阻塞期间，Redis 不能处理任何命令请求</li>
-<li>bgsave：创建一个子进程，专门用于写入RDB文件，避免了主线程的阻塞(默认配置)</li>
-</ul>
-</li>
-<li>Q:bgsave做快照时如何保证数据可修改？<ul>
-<li>借助操作系统提供的写时复制技术(Copy-On-Write, COW)</li>
-<li>bgsave子进程是由主线程fork生成的，可以共享主线程的所有内存数据。bgsave子进程运行后，开始读取主线程的内存数据，并把它们写入RDB文件</li>
-<li>若主线程对这些数据也是读操作(图中键值对A)，主线程和bgsave子线程互不影响</li>
-<li>若主线程要修改一块数据(图中键值对C)，那这块数据会被复制一份，生成该数据的副本C’。然后，主线程在这个数据副本上修改，同时，bgsave子进程会把原来的数据写入RDB文件</li>
-<li><img src="https://img.shiqi-lu.tech/20210619182408.png"></li>
-</ul>
-</li>
-<li>Q:混合使用AOF日志和内存快照的方法是什么？<ul>
-<li>内存快照以一定的频率执行，在两次快照之间，使用AOF日志记录这期间的所有命令操作</li>
-<li><img src="https://img.shiqi-lu.tech/20210131104239.png"></li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《Redis核心技术与实战》基础篇6-9</title>
     <url>/redis-gt-2/</url>
     <content><![CDATA[<h1 id="06丨数据同步：主从库如何实现数据一致？"><a href="#06丨数据同步：主从库如何实现数据一致？" class="headerlink" title="06丨数据同步：主从库如何实现数据一致？"></a>06丨数据同步：主从库如何实现数据一致？</h1><ul>
@@ -4947,6 +4782,171 @@
 <li>ASK 命令表示客户端请求的键值对所在的哈希槽 13320，在 172.16.19.5 这个实例上，但是这个哈希槽正在迁移</li>
 <li>此时客户端需要先给 172.16.19.5 这个实例发送一个 ASKING 命令，然后在发送 GET 命令以读取数据</li>
 <li>ASK 命令不会更新客户端缓存的哈希槽分配信息，即只让客户端能给新实例发送一次请求。MOVED 命令会更改本地缓存，让后续命令都发往新实例</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《Redis核心技术与实战》基础篇2-5</title>
+    <url>/redis-gt-1/</url>
+    <content><![CDATA[<h1 id="02丨数据结构：快速的Redis有哪些慢操作？"><a href="#02丨数据结构：快速的Redis有哪些慢操作？" class="headerlink" title="02丨数据结构：快速的Redis有哪些慢操作？"></a>02丨数据结构：快速的Redis有哪些慢操作？</h1><ul>
+<li>Q:Redis的数据类型分别对应底层哪些数据结构？<ul>
+<li>String：简单动态字符串</li>
+<li>List：压缩列表、双向链表</li>
+<li>Hash：压缩列表、哈希表</li>
+<li>Set：整数数组、哈希表</li>
+<li>Sorted Set：压缩列表、跳表</li>
+<li><img src="https://img.shiqi-lu.tech/20210507163031.png?imageView2/2/w/300"></li>
+<li><img src="https://img.shiqi-lu.tech/20210130161930.png"></li>
+</ul>
+</li>
+<li>Q:Redis的键和值使用什么结构组织？<ul>
+<li>使用一个全局哈希表，其实是一个数组，数组的每个元素称为一个哈希桶，每个哈希桶中保存了键值对数据</li>
+<li>哈希桶中的 entry 元素中保存了 *key 和 *value 指针，分别指向了实际的键和值</li>
+<li><img src="https://img.shiqi-lu.tech/20210507113941.png"></li>
+</ul>
+</li>
+<li>Q:Redis如何解决哈希冲突？<ul>
+<li>哈希冲突是，由于哈希桶的个数通常少于 key 的数量，计算两个 key 的哈希值正好落在同一个哈希桶中</li>
+<li>解决：使用链式哈希，即同一个哈希桶中的多个元素用一个链表来保存，它们之间依次用指针连接，该链表也叫哈希冲突链</li>
+<li><img src="https://img.shiqi-lu.tech/20210507114739.png"></li>
+</ul>
+</li>
+<li>Q:rehash是什么？<ul>
+<li>增加现有的哈希桶数量，让逐渐增多的 entry 元素能在更多的桶之间分散保存，减少单个桶中的元素数量，从而减少单个桶中的冲突</li>
+</ul>
+</li>
+<li>Q:Redis 使 rehash 更高效的方法是什么？<ul>
+<li>默认使用了两个全局哈希表：哈希表 1 和哈希表 2</li>
+<li>一开始默认使用哈希表 1，此时的哈希表 2 并没有被分配空间。随着数据逐步增多，Redis 开始执行 rehash</li>
+<li>rehash 完毕后从哈希表 1 切换到哈希表 2，用增大的哈希表 2 保存更多数据，而原来的哈希表 1 留作下一次 rehash 扩容备用</li>
+</ul>
+</li>
+<li>Q:rehash 的步骤是什么？<ul>
+<li>1.给哈希表2分配更大的空间，例如是当前哈希表1大小的两倍</li>
+<li>2.把哈希表1中的数据重新映射并拷贝到哈希表2中</li>
+<li>3.释放哈希表1的空间</li>
+</ul>
+</li>
+<li>Q:渐进式 rehash 是什么？<ul>
+<li>在第二步拷贝数据时，redis仍然正常处理客户端请求，每处理一个请求时，从哈希表1中的第一个索引位置开始，顺带着将这个索引位置上的所有entries拷贝到哈希表2中。等处理下一个请求时，再顺带拷贝哈希表1中的下一个索引位置的entries</li>
+<li><img src="https://img.shiqi-lu.tech/20210130162617.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="03丨高性能IO模型：为什么单线程Redis能那么快？"><a href="#03丨高性能IO模型：为什么单线程Redis能那么快？" class="headerlink" title="03丨高性能IO模型：为什么单线程Redis能那么快？"></a>03丨高性能IO模型：为什么单线程Redis能那么快？</h1><ul>
+<li>Q:Redis单线程指的是什么？<ul>
+<li>Redis的网络IO和键值对读写是由一个线程来完成的，这也是Redis对外提供键值存储服务的主要流程</li>
+</ul>
+</li>
+<li>Q:单线程Redis速度快的原因是什么？<ul>
+<li>1.大部分操作在内存上完成，加上采用的高效的数据结构(哈希表和跳表)</li>
+<li>2.采用了多路复用机制，使其在网络IO操作中能并发处理大量的客户端请求</li>
+</ul>
+</li>
+</ul>
+<h1 id="04丨AOF日志：宕机了，Redis如何避免数据丢失？"><a href="#04丨AOF日志：宕机了，Redis如何避免数据丢失？" class="headerlink" title="04丨AOF日志：宕机了，Redis如何避免数据丢失？"></a>04丨AOF日志：宕机了，Redis如何避免数据丢失？</h1><ul>
+<li>Q:Redis持久化的两大机制是什么？<ul>
+<li>AOF日志和RDB快照</li>
+</ul>
+</li>
+<li>Q:AOF(Append Only File)的持久化是怎样的<ul>
+<li>Redis 执行完一个写命令后，将写命令以协议文本的形式追加到 AOF 缓冲区末尾，再通过同步策略来决定是否将 AOF 缓冲区中的内容写入 &amp; 同步到 AOF 日志</li>
+<li>只有命令能执行成功，才会被记录到日志中。不会阻塞当前的写操作</li>
+</ul>
+</li>
+<li>Q:AOF日记的记录内容是怎样的？<ul>
+<li>以<code>set testkey testvalue</code>为例</li>
+<li><code>*3</code>表示当前命令有三个部分，每部分都是有<code>$+数字</code>开头，后面紧跟着具体的命令、键、值，此处的数字表示这部分中的命令、键和值一共有多少字节</li>
+<li><img src="https://img.shiqi-lu.tech/20210130204646.png"></li>
+</ul>
+</li>
+<li>Q:AOF的两个潜在风险是什么？<ul>
+<li>1.如果刚执行完一个命令，还没有来得及记日志就宕机了，那么这个命令和相应的数据就有丢失的风险</li>
+<li>2.AOF虽然避免了对当前命令的阻塞，但可能会给下一个操作带来阻塞风险，这是因为，AOF日志也是在主线程中执行的，如果在把日志文件写入磁盘时，磁盘写压力大，就会导致写盘很慢，进而导致后续的操作也无法执行</li>
+</ul>
+</li>
+<li>Q:AOF日志有哪三种写回策略？(即配置项 appendfsync 的三个可选值)<ul>
+<li>Always,同步写回：每个写命令执行完，立马将所有内容写入并同到 AOF 日志</li>
+<li>Everysec,每秒写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，如果上次同步 AOF 日志的时间距离现在超过 1 秒，那么对 AOF 日志进行同步</li>
+<li>No,操作系统控制的写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，但并不对 AOF 日志进行同步，何时同步由操作系统来决定</li>
+</ul>
+</li>
+<li>Q:Redis 中的写入并同步到 AOF 日志的写入和同步的区别是什么<ul>
+<li>当写回策略为 always 的时候，Redis 源码逻辑为先调用 write 函数写入 AOF 日志文件，紧接着调用 fdatasync 函数对 AOF 日志文件进行同步，确保写入的内容同步到硬盘成功</li>
+<li>当调用 write 函数的时候，数据只是写到了内存缓冲区中，用 fdatasync 函数可以强制让操作系统立即将内存缓冲区中的数据同步到硬盘中</li>
+</ul>
+</li>
+<li>Q:AOF日志三种写回策略的优劣是什么？<ul>
+<li>同步写回：基本不丢数据，但在每一个写命令后都有一个慢速的落盘操作，不可避免地会影响主线程性能</li>
+<li>每秒写回：采用一秒写回一次的频率，避免了「同步写回」的性能开销，虽然减少了对系统性能的影响，但若发生宕机，上一秒内未落盘的命令操作仍然会丢失</li>
+<li>操作系统控制的写回：在写完缓冲区后，可以继续执行后续的命令，但是落盘的时机已经不在Redis手中了，只有AOF记录没有写回磁盘，一旦宕机对应的数据就丢失了</li>
+<li><img src="https://img.shiqi-lu.tech/20210130205858.png"></li>
+</ul>
+</li>
+<li>Q:AOF文件过大带来的3个性能问题是什么？<ul>
+<li>1.文件系统本身对文件大小有限制， 无法保存过大的文件</li>
+<li>2.如果文件太大，之后再往里面追加命令记录的话，效率也会变低</li>
+<li>3.如果发生宕机，AOF 中记录的命令要一个个被重新执行，用于故障恢复，如果日志文件太大，整个恢复过程就会非常缓慢</li>
+</ul>
+</li>
+<li>Q:AOF重写机制是什么？<ul>
+<li>在重写时，Redis根据数据库的现状创建一个新的AOF文件。</li>
+<li>即读取数据库中的所有键值对，然后对每一个键值对用一条命令记录它的写入</li>
+</ul>
+</li>
+<li>Q:为什么重写机制可以把日志文件变小？<ul>
+<li>当一个键值对被多条写命令反复修改时，AOF文件会记录相应的多条命令</li>
+<li>但在重写时，根据这个键值对当前的最新状态，为它生成对应的写入命令。这样，一个键值对在重写日志中只用一条命令即可</li>
+<li>在日志恢复时，只用执行这条命令，就可以直接完成这个键值对的写入了</li>
+<li><img src="https://img.shiqi-lu.tech/20210130225834.png"></li>
+</ul>
+</li>
+<li>Q:重写的过程是怎样的？<ul>
+<li>由后台线程bgrewriteaof完成，是为了避免阻塞主线程，导致数据库性能下降</li>
+<li>一个拷贝<ul>
+<li>每次执行重写时，主线程fork出后台的bgrewriteaof子进程。fork会把主线程的内存拷贝一份给bgrewriteaof子进程，这里包含了数据库的最新数据</li>
+<li>bgrewriteaof子进程在不影响主线程的情况下，逐一把拷贝的数据写成操作，记入重写日志</li>
+</ul>
+</li>
+<li>两处日志<ul>
+<li>1.正在使用的AOF日志：因主进程未阻塞，仍然可以处理新来的操作。此时若有写操作，Redis会把这个操作写到它的缓冲区。这样一来，即使宕机了，这个AOF日志的操作仍然是齐全的，可以用于恢复</li>
+<li>2.新的AOF重写日志：这个操作也会被写到重写日志的缓冲区。这样，重写日志也不会丢失最新的操作。等到拷贝数据的所有操作记录重写完成后，重写日志记录的这些最新操作也会写入新的AOF文件，以保证数据库最新状态的记录。此时即可用新的AOF文件替代旧文件了</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20210131101541.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="05丨内存快照：宕机后，Redis如何实现快速恢复？"><a href="#05丨内存快照：宕机后，Redis如何实现快速恢复？" class="headerlink" title="05丨内存快照：宕机后，Redis如何实现快速恢复？"></a>05丨内存快照：宕机后，Redis如何实现快速恢复？</h1><ul>
+<li>Q:RDB的持久化是怎样的？<ul>
+<li>作用是将某个时间点上的数据库状态保存到 RDB 文件中，RDB 文件是一个压缩的二进制文件，通过它可以还原某个时刻数据库的状态。由于 RDB 文件是保存在硬盘上的，所以即使 Redis 崩溃或者退出，只要 RDB 文件存在，就可以用它来还原数据库的状态</li>
+</ul>
+</li>
+<li>Q:生成RDB文件的两个命令是什么？<ul>
+<li>save：在主线程执行，会导致阻塞，直到 RDB 文件生成完毕，在进程阻塞期间，Redis 不能处理任何命令请求</li>
+<li>bgsave：创建一个子进程，专门用于写入RDB文件，避免了主线程的阻塞(默认配置)</li>
+</ul>
+</li>
+<li>Q:bgsave做快照时如何保证数据可修改？<ul>
+<li>借助操作系统提供的写时复制技术(Copy-On-Write, COW)</li>
+<li>bgsave子进程是由主线程fork生成的，可以共享主线程的所有内存数据。bgsave子进程运行后，开始读取主线程的内存数据，并把它们写入RDB文件</li>
+<li>若主线程对这些数据也是读操作(图中键值对A)，主线程和bgsave子线程互不影响</li>
+<li>若主线程要修改一块数据(图中键值对C)，那这块数据会被复制一份，生成该数据的副本C’。然后，主线程在这个数据副本上修改，同时，bgsave子进程会把原来的数据写入RDB文件</li>
+<li><img src="https://img.shiqi-lu.tech/20210619182408.png"></li>
+</ul>
+</li>
+<li>Q:混合使用AOF日志和内存快照的方法是什么？<ul>
+<li>内存快照以一定的频率执行，在两次快照之间，使用AOF日志记录这期间的所有命令操作</li>
+<li><img src="https://img.shiqi-lu.tech/20210131104239.png"></li>
 </ul>
 </li>
 </ul>
@@ -5323,8 +5323,8 @@
 <li><code>ls /</code></li>
 </ul>
 </li>
-<li>查看当前节点详细数据<ul>
-<li><code>plain text [zk: hadoop102:2181(CONNECTED) 5] ls -s / [zookeeper]cZxid = 0x0 ctime = Thu Jan 01 08:00:00 CST 1970 mZxid = 0x0 mtime = Thu Jan 01 08:00:00 CST 1970 pZxid = 0x0 cversion = -1 dataVersion = 0 aclVersion = 0 ephemeralOwner = 0x0 dataLength = 0 numChildren = 1</code></li>
+<li>查看当前节点详细数据<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">[zk: hadoop102:2181(CONNECTED) 5] ls -s &#x2F;</span><br><span class="line">[zookeeper]cZxid &#x3D; 0x0</span><br><span class="line">ctime &#x3D; Thu Jan 01 08:00:00 CST 1970</span><br><span class="line">mZxid &#x3D; 0x0</span><br><span class="line">mtime &#x3D; Thu Jan 01 08:00:00 CST 1970</span><br><span class="line">pZxid &#x3D; 0x0</span><br><span class="line">cversion &#x3D; -1</span><br><span class="line">dataVersion &#x3D; 0</span><br><span class="line">aclVersion &#x3D; 0</span><br><span class="line">ephemeralOwner &#x3D; 0x0</span><br><span class="line">dataLength &#x3D; 0</span><br><span class="line">numChildren &#x3D; 1</span><br></pre></td></tr></table></figure>
+<ul>
 <li>1.czxid：创建节点的事务 zxid<ul>
 <li>每次修改ZooKeeper状态都会产生一个ZooKeeper事务ID。事务ID是ZooKeeper中所有修改总的次序。每次修改都有唯一的zxid,如果zxid1小于zxid2,那么zxid1在zxid2之前发生</li>
 </ul>

@@ -524,8 +524,8 @@
 <li><code>ls /</code></li>
 </ul>
 </li>
-<li>查看当前节点详细数据<ul>
-<li><code>plain text [zk: hadoop102:2181(CONNECTED) 5] ls -s / [zookeeper]cZxid = 0x0 ctime = Thu Jan 01 08:00:00 CST 1970 mZxid = 0x0 mtime = Thu Jan 01 08:00:00 CST 1970 pZxid = 0x0 cversion = -1 dataVersion = 0 aclVersion = 0 ephemeralOwner = 0x0 dataLength = 0 numChildren = 1</code></li>
+<li>查看当前节点详细数据<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[zk: hadoop102:2181(CONNECTED) 5] ls -s &#x2F;</span><br><span class="line">[zookeeper]cZxid &#x3D; 0x0</span><br><span class="line">ctime &#x3D; Thu Jan 01 08:00:00 CST 1970</span><br><span class="line">mZxid &#x3D; 0x0</span><br><span class="line">mtime &#x3D; Thu Jan 01 08:00:00 CST 1970</span><br><span class="line">pZxid &#x3D; 0x0</span><br><span class="line">cversion &#x3D; -1</span><br><span class="line">dataVersion &#x3D; 0</span><br><span class="line">aclVersion &#x3D; 0</span><br><span class="line">ephemeralOwner &#x3D; 0x0</span><br><span class="line">dataLength &#x3D; 0</span><br><span class="line">numChildren &#x3D; 1</span><br></pre></td></tr></table></figure>
+<ul>
 <li>1.czxid：创建节点的事务 zxid<ul>
 <li>每次修改ZooKeeper状态都会产生一个ZooKeeper事务ID。事务ID是ZooKeeper中所有修改总的次序。每次修改都有唯一的zxid,如果zxid1小于zxid2,那么zxid1在zxid2之前发生</li>
 </ul>
