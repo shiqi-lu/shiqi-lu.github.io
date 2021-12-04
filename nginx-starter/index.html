@@ -431,13 +431,7 @@
 </li>
 </ul>
 <h2 id="location-指令说明"><a href="#location-指令说明" class="headerlink" title="location 指令说明"></a>location 指令说明</h2><ul>
-<li>该指令用于匹配 URL。语法如下</li>
-<li><pre><code class="plain">location [ = | ~ | ~* | ^~ ] uri &#123;
-</code></pre>
-</li>
-</ul>
-<p>}```</p>
-<ul>
+<li>该指令用于匹配 URL。语法如下<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location [ &#x3D; | ~ | ~* | ^~ ] uri &#123;</span><br><span class="line">      </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 <li>= ：用于不含正则表达式的 uri 前，要求请求字符串与 uri 严格匹配，如果匹配成功，就停止继续向下搜索并立即处理该请求</li>
 <li>~：用于表示 uri 包含正则表达式，并且区分大小写</li>
 <li>~*：用于表示 uri 包含正则表达式，并且不区分大小写</li>
