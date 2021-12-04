@@ -22,33 +22,28 @@
     var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了">
+  <meta name="description" content="总结了 5 种常见的限流算法的原理、代码、优缺点等，包括计数限流、固定窗口限流、滑动窗口限流、漏桶算法、令牌桶算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《沈剑架构师训练营》第3章 - 快速性能优化">
-<meta property="og:url" content="http://shiqi-lu.tech/arch-sj-3/index.html">
+<meta property="og:title" content="5种限流算法总结">
+<meta property="og:url" content="http://shiqi-lu.tech/throttling-algorithm/index.html">
 <meta property="og:site_name" content="每天净瞎搞">
-<meta property="og:description" content="包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了">
+<meta property="og:description" content="总结了 5 种常见的限流算法的原理、代码、优缺点等，包括计数限流、固定窗口限流、滑动窗口限流、漏桶算法、令牌桶算法">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210906113515.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210906113737.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908205424.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908205943.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908211227.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908211506.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210823230403.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212034.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212221.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212329.png">
-<meta property="og:image" content="https://img.shiqi-lu.tech/20210908212439.png">
-<meta property="article:published_time" content="2021-09-14T13:08:00.000Z">
-<meta property="article:modified_time" content="2021-09-14T12:08:00.000Z">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211204112507.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211204112759.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211204113156.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211204114457.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211204121242.png">
+<meta property="article:published_time" content="2021-11-04T08:23:20.000Z">
+<meta property="article:modified_time" content="2021-11-04T08:23:20.000Z">
 <meta property="article:author" content="Shiqi Lu">
 <meta property="article:tag" content="架构">
+<meta property="article:tag" content="分布式">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210906113515.png">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20211204112507.png">
 
 
-<link rel="canonical" href="http://shiqi-lu.tech/arch-sj-3/">
+<link rel="canonical" href="http://shiqi-lu.tech/throttling-algorithm/">
 
 
 <script data-pjax class="page-configurations">
@@ -61,7 +56,7 @@
   };
 </script>
 
-  <title>《沈剑架构师训练营》第3章 - 快速性能优化 | 每天净瞎搞</title>
+  <title>5种限流算法总结 | 每天净瞎搞</title>
   
 
 
@@ -217,7 +212,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11%E3%80%81%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%9A%E5%8A%A8%E9%9D%99%E5%88%86%E7%A6%BB%EF%BC%8C%E4%BA%92%E8%81%94%E7%BD%91%E4%BC%98%E5%8C%96%E5%88%A9%E5%99%A8%EF%BC%9F"><span class="nav-text">11、性能优化：动静分离，互联网优化利器？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12%E3%80%81%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%9A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%EF%BC%8C%E5%89%8D%E5%8F%B0%E4%B8%8E%E5%90%8E%E5%8F%B0%E5%88%86%E7%A6%BB"><span class="nav-text">12、性能优化：读写分离，前台与后台分离</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#13%E3%80%81%E6%9C%AC%E7%AB%A0%E5%B0%8F%E7%BB%93%EF%BC%9A%E7%99%BE%E4%B8%87%E6%B5%81%E9%87%8F%EF%BC%8C%E8%BF%99%E4%BA%9B%E6%8A%80%E6%9C%AF%E5%A4%9F%E7%94%A8%E4%BA%86"><span class="nav-text">13、本章小结：百万流量，这些技术够用了</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%90%E6%B5%81%E7%9A%84%E5%AE%9A%E4%B9%89%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-text">限流的定义是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">限流算法有哪些？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E3%80%81%E4%BB%A3%E7%A0%81%E3%80%81%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">计数限流算法原理、代码、优缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E7%AA%97%E5%8F%A3%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E3%80%81%E4%BB%A3%E7%A0%81%E3%80%81%E9%97%AE%E9%A2%98"><span class="nav-text">固定窗口限流算法的原理、代码、问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E3%80%81%E4%BB%A3%E7%A0%81"><span class="nav-text">滑动窗口限流算法的原理、代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A1%B6%E6%BC%8F%E7%AE%97%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E3%80%81%E5%AE%9E%E7%8E%B0%E3%80%81%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">桶漏算法的原理、实现、优缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E3%80%81%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">令牌桶算法的原理、优缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -300,7 +295,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/arch-sj-3/">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/throttling-algorithm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
@@ -316,7 +311,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《沈剑架构师训练营》第3章 - 快速性能优化
+          5种限流算法总结
         </h1>
 
         <div class="post-meta-container">
@@ -326,9 +321,8 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-09-14 21:08:00 / 修改时间：20:08:00" itemprop="dateCreated datePublished" datetime="2021-09-14T21:08:00+08:00">2021-09-14</time>
+      <time title="创建时间：2021-11-04 16:23:20" itemprop="dateCreated datePublished" datetime="2021-11-04T16:23:20+08:00">2021-11-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -341,7 +335,7 @@
     </span>
 
   
-    <span id="/arch-sj-3/" class="post-meta-item leancloud_visitors" data-flag-title="《沈剑架构师训练营》第3章 - 快速性能优化" title="阅读次数">
+    <span id="/throttling-algorithm/" class="post-meta-item leancloud_visitors" data-flag-title="5种限流算法总结" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -356,8 +350,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/arch-sj-3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/arch-sj-3/" itemprop="commentCount"></span>
+    <a title="valine" href="/throttling-algorithm/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/throttling-algorithm/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -369,18 +363,18 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
+      <span>1.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
-            <div class="post-description">包括如下目录学习笔记：11、性能优化：动静分离，互联网优化利器？12、性能优化：读写分离，前台与后台分离。13、本章小结：百万流量，这些技术够用了</div>
+            <div class="post-description">总结了 5 种常见的限流算法的原理、代码、优缺点等，包括计数限流、固定窗口限流、滑动窗口限流、漏桶算法、令牌桶算法</div>
         </div>
       </header>
 
@@ -388,131 +382,110 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="11、性能优化：动静分离，互联网优化利器？"><a href="#11、性能优化：动静分离，互联网优化利器？" class="headerlink" title="11、性能优化：动静分离，互联网优化利器？"></a>11、性能优化：动静分离，互联网优化利器？</h1><ul>
-<li>no11：与静态页面、动态页面匹配的加速技术有哪些？<ul>
-<li>静态页面<ul>
-<li>CDN</li>
-<li>nginx</li>
-<li>squid/varnish</li>
+        <h1 id="限流的定义是什么"><a href="#限流的定义是什么" class="headerlink" title="限流的定义是什么"></a>限流的定义是什么</h1><ul>
+<li>限流就是对请求的速率进行限制，即限制到达系统的并发请求数，避免瞬时的大量请求击垮软件系统</li>
+</ul>
+<h1 id="限流算法有哪些？"><a href="#限流算法有哪些？" class="headerlink" title="限流算法有哪些？"></a>限流算法有哪些？</h1><ul>
+<li>计数限流</li>
+<li>固定窗口限流</li>
+<li>滑动窗口限流</li>
+<li>漏桶算法</li>
+<li>令牌桶算法</li>
+</ul>
+<h1 id="计数限流算法原理、代码、优缺点"><a href="#计数限流算法原理、代码、优缺点" class="headerlink" title="计数限流算法原理、代码、优缺点"></a>计数限流算法原理、代码、优缺点</h1><ul>
+<li>原理<ul>
+<li>根据系统能同时处理的请求数，保存一个计数器，处理一个请求加一，处理完后减一，若超过阈值拒绝请求</li>
 </ul>
 </li>
-<li>动态页面<ul>
-<li>分层架构</li>
-<li>服务化架构</li>
-<li>数据库，缓存架构</li>
+<li>代码<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     <span class="keyword">if</span> (counter &lt; threshold) &#123;</span><br><span class="line">         counter++;</span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryRelease</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (counter &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        counter--;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>优点<ul>
+<li>简单粗暴，单机在 java 可用 Atomic 等原子类、分布式就 Redis incr</li>
 </ul>
 </li>
-</ul>
-</li>
-<li>no11：动静分离是什么？<ul>
-<li>静态页面与动态页面分开不同的系统访问的架构设计方法</li>
-<li><img src="https://img.shiqi-lu.tech/20210906113515.png"></li>
-<li>静态页面，几毫秒返回</li>
-<li>动态页面，几百毫秒返回</li>
-</ul>
-</li>
-<li>no11：「页面静态化」是什么？如何实施？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210906113737.png"></li>
-<li>把网页内容提前生成相关的 html，用静态页面相关的加速技术来进行加速</li>
-<li>适合场景：返回页面结果集有限</li>
-<li>不适合场景：返回页面结果集数据量过大，如帖子，搜索等</li>
+<li>缺点<ul>
+<li>假设单机设的 1 万阈值，计数器为 0，若在 1 秒内收到 1 万个突发请求，可能超过机器的处理上限而导致机器崩溃</li>
 </ul>
 </li>
 </ul>
-<h1 id="12、性能优化：读写分离，前台与后台分离"><a href="#12、性能优化：读写分离，前台与后台分离" class="headerlink" title="12、性能优化：读写分离，前台与后台分离"></a>12、性能优化：读写分离，前台与后台分离</h1><ul>
-<li>no12：什么是读写分离？能解决什么问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908205424.png"></li>
-<li>一主多从，读写分离，主从同步，是一种常见的数据库架构</li>
-<li>一般来说，主库，提供数据库的写服务，从库，提供数据库的读服务，主从之间通过某种机制来实现数据库的同步，如 MySQL 的 binlog，一个主从同步集群通常被称为一个「分组」</li>
-<li>能解决什么问题？<ul>
-<li>主要可以线性提升读的性能</li>
+<h1 id="固定窗口限流算法的原理、代码、问题"><a href="#固定窗口限流算法的原理、代码、问题" class="headerlink" title="固定窗口限流算法的原理、代码、问题"></a>固定窗口限流算法的原理、代码、问题</h1><ul>
+<li>原理<ul>
+<li><img src="https://img.shiqi-lu.tech/20211204112507.png"></li>
+<li>相比于计数限流主要是多了个时间窗口的概念，计数器每过一个时间窗口就重置，规则为：<ul>
+<li>1.请求次数小于阈值，允许访问并且计数器 +1</li>
+<li>2.请求次数大于阈值，拒绝访问</li>
+<li>3.这个时间窗口过了之后，计数器清零</li>
+</ul>
+</li>
+<li>代码<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 获取当前时间</span></span><br><span class="line">    bool now = currentTimeMillis();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 若过了时间窗口把计数器清零</span></span><br><span class="line">    <span class="keyword">if</span> (now - lastAcquireTime &gt; TimeWindow) &#123;</span><br><span class="line">        counter = <span class="number">0</span>;</span><br><span class="line">        lastAcquireTime = now;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (counter &lt; threshold) &#123;</span><br><span class="line">        counter++;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>问题<ul>
+<li>无法保证限流速率，因而无法保证突然激增的流量，会遇到固定窗口临界问题，即这个算法有时会让通过请求量允许为限制的两倍</li>
+<li>如图，限制 1 秒内最多通过 5 个请求，在第一个窗口的最后半秒内通过了 5 个请求，第二个窗口的前半秒内又通过了 5 个请求。这样看来就是在 1 秒内通过了 10 个请求</li>
+<li><img src="https://img.shiqi-lu.tech/20211204112759.png"></li>
 </ul>
 </li>
 </ul>
+<h1 id="滑动窗口限流算法的原理、代码"><a href="#滑动窗口限流算法的原理、代码" class="headerlink" title="滑动窗口限流算法的原理、代码"></a>滑动窗口限流算法的原理、代码</h1><ul>
+<li>原理<ul>
+<li><img src="https://img.shiqi-lu.tech/20211204113156.png"></li>
+<li>1.将时间划分为多个区间</li>
+<li>2.在每个区间内每有一次请求就将计数器加一维持一个时间窗口，占据多个区间</li>
+<li>3.每经过一个区间的时间，则抛弃最老的一个区间，并纳入最新的一个区间</li>
+<li>4.如果当前窗口内的请求计数总和超过了限制数量，则本窗口内所有的请求都被丢弃</li>
+</ul>
 </li>
-<li>no12：什么是水平切分？能解决什么问题？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908205943.png"></li>
-<li>数据库水平切分后，数据库之间没有数据的重合，不需要同步</li>
-<li>能解决什么问题？<ul>
-<li>数据库存储容量提升</li>
+<li>代码<ul>
+<li>实现：记录每次请求的时间，统计每次请求的时间至往前一个时间窗口的请求数，如果小于阈值就记录这个请求的时间，反之拒绝<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> now = currentTimeMillis();</span><br><span class="line">    <span class="keyword">long</span> counter = getCounterInTimeWindow(now);</span><br><span class="line">    <span class="keyword">if</span> (counter &lt; threshold) &#123;</span><br><span class="line">        addToTimeWindow(now);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>优点<ul>
+<li>避免了固定窗口计数器带来的双倍突发请求</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>时间区间的精度越高，算法所需的空间容量就越大</li>
+<li>无法解决短时间集中流量的突击，到流量处理不够平滑</li>
 </ul>
 </li>
 </ul>
+<h1 id="桶漏算法的原理、实现、优缺点"><a href="#桶漏算法的原理、实现、优缺点" class="headerlink" title="桶漏算法的原理、实现、优缺点"></a>桶漏算法的原理、实现、优缺点</h1><ul>
+<li>原理<ul>
+<li><img src="https://img.shiqi-lu.tech/20211204114457.png"></li>
+<li>水滴持续漏到桶中，底部定速流出，如果桶空了则停止漏水，如果满了多余的水会被直接抛弃</li>
+</ul>
 </li>
-<li>no12：什么是前台？什么是后台？<ul>
-<li>前台，用户访问的对外系统</li>
-<li>后台，运营访问的对内系统</li>
+<li>实现<ul>
+<li>使用队列，服务的请求会存在队列中，服务的提供方按照固定的速率从队列中取出请求并执行，过多的请求则放在队列中排队或直接拒绝</li>
+</ul>
+</li>
+<li>优点<ul>
+<li>宽进严出，无论请求数量和速率多大，都能按照固定速率流出，流量处理非常平滑</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>当短时间内有大量的突发请求时，即便此时服务器没有任何负载，每个请求也都得在队列中等待一段时间才能被响应</li>
 </ul>
 </li>
 </ul>
-<h1 id="13、本章小结：百万流量，这些技术够用了"><a href="#13、本章小结：百万流量，这些技术够用了" class="headerlink" title="13、本章小结：百万流量，这些技术够用了"></a>13、本章小结：百万流量，这些技术够用了</h1><ul>
-<li>no13：早期单体 ALL in one 架构，遇到什么问题？这阶段的优化思路是什么？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908211227.png"></li>
-<li>性能问题：访问人数多的时候，希望系统快一点</li>
-<li>耦合问题：当出现问题的时候，系统不要全部挂掉</li>
-<li>思路：<ul>
-<li>1.技术不炫技，以解决业务问题为导向</li>
-<li>2.系统改造尽可能小的架构方案</li>
-<li>3.以最快的速度，提升系统的性能，解决遇到的问题</li>
+<h1 id="令牌桶算法的原理、优缺点"><a href="#令牌桶算法的原理、优缺点" class="headerlink" title="令牌桶算法的原理、优缺点"></a>令牌桶算法的原理、优缺点</h1><ul>
+<li>原理<ul>
+<li><img src="https://img.shiqi-lu.tech/20211204121242.png"></li>
+<li>以固定速率生成令牌存入到令牌桶中</li>
+<li>如果令牌数量超过桶的限制则直接丢弃</li>
+<li>当请求到达是，会先从令牌桶中取令牌，取到了令牌的请求可以执行，如果桶空了，那么取令牌的请求会被直接丢弃</li>
+</ul>
+</li>
+<li>优点<ul>
+<li>能够将所有的请求平均分布到时间区间内，又能接受服务器能够承受范围内的突发请求</li>
 </ul>
 </li>
 </ul>
-</li>
-<li>no13：单体架构演进：伪分布式，提升性能<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908211506.png"></li>
-<li>三大分离<ul>
-<li>动静分离</li>
-<li>读写分离(引发读写延时新问题)</li>
-<li>前台后台分离</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no13：单体架构演进：垂直拆分，解耦<ul>
-<li><img src="https://img.shiqi-lu.tech/20210823230403.png"></li>
-<li>业务垂直划分</li>
-<li>代码垂直划分(子系统解耦)</li>
-<li>数据库垂直划分(数据量降低,延时缓解)</li>
-<li>研发团队垂直拆分(专业化，效率提升)</li>
-</ul>
-</li>
-<li>no13：如何保证垂直拆分后，子系统的高可用？<ul>
-<li>使用反向代理</li>
-<li>子web系统的性能，不再受到单台机器资源限制，可以扩展</li>
-<li>子web系统，实现了高可用(伪集群-&gt;真集群) </li>
-<li><img src="https://img.shiqi-lu.tech/20210908212034.png"></li>
-</ul>
-</li>
-<li>no13：真集群后，反向代理如何做负载均衡？<ul>
-<li>负载均衡方法：随机、轮询、静态权重轮询、动态权重轮询，一致性哈希</li>
-<li>负载均衡抓手：四层(转发/交换)，七层(转发/交换)</li>
-</ul>
-</li>
-<li>no13：反向代理，如何保证高可用？<ul>
-<li><img src="https://img.shiqi-lu.tech/20210908212221.png"></li>
-</ul>
-</li>
-<li>no13：反向代理技术出现之前，接入层如何扩展？<ul>
-<li>DNS 轮询</li>
-<li><img src="https://img.shiqi-lu.tech/20210908212329.png"></li>
-</ul>
-</li>
-<li>no13：使用多层反向代理后，如何做到继续提升性能？<ul>
-<li>DNS 轮询</li>
-<li><img src="https://img.shiqi-lu.tech/20210908212439.png"></li>
-</ul>
-</li>
-<li>no13：session 一致性如何保障？<ul>
-<li>session 同步法</li>
-<li>客户端存储法</li>
-<li>反向代理 hash 一致性</li>
-<li>后端统一存储法</li>
-</ul>
-</li>
-<li>no13：如何加速静态资源？<ul>
-<li>CDN</li>
-</ul>
-</li>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000023552181">图解+代码|常见限流算法以及限流在单机分布式场景下的思考</a></li>
+<li><a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/high-availability/limit-request">限流算法有哪些？</a></li>
+<li>极客时间-分布式技术原理与算法解析 29 讲</li>
+<li><a target="_blank" rel="noopener" href="https://www.infoq.cn/article/Qg2tX8fyw5Vt-f3HH673">分布式服务限流实战，已经为你排好坑了</a></li>
 </ul>
 
     </div>
@@ -549,7 +522,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://shiqi-lu.tech/arch-sj-3/" title="《沈剑架构师训练营》第3章 - 快速性能优化">http://shiqi-lu.tech/arch-sj-3/</a>
+      <a href="http://shiqi-lu.tech/throttling-algorithm/" title="5种限流算法总结">http://shiqi-lu.tech/throttling-algorithm/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -559,20 +532,18 @@
 
           <div class="post-tags">
               <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/arch-sj-2/" rel="prev" title="《沈剑架构师训练营》第2章 - 接入层架构">
-                  <i class="fa fa-chevron-left"></i> 《沈剑架构师训练营》第2章 - 接入层架构
+                <a href="/arch-miao-sha/" rel="prev" title="《秒杀系统架构设计》学习">
+                  <i class="fa fa-chevron-left"></i> 《秒杀系统架构设计》学习
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/arch-sj-4/" rel="next" title="《沈剑架构师训练营》第4章 - 微服务架构">
-                  《沈剑架构师训练营》第4章 - 微服务架构 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -721,7 +692,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({
       el  : '#valine-comments',
-      path: "/arch-sj-3/",
+      path: "/throttling-algorithm/",
     }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
     ));
   }, window.Valine);
