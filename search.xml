@@ -1469,125 +1469,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《沈剑架构师训练营》第7章 - 架构解耦</title>
-    <url>/arch-sj-7/</url>
-    <content><![CDATA[<h1 id="34、解耦：配置中心，与配置架构演进。"><a href="#34、解耦：配置中心，与配置架构演进。" class="headerlink" title="34、解耦：配置中心，与配置架构演进。"></a>34、解耦：配置中心，与配置架构演进。</h1><ul>
-<li>no34：配置文件架构有什么核心痛点？<ul>
-<li>1.上游痛：扩容的是下游，改配置重启的是上游(耦合，典型反向依赖)</li>
-<li>2.下游痛：不知道谁依赖于自己(难以实施服务治理)</li>
-</ul>
-</li>
-<li>no34：配置文件架构怎么解耦？<ul>
-<li>1.「配置私藏」架构<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919152754.png"></li>
-<li>上游把下游的配置私藏在自己单独的配置文件里</li>
-<li>不足：例如需要扩容时，下游需要通知所有的上游调用方去修改各自私藏的配置，并重启上游，将连接连到新的集群节点上去，将流量从下线的节点迁走</li>
-</ul>
-</li>
-<li>2.「全局配置文件」架构<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919153259.png"></li>
-<li>运维制定一系列配置文件规范，将通用的服务的配置放到 global.conf 全局配置文件里，调用方升级，不再读取本地的私有配置文件，而是读取全局配置文件去获取通用服务的配置，配合文件监控组件和动态连接池组件能够实现自动的扩容与缩容，但依然解决不了下游服务治理的问题</li>
-<li>优点<ul>
-<li>下游容量变化时只需修改一个地方，调用方重启后会自动读取新配置，对架构的改动较小</li>
-</ul>
-</li>
-<li>不足<ul>
-<li>如果调用方一直不重启，就没办法迁移</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>3.「配置中心」架构<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919153652.png"></li>
-<li>由服务、zookeeper、后台配置文件和落地的数据库组成</li>
-<li>所有服务的配置都维护在配置中心里，所有调用方需要注册配置中心，去配置中心拉取相关的配置，此时全局调用关系图和服务治理，以及按照上游的调用方来限流，就容易实现</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="35、MQ，互联网架构解耦利器。"><a href="#35、MQ，互联网架构解耦利器。" class="headerlink" title="35、MQ，互联网架构解耦利器。"></a>35、MQ，互联网架构解耦利器。</h1><ul>
-<li>no35：什么时候不用 MQ？什么时候用 MQ？<ul>
-<li>不用<ul>
-<li>上游实时关注执行结果，通常采用 RPC</li>
-</ul>
-</li>
-<li>用<ul>
-<li>1.数据驱动的任务依赖，如下一个任务依赖上一个任务的执行结果</li>
-<li>2.上游不关心执行结果</li>
-<li>3.上游关注结果，但执行时间很长，如是离线处理或者跨公网调用的时候，经常使用回调网关加 mq 解耦的方案</li>
-<li>4.削峰填谷，流量控制，保护下游：使用 MQ 的拉取模式，消息的消费方根据自己的处理能力来拉取消息，可实现流量控制，能够达到自身保护的效果</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="36、解耦：MQ，平滑迁移。"><a href="#36、解耦：MQ，平滑迁移。" class="headerlink" title="36、解耦：MQ，平滑迁移。"></a>36、解耦：MQ，平滑迁移。</h1><ul>
-<li>no36：如何实现 MQ 的平滑迁移？如何快速实现统一迁移？<ul>
-<li>步骤<ul>
-<li>1.消费方双向订阅<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919161429.png"></li>
-</ul>
-</li>
-<li>2.生产方升级为新发布<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919161457.png"></li>
-</ul>
-</li>
-<li>3.消费方下线旧订阅<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919161530.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>快速实现统一迁移<ul>
-<li>浅浅地封装一层后，可简单地升级一下组件即可</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="37、解耦：IP耦合，公共库耦合，解耦实践。"><a href="#37、解耦：IP耦合，公共库耦合，解耦实践。" class="headerlink" title="37、解耦：IP耦合，公共库耦合，解耦实践。"></a>37、解耦：IP耦合，公共库耦合，解耦实践。</h1><ul>
-<li>no37：如何发现系统中的耦合？<ul>
-<li>查找「被动联动」的点</li>
-</ul>
-</li>
-<li>no37：「IP 耦合」如何解耦<ul>
-<li>使用内网域名来替代内网 IP</li>
-<li><img src="https://img.shiqi-lu.tech/20210919165206.png"></li>
-</ul>
-</li>
-<li>no37：「公共库耦合」如何解耦<ul>
-<li>1.代码各自拷贝一份</li>
-<li>2.垂直拆分，个性业务代码「上浮」<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919165326.png"></li>
-</ul>
-</li>
-<li>3.服务化，共性业务代码「下沉」<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919165415.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="38、解耦：数据库耦合，解耦实战！"><a href="#38、解耦：数据库耦合，解耦实战！" class="headerlink" title="38、解耦：数据库耦合，解耦实战！"></a>38、解耦：数据库耦合，解耦实战！</h1><ul>
-<li>no38：如何对「数据库耦合」进行解耦？<ul>
-<li>1.公共数据访问服务化，屏蔽底层数据访问的复杂性，屏蔽分库分表，屏蔽读写分离，屏蔽缓存与数据库，将数据私藏<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919171009.png"></li>
-</ul>
-</li>
-<li>2.个性数据访问，自己家的数据自己管理，要么通过 DAO 访问数据库，要么子业也建立个性化数据访问的服务，本质是垂直拆分</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《沈剑架构师训练营》第8章 - 架构分层</title>
     <url>/arch-sj-8/</url>
     <content><![CDATA[<h1 id="40、分层：互联网分层架构方法论"><a href="#40、分层：互联网分层架构方法论" class="headerlink" title="40、分层：互联网分层架构方法论"></a>40、分层：互联网分层架构方法论</h1><ul>
@@ -1763,6 +1644,125 @@
         <tag>数据结构</tag>
         <tag>算法</tag>
         <tag>二分查找</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《沈剑架构师训练营》第7章 - 架构解耦</title>
+    <url>/arch-sj-7/</url>
+    <content><![CDATA[<h1 id="34、解耦：配置中心，与配置架构演进。"><a href="#34、解耦：配置中心，与配置架构演进。" class="headerlink" title="34、解耦：配置中心，与配置架构演进。"></a>34、解耦：配置中心，与配置架构演进。</h1><ul>
+<li>no34：配置文件架构有什么核心痛点？<ul>
+<li>1.上游痛：扩容的是下游，改配置重启的是上游(耦合，典型反向依赖)</li>
+<li>2.下游痛：不知道谁依赖于自己(难以实施服务治理)</li>
+</ul>
+</li>
+<li>no34：配置文件架构怎么解耦？<ul>
+<li>1.「配置私藏」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919152754.png"></li>
+<li>上游把下游的配置私藏在自己单独的配置文件里</li>
+<li>不足：例如需要扩容时，下游需要通知所有的上游调用方去修改各自私藏的配置，并重启上游，将连接连到新的集群节点上去，将流量从下线的节点迁走</li>
+</ul>
+</li>
+<li>2.「全局配置文件」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919153259.png"></li>
+<li>运维制定一系列配置文件规范，将通用的服务的配置放到 global.conf 全局配置文件里，调用方升级，不再读取本地的私有配置文件，而是读取全局配置文件去获取通用服务的配置，配合文件监控组件和动态连接池组件能够实现自动的扩容与缩容，但依然解决不了下游服务治理的问题</li>
+<li>优点<ul>
+<li>下游容量变化时只需修改一个地方，调用方重启后会自动读取新配置，对架构的改动较小</li>
+</ul>
+</li>
+<li>不足<ul>
+<li>如果调用方一直不重启，就没办法迁移</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.「配置中心」架构<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919153652.png"></li>
+<li>由服务、zookeeper、后台配置文件和落地的数据库组成</li>
+<li>所有服务的配置都维护在配置中心里，所有调用方需要注册配置中心，去配置中心拉取相关的配置，此时全局调用关系图和服务治理，以及按照上游的调用方来限流，就容易实现</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="35、MQ，互联网架构解耦利器。"><a href="#35、MQ，互联网架构解耦利器。" class="headerlink" title="35、MQ，互联网架构解耦利器。"></a>35、MQ，互联网架构解耦利器。</h1><ul>
+<li>no35：什么时候不用 MQ？什么时候用 MQ？<ul>
+<li>不用<ul>
+<li>上游实时关注执行结果，通常采用 RPC</li>
+</ul>
+</li>
+<li>用<ul>
+<li>1.数据驱动的任务依赖，如下一个任务依赖上一个任务的执行结果</li>
+<li>2.上游不关心执行结果</li>
+<li>3.上游关注结果，但执行时间很长，如是离线处理或者跨公网调用的时候，经常使用回调网关加 mq 解耦的方案</li>
+<li>4.削峰填谷，流量控制，保护下游：使用 MQ 的拉取模式，消息的消费方根据自己的处理能力来拉取消息，可实现流量控制，能够达到自身保护的效果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="36、解耦：MQ，平滑迁移。"><a href="#36、解耦：MQ，平滑迁移。" class="headerlink" title="36、解耦：MQ，平滑迁移。"></a>36、解耦：MQ，平滑迁移。</h1><ul>
+<li>no36：如何实现 MQ 的平滑迁移？如何快速实现统一迁移？<ul>
+<li>步骤<ul>
+<li>1.消费方双向订阅<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161429.png"></li>
+</ul>
+</li>
+<li>2.生产方升级为新发布<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161457.png"></li>
+</ul>
+</li>
+<li>3.消费方下线旧订阅<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919161530.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>快速实现统一迁移<ul>
+<li>浅浅地封装一层后，可简单地升级一下组件即可</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="37、解耦：IP耦合，公共库耦合，解耦实践。"><a href="#37、解耦：IP耦合，公共库耦合，解耦实践。" class="headerlink" title="37、解耦：IP耦合，公共库耦合，解耦实践。"></a>37、解耦：IP耦合，公共库耦合，解耦实践。</h1><ul>
+<li>no37：如何发现系统中的耦合？<ul>
+<li>查找「被动联动」的点</li>
+</ul>
+</li>
+<li>no37：「IP 耦合」如何解耦<ul>
+<li>使用内网域名来替代内网 IP</li>
+<li><img src="https://img.shiqi-lu.tech/20210919165206.png"></li>
+</ul>
+</li>
+<li>no37：「公共库耦合」如何解耦<ul>
+<li>1.代码各自拷贝一份</li>
+<li>2.垂直拆分，个性业务代码「上浮」<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919165326.png"></li>
+</ul>
+</li>
+<li>3.服务化，共性业务代码「下沉」<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919165415.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="38、解耦：数据库耦合，解耦实战！"><a href="#38、解耦：数据库耦合，解耦实战！" class="headerlink" title="38、解耦：数据库耦合，解耦实战！"></a>38、解耦：数据库耦合，解耦实战！</h1><ul>
+<li>no38：如何对「数据库耦合」进行解耦？<ul>
+<li>1.公共数据访问服务化，屏蔽底层数据访问的复杂性，屏蔽分库分表，屏蔽读写分离，屏蔽缓存与数据库，将数据私藏<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919171009.png"></li>
+</ul>
+</li>
+<li>2.个性数据访问，自己家的数据自己管理，要么通过 DAO 访问数据库，要么子业也建立个性化数据访问的服务，本质是垂直拆分</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
       </tags>
   </entry>
   <entry>
@@ -3261,6 +3261,90 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s培训第8课 集群调度</title>
+    <url>/k8s-8/</url>
+    <content><![CDATA[<ul>
+<li>Q:Scheduler是什么？<ul>
+<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
+<li>公平：如何保证每个节点都能被分配资源</li>
+<li>资源高效利用：集群所有资源最大化被使用</li>
+<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
+<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
+</ul>
+</li>
+<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
+</ul>
+</li>
+<li>Q: k8s的调度过程是怎样<ul>
+<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
+<li>Predicate 有一系列的算法可以使用：<ul>
+<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
+<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
+<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
+<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
+<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
+</ul>
+</li>
+<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
+<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
+<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
+<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
+<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
+</ul>
+</li>
+<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
+</ul>
+</li>
+<li>Q:结点亲和性<ul>
+<li>pod.spec.nodeAﬃnity<ul>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
+</ul>
+</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>键值运算关系<ul>
+<li>In：label 的值在某个列表中</li>
+<li>NotIn：label 的值不在某个列表中</li>
+<li>Gt：label 的值大于某个值</li>
+<li>Lt：label 的值小于某个值</li>
+<li>Exists：某个 label 存在</li>
+<li>DoesNotExist：某个 label 不存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Pod亲和性<ul>
+<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:亲和性/反亲和性调度策略比较<ul>
+<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
+</ul>
+</li>
+<li>Q:给节点打标签<ul>
+<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
+</ul>
+</li>
+<li>Q:k8s指定调度节点<ul>
+<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
+<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s培训第7课 存储</title>
     <url>/k8s-7/</url>
     <content><![CDATA[<ul>
@@ -3384,90 +3468,6 @@
 <li>Q:如何安装nfs服务器<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nfs-common nfs-utils rpcbind</span><br><span class="line">mkdir /nfsdata</span><br><span class="line">chmod 666 /nfsdata</span><br><span class="line">chown nfsnobody /nfsdata</span><br><span class="line">cat /etc/exports</span><br><span class="line">      /nfsdata *(rw,no_root_squash,no_all_squash,sync)</span><br><span class="line">systemctl start rpcbind</span><br><span class="line">systemctl start nfs</span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载</span></span><br><span class="line">showmount -e xxx.xxx.xxx.xxx</span><br><span class="line">mount -t nfs xxx.xxx.xxx.xxx:/nfs /test</span><br><span class="line">umount /test</span><br></pre></td></tr></table></figure></li>
 <li>Q:部署PV<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfspv1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfs</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">10.66</span><span class="number">.66</span><span class="number">.10</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kubectl create -f pv.yaml</span><br><span class="line">kubectl get pv```</span><br><span class="line">- Q:创建服务并使用pvc</span><br><span class="line">    - ```yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    name: web</span><br><span class="line">  clusterIP: None</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: web</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  serviceName: &quot;nginx&quot;</span><br><span class="line">  replicas: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: wangyanglinux/myapp:v2</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: web</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: www</span><br><span class="line">          mountPath: /usr/share/nginx/html</span><br><span class="line">  volumeClaimTemplates:</span><br><span class="line">  - metadata:</span><br><span class="line">      name: www</span><br><span class="line">    spec:</span><br><span class="line">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span><br><span class="line">      storageClassName: &quot;nfs&quot;</span><br><span class="line">      resources:</span><br><span class="line">        requests:</span><br><span class="line">          storage: 1Gi</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>k8s培训第8课 集群调度</title>
-    <url>/k8s-8/</url>
-    <content><![CDATA[<ul>
-<li>Q:Scheduler是什么？<ul>
-<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
-<li>公平：如何保证每个节点都能被分配资源</li>
-<li>资源高效利用：集群所有资源最大化被使用</li>
-<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
-<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
-</ul>
-</li>
-<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
-</ul>
-</li>
-<li>Q: k8s的调度过程是怎样<ul>
-<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
-<li>Predicate 有一系列的算法可以使用：<ul>
-<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
-<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
-<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
-<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
-<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
-</ul>
-</li>
-<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
-<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
-<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
-<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
-<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
-</ul>
-</li>
-<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
-</ul>
-</li>
-<li>Q:结点亲和性<ul>
-<li>pod.spec.nodeAﬃnity<ul>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
-</ul>
-</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>键值运算关系<ul>
-<li>In：label 的值在某个列表中</li>
-<li>NotIn：label 的值不在某个列表中</li>
-<li>Gt：label 的值大于某个值</li>
-<li>Lt：label 的值小于某个值</li>
-<li>Exists：某个 label 存在</li>
-<li>DoesNotExist：某个 label 不存在</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:Pod亲和性<ul>
-<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:亲和性/反亲和性调度策略比较<ul>
-<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
-</ul>
-</li>
-<li>Q:给节点打标签<ul>
-<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
-</ul>
-</li>
-<li>Q:k8s指定调度节点<ul>
-<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
-<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
 </li>
 </ul>
 ]]></content>
@@ -3608,6 +3608,148 @@
         <tag>数据结构</tag>
         <tag>算法</tag>
         <tag>海量数据</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《左手MongoDB，右手Redis》第3章 MongoDB快速入门</title>
+    <url>/mongodb-redis3/</url>
+    <content><![CDATA[<ul>
+<li>3.4 MongoDB的基本操作<ul>
+<li>创建数据库与集合<ul>
+<li>创建数据库：Robo 3T中，右键小电脑选择“Create Database”</li>
+<li>创建集合：在新创建的数据库里，右键“Collections”，选择”Create Collection”</li>
+</ul>
+</li>
+<li>插入单条数据<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).insertOne(&#123;&quot;name&quot;:&quot;张小三&quot;, &quot;age&quot;:18, &quot;address&quot;:&quot;上海&quot;&#125;)</code></li>
+<li>使用cmd+r运行</li>
+</ul>
+</li>
+<li>批量插入数据<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">db.getCollection(&#x27;example_data_1&#x27;).insertMany([</span><br><span class="line">    &#123;&quot;name&quot;:&quot;kk&quot;, &quot;age&quot;:20&#125;,</span><br><span class="line">    &#123;&quot;name&quot;:&quot;ll&quot;, &quot;age&quot;:21&#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure></li>
+<li>查询所有数据<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;)</code></li>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find()</code></li>
+</ul>
+</li>
+<li>查询特定数据<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;字段1&#39;:&#39;值1&#39;, &#39;字段2&#39;:&#39;值2&#39;&#125;)</code></li>
+</ul>
+</li>
+<li>查询范围值数据<ul>
+<li>查询’age’字段不小于25的记录<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;)</code></li>
+</ul>
+</li>
+<li>各个操作符<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">大于：$gt</span><br><span class="line">大于等于：$gte</span><br><span class="line">小于：$lt</span><br><span class="line">小于等于：$lte</span><br><span class="line">不等于：$ne</span><br></pre></td></tr></table></figure></li>
+<li>查询’age’大于21并小于等于24的数据<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$lte&#39;: 24, &#39;$gt&#39;: 21&#125;&#125;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>限定返回哪些字段<ul>
+<li>find命令第1个参数用于过滤不同的记录，第2个参数用于修改返回的字段。如果省略第2个参数，则会返回所有字段</li>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(用于过滤记录的字典, 用于限定字段的字典)</code></li>
+<li>限定字段的字典的Key为各个字段名，其值只有两个0或1<ul>
+<li>0表示在全部字段中剔除值为0的这些字段返回</li>
+<li>1表示只返回值为1的这些字段</li>
+</ul>
+</li>
+<li>查询数据集，但不返回address和age字段<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;, &#123;&#39;address&#39;:0, &#39;age&#39;:0&#125;)</code></li>
+</ul>
+</li>
+<li>查询数据集，只返回address和age字段<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;, &#123;&#39;address&#39;:1, &#39;age&#39;:1&#125;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询满足结果的数据集的条数<ul>
+<li>查询’age’字段不小于25的记录的条数<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;).count()</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回限定的条数<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find().limit(限制返回的条数)</code></li>
+</ul>
+</li>
+<li>对查询结果进行排序<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;).sort(&#123;&#39;字段名&#39;: -1或1&#125;)</code></li>
+<li>其中-1表示倒序，1表示正序</li>
+</ul>
+</li>
+<li>修改数据updateOne()和updateMany()<ul>
+<li><code>sql db.getCollection(&#39;example_data_1&#39;).updateMany( 参数1：查询语句的第一个字典， &#123;&#39;$set&#39;: &#123;&#39;字段1&#39;: &#39;新的值1&#39;, &#39;字段2&#39;: &#39;新的值2&#39;&#125;&#125; )</code></li>
+</ul>
+</li>
+<li>删除数据<ul>
+<li>只需把find改成deleteOne或deleteMany即可，对应删除第1条数据和所有满足要求的数据</li>
+</ul>
+</li>
+<li>数据去重<ul>
+<li><code>db.getCollection(&#39;example_data_1&#39;).distinct(&#39;字段名&#39;, 查询语句的第一个字典)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.5 使用Python操作MongoDB<ul>
+<li>安装<ul>
+<li><code>pip install pymongo</code></li>
+</ul>
+</li>
+<li>连接数据库<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>client = MongoClient(<span class="string">&#x27;mongodb://192.168.1.53:27017&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>database = client.chapter_3</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection = database.example_data_1</span><br></pre></td></tr></table></figure></li>
+<li>MongoDB与PyMongo的对比<ul>
+<li>把MongoDB的驼峰命名转化为PyMongo的小写加下划线即可</li>
+</ul>
+</li>
+<li>插入数据insert_one和insert_many<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.insert_many([</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;new_new&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">30</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;old_old&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">31</span>&#125;</span><br><span class="line"><span class="meta">... </span>])</span><br></pre></td></tr></table></figure></li>
+<li>查询数据find<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>rows = collection.find(&#123;<span class="string">&#x27;age&#x27;</span>: &#123;<span class="string">&#x27;$lt&#x27;</span>: <span class="number">30</span>&#125;&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line"><span class="meta">... </span>    print(row)</span><br></pre></td></tr></table></figure></li>
+<li>更新数据<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.update_many(</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;kk&#x27;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;$set&#x27;</span>: &#123;<span class="string">&#x27;age&#x27;</span>: <span class="number">44</span>&#125;&#125;</span><br><span class="line"><span class="meta">... </span>)</span><br></pre></td></tr></table></figure></li>
+<li>更新或插入数据<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.update_many(</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;kk&#x27;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;$set&#x27;</span>: &#123;<span class="string">&#x27;age&#x27;</span>: <span class="number">44</span>&#125;&#125;,</span><br><span class="line"><span class="meta">... </span>    upsert=<span class="literal">True</span></span><br><span class="line"><span class="meta">... </span>)</span><br></pre></td></tr></table></figure></li>
+<li>删除数据<ul>
+<li><code>collection.delete_many(&#123;&#39;age&#39;:0&#125;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>3.6 MongoDB与Python不通用的操作<ul>
+<li>1.空值<ul>
+<li>MongoDB中写作null，Python中写作None</li>
+</ul>
+</li>
+<li>2.布尔值<ul>
+<li>MongoDB中真为true，假为false</li>
+<li>Python中真为True，假为False</li>
+</ul>
+</li>
+<li>3.排序参数<ul>
+<li>MongoDB: .sort({‘age’: -1})</li>
+<li>Python: .sort(‘age’, -1)</li>
+</ul>
+</li>
+<li>4.查询_id<ul>
+<li>MongoDB<ul>
+<li><code>db.getCollection(&#39;example_data_2&#39;).find(&#123;&#39;_id&#39;: ObjectId(&#39;mxmmmmm&#39;)&#125;)</code></li>
+</ul>
+</li>
+<li>Python<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> bson <span class="keyword">import</span> ObjectId</span><br><span class="line">collection.find(&#123;<span class="string">&#x27;_id&#x27;</span>: ObjectId(<span class="string">&#x27;mxmmmmm&#x27;</span>)&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>MongoDB</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>MongoDB</tag>
+        <tag>Redis</tag>
       </tags>
   </entry>
   <entry>
@@ -3759,148 +3901,6 @@
       </categories>
       <tags>
         <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《左手MongoDB，右手Redis》第3章 MongoDB快速入门</title>
-    <url>/mongodb-redis3/</url>
-    <content><![CDATA[<ul>
-<li>3.4 MongoDB的基本操作<ul>
-<li>创建数据库与集合<ul>
-<li>创建数据库：Robo 3T中，右键小电脑选择“Create Database”</li>
-<li>创建集合：在新创建的数据库里，右键“Collections”，选择”Create Collection”</li>
-</ul>
-</li>
-<li>插入单条数据<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).insertOne(&#123;&quot;name&quot;:&quot;张小三&quot;, &quot;age&quot;:18, &quot;address&quot;:&quot;上海&quot;&#125;)</code></li>
-<li>使用cmd+r运行</li>
-</ul>
-</li>
-<li>批量插入数据<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">db.getCollection(&#x27;example_data_1&#x27;).insertMany([</span><br><span class="line">    &#123;&quot;name&quot;:&quot;kk&quot;, &quot;age&quot;:20&#125;,</span><br><span class="line">    &#123;&quot;name&quot;:&quot;ll&quot;, &quot;age&quot;:21&#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure></li>
-<li>查询所有数据<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;)</code></li>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find()</code></li>
-</ul>
-</li>
-<li>查询特定数据<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;字段1&#39;:&#39;值1&#39;, &#39;字段2&#39;:&#39;值2&#39;&#125;)</code></li>
-</ul>
-</li>
-<li>查询范围值数据<ul>
-<li>查询’age’字段不小于25的记录<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;)</code></li>
-</ul>
-</li>
-<li>各个操作符<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">大于：$gt</span><br><span class="line">大于等于：$gte</span><br><span class="line">小于：$lt</span><br><span class="line">小于等于：$lte</span><br><span class="line">不等于：$ne</span><br></pre></td></tr></table></figure></li>
-<li>查询’age’大于21并小于等于24的数据<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$lte&#39;: 24, &#39;$gt&#39;: 21&#125;&#125;)</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>限定返回哪些字段<ul>
-<li>find命令第1个参数用于过滤不同的记录，第2个参数用于修改返回的字段。如果省略第2个参数，则会返回所有字段</li>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(用于过滤记录的字典, 用于限定字段的字典)</code></li>
-<li>限定字段的字典的Key为各个字段名，其值只有两个0或1<ul>
-<li>0表示在全部字段中剔除值为0的这些字段返回</li>
-<li>1表示只返回值为1的这些字段</li>
-</ul>
-</li>
-<li>查询数据集，但不返回address和age字段<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;, &#123;&#39;address&#39;:0, &#39;age&#39;:0&#125;)</code></li>
-</ul>
-</li>
-<li>查询数据集，只返回address和age字段<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#125;, &#123;&#39;address&#39;:1, &#39;age&#39;:1&#125;)</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>查询满足结果的数据集的条数<ul>
-<li>查询’age’字段不小于25的记录的条数<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;).count()</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>返回限定的条数<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find().limit(限制返回的条数)</code></li>
-</ul>
-</li>
-<li>对查询结果进行排序<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).find(&#123;&#39;age&#39;: &#123;&#39;$gte&#39;: 25&#125;&#125;).sort(&#123;&#39;字段名&#39;: -1或1&#125;)</code></li>
-<li>其中-1表示倒序，1表示正序</li>
-</ul>
-</li>
-<li>修改数据updateOne()和updateMany()<ul>
-<li><code>sql db.getCollection(&#39;example_data_1&#39;).updateMany( 参数1：查询语句的第一个字典， &#123;&#39;$set&#39;: &#123;&#39;字段1&#39;: &#39;新的值1&#39;, &#39;字段2&#39;: &#39;新的值2&#39;&#125;&#125; )</code></li>
-</ul>
-</li>
-<li>删除数据<ul>
-<li>只需把find改成deleteOne或deleteMany即可，对应删除第1条数据和所有满足要求的数据</li>
-</ul>
-</li>
-<li>数据去重<ul>
-<li><code>db.getCollection(&#39;example_data_1&#39;).distinct(&#39;字段名&#39;, 查询语句的第一个字典)</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>3.5 使用Python操作MongoDB<ul>
-<li>安装<ul>
-<li><code>pip install pymongo</code></li>
-</ul>
-</li>
-<li>连接数据库<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>client = MongoClient(<span class="string">&#x27;mongodb://192.168.1.53:27017&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>database = client.chapter_3</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection = database.example_data_1</span><br></pre></td></tr></table></figure></li>
-<li>MongoDB与PyMongo的对比<ul>
-<li>把MongoDB的驼峰命名转化为PyMongo的小写加下划线即可</li>
-</ul>
-</li>
-<li>插入数据insert_one和insert_many<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.insert_many([</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;new_new&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">30</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;old_old&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">31</span>&#125;</span><br><span class="line"><span class="meta">... </span>])</span><br></pre></td></tr></table></figure></li>
-<li>查询数据find<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>rows = collection.find(&#123;<span class="string">&#x27;age&#x27;</span>: &#123;<span class="string">&#x27;$lt&#x27;</span>: <span class="number">30</span>&#125;&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> row <span class="keyword">in</span> rows:</span><br><span class="line"><span class="meta">... </span>    print(row)</span><br></pre></td></tr></table></figure></li>
-<li>更新数据<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.update_many(</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;kk&#x27;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;$set&#x27;</span>: &#123;<span class="string">&#x27;age&#x27;</span>: <span class="number">44</span>&#125;&#125;</span><br><span class="line"><span class="meta">... </span>)</span><br></pre></td></tr></table></figure></li>
-<li>更新或插入数据<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>collection.update_many(</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;kk&#x27;</span>&#125;,</span><br><span class="line"><span class="meta">... </span>    &#123;<span class="string">&#x27;$set&#x27;</span>: &#123;<span class="string">&#x27;age&#x27;</span>: <span class="number">44</span>&#125;&#125;,</span><br><span class="line"><span class="meta">... </span>    upsert=<span class="literal">True</span></span><br><span class="line"><span class="meta">... </span>)</span><br></pre></td></tr></table></figure></li>
-<li>删除数据<ul>
-<li><code>collection.delete_many(&#123;&#39;age&#39;:0&#125;)</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>3.6 MongoDB与Python不通用的操作<ul>
-<li>1.空值<ul>
-<li>MongoDB中写作null，Python中写作None</li>
-</ul>
-</li>
-<li>2.布尔值<ul>
-<li>MongoDB中真为true，假为false</li>
-<li>Python中真为True，假为False</li>
-</ul>
-</li>
-<li>3.排序参数<ul>
-<li>MongoDB: .sort({‘age’: -1})</li>
-<li>Python: .sort(‘age’, -1)</li>
-</ul>
-</li>
-<li>4.查询_id<ul>
-<li>MongoDB<ul>
-<li><code>db.getCollection(&#39;example_data_2&#39;).find(&#123;&#39;_id&#39;: ObjectId(&#39;mxmmmmm&#39;)&#125;)</code></li>
-</ul>
-</li>
-<li>Python<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> bson <span class="keyword">import</span> ObjectId</span><br><span class="line">collection.find(&#123;<span class="string">&#x27;_id&#x27;</span>: ObjectId(<span class="string">&#x27;mxmmmmm&#x27;</span>)&#125;)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>MongoDB</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>MongoDB</tag>
-        <tag>Redis</tag>
       </tags>
   </entry>
   <entry>
@@ -4154,6 +4154,219 @@
       </tags>
   </entry>
   <entry>
+    <title>nginx学习笔记</title>
+    <url>/nginx-starter/</url>
+    <content><![CDATA[<h1 id="第-2-章-Nginx-安装"><a href="#第-2-章-Nginx-安装" class="headerlink" title="第 2 章 Nginx 安装"></a>第 2 章 Nginx 安装</h1><ul>
+<li>0.官网下载 nginx：<a href="http://nginx.org/">http://nginx.org/</a></li>
+<li>1.安装 pcre 依赖<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pcre/pcre/8.37/pcre-8.37.tar.gz</span><br><span class="line">tar –xvf pcre-8.37.tar.gz</span><br><span class="line">./configure</span><br><span class="line">完成后，回到 pcre 目录下执行 make &amp;&amp; make install</span><br></pre></td></tr></table></figure></li>
+<li>2.安装 openssl 、zlib 、 gcc 依赖<ul>
+<li><code>yum -y install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel</code></li>
+</ul>
+</li>
+<li>3.安装 nginx<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></li>
+<li>4.防火墙<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">查看开放的端口号</span><br><span class="line">firewall-cmd --list-all</span><br><span class="line"></span><br><span class="line">设置开放的端口号</span><br><span class="line">firewall-cmd --add-service=http --permanent</span><br><span class="line">firewall-cmd --add-port=80/tcp --permanent</span><br><span class="line"></span><br><span class="line">重启防火墙</span><br><span class="line">firewall-cmd –reload</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第-3-章-nginx-常用的命令和配置文件"><a href="#第-3-章-nginx-常用的命令和配置文件" class="headerlink" title="第 3 章 nginx 常用的命令和配置文件"></a>第 3 章 nginx 常用的命令和配置文件</h1><h2 id="nginx-常用命令"><a href="#nginx-常用命令" class="headerlink" title="nginx 常用命令"></a>nginx 常用命令</h2><ul>
+<li>进入 <code>/usr/local/nginx/sbin</code></li>
+<li>启动：<code>./nginx</code></li>
+<li>关闭：<code>./nginx -s stop</code></li>
+<li>重新加载：<code>./nginx -s reload</code></li>
+</ul>
+<h2 id="nginx-的配置文件的位置和内容"><a href="#nginx-的配置文件的位置和内容" class="headerlink" title="nginx 的配置文件的位置和内容"></a>nginx 的配置文件的位置和内容</h2><ul>
+<li>位置：<code>/usr/local/nginx/conf/nginx.conf</code></li>
+<li>包含三部分内容：<ul>
+<li>全局块：配置服务器整体运行的配置指令</li>
+<li>events 块：影响 Nginx 服务器与用户的网络连接</li>
+<li>http 块：代理、缓存和日志定义等绝大多数功能和第三方模块的配置都在这里<ul>
+<li>http 全局块：括文件引入、MIME-TYPE 定义、日志自定义、连接超时时间、单链接请求数上限等</li>
+<li>server 块：和虚拟主机有密切关系，虚拟主机从用户角度看，和一台独立的硬件主机是完全一样的</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-4-章-nginx-配置实例-反向代理"><a href="#第-4-章-nginx-配置实例-反向代理" class="headerlink" title="第 4 章 nginx 配置实例-反向代理"></a>第 4 章 nginx 配置实例-反向代理</h1><h2 id="反向代理实例一"><a href="#反向代理实例一" class="headerlink" title="反向代理实例一"></a>反向代理实例一</h2><ul>
+<li>实现效果：使用 nginx 反向代理，访问 <a href="http://www.123.com/">www.123.com</a> 直接跳转到 127.0.0.1:8080</li>
+<li>1.启动一个 tomcat 配置为 127.0.0.1:8080</li>
+<li>2.修改本地 host 文件，将 <a href="http://www.123.com/">www.123.com</a> 映射到 127.0.0.1(如果nginx不是在一台机器要把这个 ip 修改到nginx对应机器上)</li>
+<li>3.配置更改<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name www.123.com;</span><br><span class="line">    </span><br><span class="line">    location &#x2F; &#123;</span><br><span class="line">        proxy_pass http:&#x2F;&#x2F;&#x2F;127.0.0.1:8080;</span><br><span class="line">        index index.html index.htm index.jsp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="反向代理实例二"><a href="#反向代理实例二" class="headerlink" title="反向代理实例二"></a>反向代理实例二</h2><ul>
+<li>实现效果<ul>
+<li>使用 nginx 反向代理，根据访问的路径跳转到不同端口的服务中</li>
+<li>nginx 监听端口为 9001，</li>
+<li>访问 <a href="http://127.0.0.1:9001/edu/">http://127.0.0.1:9001/edu/</a> 直接跳转到 127.0.0.1:8081</li>
+<li>访问 <a href="http://127.0.0.1:9001/vod/">http://127.0.0.1:9001/vod/</a> 直接跳转到 127.0.0.1:8082</li>
+</ul>
+</li>
+<li>1.准备两个tomcat，一个 8001 端口，一个 8002 端口，并准备好测试的页面</li>
+<li>2.配置更改<ul>
+<li><img src="https://img.shiqi-lu.tech/20211109113836.png"></li>
+</ul>
+</li>
+</ul>
+<h2 id="location-指令说明"><a href="#location-指令说明" class="headerlink" title="location 指令说明"></a>location 指令说明</h2><ul>
+<li>该指令用于匹配 URL。语法如下</li>
+<li><pre><code class="plain">location [ = | ~ | ~* | ^~ ] uri &#123;
+</code></pre>
+</li>
+</ul>
+<p>}```</p>
+<ul>
+<li>= ：用于不含正则表达式的 uri 前，要求请求字符串与 uri 严格匹配，如果匹配成功，就停止继续向下搜索并立即处理该请求</li>
+<li>~：用于表示 uri 包含正则表达式，并且区分大小写</li>
+<li>~*：用于表示 uri 包含正则表达式，并且不区分大小写</li>
+<li>^~：用于不含正则表达式的 uri 前，要求 Nginx 服务器找到标识 uri 和请求字符串匹配度最高的 location 后，立即使用此 location 处理请求，而不再使用 location 块中的正则 uri 和请求字符串做匹配</li>
+</ul>
+<h1 id="第-5-章-nginx-配置实例-负载均衡"><a href="#第-5-章-nginx-配置实例-负载均衡" class="headerlink" title="第 5 章 nginx 配置实例-负载均衡"></a>第 5 章 nginx 配置实例-负载均衡</h1><h2 id="配置负载均衡"><a href="#配置负载均衡" class="headerlink" title="配置负载均衡"></a>配置负载均衡</h2><ul>
+<li>配置更改<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    ...</span><br><span class="line">    upstream myserver &#123;</span><br><span class="line">        ip_hash;</span><br><span class="line">        server 192.168.5.21;</span><br><span class="line">        server 192.168.5.22;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    server &#123;</span><br><span class="line">        location &#x2F; &#123;</span><br><span class="line">            ...</span><br><span class="line">            proxy_pass http:&#x2F;&#x2F;myserver;</span><br><span class="line">            proxy_connect_timeout 10;</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="nginx-提供的负载均衡分配策略"><a href="#nginx-提供的负载均衡分配策略" class="headerlink" title="nginx 提供的负载均衡分配策略"></a>nginx 提供的负载均衡分配策略</h2><ul>
+<li>1.轮询（默认）：每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器 down 掉，能自动剔除</li>
+<li>2.weight：代表权,重默认为 1,权重越高被分配的客户端越多，指定轮询几率，weight 和访问比率成正比，用于后端服务器性能不均的情况<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">upstream server_pool &#123;</span><br><span class="line">  server 192.168.5.21 weight &#x3D; 10;</span><br><span class="line">  server 192.168.5.22 weight &#x3D; 10;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>3.ip_hash：每个请求按访问 ip 的 hash 结果分配，这样每个访客固定访问一个后端服务器，可以解决 session 的问题<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">upstream server_pool &#123;</span><br><span class="line">  ip_hash;</span><br><span class="line">  server 192.168.5.21;</span><br><span class="line">  server 192.168.5.22;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>4.fair（第三方）：按后端服务器的响应时间来分配请求，响应时间短的优先分配<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">upstream server_pool &#123;</span><br><span class="line">  server 192.168.5.21;</span><br><span class="line">  server 192.168.5.22;</span><br><span class="line">  fair;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第-6-章-nginx-配置实例-动静分离"><a href="#第-6-章-nginx-配置实例-动静分离" class="headerlink" title="第 6 章 nginx 配置实例-动静分离"></a>第 6 章 nginx 配置实例-动静分离</h1><h2 id="配置动静分离"><a href="#配置动静分离" class="headerlink" title="配置动静分离"></a>配置动静分离</h2><figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name 192.168.17.129;</span><br><span class="line">    </span><br><span class="line">    location &#x2F;www&#x2F; &#123;</span><br><span class="line">        root &#x2F;data&#x2F;;</span><br><span class="line">        index index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    location &#x2F;image&#x2F; &#123;</span><br><span class="line">        root &#x2F;data&#x2F;;</span><br><span class="line">        autoindex on; # 这个选项用于在浏览器上看文件目录</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="第-7-章-nginx-原理与优化参数配置"><a href="#第-7-章-nginx-原理与优化参数配置" class="headerlink" title="第 7 章 nginx 原理与优化参数配置"></a>第 7 章 nginx 原理与优化参数配置</h1><ul>
+<li>master-workers 的机制的好处<ul>
+<li>1.可以使用 nginx –s reload 热部署，利用 nginx 进行热部署操作</li>
+<li>2.每个 woker 是独立的进程，如果有其中的一个 woker 出现问题，其他 woker 独立的，继续进行争抢，实现请求过程，不会造成服务中断</li>
+</ul>
+</li>
+<li>设置多少个 woker 合适<ul>
+<li>worker 数和服务器的 cpu 数相等是最为适宜的</li>
+</ul>
+</li>
+<li>发送请求，占用了 woker 的几个连接数worker_connection？<ul>
+<li>2 或者 4 个</li>
+</ul>
+</li>
+<li>nginx 有一个 master，有四个 woker，每个 woker 支持最大的连接数 1024，支持的最大并发数是多少？<ul>
+<li>普通的静态访问最大并发数是： worker_connections * worker_processes / 2</li>
+<li>而如果是 HTTP 作 为反向代理来说，最大并发数量应该是 worker_connections * worker_processes/4</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-8-章-nginx-搭建高可用集群"><a href="#第-8-章-nginx-搭建高可用集群" class="headerlink" title="第 8 章 nginx 搭建高可用集群"></a>第 8 章 nginx 搭建高可用集群</h1><h2 id="Keepalived-Nginx-高可用集群（主从模式）"><a href="#Keepalived-Nginx-高可用集群（主从模式）" class="headerlink" title="Keepalived+Nginx 高可用集群（主从模式）"></a>Keepalived+Nginx 高可用集群（主从模式）</h2><ul>
+<li>准备<ul>
+<li>1.需要两台服务器 192.168.17.129 和 192.168.17.131</li>
+<li>2.在两台服务器安装 nginx</li>
+<li>3.在两台服务器安装 keepalived<ul>
+<li>yum install keepalived –y</li>
+<li>安装之后，在 etc 里面生成目录 keepalived，有文件 keepalived.conf</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>修改/etc/keepalived/keepalivec.conf 配置文件<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="code"><pre><span class="line">global_defs &#123;</span><br><span class="line">    notification_email &#123;</span><br><span class="line">        acassen@firewall.loc</span><br><span class="line">        failover@firewall.loc</span><br><span class="line">        sysadmin@firewall.loc</span><br><span class="line">    &#125;</span><br><span class="line">    notification_email_from Alexandre.Cassen@firewall.loc</span><br><span class="line">    smtp_server 192.168.17.129</span><br><span class="line">    smtp_connect_timeout 30</span><br><span class="line">    router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script chk_http_port &#123;</span><br><span class="line">    script &quot;&#x2F;usr&#x2F;local&#x2F;src&#x2F;nginx_check.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    #（检测脚本执行的间隔）</span><br><span class="line">    weight 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP # 备份服务器上将 MASTER 改为 BACKUP</span><br><span class="line">    interface ens33 &#x2F;&#x2F;网卡</span><br><span class="line">    virtual_router_id 51 # 主、备机的 virtual_router_id 必须相同</span><br><span class="line">    priority 90 # 主、备机取不同的优先级，主机值较大，备份机值较小</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.17.50 &#x2F;&#x2F; VRRP H 虚拟地址</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>在/usr/local/src 添加检测脚本<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">A=`ps -C nginx –no-header |wc -l`</span><br><span class="line">if [ $A -eq 0 ];then</span><br><span class="line">    /usr/local/nginx/sbin/nginx</span><br><span class="line">    sleep 2</span><br><span class="line">    if [ `ps -C nginx --no-header |wc -l` -eq 0 ];then</span><br><span class="line">        killall keepalived</span><br><span class="line">    fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure></li>
+<li>把两台服务器上 nginx 和 keepalived 启动<ul>
+<li>启动 nginx：./nginx</li>
+<li>启动 keepalived：systemctl start keepalived</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>网络</category>
+      </categories>
+      <tags>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pytorch学习笔记</title>
+    <url>/pytorch-learning/</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
+<ul>
+<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
+<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
+<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
+<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
+<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+</ul>
+<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
+<ul>
+<li>Pytorch简介及环境配置</li>
+<li>Pytorch基础数据结构——张量</li>
+<li>张量操作与线性回归</li>
+<li>计算图与动态图机制</li>
+<li>autograd与逻辑回归</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
+<ul>
+<li>数据读取机制DataLoader与Dataset</li>
+<li>数据预处理transforms模块机制</li>
+<li>二十二种transforms数据预处理方法</li>
+<li>学会自定义transforms方法</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
+<ul>
+<li>nn.Module与网络模型构建步骤</li>
+<li>模型容器与AlexNet构建</li>
+<li>网络层中的卷积层</li>
+<li>网络层中的池化层、全连接层和激活函数层</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
+<ul>
+<li>权值初始化</li>
+<li>损失函数（一）</li>
+<li>Pytorch的14种损失函数</li>
+<li>优化器optimizer的概念</li>
+<li>torch.optim.SGD</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
+<ul>
+<li>学习率调整</li>
+<li>TensorBoard简介与安装</li>
+<li>TensorBoard使用（一）</li>
+<li>TensorBoard使用（二）</li>
+<li>hook函数与CAM</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
+<ul>
+<li>weight_decay</li>
+<li>dropout</li>
+<li>Batch Normalization</li>
+<li>Layer Normalization、Instance</li>
+<li>Normalization和Group Normalization</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
+<ul>
+<li>模型保存与加载</li>
+<li>Finetune</li>
+<li>GPU的使用</li>
+<li>Pytorch中常见报错</li>
+</ul>
+<p>Week8、9 PyTorch深度体验</p>
+<ul>
+<li>图像分类一瞥</li>
+<li>图像分割一瞥</li>
+<li>目标检测一瞥（上）</li>
+<li>目标检测一瞥（下）</li>
+<li>对抗生成网络一瞥</li>
+<li>循环神经网络一瞥</li>
+</ul>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《OFF学》读书笔记</title>
     <url>/off-time/</url>
     <content><![CDATA[<ul>
@@ -4402,88 +4615,6 @@
       </categories>
       <tags>
         <tag>休闲</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pytorch学习笔记</title>
-    <url>/pytorch-learning/</url>
-    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
-</ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
-</ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
-</ul>
-]]></content>
-      <categories>
-        <category>pytorch学习笔记</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -4930,6 +5061,22 @@
       </tags>
   </entry>
   <entry>
+    <title>博客升级纪要</title>
+    <url>/update-blog/</url>
+    <content><![CDATA[<p>学完HTTP协议后，然后下决心要把博客和图床都升级为HTTPS，然后域名也备案，并且把图床也用自己的域名</p>
+<p>参考：<a href="https://jiapeng.me/markdown-picbed/">https://jiapeng.me/markdown-picbed/</a></p>
+<p>简要步骤：<br>1.先把原有的域名走备案流程，原有申请的域名在万网，就直接在阿里云备案了，这需要一周左右时间，这里我要吐槽一下，备案一定要买阿里云的服务器，，，，，，<br>2.在阿里云上课直接申请免费的SSL证书，同时在七牛云上的图床的对象存储中新开一个域名，配置好后，打开HTTPS访问，并且自动转换HTTP为HTTPS访问<br>3.申请一个子域名img.shiqi-lu.tech，然后指向七牛云中<br>4.批量替换原有图床的域名为新域名</p>
+<p>除了第1个步骤等了很久，其它都很快。。。整个过程阿里云的服务器买了最低配的，花了300多，七牛云以后用HTTPS的话，就没有免费额度了，看了一下价格也不贵，19块有100G流量，够用了。。。</p>
+]]></content>
+      <categories>
+        <category>自我提升</category>
+      </categories>
+      <tags>
+        <tag>感想</tag>
+        <tag>自我提升</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>5种限流算法总结</title>
     <url>/throttling-algorithm/</url>
     <content><![CDATA[<h1 id="限流的定义是什么"><a href="#限流的定义是什么" class="headerlink" title="限流的定义是什么"></a>限流的定义是什么</h1><ul>
@@ -5044,22 +5191,6 @@
       <tags>
         <tag>架构</tag>
         <tag>分布式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>博客升级纪要</title>
-    <url>/update-blog/</url>
-    <content><![CDATA[<p>学完HTTP协议后，然后下决心要把博客和图床都升级为HTTPS，然后域名也备案，并且把图床也用自己的域名</p>
-<p>参考：<a href="https://jiapeng.me/markdown-picbed/">https://jiapeng.me/markdown-picbed/</a></p>
-<p>简要步骤：<br>1.先把原有的域名走备案流程，原有申请的域名在万网，就直接在阿里云备案了，这需要一周左右时间，这里我要吐槽一下，备案一定要买阿里云的服务器，，，，，，<br>2.在阿里云上课直接申请免费的SSL证书，同时在七牛云上的图床的对象存储中新开一个域名，配置好后，打开HTTPS访问，并且自动转换HTTP为HTTPS访问<br>3.申请一个子域名img.shiqi-lu.tech，然后指向七牛云中<br>4.批量替换原有图床的域名为新域名</p>
-<p>除了第1个步骤等了很久，其它都很快。。。整个过程阿里云的服务器买了最低配的，花了300多，七牛云以后用HTTPS的话，就没有免费额度了，看了一下价格也不贵，19块有100G流量，够用了。。。</p>
-]]></content>
-      <categories>
-        <category>自我提升</category>
-      </categories>
-      <tags>
-        <tag>感想</tag>
-        <tag>自我提升</tag>
       </tags>
   </entry>
   <entry>
@@ -6715,8 +6846,8 @@
         <category>网络</category>
       </categories>
       <tags>
-        <tag>HTTP</tag>
         <tag>网络</tag>
+        <tag>HTTP</tag>
       </tags>
   </entry>
   <entry>
@@ -6968,8 +7099,8 @@
         <category>网络</category>
       </categories>
       <tags>
-        <tag>HTTP</tag>
         <tag>网络</tag>
+        <tag>HTTP</tag>
       </tags>
   </entry>
   <entry>
@@ -7156,8 +7287,8 @@
         <category>网络</category>
       </categories>
       <tags>
-        <tag>HTTP</tag>
         <tag>网络</tag>
+        <tag>HTTP</tag>
       </tags>
   </entry>
   <entry>

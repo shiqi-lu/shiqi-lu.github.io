@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="整理B站尚硅谷 nginx 的视频学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx学习笔记">
+<meta property="og:url" content="http://shiqi-lu.tech/nginx-starter/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="整理B站尚硅谷 nginx 的视频学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211109113836.png">
+<meta property="article:published_time" content="2021-11-06T06:23:20.000Z">
+<meta property="article:modified_time" content="2021-11-06T06:23:20.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20211109113836.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/nginx-starter/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>nginx学习笔记 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：CS/AI/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-2-%E7%AB%A0-Nginx-%E5%AE%89%E8%A3%85"><span class="nav-text">第 2 章 Nginx 安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-3-%E7%AB%A0-nginx-%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4%E5%92%8C%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">第 3 章 nginx 常用的命令和配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">nginx 常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx-%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%8D%E7%BD%AE%E5%92%8C%E5%86%85%E5%AE%B9"><span class="nav-text">nginx 的配置文件的位置和内容</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-4-%E7%AB%A0-nginx-%E9%85%8D%E7%BD%AE%E5%AE%9E%E4%BE%8B-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="nav-text">第 4 章 nginx 配置实例-反向代理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%AE%9E%E4%BE%8B%E4%B8%80"><span class="nav-text">反向代理实例一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%AE%9E%E4%BE%8B%E4%BA%8C"><span class="nav-text">反向代理实例二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#location-%E6%8C%87%E4%BB%A4%E8%AF%B4%E6%98%8E"><span class="nav-text">location 指令说明</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-5-%E7%AB%A0-nginx-%E9%85%8D%E7%BD%AE%E5%AE%9E%E4%BE%8B-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-text">第 5 章 nginx 配置实例-负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-text">配置负载均衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx-%E6%8F%90%E4%BE%9B%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5"><span class="nav-text">nginx 提供的负载均衡分配策略</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-6-%E7%AB%A0-nginx-%E9%85%8D%E7%BD%AE%E5%AE%9E%E4%BE%8B-%E5%8A%A8%E9%9D%99%E5%88%86%E7%A6%BB"><span class="nav-text">第 6 章 nginx 配置实例-动静分离</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8A%A8%E9%9D%99%E5%88%86%E7%A6%BB"><span class="nav-text">配置动静分离</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-7-%E7%AB%A0-nginx-%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BC%98%E5%8C%96%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE"><span class="nav-text">第 7 章 nginx 原理与优化参数配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-8-%E7%AB%A0-nginx-%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4"><span class="nav-text">第 8 章 nginx 搭建高可用集群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Keepalived-Nginx-%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-text">Keepalived+Nginx 高可用集群（主从模式）</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/nginx-starter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          nginx学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-06 14:23:20" itemprop="dateCreated datePublished" datetime="2021-11-06T14:23:20+08:00">2021-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">网络</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/nginx-starter/" class="post-meta-item leancloud_visitors" data-flag-title="nginx学习笔记" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/nginx-starter/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/nginx-starter/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">整理B站尚硅谷 nginx 的视频学习笔记</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="第-2-章-Nginx-安装"><a href="#第-2-章-Nginx-安装" class="headerlink" title="第 2 章 Nginx 安装"></a>第 2 章 Nginx 安装</h1><ul>
+<li>0.官网下载 nginx：<a target="_blank" rel="noopener" href="http://nginx.org/">http://nginx.org/</a></li>
+<li>1.安装 pcre 依赖<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget http://downloads.sourceforge.net/project/pcre/pcre/8.37/pcre-8.37.tar.gz</span><br><span class="line">tar –xvf pcre-8.37.tar.gz</span><br><span class="line">./configure</span><br><span class="line">完成后，回到 pcre 目录下执行 make &amp;&amp; make install</span><br></pre></td></tr></table></figure></li>
+<li>2.安装 openssl 、zlib 、 gcc 依赖<ul>
+<li><code>yum -y install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel</code></li>
+</ul>
+</li>
+<li>3.安装 nginx<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></li>
+<li>4.防火墙<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">查看开放的端口号</span><br><span class="line">firewall-cmd --list-all</span><br><span class="line"></span><br><span class="line">设置开放的端口号</span><br><span class="line">firewall-cmd --add-service=http --permanent</span><br><span class="line">firewall-cmd --add-port=80/tcp --permanent</span><br><span class="line"></span><br><span class="line">重启防火墙</span><br><span class="line">firewall-cmd –reload</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第-3-章-nginx-常用的命令和配置文件"><a href="#第-3-章-nginx-常用的命令和配置文件" class="headerlink" title="第 3 章 nginx 常用的命令和配置文件"></a>第 3 章 nginx 常用的命令和配置文件</h1><h2 id="nginx-常用命令"><a href="#nginx-常用命令" class="headerlink" title="nginx 常用命令"></a>nginx 常用命令</h2><ul>
+<li>进入 <code>/usr/local/nginx/sbin</code></li>
+<li>启动：<code>./nginx</code></li>
+<li>关闭：<code>./nginx -s stop</code></li>
+<li>重新加载：<code>./nginx -s reload</code></li>
+</ul>
+<h2 id="nginx-的配置文件的位置和内容"><a href="#nginx-的配置文件的位置和内容" class="headerlink" title="nginx 的配置文件的位置和内容"></a>nginx 的配置文件的位置和内容</h2><ul>
+<li>位置：<code>/usr/local/nginx/conf/nginx.conf</code></li>
+<li>包含三部分内容：<ul>
+<li>全局块：配置服务器整体运行的配置指令</li>
+<li>events 块：影响 Nginx 服务器与用户的网络连接</li>
+<li>http 块：代理、缓存和日志定义等绝大多数功能和第三方模块的配置都在这里<ul>
+<li>http 全局块：括文件引入、MIME-TYPE 定义、日志自定义、连接超时时间、单链接请求数上限等</li>
+<li>server 块：和虚拟主机有密切关系，虚拟主机从用户角度看，和一台独立的硬件主机是完全一样的</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-4-章-nginx-配置实例-反向代理"><a href="#第-4-章-nginx-配置实例-反向代理" class="headerlink" title="第 4 章 nginx 配置实例-反向代理"></a>第 4 章 nginx 配置实例-反向代理</h1><h2 id="反向代理实例一"><a href="#反向代理实例一" class="headerlink" title="反向代理实例一"></a>反向代理实例一</h2><ul>
+<li>实现效果：使用 nginx 反向代理，访问 <a target="_blank" rel="noopener" href="http://www.123.com/">www.123.com</a> 直接跳转到 127.0.0.1:8080</li>
+<li>1.启动一个 tomcat 配置为 127.0.0.1:8080</li>
+<li>2.修改本地 host 文件，将 <a target="_blank" rel="noopener" href="http://www.123.com/">www.123.com</a> 映射到 127.0.0.1(如果nginx不是在一台机器要把这个 ip 修改到nginx对应机器上)</li>
+<li>3.配置更改<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name www.123.com;</span><br><span class="line">    </span><br><span class="line">    location &#x2F; &#123;</span><br><span class="line">        proxy_pass http:&#x2F;&#x2F;&#x2F;127.0.0.1:8080;</span><br><span class="line">        index index.html index.htm index.jsp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="反向代理实例二"><a href="#反向代理实例二" class="headerlink" title="反向代理实例二"></a>反向代理实例二</h2><ul>
+<li>实现效果<ul>
+<li>使用 nginx 反向代理，根据访问的路径跳转到不同端口的服务中</li>
+<li>nginx 监听端口为 9001，</li>
+<li>访问 <a target="_blank" rel="noopener" href="http://127.0.0.1:9001/edu/">http://127.0.0.1:9001/edu/</a> 直接跳转到 127.0.0.1:8081</li>
+<li>访问 <a target="_blank" rel="noopener" href="http://127.0.0.1:9001/vod/">http://127.0.0.1:9001/vod/</a> 直接跳转到 127.0.0.1:8082</li>
+</ul>
+</li>
+<li>1.准备两个tomcat，一个 8001 端口，一个 8002 端口，并准备好测试的页面</li>
+<li>2.配置更改<ul>
+<li><img src="https://img.shiqi-lu.tech/20211109113836.png"></li>
+</ul>
+</li>
+</ul>
+<h2 id="location-指令说明"><a href="#location-指令说明" class="headerlink" title="location 指令说明"></a>location 指令说明</h2><ul>
+<li>该指令用于匹配 URL。语法如下</li>
+<li><pre><code class="plain">location [ = | ~ | ~* | ^~ ] uri &#123;
+</code></pre>
+</li>
+</ul>
+<p>}```</p>
+<ul>
+<li>= ：用于不含正则表达式的 uri 前，要求请求字符串与 uri 严格匹配，如果匹配成功，就停止继续向下搜索并立即处理该请求</li>
+<li>~：用于表示 uri 包含正则表达式，并且区分大小写</li>
+<li>~*：用于表示 uri 包含正则表达式，并且不区分大小写</li>
+<li>^~：用于不含正则表达式的 uri 前，要求 Nginx 服务器找到标识 uri 和请求字符串匹配度最高的 location 后，立即使用此 location 处理请求，而不再使用 location 块中的正则 uri 和请求字符串做匹配</li>
+</ul>
+<h1 id="第-5-章-nginx-配置实例-负载均衡"><a href="#第-5-章-nginx-配置实例-负载均衡" class="headerlink" title="第 5 章 nginx 配置实例-负载均衡"></a>第 5 章 nginx 配置实例-负载均衡</h1><h2 id="配置负载均衡"><a href="#配置负载均衡" class="headerlink" title="配置负载均衡"></a>配置负载均衡</h2><ul>
+<li>配置更改<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    ...</span><br><span class="line">    upstream myserver &#123;</span><br><span class="line">        ip_hash;</span><br><span class="line">        server 192.168.5.21;</span><br><span class="line">        server 192.168.5.22;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    server &#123;</span><br><span class="line">        location &#x2F; &#123;</span><br><span class="line">            ...</span><br><span class="line">            proxy_pass http:&#x2F;&#x2F;myserver;</span><br><span class="line">            proxy_connect_timeout 10;</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="nginx-提供的负载均衡分配策略"><a href="#nginx-提供的负载均衡分配策略" class="headerlink" title="nginx 提供的负载均衡分配策略"></a>nginx 提供的负载均衡分配策略</h2><ul>
+<li>1.轮询（默认）：每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器 down 掉，能自动剔除</li>
+<li>2.weight：代表权,重默认为 1,权重越高被分配的客户端越多，指定轮询几率，weight 和访问比率成正比，用于后端服务器性能不均的情况<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">upstream server_pool &#123;</span><br><span class="line">  server 192.168.5.21 weight &#x3D; 10;</span><br><span class="line">  server 192.168.5.22 weight &#x3D; 10;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>3.ip_hash：每个请求按访问 ip 的 hash 结果分配，这样每个访客固定访问一个后端服务器，可以解决 session 的问题<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">upstream server_pool &#123;</span><br><span class="line">  ip_hash;</span><br><span class="line">  server 192.168.5.21;</span><br><span class="line">  server 192.168.5.22;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>4.fair（第三方）：按后端服务器的响应时间来分配请求，响应时间短的优先分配<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">upstream server_pool &#123;</span><br><span class="line">  server 192.168.5.21;</span><br><span class="line">  server 192.168.5.22;</span><br><span class="line">  fair;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="第-6-章-nginx-配置实例-动静分离"><a href="#第-6-章-nginx-配置实例-动静分离" class="headerlink" title="第 6 章 nginx 配置实例-动静分离"></a>第 6 章 nginx 配置实例-动静分离</h1><h2 id="配置动静分离"><a href="#配置动静分离" class="headerlink" title="配置动静分离"></a>配置动静分离</h2><figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name 192.168.17.129;</span><br><span class="line">    </span><br><span class="line">    location &#x2F;www&#x2F; &#123;</span><br><span class="line">        root &#x2F;data&#x2F;;</span><br><span class="line">        index index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    location &#x2F;image&#x2F; &#123;</span><br><span class="line">        root &#x2F;data&#x2F;;</span><br><span class="line">        autoindex on; # 这个选项用于在浏览器上看文件目录</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="第-7-章-nginx-原理与优化参数配置"><a href="#第-7-章-nginx-原理与优化参数配置" class="headerlink" title="第 7 章 nginx 原理与优化参数配置"></a>第 7 章 nginx 原理与优化参数配置</h1><ul>
+<li>master-workers 的机制的好处<ul>
+<li>1.可以使用 nginx –s reload 热部署，利用 nginx 进行热部署操作</li>
+<li>2.每个 woker 是独立的进程，如果有其中的一个 woker 出现问题，其他 woker 独立的，继续进行争抢，实现请求过程，不会造成服务中断</li>
+</ul>
+</li>
+<li>设置多少个 woker 合适<ul>
+<li>worker 数和服务器的 cpu 数相等是最为适宜的</li>
+</ul>
+</li>
+<li>发送请求，占用了 woker 的几个连接数worker_connection？<ul>
+<li>2 或者 4 个</li>
+</ul>
+</li>
+<li>nginx 有一个 master，有四个 woker，每个 woker 支持最大的连接数 1024，支持的最大并发数是多少？<ul>
+<li>普通的静态访问最大并发数是： worker_connections * worker_processes / 2</li>
+<li>而如果是 HTTP 作 为反向代理来说，最大并发数量应该是 worker_connections * worker_processes/4</li>
+</ul>
+</li>
+</ul>
+<h1 id="第-8-章-nginx-搭建高可用集群"><a href="#第-8-章-nginx-搭建高可用集群" class="headerlink" title="第 8 章 nginx 搭建高可用集群"></a>第 8 章 nginx 搭建高可用集群</h1><h2 id="Keepalived-Nginx-高可用集群（主从模式）"><a href="#Keepalived-Nginx-高可用集群（主从模式）" class="headerlink" title="Keepalived+Nginx 高可用集群（主从模式）"></a>Keepalived+Nginx 高可用集群（主从模式）</h2><ul>
+<li>准备<ul>
+<li>1.需要两台服务器 192.168.17.129 和 192.168.17.131</li>
+<li>2.在两台服务器安装 nginx</li>
+<li>3.在两台服务器安装 keepalived<ul>
+<li>yum install keepalived –y</li>
+<li>安装之后，在 etc 里面生成目录 keepalived，有文件 keepalived.conf</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>修改/etc/keepalived/keepalivec.conf 配置文件<figure class="highlight plain"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">global_defs &#123;</span><br><span class="line">    notification_email &#123;</span><br><span class="line">        acassen@firewall.loc</span><br><span class="line">        failover@firewall.loc</span><br><span class="line">        sysadmin@firewall.loc</span><br><span class="line">    &#125;</span><br><span class="line">    notification_email_from Alexandre.Cassen@firewall.loc</span><br><span class="line">    smtp_server 192.168.17.129</span><br><span class="line">    smtp_connect_timeout 30</span><br><span class="line">    router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script chk_http_port &#123;</span><br><span class="line">    script &quot;&#x2F;usr&#x2F;local&#x2F;src&#x2F;nginx_check.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    #（检测脚本执行的间隔）</span><br><span class="line">    weight 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP # 备份服务器上将 MASTER 改为 BACKUP</span><br><span class="line">    interface ens33 &#x2F;&#x2F;网卡</span><br><span class="line">    virtual_router_id 51 # 主、备机的 virtual_router_id 必须相同</span><br><span class="line">    priority 90 # 主、备机取不同的优先级，主机值较大，备份机值较小</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.17.50 &#x2F;&#x2F; VRRP H 虚拟地址</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>在/usr/local/src 添加检测脚本<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">A=`ps -C nginx –no-header |wc -l`</span><br><span class="line">if [ $A -eq 0 ];then</span><br><span class="line">    /usr/local/nginx/sbin/nginx</span><br><span class="line">    sleep 2</span><br><span class="line">    if [ `ps -C nginx --no-header |wc -l` -eq 0 ];then</span><br><span class="line">        killall keepalived</span><br><span class="line">    fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure></li>
+<li>把两台服务器上 nginx 和 keepalived 启动<ul>
+<li>启动 nginx：./nginx</li>
+<li>启动 keepalived：systemctl start keepalived</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/nginx-starter/" title="nginx学习笔记">http://shiqi-lu.tech/nginx-starter/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/arch-miao-sha/" rel="prev" title="《秒杀系统架构设计》学习">
+                  <i class="fa fa-chevron-left"></i> 《秒杀系统架构设计》学习
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/throttling-algorithm/" rel="next" title="5种限流算法总结">
+                  5种限流算法总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/nginx-starter/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
