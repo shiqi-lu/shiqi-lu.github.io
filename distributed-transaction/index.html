@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="完整整理了8种实现分布式事务的原理，包括2PC、3PC、消息队列、TCC、事务状态表、对账等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8种分布式事务实现原理的全面整理">
+<meta property="og:url" content="http://shiqi-lu.tech/distributed-transaction/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="完整整理了8种实现分布式事务的原理，包括2PC、3PC、消息队列、TCC、事务状态表、对账等">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225155731.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225155951.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225160141.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225160602.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225161139.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210225161206.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205174706.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205175446.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205181411.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205164453.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205165847.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205172003.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205172631.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205172744.png">
+<meta property="article:published_time" content="2021-12-04T14:00:14.000Z">
+<meta property="article:modified_time" content="2021-12-04T14:00:14.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="高并发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20210225155731.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/distributed-transaction/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>8种分布式事务实现原理的全面整理 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：CS/AI/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">61</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">事务和分布式事务是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%9F%BA%E6%9C%AC%E7%89%B9%E5%BE%81ACID%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">事务基本特征ACID是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BASE%E7%90%86%E8%AE%BA%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">BASE理论是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9A%E6%80%A7%E4%BA%8B%E5%8A%A1%E5%92%8C%E6%9F%94%E6%80%A7%E4%BA%8B%E5%8A%A1%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">刚性事务和柔性事务是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E4%B8%BB%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95%E6%9C%89%E5%93%AA%E5%85%AB%E7%A7%8D%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">分布式事务主要解决的问题，以及实现方法有哪八种？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EXA%E5%8D%8F%E8%AE%AE%E7%9A%84%E4%BA%8C%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE%E6%96%B9%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">基于XA协议的二阶段提交协议方法的原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE%E6%96%B9%E6%B3%95"><span class="nav-number">7.</span> <span class="nav-text">三阶段提交协议方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%88%86%E5%B8%83%E5%BC%8F%E6%B6%88%E6%81%AF%E7%9A%84%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%E6%96%B9%E6%A1%88%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3%E3%80%81%E4%B8%BE%E4%BE%8B%E3%80%813%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95"><span class="nav-number">8.</span> <span class="nav-text">基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCC%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%92%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">9.</span> <span class="nav-text">TCC的使用场景和步骤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%8A%B6%E6%80%81%E8%A1%A8-%E8%B0%83%E7%94%A8%E6%96%B9%E9%87%8D%E8%AF%95-%E6%8E%A5%E6%94%B6%E6%96%B9%E5%B9%82%E7%AD%89%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E8%A1%A5%E5%85%85%E8%AF%B4%E6%98%8E"><span class="nav-number">10.</span> <span class="nav-text">事务状态表+调用方重试+接收方幂等的原理和补充说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%B9%E8%B4%A6%E7%9A%84%E5%8E%9F%E7%90%86%E3%80%81%E6%80%9D%E8%B7%AF%E3%80%81%E5%88%86%E7%B1%BB"><span class="nav-number">11.</span> <span class="nav-text">对账的原理、思路、分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%A5%E5%8D%8F%E6%96%B9%E6%A1%88%EF%BC%9A%E5%BC%B1%E4%B8%80%E8%87%B4%E6%80%A7-%E5%9F%BA%E4%BA%8E%E7%8A%B6%E6%80%81%E7%9A%84%E8%A1%A5%E5%81%BF%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E3%80%81%E6%80%9D%E8%B7%AF%E3%80%81%E6%96%B9%E6%A1%88%E3%80%81%E8%A1%A5%E5%81%BF%E6%96%B9%E6%B3%95"><span class="nav-number">12.</span> <span class="nav-text">妥协方案：弱一致性+基于状态的补偿的使用场景、思路、方案、补偿方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%A5%E5%8D%8F%E6%96%B9%E6%A1%88%EF%BC%9A%E9%87%8D%E8%AF%95-%E5%9B%9E%E6%BB%9A-%E6%8A%A5%E8%AD%A6-%E4%BA%BA%E5%B7%A5%E4%BF%AE%E5%A4%8D"><span class="nav-number">13.</span> <span class="nav-text">妥协方案：重试+回滚+报警+人工修复</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">14.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/distributed-transaction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          8种分布式事务实现原理的全面整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-04 22:00:14" itemprop="dateCreated datePublished" datetime="2021-12-04T22:00:14+08:00">2021-12-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/distributed-transaction/" class="post-meta-item leancloud_visitors" data-flag-title="8种分布式事务实现原理的全面整理" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/distributed-transaction/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/distributed-transaction/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">完整整理了8种实现分布式事务的原理，包括2PC、3PC、消息队列、TCC、事务状态表、对账等</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="事务和分布式事务是什么？"><a href="#事务和分布式事务是什么？" class="headerlink" title="事务和分布式事务是什么？"></a>事务和分布式事务是什么？</h1><ul>
+<li>事务：包含一系列操作的、一个有边界的工作序列，有明确的开始和结束标志，且要么被完全执行，要么完全失败，通常指本地（或单机）事务</li>
+<li>分布式事务：在分布式系统中运行的事务，由多个本地事务组合而成</li>
+</ul>
+<h1 id="事务基本特征ACID是什么？"><a href="#事务基本特征ACID是什么？" class="headerlink" title="事务基本特征ACID是什么？"></a>事务基本特征ACID是什么？</h1><ul>
+<li>原子性（Atomicity）：事务的最终状态只有两种，全部执行成功和全部不执行。若处理事务的任何一项操作不成功，就会导致整个事务失败。一旦操作失败，所有操作都会被取消（回滚）</li>
+<li>一致性（Consistency）：事务操作前和操作后，数据的完整性保持一致或满足完整性约束</li>
+<li>隔离性（Isolation）：当系统内多个事务并发执行时，多个事务不会相互干扰，即一个事务内部的操作及使用的数据，对其它并发事务是隔离的</li>
+<li>持久性（Durability）：一个事务完成了，那么它对数据库所做的更新就被永久保存下来了。即使发生系统崩溃或宕机等故障，只要数据库能够被重新访问，那么一定能够将其恢复到事务完成时的状态</li>
+</ul>
+<h1 id="BASE理论是什么？"><a href="#BASE理论是什么？" class="headerlink" title="BASE理论是什么？"></a>BASE理论是什么？</h1><ul>
+<li>基本可用（Basically Available）：分布式系统出现故障的时候，允许损失一部分功能的可用性</li>
+<li>柔性状态（Soft State）：在柔性事务中，允许系统存在中间状态，且这个中间状态不会影响系统整体可用性。如数据库读写分离，写库（主库）同步到读库（从库）会有一个延时，就是柔性状态</li>
+<li>最终一致性（Eventual Consistency）：事务在操作过程中可能由于同步延迟导致不一致，但最终状态下，数据都是一致的</li>
+<li>BASE理论为了支持大型分布式系统，通过牺牲强一致性，保证最终一致性，来获得高可用性</li>
+</ul>
+<h1 id="刚性事务和柔性事务是什么？"><a href="#刚性事务和柔性事务是什么？" class="headerlink" title="刚性事务和柔性事务是什么？"></a>刚性事务和柔性事务是什么？</h1><ul>
+<li>刚性事务：遵循ACID原则，具有强一致性。如数据库事务</li>
+<li>柔性事务：根据不同的业务场景使用不同的方法实现最终一致性。即可根据业务的特性做部分取舍，容忍一定时间内的数据不一致，遵循BASE理论</li>
+</ul>
+<h1 id="分布式事务主要解决的问题，以及实现方法有哪八种？"><a href="#分布式事务主要解决的问题，以及实现方法有哪八种？" class="headerlink" title="分布式事务主要解决的问题，以及实现方法有哪八种？"></a>分布式事务主要解决的问题，以及实现方法有哪八种？</h1><ul>
+<li>主要解决：在分布式环境下，组合事务的一致性问题</li>
+<li>方法：</li>
+<li>1.基于XA协议的二阶段提交协议方法（强一致性，遵从ACID）</li>
+<li>2.三阶段提交协议方法（强一致性，遵从ACID）</li>
+<li>3.基于消息的最终一致性方法（最终一致性，遵从BASE理论）</li>
+<li>4.TCC</li>
+<li>5.事务状态表+调用方重试+接收方幂等</li>
+<li>6.对账</li>
+<li>7.妥协方案：弱一致性+基于状态的补偿</li>
+<li>8.妥协方案：重试+回滚+报警+人工修复</li>
+</ul>
+<h1 id="基于XA协议的二阶段提交协议方法的原理"><a href="#基于XA协议的二阶段提交协议方法的原理" class="headerlink" title="基于XA协议的二阶段提交协议方法的原理"></a>基于XA协议的二阶段提交协议方法的原理</h1><ul>
+<li>两阶段提交协议保证分布在不同节点上的分布式事务的一致性的方法<ul>
+<li>引入一个协调者来管理所有的节点，并确保这些节点正确提交操作结果，若提交失败则放弃事务</li>
+</ul>
+</li>
+<li>XA的组成<ul>
+<li>事务管理器（协调者）：负责各个本地资源的提交和回滚</li>
+<li>资源管理器（参与者）：通常由数据库实现</li>
+</ul>
+</li>
+<li>算法思路概要<ul>
+<li>协调者下发请求事务操作，参与者将操作结果通知协调者，协调者根据所有参与者的反馈结果决定各参与者是要提交操作还是撤销操作</li>
+</ul>
+</li>
+<li>执行过程<ul>
+<li>第一阶段：投票(voting)<ul>
+<li>协调者(Coordinator，即事务管理器)会向事务的参与者(Cohort，即本地资源管理器)发起执行操作的CanCommit请求，并等待参与者的响应。参与者接收到请求后，会执行请求中的事务操作，记录日志信息但不提交，待参与者执行成功，则向协调者发送「Yes」消息，表示同意操作；若不成功，则发送「No」消息，表示终止操作</li>
+</ul>
+</li>
+<li>第二阶段：提交(commit)<ul>
+<li>当所有的参与者都返回了操作结果（Yes 或 No 消息）后，系统进入了提交阶段。在提交阶段，协调者会根据所有参与者返回的信息向参与者发送 DoCommit 或 DoAbort 指令：<ul>
+<li>若协调者收到的都是「Yes」消息，则向参与者发送「DoCommit」消息，参与者会完成剩余的操作并释放资源，然后向协调者返回「HaveCommitted」消息</li>
+<li>如果协调者收到的消息中包含「No」消息，则向所有参与者发送「DoAbort」消息，此时发送「Yes」的参与者则会根据之前执行操作时的回滚日志对操作进行回滚，然后所有参与者会向协调者发送「HaveCommitted」消息</li>
+<li>协调者接收到「HaveCommitted」消息，就意味着整个事务结束了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>不足<ul>
+<li>同步阻塞问题：二阶段提交算法在执行过程中，所有参与节点都是事务阻塞型的。也就是说，当本地资源管理器占有临界资源时，其他资源管理器如果要访问同一临界资源，会处于阻塞状态</li>
+<li>单点故障问题：基于 XA 的二阶段提交算法类似于集中式算法，一旦事务管理器发生故障，整个系统都处于停滞状态。尤其是在提交阶段，一旦事务管理器发生故障，资源管理器会由于等待管理器的消息，而一直锁定事务资源，导致整个系统被阻塞</li>
+<li>数据不一致问题：在提交阶段，当协调者向参与者发送 DoCommit 请求之后，如果发生了局部网络异常，或者在发送提交请求的过程中协调者发生了故障，就会导致只有一部分参与者接收到了提交请求并执行提交操作，但其他未接到提交请求的那部分参与者则无法执行事务提交。于是整个分布式系统便出现了数据不一致的问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="三阶段提交协议方法"><a href="#三阶段提交协议方法" class="headerlink" title="三阶段提交协议方法"></a>三阶段提交协议方法</h1><ul>
+<li>详细过程<ul>
+<li>1.CanCommit阶段<ul>
+<li>协调者向参与者发送请求操作（CanCommit请求），询问参与者是否可以执行事务提交操作，然后等待参与者的响应；参与者收到 CanCommit 请求之后，回复 Yes，表示可以顺利执行事务；否则回复 No</li>
+<li>CanCommit 阶段不同节点之间的事务请求成功和失败的流程，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20210225155731.png"></li>
+</ul>
+</li>
+<li>2.PreCommit阶段<ul>
+<li>协调者根据参与者的回复情况，来决定是否可以进行 PreCommit 操作<ul>
+<li>如果所有参与者回复的都是“Yes”，那么协调者就会执行事务的预执行：<ul>
+<li>发送预提交请求：协调者向参与者发送 PreCommit 请求，进入预提交阶段</li>
+<li>事务预提交：参与者接收到 PreCommit 请求后执行事务操作，并将 Undo 和 Redo 信息记录到事务日志中</li>
+<li>响应反馈：如果参与者成功执行了事务操作，则返回 ACK 响应，同时开始等待最终指令</li>
+</ul>
+</li>
+<li>假如任何一个参与者向协调者发送了“No”消息，或者等待超时之后，协调者都没有收到参与者的响应，就执行中断事务的操作： <ul>
+<li>发送中断请求：协调者向所有参与者发送“Abort”消息</li>
+<li>终断事务：参与者收到“Abort”消息之后，或超时后仍未收到协调者的消息，执行事务的中断操作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>预执行阶段，不同节点上事务执行成功和失败的流程，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20210225155951.png"></li>
+</ul>
+</li>
+<li>3.DoCommit阶段<ul>
+<li>DoCmmit 阶段进行真正的事务提交，根据 PreCommit 阶段协调者发送的消息，进入执行提交阶段或事务中断阶段</li>
+<li>执行提交阶段：<ul>
+<li>发送提交请求：协调者接收到所有参与者发送的 Ack 响应，从预提交状态进入到提交状态，并向所有参与者发送 DoCommit 消息</li>
+<li>事务提交：参与者接收到 DoCommit 消息之后，正式提交事务。完成事务提交之后，释放所有锁住的资源。</li>
+<li>响应反馈：参与者提交完事务之后，向协调者发送 Ack 响应</li>
+<li>完成事务：协调者接收到所有参与者的 Ack 响应之后，完成事务</li>
+</ul>
+</li>
+<li>事务中断阶段：<ul>
+<li>发送中断请求：协调者向所有参与者发送 Abort 请求</li>
+<li>事务回滚：参与者接收到 Abort 消息之后，利用其在 PreCommit 阶段记录的 Undo 信息执行事务的回滚操作，并释放所有锁住的资源</li>
+<li>反馈结果：参与者完成事务回滚之后，向协调者发送 Ack 消息</li>
+<li>终断事务：协调者接收到参与者反馈的 Ack 消息之后，执行事务的终断，并结束事务</li>
+</ul>
+</li>
+<li>执行阶段不同节点上事务执行成功和失败 (事务终断) 的流程，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20210225160141.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>三阶段提交协议（Three-phase commit protocol，3PC）相对二阶段提交(2PC)的改进<ul>
+<li>为了解决两阶段提交的同步阻塞和数据不一致问题，三阶段提交引入了超时机制和准备阶段</li>
+<li>同时在协调者和参与者中引入超时机制。如果协调者或参与者在规定的时间内没有接收到来自其他节点的响应，就会根据当前的状态选择提交或者终止整个事务</li>
+<li>在第一阶段和第二阶段中间引入了一个准备阶段，也就是在提交阶段之前，加入了一个预提交阶段。在预提交阶段排除一些不一致的情况，保证在最后提交之前各参与节点的状态是一致的</li>
+</ul>
+</li>
+<li>2PC 和 3PC 这两种方法的两个共同的缺点是什么<ul>
+<li>1.都需要锁定资源，降低系统性能</li>
+<li>2.没有解决数据不一致的问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法"><a href="#基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法" class="headerlink" title="基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法"></a>基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法</h1><ul>
+<li>核心思想<ul>
+<li>将需要分布式处理的事务通过消息或者日志的方式异步执行，消息或日志可以存到本地文件、数据库或消息队列中，再通过业务规则进行失败重试</li>
+<li>基于分布式消息的最终一致性方案的事务处理，引入了一个消息中间件（Message Queue，MQ），用于在多个应用之间进行消息传递</li>
+<li><img src="https://img.shiqi-lu.tech/20210225160602.png"></li>
+</ul>
+</li>
+<li>以网上购物为例，阐述分布式消息的最终一致性方案的事务处理<ul>
+<li>假设用户 A 在某电商平台下了一个订单，需要支付 50 元，发现自己的账户余额共 150 元，就使用余额支付，支付成功之后，订单状态修改为支付成功，然后通知仓库发货</li>
+<li>在该事件中，涉及到了订单系统、支付系统、仓库系统，这三个系统是相互独立的应用，通过远程服务进行调用</li>
+<li><img src="https://img.shiqi-lu.tech/20210225161139.png"></li>
+<li>整个购物流程如下</li>
+<li><img src="https://img.shiqi-lu.tech/20210225161206.png"></li>
+<li>1.订单系统把订单消息发给消息中间件，消息状态标记为“待确认”</li>
+<li>2.消息中间件收到消息后，进行消息持久化操作，即在消息存储系统中新增一条状态为“待发送”的消息</li>
+<li>3.消息中间件返回消息持久化结果（成功 / 失败），订单系统根据返回结果判断如何进行业务操作。失败，放弃订单，结束（必要时向上层返回失败结果）；成功，则创建订单</li>
+<li>4.订单操作完成后，把操作结果（成功 / 失败）发送给消息中间件</li>
+<li>5.消息中间件收到业务操作结果后，根据结果进行处理：失败，删除消息存储中的消息，结束；成功，则更新消息存储中的消息状态为“待发送（可发送）”，并执行消息投递</li>
+<li>6.如果消息状态为“可发送”，则 MQ 会将消息发送给支付系统，表示已经创建好订单，需要对订单进行支付。支付系统也按照上述方式进行订单支付操作</li>
+<li>7.订单系统支付完成后，会将支付消息返回给消息中间件，中间件将消息传送给订单系统。订单系统再调用库存系统，进行出货操作</li>
+</ul>
+</li>
+<li>转账的场景说明<ul>
+<li>系统A收到用户的转账请求，系统A先自己扣钱，也就是更新DB1；然后通过消息中间件给系统B发送一条加钱的消息，系统B收到此消息,对自己的账号进行加钱，也就是更新DB2</li>
+<li><img src="https://img.shiqi-lu.tech/20211205174706.png"></li>
+</ul>
+</li>
+<li>场景的技术难点<ul>
+<li>中间有两次网络调用，系统 A 给消息中间件发消息和更新 DB1，两个操作不是原子的。</li>
+<li>系统 A 是先更新DB1，后发送消息，还是先发送消息，后更新DB1?</li>
+<li>假设先更新DB1成功，发送消息网络失败，重发又失败,怎么办?又假设先发送消息成功，更新DB1失败。消息已经发出去了，又不能撤回，怎么办?或者消息中间件提供了消息撤回的接口，但是又调用失败怎么办?</li>
+</ul>
+</li>
+<li>实现方案0：错误的方案<ul>
+<li>方案<ul>
+<li>把「发送加钱消息」这个网络调用和更新DB1放在同一个事务里面，如果发送消息失败，更新DB自动回滚</li>
+</ul>
+</li>
+<li>错误原因<ul>
+<li>1.网络的2将军问题：发送消息失败，发送方并不知道是消息中间件没有收到消息，还是消息已经收到了，只是返回response的时候失败了?如果已经收到消息了，而发送端认为没有收到，执行update DB的回滚操作，则会导致账户A的钱没有扣，账户B的钱却被加了</li>
+<li>2.把网络调用放在数据库事务里面，可能会因为网络的延时导致数据库长事务。严重的会阻塞整个数据库，风险很大</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>实现方案 1：业务方实现，例如使用 kafka，消息中间件没有提供「事务消息」功能<ul>
+<li>步骤<ul>
+<li><img src="https://img.shiqi-lu.tech/20211205175446.png"></li>
+<li>1.系统 A 增加一张消息表，系统 A 不再直接给消息中间件发送消息，而是把消息写入到这张消息表中。把 DB1 的扣钱操作(表1)和写入消息表(表 2)这两个操作放在一个数据库事务里，保证两者的原子性</li>
+<li>2.系统 A 准备一个后台程序，源源不断地把消息传送给消息中间件。如果失败了，也不断尝试重试。因为网络的 2 将军问题，系统 A 发送给消息中间件的消息网络超时了，消息中间件可能已经收到了消息，也可能没有收到。系统A会再次发送该消息，直到消息中间件返回成功。所以，系统A允许消息重复，但消息不会丢失，顺序也不会打乱</li>
+<li>3.通过上面两个步骤，系统 A 保证了消息不丢失，但消息可能重复</li>
+</ul>
+</li>
+<li>问题 1：丢失消费。系统B从消息中间件取出消息(此时还在内存里面)，如果处理了一半，系统B宕机并再次重启，此时这条消息未处理成功，怎么办?<ul>
+<li>通过消息中间件的 ACK 机制，凡是发送 ACK 的消息，系统 B 重启之后，消息中间件不会再次发送；凡是没有发送ACK的消息，系统B重启之后消息中间件会再次推送。但这可能会引发重复消费的问题，如 B 处理成功正要返回 ACK 时宕机了</li>
+</ul>
+</li>
+<li>问题 2：重复消费。除了ACK机制，可能会引起重复消费;系统A的后台任务也可能给消息中间件重复发送消息<ul>
+<li>系统 B 增加一个判重表记录处理成功的消息 ID 和消息中间件对应的 offset(以 kafka 为例)，系统 B 宕机重启，可定位到 offset 位置，从这之后开始继续消费</li>
+<li>每次接收到新消息，先通过判重表进行判重，实现业务的幂等。同样，对DB2的加钱操作和消息写入判重表两个操作，要在一个DB的事务里面完成</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>系统A需要增加消息表，同时还需要一个 后台任务，不断扫描此消息表，会导致消息的处理和业务逻辑耦合，额外增加业务方的开发负担</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>实现方案 2：基于 RocketMQ 事务消息<ul>
+<li>原理<ul>
+<li>RocketMQ 不是提供一个单一的「发送」接口，而是把消息的发送拆成了两个阶段，Prepare 阶段(消息预发送)和 Confirm 阶段(确认发送)</li>
+</ul>
+</li>
+<li>步骤<ul>
+<li><img src="https://img.shiqi-lu.tech/20211205181411.png"></li>
+<li>1.系统 A 调用 Prepare 接口，预发送消息。此时消息保存在消息中间件里，但消息中间件不会把消息给消费方消费，消息只是暂存在那</li>
+<li>2.系统 A 更新数据库，进行扣钱操作</li>
+<li>3.系统 A 调用 Comfirm 接口，确认发送消息。此时消息中间件才会吧消息给消费方进行消费</li>
+</ul>
+</li>
+<li>两个异常场景<ul>
+<li>场景1:步骤1成功，步骤2成功，步骤3失败或超时，怎么处理?</li>
+<li>场景2:步骤1成功，步骤2失败或超时，步骤3不会执行。怎么处理?</li>
+</ul>
+</li>
+<li>解决<ul>
+<li>RocketMQ 会定期(默认1 min)扫描所有的预发送但还没有确认的消息，回调给发送方，询问这条消息是要发送出去，还是取消。业务方根据自己的业务数据回应</li>
+</ul>
+</li>
+<li>和方案 2 的区别<ul>
+<li>RocketMQ 最大的改变其实是把「扫描消息表」这件事不让业务方做，而是让消息中间件完成</li>
+<li>消息表其实还是没有省掉，因为消息中间件要询问发送方事务是否执行成功，还需要一个「变相的本地消息表」，记录事务执行状态和消息发送状态。</li>
+<li>同时对于消费方，还是没有解决系统重启可能导致的重复消费问题，这只能由消费方解决。需要设计判重机制，实现消息消费的幂等。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>实现方案 3：人工介入<ul>
+<li>无论方案1，还是方案2，发送端把消息成功放入了队列中，但如果消费端消费失败怎么办?</li>
+<li>如果消费失败了，则可以重试，但还一直失败怎么办?是否要自动回滚整个流程?</li>
+<li>答案是人工介入。从工程实践角度来讲，这种整个流程自动回滚的代价是非常巨大的，不但实现起来很复杂，还会引入新的问题。比如自动回滚失败，又如何处理?</li>
+<li>对应这种发生概率极低的事件，采取人工处理会比实现一个高复杂的自动化回滚系统更加可靠，也更加简单</li>
+</ul>
+</li>
+</ul>
+<h1 id="TCC的使用场景和步骤"><a href="#TCC的使用场景和步骤" class="headerlink" title="TCC的使用场景和步骤"></a>TCC的使用场景和步骤</h1><ul>
+<li>使用场景<ul>
+<li>2PC通常用来解决两个数据库之间的分布式事务问题，TCC 用于解决两个服务之间的分布式事务问题</li>
+</ul>
+</li>
+<li>步骤<ul>
+<li><img src="https://img.shiqi-lu.tech/20211205164453.png"></li>
+<li>1.准备阶段：调用方调用所有服务方提供的 Try 接口，该阶段个调用方做资源检查和资源锁定，为接下来阶段 2 做准备</li>
+<li>2.提交阶段：如果所有服务方都返回 Yes，则进入提交阶段，调用方调用个服务方的 Confirm 接口，个服务方进行事务提交。如果有一个服务方在阶段 1 返回 NO 或者超时，则调用方调用各服务方的 Cancel 接口</li>
+</ul>
+</li>
+<li>在阶段 2，调用方发生宕机，或者某个服务超时了，如何处理呢?<ul>
+<li>不断重试！不管是 Confirm 还是 Cancel 失败了，都不断重试。这就要求 Confirm 和 Cancel 都必须是幂等操作</li>
+<li>注意，这里的重试是由TCC的框架来执行的，而不是让业务方自己去做</li>
+</ul>
+</li>
+</ul>
+<h1 id="事务状态表-调用方重试-接收方幂等的原理和补充说明"><a href="#事务状态表-调用方重试-接收方幂等的原理和补充说明" class="headerlink" title="事务状态表+调用方重试+接收方幂等的原理和补充说明"></a>事务状态表+调用方重试+接收方幂等的原理和补充说明</h1><ul>
+<li>原理<ul>
+<li>(由业务方自己实现)调用方维护一张事务状态表(或者说事务日志、日志流水)，在每次调用之前，落盘一条事务流水，生成一个全局的事务 ID。事务状态表的表结构如图</li>
+<li><img src="https://img.shiqi-lu.tech/20211205165847.png"></li>
+<li>初始是状态1，每调用成功1个服务则更新1次状态，最后所有系统调用成功，状态更新到状态4，状态2、3是中间状态。当然，也可以不保存中间状态，只设置两个状态: Begin 和End。事务开始之前的状态是Begin,全部结束之后的状态是End。如果某个事务一直停留在Begin状态，则说明该事务没有执行完毕</li>
+<li>然后有一个后台任务，扫描状态表，在过了某段时间后，状态没有变为最终的状态 4，说明这条事务没有执行成功。于是重新调用系统A、B、C。保证这条流水的最终状态是状态4 (或End状态)。当然，系统A、B、C根据全局的事务ID做幂等操作，所以即使重复调用也没有关系</li>
+</ul>
+</li>
+<li>补充<ul>
+<li>1.如果后台任务重试多次仍然不能成功，要为状态表加一个Error状态，通过人工介入干预</li>
+<li>2.对于调用方的同步调用，如果部分成功，此时给客户端返回不确定，或者说暂时未知。只能告诉用户该笔钱转账超时，请稍后再来确认</li>
+<li>3.对于同步调用，调用方调用A或B失败的时候，可以重试三次。如果重试三次还不成功，则放弃操作，再交由后台任务后续处理</li>
+</ul>
+</li>
+</ul>
+<h1 id="对账的原理、思路、分类"><a href="#对账的原理、思路、分类" class="headerlink" title="对账的原理、思路、分类"></a>对账的原理、思路、分类</h1><ul>
+<li>原理<ul>
+<li>事务、系统中的各种数据对象都有状态，或者说都有各自完整的生命周期，同时数据与数据之间存在着关联关系。可以很好地利用这种完整的生命周期和数据之间的关联关系，来实现系统的一致性，这就是「对账」</li>
+</ul>
+</li>
+<li>思路<ul>
+<li>最终一致性、TCC、事务状态表等方案，都是为了保证「过程的原子性」，也就是多个系统操作(或 系统调用)，要么全部成功，要么全部失败</li>
+<li>但所有的「过程」都必然产生「结果」，过程是我们所说的「事务」，结果就是业务数据。一个过程如果部分执行成功、部分执行失败，则意味着结果是不完整的。从结果也可以反推出过程出了问题，从而对数据进行修补</li>
+</ul>
+</li>
+<li>分类<ul>
+<li>1.全量对账。比如每天晚上运作一个定时任务，比对两个数据库</li>
+<li>2.增量对账。可以是一个定时任务，基于数据库的更新时间；也可以基于消息中间件，每一次业务操作都抛出一个消息到消息中间件，然后由一个消费者消费这条消息，对两个数据库中的数据进行比对(当然，消息可能丢失，无法百分之百地保证，还是需要全量对账来兜底)</li>
+</ul>
+</li>
+</ul>
+<h1 id="妥协方案：弱一致性-基于状态的补偿的使用场景、思路、方案、补偿方法"><a href="#妥协方案：弱一致性-基于状态的补偿的使用场景、思路、方案、补偿方法" class="headerlink" title="妥协方案：弱一致性+基于状态的补偿的使用场景、思路、方案、补偿方法"></a>妥协方案：弱一致性+基于状态的补偿的使用场景、思路、方案、补偿方法</h1><ul>
+<li>使用场景<ul>
+<li>需要一个同步的方案，既要让系统之间保持一致性，又要有很高的性能，支持高并发</li>
+</ul>
+</li>
+<li>电商下单场景的示例<ul>
+<li>如图，电商网站的下单至少需要两个操作:创建订单和扣库存。订单系统有订单的数据库和服务，库存系统有库存的数据库和服务。先创建订单，后扣库存，可能会创建订单成功，扣库存失败；反过来，先扣库存，后创建订单，可能会扣库存成功，创建订单失败。如何保证创建订单+扣库存两个操作的原子性，同时还要能抵抗线上的高并发流量?</li>
+<li><img src="https://img.shiqi-lu.tech/20211205172003.png"></li>
+</ul>
+</li>
+<li>方案思路<ul>
+<li>利用电商购物中的一个特性：允许少卖，但不能超卖，以下两个均保证最终库存可以多扣，不能少扣</li>
+</ul>
+</li>
+<li>方案 1：先扣库存，后创建订单<ul>
+<li>有三种情况：</li>
+<li>1.扣库存成功，提交订单成功，返回成功</li>
+<li>2.扣库存成功，提交订单失败，返回失败，调用方重试(此处可能会多扣库存)</li>
+<li>3.扣库存失败，不再提交订单，返回失败，调用方重试(此处可能会多扣库存)</li>
+<li><img src="https://img.shiqi-lu.tech/20211205172631.png"></li>
+</ul>
+</li>
+<li>方案 2：先创建订单，后扣库存<ul>
+<li>有三种情况：</li>
+<li>1.提交订单成功，扣库存成功，返回成功</li>
+<li>2.提交订单成功，扣库存失败，返回失败，调用方重试(此处可能会多扣库存)</li>
+<li>3.提交订单失败，不再扣库存，调用方重试</li>
+<li><img src="https://img.shiqi-lu.tech/20211205172744.png"></li>
+</ul>
+</li>
+<li>库存多扣导致数据不一致的补偿<ul>
+<li>库存每扣一次，都会生成一条流水记录并记初始状态是「占用」，等订单支付成功后，会把状态改成「释放」</li>
+<li>对于那些过了很长时间一直是占用，而不释放的库存，要么是因为前面多扣造成的，要么是因为用户下了单但没有支付</li>
+<li>通过比对，得到库存系统的「占用又没有释放的库存流水」与订单系统的未支付的订单，就可以回收这些库存，同时把对应的订单取消，将库存释放</li>
+</ul>
+</li>
+</ul>
+<h1 id="妥协方案：重试-回滚-报警-人工修复"><a href="#妥协方案：重试-回滚-报警-人工修复" class="headerlink" title="妥协方案：重试+回滚+报警+人工修复"></a>妥协方案：重试+回滚+报警+人工修复</h1><ul>
+<li>使用场景<ul>
+<li>基于订单的状态+库存流水的状态做补偿中，如果业务很复杂可使用该方法</li>
+</ul>
+</li>
+<li>原理<ul>
+<li>先扣库存，后创建订单。不做状态补偿，为库存系统提供一个回滚接口。创建订单如果失败了，先重试。如果重试还不成功，则回滚库存的扣减。如果回滚也失败，则发报警，进行人工干预修复</li>
+<li>根据业务逻辑，通过三次重试或回滚的方法，最大限度地保证一致。实在不一致，就发报警，让人工干预。只要日志流水记录得完整，人工肯定可以修复!通常 只要业务逻辑本身没问题，重试、回滚之后还失败的概率会比较低，所以这种办法虽然丑陋，但很实用</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>软件架构设计 大型网站技术架构与业务架构融合之道-第 10 章-事务一致性</li>
+<li>分布式技术原理与算法解析-第 6 讲-分布式事务：All or nothing</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/distributed-transaction/" title="8种分布式事务实现原理的全面整理">http://shiqi-lu.tech/distributed-transaction/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91/" rel="tag"># 高并发</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/distributed-lock/" rel="prev" title="3种分布式锁实现原理的全面整理">
+                  <i class="fa fa-chevron-left"></i> 3种分布式锁实现原理的全面整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/distributed-transaction/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>

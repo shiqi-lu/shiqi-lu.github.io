@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理，主要讲了高并发读写系统的应对方案">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理">
+<meta property="og:url" content="http://shiqi-lu.tech/soft-arch-design-ch8/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理，主要讲了高并发读写系统的应对方案">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205195245.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211205205742.png">
+<meta property="article:published_time" content="2021-11-20T12:55:48.000Z">
+<meta property="article:modified_time" content="2021-11-20T12:55:48.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="高并发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20211205195245.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/soft-arch-design-ch8/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：CS/AI/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">61</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E5%B9%B6%E5%8F%91%E7%B3%BB%E7%BB%9F%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%E5%92%8C%E4%BE%8B%E5%AD%90"><span class="nav-number">1.</span> <span class="nav-text">高并发系统有哪些分类和例子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%A7%E9%87%8D%E4%BA%8E%E3%80%8C%E9%AB%98%E5%B9%B6%E5%8F%91%E8%AF%BB%E3%80%8D%E7%9A%84%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.</span> <span class="nav-text">侧重于「高并发读」的系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%A7%E9%87%8D%E4%BA%8E%E3%80%8C%E9%AB%98%E5%B9%B6%E5%8F%91%E5%86%99%E3%80%8D%E7%9A%84%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.2.</span> <span class="nav-text">侧重于「高并发写」的系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%97%B6%E4%BE%A7%E9%87%8D%E4%BA%8E%E3%80%8C%E9%AB%98%E5%B9%B6%E5%8F%91%E8%AF%BB%E3%80%8D%E5%92%8C%E3%80%8C%E9%AB%98%E5%B9%B6%E5%8F%91%E5%86%99%E3%80%8D%E7%9A%84%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.3.</span> <span class="nav-text">同时侧重于「高并发读」和「高并发写」的系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E5%B9%B6%E5%8F%91%E8%AF%BB%E7%9A%84%E5%BA%94%E5%AF%B9%E7%AD%96%E7%95%A5"><span class="nav-number">2.</span> <span class="nav-text">高并发读的应对策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5-1%EF%BC%9A%E5%8A%A0%E7%BC%93%E5%AD%98"><span class="nav-number">2.1.</span> <span class="nav-text">策略 1：加缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5-2%EF%BC%9A%E5%B9%B6%E5%8F%91%E8%AF%BB"><span class="nav-number">2.2.</span> <span class="nav-text">策略 2：并发读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5-3%EF%BC%9A%E9%87%8D%E5%86%99%E8%BD%BB%E8%AF%BB"><span class="nav-number">2.3.</span> <span class="nav-text">策略 3：重写轻读</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E5%B9%B6%E5%8F%91%E5%86%99%E7%9A%84%E5%BA%94%E5%AF%B9%E7%AD%96%E7%95%A5"><span class="nav-number">3.</span> <span class="nav-text">高并发写的应对策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5-1%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%88%86%E7%89%87"><span class="nav-number">3.1.</span> <span class="nav-text">策略 1：数据分片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5-2%EF%BC%9A%E4%BB%BB%E5%8A%A1%E5%88%86%E7%89%87"><span class="nav-number">3.2.</span> <span class="nav-text">策略 2：任务分片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5-3%EF%BC%9A%E5%BC%82%E6%AD%A5%E5%8C%96"><span class="nav-number">3.3.</span> <span class="nav-text">策略 3：异步化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5-4%EF%BC%9A%E6%89%B9%E9%87%8F"><span class="nav-number">3.4.</span> <span class="nav-text">策略 4：批量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5-5%EF%BC%9A%E4%B8%B2%E8%A1%8C%E5%8C%96-%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%8D%95%E7%BA%BF%E7%A8%8B-%E5%BC%82%E6%AD%A5-I-O"><span class="nav-number">3.5.</span> <span class="nav-text">策略 5：串行化+多进程单线程+异步 I&#x2F;O</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/soft-arch-design-ch8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-20 20:55:48" itemprop="dateCreated datePublished" datetime="2021-11-20T20:55:48+08:00">2021-11-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/soft-arch-design-ch8/" class="post-meta-item leancloud_visitors" data-flag-title="《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/soft-arch-design-ch8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/soft-arch-design-ch8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理，主要讲了高并发读写系统的应对方案</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="高并发系统有哪些分类和例子"><a href="#高并发系统有哪些分类和例子" class="headerlink" title="高并发系统有哪些分类和例子"></a>高并发系统有哪些分类和例子</h1><h2 id="侧重于「高并发读」的系统"><a href="#侧重于「高并发读」的系统" class="headerlink" title="侧重于「高并发读」的系统"></a>侧重于「高并发读」的系统</h2><ul>
+<li>1.搜索引擎</li>
+<li>2.电商的商品搜索</li>
+<li>3.电商系统的商品描述、图片和价格</li>
+</ul>
+<h2 id="侧重于「高并发写」的系统"><a href="#侧重于「高并发写」的系统" class="headerlink" title="侧重于「高并发写」的系统"></a>侧重于「高并发写」的系统</h2><ul>
+<li>广告计费系统：C 端用户的每一次浏览或点击都会对广告主的账号余额进行一次扣减</li>
+</ul>
+<h2 id="同时侧重于「高并发读」和「高并发写」的系统"><a href="#同时侧重于「高并发读」和「高并发写」的系统" class="headerlink" title="同时侧重于「高并发读」和「高并发写」的系统"></a>同时侧重于「高并发读」和「高并发写」的系统</h2><ul>
+<li>1.电商的库存系统和秒杀系统</li>
+<li>2.支付系统和微信红包</li>
+<li>3.IM、微博和朋友圈</li>
+</ul>
+<h1 id="高并发读的应对策略"><a href="#高并发读的应对策略" class="headerlink" title="高并发读的应对策略"></a>高并发读的应对策略</h1><h2 id="策略-1：加缓存"><a href="#策略-1：加缓存" class="headerlink" title="策略 1：加缓存"></a>策略 1：加缓存</h2><ul>
+<li>案例 1：本地缓存或 Memcached/Redis 集中式缓存</li>
+<li>案例 2：MySQL 的 Master/Slave</li>
+<li>案例 3：CDN 静态文件加速(动静分离)</li>
+</ul>
+<h2 id="策略-2：并发读"><a href="#策略-2：并发读" class="headerlink" title="策略 2：并发读"></a>策略 2：并发读</h2><ul>
+<li>案例 1：异步 RPC<ul>
+<li>没有耦合关系的 3 个调用可以并行去调</li>
+</ul>
+</li>
+<li>案例 2：Google 的「冗余请求」<ul>
+<li>客户端首先给服务端发送一个请求，并等待服务端返回的响应</li>
+<li>如果客户端在一定的时间内(定义为 95%请求的响应时间)没有收到响应，则马上给一台(或多台)服务器发送同样的请求</li>
+<li>客户端等待第一个响应到达之后，终止其他请求的处理</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-3：重写轻读"><a href="#策略-3：重写轻读" class="headerlink" title="策略 3：重写轻读"></a>策略 3：重写轻读</h2><ul>
+<li>案例 1：微博 Feeds 流<ul>
+<li>场景<ul>
+<li>微博首页或微信朋友圈都存在类似的查询场景:用户关注了n个人(或者有n个好友)，每个人都在不断地发微博，然后系统需要把这n个人的微博按时间排序成一个列表，也就是Feeds流并展示给用户</li>
+<li>用户也需要查看自已发布的微博列表</li>
+</ul>
+</li>
+<li>原始方案(假设数据存在数据库中)<ul>
+<li>表结构<ul>
+<li>关注关系表(Following 表)<ul>
+<li>ID(自增主键)</li>
+<li>user_id(关注者)</li>
+<li>followings(被关注的人)</li>
+</ul>
+</li>
+<li>微博发布表(Msg表)<ul>
+<li>ID(自增主键)</li>
+<li>user_id(发布者)</li>
+<li>msg_id(发布的微博 ID)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询 user_id = 1 发布的微博列表并分页<ul>
+<li><code>SELECT msg_ids from Msg where user_id = 1 limit offset, count</code></li>
+</ul>
+</li>
+<li>查询 user_id = 1 用户的 Feeds 流，并按时间排序并分页，需要两条 SQL 语句<ul>
+<li>先查询 user_id = 1 的用户的关注的用户列表：</li>
+<li><code>SELECT followings from Following where user_id=1</code></li>
+<li>查询关注的所有用户的微博列表，按时间排序并分页I</li>
+<li><code>SELECT msg_ids from Msg where user_id in (followings) limit offset, count</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>重写轻读<ul>
+<li>方案<ul>
+<li>提前为每个 user_id 准备一个 Feeds 流，或叫收件箱</li>
+<li>每个用户都有一个发件箱和收件箱。用户发布 1 条微博后，只写入自己的发件箱就返回成功。然后后台异步地把这条微博推送到粉丝的收件箱，即「写扩散」</li>
+<li>这样，每个用户读取 Feeds 流的时候不需实时聚合，直接读取各自的收件箱即可</li>
+<li>若是收件箱数量超过一定的阈值，丢弃即可</li>
+</ul>
+</li>
+<li>用户发布的微博如何全量保存数据<ul>
+<li>仍然按 Msg 表存储，按 user_id 和时间范围进行数据库的分片</li>
+</ul>
+</li>
+<li>分页后，如何快速查看某个 user_id 从某个 offet 开始的微博，如显示要第 50 页，每页有 100 个，即 offset = 5000 的位置开始之后的微博。如何快速定位到 5000 所属的库？<ul>
+<li>借助二级索引：另外有一张表，记录&lt;user_id，月份，count&gt;。也就是每个 user_id 在每个月份发表的微博总数。基于这个索引表即可快速定位到 offset = 5000 的微博发生在那个月份</li>
+</ul>
+</li>
+<li>用户粉丝多的优化：在读的时候实时聚合<ul>
+<li>在写的一端，对于粉丝数量少的用户(假设定个阈值为5000，小于5000的用户)，发布一条微博之后推送给5000个粉丝</li>
+<li>对于粉丝数多的用户，只推送给在线的粉丝们(系统要维护一个全局的、在线的用户列表)</li>
+<li>对于读的一端，一个用户的关注的人当中，有的人是推给他的(粉丝数少于5000)， 有的人是需要他去拉的(粉丝数大于5000)，需要把两者聚合起来，再按时间排序，然后分页显示，这就是“推拉结合”</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>案例 2：多表的关联查询：宽表和搜索引擎<ul>
+<li>提前把关联数据计算好，存在一个地方，读的时候直接去读聚合好的数据，而不是读取的时候再去做 join</li>
+<li>宽表实现：把要关联的表的数据算好后保存在宽表里。依据实际情况，可以定时算，也可能任何一张原始表发生变化之后就触发-次宽表数据的计算</li>
+<li>ES 类的搜索引擎实现：把多张表的Join 结果做成一个个的文档，放在搜索引擎里面，也可以灵活地实现排序和分页查询功能</li>
+</ul>
+</li>
+</ul>
+<h1 id="高并发写的应对策略"><a href="#高并发写的应对策略" class="headerlink" title="高并发写的应对策略"></a>高并发写的应对策略</h1><h2 id="策略-1：数据分片"><a href="#策略-1：数据分片" class="headerlink" title="策略 1：数据分片"></a>策略 1：数据分片</h2><ul>
+<li>案例 1：数据库的分库分表</li>
+<li>案例 2：JDK 的 ConcurrentHashMap 实现<ul>
+<li>ConcurrentHashMap在内部分成了若干槽( 个数是2的整数次方，默认是16 个槽)，也就是若干子HashMap。这些槽可以并发地读写，槽与槽之间是独立的，不会发生数据互斥</li>
+</ul>
+</li>
+<li>案例 3：Kafka 的 partition<ul>
+<li>在Kafka中，一个topic表示-一个逻辑上的消息队列，具体到物理上，一个topic 被分成了多个partition,每个parition对应磁盘中的一个日志文件。partition 之间也是相互独立的，可以并发地读写，也就提高了一个topic 的并发量</li>
+</ul>
+</li>
+<li>案例 4：ES 的分布式索引<ul>
+<li>在搜索引擎里有一个基本策略是分布式索引。比如有10亿个网页或商品，如果建在一个倒排索引里面，则索引很大，也不能并发地查询</li>
+<li>可以把这 10 亿个网页或商品分成n份，建成n个小的索引。一个查询请求来了以后，并行地在n个索引上查询，再把查询结果进行合并</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-2：任务分片"><a href="#策略-2：任务分片" class="headerlink" title="策略 2：任务分片"></a>策略 2：任务分片</h2><ul>
+<li>案例 1：CPU 的指令流水线</li>
+<li>案例 2：Map/Reduce</li>
+<li>案例 3：Tomcat 的 1+N+M 网络模型<ul>
+<li><img src="https://img.shiqi-lu.tech/20211205195245.png"></li>
+<li>把一个请求的处理分成了三个工序：监听、I/O、业务逻辑处理。1 个监听线程负责监听客户端的 Socket 连接；N 个 I/O 线程负责对 Socket 进行读写，N 通常约等于 CPU 核数；M 个 Work 线程负责对请求进行逻辑处理</li>
+<li>进一步来讲，Work 线程还可能被拆分成解码、业务逻辑计算、编码等环节，进一步提高并发度</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-3：异步化"><a href="#策略-3：异步化" class="headerlink" title="策略 3：异步化"></a>策略 3：异步化</h2><ul>
+<li>解释<ul>
+<li>站在客户端的角度来讲，是请求服务器做一个事情,客户端不等结果返回，就去做其他的事情，回头再去轮询，或者让服务器回调通知</li>
+<li>站在服务器角度来看，是接收到一个客户的请求之后不立即处理，也不立马返回结果，而是在“后台慢慢地处理”，稍后返回结果。因为客户端不等上一个请求返回结果就可以发送一个请求，可以源源不断地发送请求，从而就形成了异步化</li>
+</ul>
+</li>
+<li>案例 1：短信验证码注册或登录<ul>
+<li>通常在注册或登录App或小程序时，采用的方式为短信验证码。短信的发送通常需要依赖第三方的短信发送平台。客户端请求发送验证码，应用服务器收到请求后调用第三方的短信平台</li>
+<li>公网的HTTP调用可能需要1~2s，如果是同步调用，则应用服务器会被阻塞。假设应用服务器是Tomcat，一台机器最多可以同时处理几百个请求，如果同时来几百个请求，Tomcat就会被卡死了。</li>
+<li>改成异步调用就可以避免这个问题。应用服务器收到客户端的请求后，放入消息队列，并立即返回。然后有一个后台任务，从消息队列读取消息，去调用第三方短信平台发送验证码</li>
+</ul>
+</li>
+<li>案例 2：电商的订单系统<ul>
+<li>买多个商品，但只下了一个订单付一次款，因为后台会进行「拆单」等环节</li>
+</ul>
+</li>
+<li>案例 3：广告计费系统<ul>
+<li>用户的点击请求或浏览请求首先会以日志的形式进行落盘。落盘之后，立即给客户端返回数据。后续的所有处理，当然也包括扣费，全部是异步化的</li>
+</ul>
+</li>
+<li>案例 4：LSM 树(写内存+Write-Ahead 日志)<ul>
+<li>LSM(Log Structured Merged Tree)的核心思想是「异步写」。LSM 树支撑的是 KV 存储，磁盘上实现了 Sorted HashMap，但插入时是无序的</li>
+<li>原理：LSM 在内存中维护一个 Sorted HashMap，并写一条日志(即 Write-Ahead 日志)，该日志的关键点是顺序写入，只会在日志尾部追加，而不会随机地写入，再有一个后台任务定期地把内存中的 SortedHashMap 合并到磁盘文件中，后台任务会执行磁盘数据的合并排序</li>
+<li>拓展：上层业务高并发扣减 MySQL 中的账户余额，可以在 Redis 中扣，同时落一条日志(日志可以在一个高可靠的消息中间件或数据库中插入一条条日志，数据库可以分库分表)。当 Redis 宕机，把所有的日志重放完毕，再用数据库中的数据初始化 Redis 中的数据。当然，数据库中的数据不能比Redis落后太多，否则积压大量日志未处理，宕机恢复的时间会很长</li>
+</ul>
+</li>
+<li>案例 5：Kafka 的 Pipeline<ul>
+<li>kafka 为了高可用性，会为每个 Topic 的每个 Partition 准备多个副本，其中一个被选举为 Leader，另外都是 Follower</li>
+<li>对于同步发送，客户端每发送一条消息，Leader 要把这条消息同步到所有 Follower 后，才会对客户端返回成功</li>
+<li>在实现上，Leader 并不会主动给两个 Follower 同步数据，而是等 Follower 主动拉取，并且是批量拉取。当 Leader 收到客户端的消息 msg1 并把它存到本地文件后，就去做别的事情了，如接收下一个消息 msg2，此时客户端仍处于阻塞状态，等待 msg1 返回。只有等所有 Follower 把消息 msg1 拖过去后，Leader 才会返回客户端说 msg1 接收成功了</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-4：批量"><a href="#策略-4：批量" class="headerlink" title="策略 4：批量"></a>策略 4：批量</h2><ul>
+<li>案例 1：Kafka 的百万 QPS 写入<ul>
+<li>kafka 快的三个策略：1.Partition 分片，2.磁盘的顺序写入，3批量，把多条合并成一条，一次性写入</li>
+<li>kafka 的客户端在内存中为每个 Partition 准备了一个队列，称为 RecordAccumulator。Producer 线程一条条地发送消息，这些消息都进入内存队列。然后通过 Sender 线程从这些队列中批量地提取消息发送给 kafka 集群</li>
+<li><img src="https://img.shiqi-lu.tech/20211205205742.png"></li>
+<li>如果是同步发送，Producer 向队列中放入一条消息后会阻塞，等待 Sender 线程取走该条消息并发出去后，Producer 才会返回，这是没有批量操作</li>
+<li>如果是异步发送，Producer把消息放入队列中后就返回了，Sender线程会把队列中的消息打包，一次发送出去多个，这时就会用到批量操作</li>
+<li>对于具体的批量策略，Kafka提供了几种参数进行配置，可以按Batch的大小或等待时间来批量操作</li>
+</ul>
+</li>
+<li>案例 2：广告计费系统的合并扣费<ul>
+<li>例如可把同一账号扣 10 次，每次扣 1 块。改为 1 次扣 10 块</li>
+<li>扣费模块一次性地从持久化消息队列中取多条消息，对这多条消息按广告主的账号 ID 进行分组，同一个组内的消息的扣费金额累加合并，然后从数据库里扣除</li>
+</ul>
+</li>
+<li>案例 3：MySQL 的小事务合并机制<ul>
+<li>比如扣库存，对同一个SKU,本来是扣10次、每次扣1个，也就是10个事务；在MySQL内核里面合并成1次扣10个，也就是10个事务变成了1个事务</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-5：串行化-多进程单线程-异步-I-O"><a href="#策略-5：串行化-多进程单线程-异步-I-O" class="headerlink" title="策略 5：串行化+多进程单线程+异步 I/O"></a>策略 5：串行化+多进程单线程+异步 I/O</h2><ul>
+<li>案例：Nginx、Redis 的单线程模型<ul>
+<li>有了异步 I/O 后，可把请求串行化处理。这样，没有了锁的竞争和 I/O 的阻塞，单线程也非常高效。要利用多核优势可开多个实例</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/soft-arch-design-ch8/" title="《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理">http://shiqi-lu.tech/soft-arch-design-ch8/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91/" rel="tag"># 高并发</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/throttling-algorithm/" rel="prev" title="5种限流算法总结">
+                  <i class="fa fa-chevron-left"></i> 5种限流算法总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/distributed-lock/" rel="next" title="3种分布式锁实现原理的全面整理">
+                  3种分布式锁实现原理的全面整理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/soft-arch-design-ch8/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>

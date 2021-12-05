@@ -1,6 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>《秒杀系统架构设计》学习</title>
+    <url>/arch-miao-sha/</url>
+    <content><![CDATA[<ul>
+<li>QQ 业务特点：细粒度数据查询<ul>
+<li>即使并发量很大，锁冲突其实不大，数据水平切分后，因为带上了 uid，gid 等字段，用户层面几乎没有锁冲突</li>
+</ul>
+</li>
+<li>weibo业务特点:读多写少，有少量读写锁冲突<ul>
+<li>微博的核心业务是feed流:<ul>
+<li>发消息，写操作</li>
+<li>刷消息，读操作</li>
+</ul>
+</li>
+<li>微博业务显然是读多写少的，在用户刷消息时，自己feed流里的消息，是由别人发出的。</li>
+</ul>
+</li>
+<li>秒杀业务特点:数据量少，写多读多,极大锁冲突<ul>
+<li>12306的核心业务是:<ul>
+<li>查票，读操作</li>
+<li>买票，写操作</li>
+</ul>
+</li>
+<li>stock(id, num) //核心数据结构：某一列车有多少张余票</li>
+<li>在用户量很大，并发量很大时，有极大的锁冲突。</li>
+</ul>
+</li>
+<li>方向上“降低数据层锁冲突”，具体两大要点:<ul>
+<li>(1)降读：用缓存</li>
+<li>(2)降写：把请求拦截在系统上游</li>
+</ul>
+</li>
+<li>用缓存降低数据层读请求，不展开<ul>
+<li>秒杀买票，这是一个典型的读多写少的业务场景:<ul>
+<li>车次查询，读，量大</li>
+<li>余票查询，读，量大</li>
+<li>下单和支付，写，量小</li>
+</ul>
+</li>
+<li>一趟火车2000张票，200w个 人同时来买，最多2000个人下单成功，其他人都是查询库存，写.</li>
+<li>比例只有0.1%，读比例占99.9%，非常适合使用缓存来优化。</li>
+</ul>
+</li>
+<li>如何将请求，拦截在系统上游?<ul>
+<li>先看看上下游分层架构，秒杀业务，常见的系统分层架构如何?<ul>
+<li>浏览器-&gt;站点-&gt;服务-&gt;数据</li>
+</ul>
+</li>
+<li>第一层，端上的请求拦截(浏览器/APP)，可以做一些限速策略，限制用户在 X 秒内只能做一次请求</li>
+<li>第二层，站点层的请求拦截，使用 session，用户 uid 或 token 等识别同一用户，进行限速拦截，高级一点可以返回页面缓存，即返回上一次的内容</li>
+<li>第三层，服务层的请求拦截，知道了业务层的抗压能力和库存，可以根据此进行限速，使用消息队列或内存中的队列</li>
+<li>第四层，数据库闲庭信步，基本不需要做什么，因为到这里访问量应该很低了</li>
+</ul>
+</li>
+<li>(1)按照上面的优化方案,其实压力最大的反而是站点层，假设真实有效的请求数是每秒100w，这部分的压力怎么处理?<ul>
+<li>站点层的扩容非常容易，测算出机器的处理能力，直接加机器即可，此外其实不需要所有的请求都处理返回，可以服务降级，把大部分的请求失败掉即可，保护系统是最优先原则</li>
+</ul>
+</li>
+<li>(2)站点层限速，是个每个uid的请求计数放到redis里么?吞吐量很大情况下，高并发访问redis，网络带宽会不会成为瓶颈?<ul>
+<li>redis 可以做水平切分，如果担心网络带宽，可以使用内存队列</li>
+</ul>
+</li>
+<li>任何脱离业务的架构设计都是耍流氓，产品+技术，不可分割，产品上，能够如何“优化”，以简化系统架构设计呢?<ul>
+<li>case 1 下单与支付分离<ul>
+<li>一般来说，下单和支付放在同一个流程里，能够提高转化率。</li>
+<li>对于秒杀场景，产品上，下单流程和支付流程异步，放在两个环节里，能够降低数据库写压力。</li>
+<li>12306， 下单成功后，系统占住库存，45分钟之内支付即可。</li>
+</ul>
+</li>
+<li>case 2 分城市用户规则差异化<ul>
+<li>一般来说，所有用户规则相同，体验会更好。</li>
+<li>对于秒杀场景，产品上，不同地域分时售票，虽然不是所有用户规则相同，但能够极大降低系统压力。</li>
+<li>北京9:00开始售票，上海9:30开始售票，广州XX开始售票，能够分担系统压力。</li>
+</ul>
+</li>
+<li>case 3 按钮只能点一次<ul>
+<li>秒杀场景，由于短时间内并发较大，系统返回较慢，用户心情十分焦急，可能会频繁点击按钮，对系统造成压力。</li>
+<li>产品上可以优化为，一旦点击，不管系统是否返回，按钮立刻置灰，不给用户机会频繁点击。</li>
+</ul>
+</li>
+<li>case 4 库存显示粒度加粗<ul>
+<li>一般来说，显示具体的库存数量，能够加强用户体验。</li>
+<li>对于秒杀场景，产品上，只显示有/无车票，而不是显示具体票数目，能够降低缓存淘汰率。</li>
+<li>显示库存会淘汰N次，显示有无只会淘汰1次。更多的，用户关注是否有票，而不是票有几张。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>总结<ul>
+<li>一、秒杀业务为什么难?数据量并不大，但锁冲突巨大</li>
+<li>二、系统架构优化，方向上，降低数据层锁冲突<ul>
+<li>(1) 降读:用缓存</li>
+<li>(2) 降写:把请求拦截在系统上游</li>
+</ul>
+</li>
+<li>三、架构难度大，产品要折衷</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《沈剑架构师训练营》第1章 - 技术选型</title>
     <url>/arch-sj-1/</url>
     <content><![CDATA[<h1 id="2、技术选型：创业初期，技术如何选型"><a href="#2、技术选型：创业初期，技术如何选型" class="headerlink" title="2、技术选型：创业初期，技术如何选型"></a>2、技术选型：创业初期，技术如何选型</h1><ul>
@@ -166,113 +273,6 @@
 <li>2.子系统不是高可用的，只能保证一个挂了，另一个不受影响</li>
 </ul>
 </li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《秒杀系统架构设计》学习</title>
-    <url>/arch-miao-sha/</url>
-    <content><![CDATA[<ul>
-<li>QQ 业务特点：细粒度数据查询<ul>
-<li>即使并发量很大，锁冲突其实不大，数据水平切分后，因为带上了 uid，gid 等字段，用户层面几乎没有锁冲突</li>
-</ul>
-</li>
-<li>weibo业务特点:读多写少，有少量读写锁冲突<ul>
-<li>微博的核心业务是feed流:<ul>
-<li>发消息，写操作</li>
-<li>刷消息，读操作</li>
-</ul>
-</li>
-<li>微博业务显然是读多写少的，在用户刷消息时，自己feed流里的消息，是由别人发出的。</li>
-</ul>
-</li>
-<li>秒杀业务特点:数据量少，写多读多,极大锁冲突<ul>
-<li>12306的核心业务是:<ul>
-<li>查票，读操作</li>
-<li>买票，写操作</li>
-</ul>
-</li>
-<li>stock(id, num) //核心数据结构：某一列车有多少张余票</li>
-<li>在用户量很大，并发量很大时，有极大的锁冲突。</li>
-</ul>
-</li>
-<li>方向上“降低数据层锁冲突”，具体两大要点:<ul>
-<li>(1)降读：用缓存</li>
-<li>(2)降写：把请求拦截在系统上游</li>
-</ul>
-</li>
-<li>用缓存降低数据层读请求，不展开<ul>
-<li>秒杀买票，这是一个典型的读多写少的业务场景:<ul>
-<li>车次查询，读，量大</li>
-<li>余票查询，读，量大</li>
-<li>下单和支付，写，量小</li>
-</ul>
-</li>
-<li>一趟火车2000张票，200w个 人同时来买，最多2000个人下单成功，其他人都是查询库存，写.</li>
-<li>比例只有0.1%，读比例占99.9%，非常适合使用缓存来优化。</li>
-</ul>
-</li>
-<li>如何将请求，拦截在系统上游?<ul>
-<li>先看看上下游分层架构，秒杀业务，常见的系统分层架构如何?<ul>
-<li>浏览器-&gt;站点-&gt;服务-&gt;数据</li>
-</ul>
-</li>
-<li>第一层，端上的请求拦截(浏览器/APP)，可以做一些限速策略，限制用户在 X 秒内只能做一次请求</li>
-<li>第二层，站点层的请求拦截，使用 session，用户 uid 或 token 等识别同一用户，进行限速拦截，高级一点可以返回页面缓存，即返回上一次的内容</li>
-<li>第三层，服务层的请求拦截，知道了业务层的抗压能力和库存，可以根据此进行限速，使用消息队列或内存中的队列</li>
-<li>第四层，数据库闲庭信步，基本不需要做什么，因为到这里访问量应该很低了</li>
-</ul>
-</li>
-<li>(1)按照上面的优化方案,其实压力最大的反而是站点层，假设真实有效的请求数是每秒100w，这部分的压力怎么处理?<ul>
-<li>站点层的扩容非常容易，测算出机器的处理能力，直接加机器即可，此外其实不需要所有的请求都处理返回，可以服务降级，把大部分的请求失败掉即可，保护系统是最优先原则</li>
-</ul>
-</li>
-<li>(2)站点层限速，是个每个uid的请求计数放到redis里么?吞吐量很大情况下，高并发访问redis，网络带宽会不会成为瓶颈?<ul>
-<li>redis 可以做水平切分，如果担心网络带宽，可以使用内存队列</li>
-</ul>
-</li>
-<li>任何脱离业务的架构设计都是耍流氓，产品+技术，不可分割，产品上，能够如何“优化”，以简化系统架构设计呢?<ul>
-<li>case 1 下单与支付分离<ul>
-<li>一般来说，下单和支付放在同一个流程里，能够提高转化率。</li>
-<li>对于秒杀场景，产品上，下单流程和支付流程异步，放在两个环节里，能够降低数据库写压力。</li>
-<li>12306， 下单成功后，系统占住库存，45分钟之内支付即可。</li>
-</ul>
-</li>
-<li>case 2 分城市用户规则差异化<ul>
-<li>一般来说，所有用户规则相同，体验会更好。</li>
-<li>对于秒杀场景，产品上，不同地域分时售票，虽然不是所有用户规则相同，但能够极大降低系统压力。</li>
-<li>北京9:00开始售票，上海9:30开始售票，广州XX开始售票，能够分担系统压力。</li>
-</ul>
-</li>
-<li>case 3 按钮只能点一次<ul>
-<li>秒杀场景，由于短时间内并发较大，系统返回较慢，用户心情十分焦急，可能会频繁点击按钮，对系统造成压力。</li>
-<li>产品上可以优化为，一旦点击，不管系统是否返回，按钮立刻置灰，不给用户机会频繁点击。</li>
-</ul>
-</li>
-<li>case 4 库存显示粒度加粗<ul>
-<li>一般来说，显示具体的库存数量，能够加强用户体验。</li>
-<li>对于秒杀场景，产品上，只显示有/无车票，而不是显示具体票数目，能够降低缓存淘汰率。</li>
-<li>显示库存会淘汰N次，显示有无只会淘汰1次。更多的，用户关注是否有票，而不是票有几张。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>总结<ul>
-<li>一、秒杀业务为什么难?数据量并不大，但锁冲突巨大</li>
-<li>二、系统架构优化，方向上，降低数据层锁冲突<ul>
-<li>(1) 降读:用缓存</li>
-<li>(2) 降写:把请求拦截在系统上游</li>
-</ul>
-</li>
-<li>三、架构难度大，产品要折衷</li>
 </ul>
 </li>
 </ul>
@@ -2475,6 +2475,176 @@
       </tags>
   </entry>
   <entry>
+    <title>3种分布式锁实现原理的全面整理</title>
+    <url>/distributed-lock/</url>
+    <content><![CDATA[<h1 id="分布式锁是什么？"><a href="#分布式锁是什么？" class="headerlink" title="分布式锁是什么？"></a>分布式锁是什么？</h1><ul>
+<li>在分布式环境下，系统部署在多个机器中，实现多进程分布式互斥的一种锁。为了保证多个进程能看到锁，锁被存在公共存储（比如 Redis、Memcache、数据库等三方存储中），以实现多个进程并发访问同一个临界资源，同一时刻只有一个进程可访问共享资源，确保数据的一致性</li>
+</ul>
+<h1 id="实现分布式锁的两个要求"><a href="#实现分布式锁的两个要求" class="headerlink" title="实现分布式锁的两个要求"></a>实现分布式锁的两个要求</h1><ul>
+<li>1.分布式锁的加锁和释放锁的过程涉及多个操作，需要保证这些锁操作的原子性</li>
+<li>2.共享存储系统保存了锁变量，如果共享存储系统发生故障或宕机，那客户端也就无法进行锁操作了。在实现分布式锁时，需考虑保证共享存储系统的可靠性，进而保证锁的可靠性</li>
+</ul>
+<h1 id="为了确保分布式锁的可用性，设计时应该考虑哪几点？"><a href="#为了确保分布式锁的可用性，设计时应该考虑哪几点？" class="headerlink" title="为了确保分布式锁的可用性，设计时应该考虑哪几点？"></a>为了确保分布式锁的可用性，设计时应该考虑哪几点？</h1><ul>
+<li>1.互斥性：在分布式系统环境下，分布式锁应该能保证一个资源或一个方法在同一时间只能被一个机器的一个线程或进程操作</li>
+<li>2.具备锁失效机制，防止死锁：即使有一个进程在持有锁的期间因为崩溃而没有主动解锁， 也能保证后续其他进程可以获得锁</li>
+<li>3.可重入性：进程未释放锁时，可多次访问临界资源</li>
+<li>有高可用的获取锁和释放锁的功能，且性能要好</li>
+</ul>
+<h1 id="实现分布式锁的-3-种主流方法是什么？"><a href="#实现分布式锁的-3-种主流方法是什么？" class="headerlink" title="实现分布式锁的 3 种主流方法是什么？"></a>实现分布式锁的 3 种主流方法是什么？</h1><ul>
+<li>基于数据库实现分布式锁，主要指关系型数据库</li>
+<li>基于缓存实现分布式锁</li>
+<li>基于ZooKeeper实现分布式锁</li>
+</ul>
+<h1 id="基于数据库实现分布式锁的原理、使用场景、缺点"><a href="#基于数据库实现分布式锁的原理、使用场景、缺点" class="headerlink" title="基于数据库实现分布式锁的原理、使用场景、缺点"></a>基于数据库实现分布式锁的原理、使用场景、缺点</h1><ul>
+<li>原理<ul>
+<li>创建一张锁表，然后通过操作该表中的数据来实现</li>
+<li>当要锁住某个资源时，就在该表中增加一条记录，想要释放锁的时候就删除这条记录。数据库对共享资源做了唯一性约束，如果有多个请求被同时提交到数据库的话，数据库会保证只有一个操作可以成功，操作成功的那个线程就获得了访问共享资源的锁并进行操作</li>
+</ul>
+</li>
+<li>使用场景<ul>
+<li>因为数据库需要落到硬盘上，频繁读取数据库会导致IO开销大，因此这种分布式锁适用于并发量低，对性能要求低的场景</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>单点故障：一旦数据库不可用，会导致整个系统崩溃</li>
+<li>死锁：数据库锁没有失效时间，未获得锁的进程只能一直等待已获得锁的进程主动释 放锁。一旦已获得锁的进程挂掉或者解锁操作失败，会导致锁记录一直存在数据库中，其它进程无法获得锁</li>
+</ul>
+</li>
+</ul>
+<h1 id="基于缓存-单个-Redis-节点-实现分布式锁的原理、优缺点"><a href="#基于缓存-单个-Redis-节点-实现分布式锁的原理、优缺点" class="headerlink" title="基于缓存(单个 Redis 节点)实现分布式锁的原理、优缺点"></a>基于缓存(单个 Redis 节点)实现分布式锁的原理、优缺点</h1><ul>
+<li>原理<ul>
+<li>使用键值对来保存锁变量，再接收和处理不同客户端发送的加锁和释放锁的操作请求</li>
+</ul>
+</li>
+<li>使用单命令<ul>
+<li>加锁：<code>setnx key value</code><ul>
+<li>Redis 通常可以使用 setnx(key, value) 来实现分布式锁。key和value就是基于缓存的分布式锁的两个属性，其中key表示锁id，value = currentTime + timeOut，表示当前时间+超时时间。即某个进程获得key这把锁后，如果在value的时间内未释放锁，系统就会主动释放锁</li>
+<li>Redis通过队列来维持进程访问共享资源的先后顺序。Redis 锁主要基于 setnx 函数实现分布式锁，当进程通过 setnx&lt;key,value&gt; 函数返回 1 时，表示已经获得锁。排在后面的进程只能等待前面的进程主动释放锁，或者等到时间超时才能获得锁</li>
+</ul>
+</li>
+<li>释放锁：<code>del key</code></li>
+<li>setnx 函数的返回值有0和1<ul>
+<li>返回1：说明该服务器获得锁，setnx将key对应的value设置为当前时间+锁的有效时间</li>
+<li>返回0：说明其它服务器已经获得了锁，进程不能进入临界区。该服务器可不断尝试setnx操作，以获得锁</li>
+</ul>
+</li>
+<li>风险<ul>
+<li>1.加入某个客户端加锁后崩溃，锁会一直被持有不释放，解决：给锁变量设置一个过期时间</li>
+<li>2.客户端A加锁，但被客户端B释放了，解决：区分来自不同客户端的操作，设置值可以让每个客户端给锁变量设置一个唯一标识，只有当前锁变量值和自己唯一标识相等的情况下才能释放锁</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>使用单命令+Lua脚本<ul>
+<li>加锁改进：<code>set lock_key unique_value NX PX 10000</code></li>
+<li>释放锁改进：lua脚本<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line">// 释放锁 比较unique_value是否相等，避免误释放</span><br><span class="line">// KEYS[<span class="number">1</span>]表示lock_key，ARGV[<span class="number">1</span>]是当前客户端的唯一标识</span><br><span class="line">// 在执行Lua脚本时作为参数传入</span><br><span class="line"><span class="keyword">if</span> redis.call(<span class="string">&quot;get&quot;</span>, KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">&quot;del&quot;</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></li>
+<li>执行命令：<code>redis-cli --eval unlock.script lock_key, unique_value</code></li>
+<li>因为释放锁操作的逻辑包含了读取锁变量、判断值、删除锁变量的多个操作，而 Redis 是以原子性的方式执行 Lua 脚本</li>
+</ul>
+</li>
+<li>优势<ul>
+<li>性能更好。数据被存放在内存，而不是磁盘，避免了频繁的 IO 操作</li>
+<li>很多缓存可以跨集群部署，避免了单点故障</li>
+<li>很多缓存服务都提供了可以用来实现分布式锁的方法，比如 Redis 的 setnx 方法等</li>
+<li>可以直接设置超时时间来控制锁的释放，因为这些缓存服务器一般支持自动删除过期数据</li>
+</ul>
+</li>
+<li>不足<ul>
+<li>通过超时时间来控制锁的失效时间，并不是十分靠谱，因为一个进程执行时间可能比较长，或受系统进程做内存回收等影响，导致时间超时，从而不正确地释放了锁</li>
+</ul>
+</li>
+</ul>
+<h1 id="基于多个-Redis-节点实现高可靠的分布式锁，算法和基本思路、步骤"><a href="#基于多个-Redis-节点实现高可靠的分布式锁，算法和基本思路、步骤" class="headerlink" title="基于多个 Redis 节点实现高可靠的分布式锁，算法和基本思路、步骤"></a>基于多个 Redis 节点实现高可靠的分布式锁，算法和基本思路、步骤</h1><ul>
+<li>使用分布式锁算法 Redlock</li>
+<li>基本思路<ul>
+<li>让客户端和多个独立的 Redis 实例依次请求加锁，如果客户端能够和半数以上的实例成功地完成加锁操作，就认为客户端成功地获得分布式锁了，否则加锁失败</li>
+</ul>
+</li>
+<li>假设有N个独立的 Redis 实例，Redlock 算法的加锁/释放锁步骤<ul>
+<li>1.客户端获取当前时间</li>
+<li>2.客户端按顺序依次向 N 个 Redis 实例执行加锁操作<ul>
+<li>和单实例上执行的加锁操作一样，使用 SET 命令，带上 NX，EX/PX 选项，以及带上客户端的唯一标识</li>
+<li>如果客户端在和一个 Redis 实例请求加锁时，一直到超时都没有成功，那么此时客户端会和下一个 Redis 实例继续请求加锁。注意，加锁操作的超时时间需要远远小于锁的有效时间，一般设几十毫秒</li>
+</ul>
+</li>
+<li>3.一旦客户端完成了和所有 Redis 实例的加锁操作，客户端就要计算整个加锁过程的总耗时<ul>
+<li>客户端只有在满足下面的这两个条件时，才能认为是加锁成功：</li>
+<li>1.客户端从超过半数(大于等于 N/2+1 )的 Redis 实例上成功获取到了锁</li>
+<li>2.客户端获取锁的总耗时没有超过锁的有效时间</li>
+</ul>
+</li>
+<li>4.满足了这两个条件后，重新计算这把锁的有效时间，计算的结果是锁的最初有效时间减去客户端为获取锁的总耗时。如果锁的有效时间已经来不及完成共享数据的操作了，可以释放锁，以免出现还没完成数据操作，锁就过期了的情况</li>
+<li>如果没能同时满足这两个条件，那么客户端向所有 Redis 节点发起释放锁的操作，释放锁的操作和在单实例上释放锁的操作一样，只要执行释放锁的 Lua 脚本就可以了</li>
+</ul>
+</li>
+</ul>
+<h1 id="ZooKeeper的树形数据存储结构是由哪4个节点构成的？"><a href="#ZooKeeper的树形数据存储结构是由哪4个节点构成的？" class="headerlink" title="ZooKeeper的树形数据存储结构是由哪4个节点构成的？"></a>ZooKeeper的树形数据存储结构是由哪4个节点构成的？</h1><ul>
+<li>持久节点：默认的节点类型，一直存在于ZooKeeper中</li>
+<li>持久顺序节点：在创建节点时，ZooKeeper根据节点创建的时间顺序对节点进行编号</li>
+<li>临时节点：当客户端与ZooKeeper断开连接后，该进程创建的临时节点就会被删除</li>
+<li>临时顺序节点：按时间顺序编号的临时节点</li>
+</ul>
+<h1 id="基于-ZooKeeper-实现分布式锁的原理、优缺点"><a href="#基于-ZooKeeper-实现分布式锁的原理、优缺点" class="headerlink" title="基于 ZooKeeper 实现分布式锁的原理、优缺点"></a>基于 ZooKeeper 实现分布式锁的原理、优缺点</h1><ul>
+<li>原理<ul>
+<li>ZooKeeper 基于临时顺序节点实现了分布锁</li>
+<li>以电商售卖吹风机的场景为例。假设用户 A、B、C 同时在 11 月 11 日的零点整提交了购买吹风机的请求，ZooKeeper 会采用如下方法来实现分布式锁</li>
+<li>1.在与该方法对应的持久节点shared_lock的目录下，为每个进程创建一个临时顺序节点。如图，吹风机就是一个拥有share_lock的目录，当有人买吹风机时，会为他创建一个临时顺序节点</li>
+<li>2.每个进程获取shared_lock目录下的所有临时节点列表，注册子节点变更的Watcher，并监听节点</li>
+<li>3.每个节点确定自己的编号是否是shared_lock下所有子节点中最小的，若最小，则获得锁。例如，用户A的的订单最先到服务器，因此创建了编号为 1 的临时顺序节点 LockNode1。该节点的编号是持久节点目录下最小的，因此获取到分布式锁，可以访问临界资源，从而可以购买吹风机</li>
+<li>4.若本进程对应的临时节点编号不是最小的，则分为两种情况：<ul>
+<li>a. 本进程为读请求，如果比自己序号小的节点中有写请求，则等待</li>
+<li>b. 本进程为写请求，如果比自己序号小的节点中有读请求，则等待</li>
+</ul>
+</li>
+<li>例如，用户 B 也想要买吹风机，但在他之前，用户 C 想看看吹风机的库存量。因此，用户 B 只能等用户 A 买完吹风机、用户 C 查询完库存量后，才能购买吹风机</li>
+<li><img src="https://img.shiqi-lu.tech/20210408212337.png"></li>
+</ul>
+</li>
+<li>优势<ul>
+<li>完美解决设计分布式锁时遇到的各种问题，比如单点故障、不可重入、死锁等问题。ZooKeeper 实现的分布式锁，几乎能涵盖所有分布式锁的特性，且易于实现</li>
+</ul>
+</li>
+<li>劣势<ul>
+<li>需要频繁地添加和删除节点，性能不如基于缓存实现的分布式锁</li>
+</ul>
+</li>
+</ul>
+<h1 id="实现分布式锁的三种方式对比"><a href="#实现分布式锁的三种方式对比" class="headerlink" title="实现分布式锁的三种方式对比"></a>实现分布式锁的三种方式对比</h1><ul>
+<li><img src="https://img.shiqi-lu.tech/20210408213429.png"></li>
+<li>ZooKeeper 分布式锁的可靠性最高，有封装好的框架，很容易实现分布式锁的功能，并且几乎解决了数据库锁和缓存式锁的不足，因此是实现分布式锁的首选方法</li>
+</ul>
+<h1 id="Zookeeper-实现分布式锁的羊群效应、和解决方法"><a href="#Zookeeper-实现分布式锁的羊群效应、和解决方法" class="headerlink" title="Zookeeper 实现分布式锁的羊群效应、和解决方法"></a>Zookeeper 实现分布式锁的羊群效应、和解决方法</h1><ul>
+<li>羊群效应<ul>
+<li>在整个分布式锁的竞争过程中，大量的「Watcher通知」和「子节点列表的获取」操作重复运行，并且大多数节点的运行结果都是判断出自己当前并不是编号最小的节点，继续等待下一次通知，而不是执行业务逻辑</li>
+<li>这就会对 ZooKeeper 服务器造成巨大的性能影响和网络冲击。更甚的是，如果同一时间多个节点对应的客户端完成事务或事务中断引起节点消失，ZooKeeper 服务器就会在短时间内向其他客户端发送大量的事件通知</li>
+</ul>
+</li>
+<li>解决方法<ul>
+<li>1.在与该方法对应的持久节点的目录下，为每个进程创建一个临时顺序节点</li>
+<li>2.每个进程获取所有临时节点列表，对比自己的编号是否最小，若最小，则获得锁。</li>
+<li>3.若本进程对应的临时节点编号不是最小的，则继续判断<ul>
+<li>若本进程为读请求，则向比自己序号小的最后一个写请求节点注册watch监听，当监听到该节点释放锁后，则获取锁</li>
+<li>若本进程为写请求，则向比自己序号小的最后一个读请求节点注册watch监听，当监听到该节点释放锁后，获取锁</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>极客时间-Redis核心技术与实战-30讲</li>
+<li>极客时间-分布式技术原理与算法解析-7讲</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+        <tag>分布式</tag>
+        <tag>高并发</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>特征选择方法汇总</title>
     <url>/feature-selection/</url>
     <content><![CDATA[<h1 id="什么是特征选择"><a href="#什么是特征选择" class="headerlink" title="什么是特征选择"></a>什么是特征选择</h1><ul>
@@ -3395,6 +3565,90 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s培训第8课 集群调度</title>
+    <url>/k8s-8/</url>
+    <content><![CDATA[<ul>
+<li>Q:Scheduler是什么？<ul>
+<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
+<li>公平：如何保证每个节点都能被分配资源</li>
+<li>资源高效利用：集群所有资源最大化被使用</li>
+<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
+<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
+</ul>
+</li>
+<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
+</ul>
+</li>
+<li>Q: k8s的调度过程是怎样<ul>
+<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
+<li>Predicate 有一系列的算法可以使用：<ul>
+<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
+<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
+<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
+<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
+<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
+</ul>
+</li>
+<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
+<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
+<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
+<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
+<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
+</ul>
+</li>
+<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
+</ul>
+</li>
+<li>Q:结点亲和性<ul>
+<li>pod.spec.nodeAﬃnity<ul>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
+</ul>
+</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
+<li>键值运算关系<ul>
+<li>In：label 的值在某个列表中</li>
+<li>NotIn：label 的值不在某个列表中</li>
+<li>Gt：label 的值大于某个值</li>
+<li>Lt：label 的值小于某个值</li>
+<li>Exists：某个 label 存在</li>
+<li>DoesNotExist：某个 label 不存在</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Pod亲和性<ul>
+<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
+<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
+<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>Q:亲和性/反亲和性调度策略比较<ul>
+<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
+</ul>
+</li>
+<li>Q:给节点打标签<ul>
+<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
+</ul>
+</li>
+<li>Q:k8s指定调度节点<ul>
+<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
+<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>海量数据处理</title>
     <url>/mass-data-processing/</url>
     <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
@@ -3524,90 +3778,6 @@
         <tag>数据结构</tag>
         <tag>算法</tag>
         <tag>海量数据</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>k8s培训第8课 集群调度</title>
-    <url>/k8s-8/</url>
-    <content><![CDATA[<ul>
-<li>Q:Scheduler是什么？<ul>
-<li>kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有 很多要考虑的问题：<ul>
-<li>公平：如何保证每个节点都能被分配资源</li>
-<li>资源高效利用：集群所有资源最大化被使用</li>
-<li>效率：调度的性能要好，能够尽快地对大批量的 pod 完成调度工作</li>
-<li>灵活：允许用户根据自己的需求控制调度的逻辑</li>
-</ul>
-</li>
-<li>Sheduler 是作为单独的程序运行的，启动之后会一直坚挺 API Server，获取 PodSpec.NodeName 为空的 pod， 对每个 pod 都会创建一个 binding，表明该 pod 应该放到哪个节点上</li>
-</ul>
-</li>
-<li>Q: k8s的调度过程是怎样<ul>
-<li>调度分为几个部分：首先是过滤掉不满足条件的节点，这个过程称为predicate；然后对通过的节点按照优先级排序，这个是priority；最后从中选择优先级最高的节点。如果中间任何一步骤有错误，就直接返回错误</li>
-<li>Predicate 有一系列的算法可以使用：<ul>
-<li>PodFitsResources：节点上剩余的资源是否大于 pod 请求的资源</li>
-<li>PodFitsHost：如果 pod 指定了NodeName，检查节点名称是否和NodeName匹配</li>
-<li>PodFitsHostPorts：节点上已经使用的port是否和pod申请的port冲突</li>
-<li>PodSelectorMatches：过滤掉和pod指定的label不匹配的节点</li>
-<li>NoDiskConflict：已经mount的volume和pod指定的volume不冲突，除非它们都是只读</li>
-</ul>
-</li>
-<li>如果在predicate过程中没有合适的节点，pod会一直在pending状态，不断重试调度，直到有节点满足条件。 经过这个步骤，如果有多个节点满足条件，就继续priorities过程：按照优先级大小对节点排序</li>
-<li>优先级由一系列键值对组成，键是该优先级项的名称，值是它的权重（该项的重要性）。这些优先级选项包括：<ul>
-<li>LeastRequestedPriority ：通过计算 CPU 和 Memory 的使用率来决定权重，使用率越低权重越高。换句话说，这个优先级指标倾向于资源使用比例更低的节点</li>
-<li>BalancedResourceAllocation：节点上 CPU 和 Memory 使用率越接近，权重越高。这个应该和上面的一起使用，不应该单独使用</li>
-<li>ImageLocalityPriority：倾向于已经有要使用镜像的节点，镜像总大小值越大，权重越高</li>
-</ul>
-</li>
-<li>通过算法对所有的优先级项目和权重进行计算，得出最终的结果</li>
-</ul>
-</li>
-<li>Q:结点亲和性<ul>
-<li>pod.spec.nodeAﬃnity<ul>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略</li>
-</ul>
-</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br></pre></td></tr></table></figure></li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span> <span class="comment"># 权重越大越亲和</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>合体<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">affinity</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">node-affinity-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">with-node-affinity</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">k8s-node02</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">preference:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">source</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">qikqiak</span></span><br></pre></td></tr></table></figure></li>
-<li>键值运算关系<ul>
-<li>In：label 的值在某个列表中</li>
-<li>NotIn：label 的值不在某个列表中</li>
-<li>Gt：label 的值大于某个值</li>
-<li>Lt：label 的值小于某个值</li>
-<li>Exists：某个 label 存在</li>
-<li>DoesNotExist：某个 label 不存在</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:Pod亲和性<ul>
-<li>pod.spec.aﬃnity.podAﬃnity/podAntiAﬃnity</li>
-<li>preferredDuringSchedulingIgnoredDuringExecution：软策略</li>
-<li>requiredDuringSchedulingIgnoredDuringExecution：硬策略<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">pod-3</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-3</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">  <span class="attr">affinity:</span></span><br><span class="line">    <span class="attr">podAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">labelSelector:</span></span><br><span class="line">          <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">pod-1</span></span><br><span class="line">        <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br><span class="line">    <span class="attr">podAntiAffinity:</span></span><br><span class="line">      <span class="attr">preferredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">weight:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">podAffinityTerm:</span></span><br><span class="line">          <span class="attr">labelSelector:</span></span><br><span class="line">            <span class="attr">matchExpressions:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">              <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">              <span class="attr">values:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">pod-2</span></span><br><span class="line">          <span class="attr">topologyKey:</span> <span class="string">kubernetes.io/hostname</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>Q:亲和性/反亲和性调度策略比较<ul>
-<li><img src="https://img.shiqi-lu.tech/20201104154834.png"></li>
-</ul>
-</li>
-<li>Q:给节点打标签<ul>
-<li><code>kubectl label node k8s-node01 disk=ssd</code></li>
-</ul>
-</li>
-<li>Q:k8s指定调度节点<ul>
-<li>Pod.spec.nodeName 将 Pod 直接调度到指定的 Node 节点上，会跳过 Scheduler 的调度策略，该匹配规则是强制匹配<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">7</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">k8s-node01</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></li>
-<li>Pod.spec.nodeSelector：通过 kubernetes 的 label-selector 机制选择节点，由调度器调度策略匹配 label， 而后调度 Pod 到目标节点，该匹配规则属于强制约束<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myweb</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">backEndNode1</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myweb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">harbor/tomcat:8.5-jre8</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
@@ -3904,49 +4074,6 @@
       </tags>
   </entry>
   <entry>
-    <title>我的leetcode刷题方法</title>
-    <url>/my-leetcode-method/</url>
-    <content><![CDATA[<ul>
-<li>最小闭环：学习、思考、记录、复习<ul>
-<li>新题先思考，旧题默念各种解法，尝试做一下，注意要计时做</li>
-<li>研究题解并简要记录题目和关键解法和关键代码，要调整到最适合自己理解和记住的最优代码和思路</li>
-<li>把题解在对应板块进行汇总</li>
-<li>总结完必须再提交一次所有搞懂的题解，计时，熟练度必须达到🐎，掌握必须达到🆗或🆒</li>
-<li>有创新和小改动的，发表题解</li>
-<li>粘贴到笔记本中，导出anki</li>
-<li>anki复习即可</li>
-</ul>
-</li>
-<li>标题记录掌握程度和熟练程度，同时metadata里面添加每一次的做题日期、做题时长、整理后做题时长<ul>
-<li>熟练程度：至少隔一周且未看题解前评估，看完题解后，必须能达到🐎<ul>
-<li>🐢表示勉强的很卡顿的写出来</li>
-<li>🐇表示需要略思考其中几个点略卡顿写出来，E10，M15，H20</li>
-<li>🐎表示非常纯熟能一气呵成写出来，E5，M10，H15</li>
-<li>整理后必须达到E3，M5，H8内，且整理后写题必须按照思路写而不是背，并把每个语句和每个变量的意义都能说出来</li>
-</ul>
-</li>
-<li>掌握程度<ul>
-<li>💯表示能不看题解的情况下，隔了一段时间没做，仍能分析并写出最优解(或已学会的最优解)</li>
-<li>🆒表示整理并背诵完毕，一题多解均能说并写出来(包括暴力和最优等)，并能分析时间/空间复杂度</li>
-<li>🆗(仅在有多种解题方法使用)表示整理并背诵其中的一种题解思路，能说并写出来和分析时间复杂度，但不能理解并写出所有解法</li>
-<li>🆕表示能在看完题解的情况下，默写/仿写出来其中的一种解法，此时未整理</li>
-<li>🆖表示看着题解写出来了，但仍不理解题解的意思，有很多模糊的地方</li>
-<li>🤨存在有一个解法学不懂，或者不必要去学</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《左手MongoDB，右手Redis》第5章 Redis快速入门</title>
     <url>/mongodb-redis5/</url>
     <content><![CDATA[<ul>
@@ -4151,6 +4278,49 @@
         <tag>数据库</tag>
         <tag>MongoDB</tag>
         <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我的leetcode刷题方法</title>
+    <url>/my-leetcode-method/</url>
+    <content><![CDATA[<ul>
+<li>最小闭环：学习、思考、记录、复习<ul>
+<li>新题先思考，旧题默念各种解法，尝试做一下，注意要计时做</li>
+<li>研究题解并简要记录题目和关键解法和关键代码，要调整到最适合自己理解和记住的最优代码和思路</li>
+<li>把题解在对应板块进行汇总</li>
+<li>总结完必须再提交一次所有搞懂的题解，计时，熟练度必须达到🐎，掌握必须达到🆗或🆒</li>
+<li>有创新和小改动的，发表题解</li>
+<li>粘贴到笔记本中，导出anki</li>
+<li>anki复习即可</li>
+</ul>
+</li>
+<li>标题记录掌握程度和熟练程度，同时metadata里面添加每一次的做题日期、做题时长、整理后做题时长<ul>
+<li>熟练程度：至少隔一周且未看题解前评估，看完题解后，必须能达到🐎<ul>
+<li>🐢表示勉强的很卡顿的写出来</li>
+<li>🐇表示需要略思考其中几个点略卡顿写出来，E10，M15，H20</li>
+<li>🐎表示非常纯熟能一气呵成写出来，E5，M10，H15</li>
+<li>整理后必须达到E3，M5，H8内，且整理后写题必须按照思路写而不是背，并把每个语句和每个变量的意义都能说出来</li>
+</ul>
+</li>
+<li>掌握程度<ul>
+<li>💯表示能不看题解的情况下，隔了一段时间没做，仍能分析并写出最优解(或已学会的最优解)</li>
+<li>🆒表示整理并背诵完毕，一题多解均能说并写出来(包括暴力和最优等)，并能分析时间/空间复杂度</li>
+<li>🆗(仅在有多种解题方法使用)表示整理并背诵其中的一种题解思路，能说并写出来和分析时间复杂度，但不能理解并写出所有解法</li>
+<li>🆕表示能在看完题解的情况下，默写/仿写出来其中的一种解法，此时未整理</li>
+<li>🆖表示看着题解写出来了，但仍不理解题解的意思，有很多模糊的地方</li>
+<li>🤨存在有一个解法学不懂，或者不必要去学</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -4612,6 +4782,171 @@
       </tags>
   </entry>
   <entry>
+    <title>《Redis核心技术与实战》基础篇2-5</title>
+    <url>/redis-gt-1/</url>
+    <content><![CDATA[<h1 id="02丨数据结构：快速的Redis有哪些慢操作？"><a href="#02丨数据结构：快速的Redis有哪些慢操作？" class="headerlink" title="02丨数据结构：快速的Redis有哪些慢操作？"></a>02丨数据结构：快速的Redis有哪些慢操作？</h1><ul>
+<li>Q:Redis的数据类型分别对应底层哪些数据结构？<ul>
+<li>String：简单动态字符串</li>
+<li>List：压缩列表、双向链表</li>
+<li>Hash：压缩列表、哈希表</li>
+<li>Set：整数数组、哈希表</li>
+<li>Sorted Set：压缩列表、跳表</li>
+<li><img src="https://img.shiqi-lu.tech/20210507163031.png?imageView2/2/w/300"></li>
+<li><img src="https://img.shiqi-lu.tech/20210130161930.png"></li>
+</ul>
+</li>
+<li>Q:Redis的键和值使用什么结构组织？<ul>
+<li>使用一个全局哈希表，其实是一个数组，数组的每个元素称为一个哈希桶，每个哈希桶中保存了键值对数据</li>
+<li>哈希桶中的 entry 元素中保存了 *key 和 *value 指针，分别指向了实际的键和值</li>
+<li><img src="https://img.shiqi-lu.tech/20210507113941.png"></li>
+</ul>
+</li>
+<li>Q:Redis如何解决哈希冲突？<ul>
+<li>哈希冲突是，由于哈希桶的个数通常少于 key 的数量，计算两个 key 的哈希值正好落在同一个哈希桶中</li>
+<li>解决：使用链式哈希，即同一个哈希桶中的多个元素用一个链表来保存，它们之间依次用指针连接，该链表也叫哈希冲突链</li>
+<li><img src="https://img.shiqi-lu.tech/20210507114739.png"></li>
+</ul>
+</li>
+<li>Q:rehash是什么？<ul>
+<li>增加现有的哈希桶数量，让逐渐增多的 entry 元素能在更多的桶之间分散保存，减少单个桶中的元素数量，从而减少单个桶中的冲突</li>
+</ul>
+</li>
+<li>Q:Redis 使 rehash 更高效的方法是什么？<ul>
+<li>默认使用了两个全局哈希表：哈希表 1 和哈希表 2</li>
+<li>一开始默认使用哈希表 1，此时的哈希表 2 并没有被分配空间。随着数据逐步增多，Redis 开始执行 rehash</li>
+<li>rehash 完毕后从哈希表 1 切换到哈希表 2，用增大的哈希表 2 保存更多数据，而原来的哈希表 1 留作下一次 rehash 扩容备用</li>
+</ul>
+</li>
+<li>Q:rehash 的步骤是什么？<ul>
+<li>1.给哈希表2分配更大的空间，例如是当前哈希表1大小的两倍</li>
+<li>2.把哈希表1中的数据重新映射并拷贝到哈希表2中</li>
+<li>3.释放哈希表1的空间</li>
+</ul>
+</li>
+<li>Q:渐进式 rehash 是什么？<ul>
+<li>在第二步拷贝数据时，redis仍然正常处理客户端请求，每处理一个请求时，从哈希表1中的第一个索引位置开始，顺带着将这个索引位置上的所有entries拷贝到哈希表2中。等处理下一个请求时，再顺带拷贝哈希表1中的下一个索引位置的entries</li>
+<li><img src="https://img.shiqi-lu.tech/20210130162617.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="03丨高性能IO模型：为什么单线程Redis能那么快？"><a href="#03丨高性能IO模型：为什么单线程Redis能那么快？" class="headerlink" title="03丨高性能IO模型：为什么单线程Redis能那么快？"></a>03丨高性能IO模型：为什么单线程Redis能那么快？</h1><ul>
+<li>Q:Redis单线程指的是什么？<ul>
+<li>Redis的网络IO和键值对读写是由一个线程来完成的，这也是Redis对外提供键值存储服务的主要流程</li>
+</ul>
+</li>
+<li>Q:单线程Redis速度快的原因是什么？<ul>
+<li>1.大部分操作在内存上完成，加上采用的高效的数据结构(哈希表和跳表)</li>
+<li>2.采用了多路复用机制，使其在网络IO操作中能并发处理大量的客户端请求</li>
+</ul>
+</li>
+</ul>
+<h1 id="04丨AOF日志：宕机了，Redis如何避免数据丢失？"><a href="#04丨AOF日志：宕机了，Redis如何避免数据丢失？" class="headerlink" title="04丨AOF日志：宕机了，Redis如何避免数据丢失？"></a>04丨AOF日志：宕机了，Redis如何避免数据丢失？</h1><ul>
+<li>Q:Redis持久化的两大机制是什么？<ul>
+<li>AOF日志和RDB快照</li>
+</ul>
+</li>
+<li>Q:AOF(Append Only File)的持久化是怎样的<ul>
+<li>Redis 执行完一个写命令后，将写命令以协议文本的形式追加到 AOF 缓冲区末尾，再通过同步策略来决定是否将 AOF 缓冲区中的内容写入 &amp; 同步到 AOF 日志</li>
+<li>只有命令能执行成功，才会被记录到日志中。不会阻塞当前的写操作</li>
+</ul>
+</li>
+<li>Q:AOF日记的记录内容是怎样的？<ul>
+<li>以<code>set testkey testvalue</code>为例</li>
+<li><code>*3</code>表示当前命令有三个部分，每部分都是有<code>$+数字</code>开头，后面紧跟着具体的命令、键、值，此处的数字表示这部分中的命令、键和值一共有多少字节</li>
+<li><img src="https://img.shiqi-lu.tech/20210130204646.png"></li>
+</ul>
+</li>
+<li>Q:AOF的两个潜在风险是什么？<ul>
+<li>1.如果刚执行完一个命令，还没有来得及记日志就宕机了，那么这个命令和相应的数据就有丢失的风险</li>
+<li>2.AOF虽然避免了对当前命令的阻塞，但可能会给下一个操作带来阻塞风险，这是因为，AOF日志也是在主线程中执行的，如果在把日志文件写入磁盘时，磁盘写压力大，就会导致写盘很慢，进而导致后续的操作也无法执行</li>
+</ul>
+</li>
+<li>Q:AOF日志有哪三种写回策略？(即配置项 appendfsync 的三个可选值)<ul>
+<li>Always,同步写回：每个写命令执行完，立马将所有内容写入并同到 AOF 日志</li>
+<li>Everysec,每秒写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，如果上次同步 AOF 日志的时间距离现在超过 1 秒，那么对 AOF 日志进行同步</li>
+<li>No,操作系统控制的写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，但并不对 AOF 日志进行同步，何时同步由操作系统来决定</li>
+</ul>
+</li>
+<li>Q:Redis 中的写入并同步到 AOF 日志的写入和同步的区别是什么<ul>
+<li>当写回策略为 always 的时候，Redis 源码逻辑为先调用 write 函数写入 AOF 日志文件，紧接着调用 fdatasync 函数对 AOF 日志文件进行同步，确保写入的内容同步到硬盘成功</li>
+<li>当调用 write 函数的时候，数据只是写到了内存缓冲区中，用 fdatasync 函数可以强制让操作系统立即将内存缓冲区中的数据同步到硬盘中</li>
+</ul>
+</li>
+<li>Q:AOF日志三种写回策略的优劣是什么？<ul>
+<li>同步写回：基本不丢数据，但在每一个写命令后都有一个慢速的落盘操作，不可避免地会影响主线程性能</li>
+<li>每秒写回：采用一秒写回一次的频率，避免了「同步写回」的性能开销，虽然减少了对系统性能的影响，但若发生宕机，上一秒内未落盘的命令操作仍然会丢失</li>
+<li>操作系统控制的写回：在写完缓冲区后，可以继续执行后续的命令，但是落盘的时机已经不在Redis手中了，只有AOF记录没有写回磁盘，一旦宕机对应的数据就丢失了</li>
+<li><img src="https://img.shiqi-lu.tech/20210130205858.png"></li>
+</ul>
+</li>
+<li>Q:AOF文件过大带来的3个性能问题是什么？<ul>
+<li>1.文件系统本身对文件大小有限制， 无法保存过大的文件</li>
+<li>2.如果文件太大，之后再往里面追加命令记录的话，效率也会变低</li>
+<li>3.如果发生宕机，AOF 中记录的命令要一个个被重新执行，用于故障恢复，如果日志文件太大，整个恢复过程就会非常缓慢</li>
+</ul>
+</li>
+<li>Q:AOF重写机制是什么？<ul>
+<li>在重写时，Redis根据数据库的现状创建一个新的AOF文件。</li>
+<li>即读取数据库中的所有键值对，然后对每一个键值对用一条命令记录它的写入</li>
+</ul>
+</li>
+<li>Q:为什么重写机制可以把日志文件变小？<ul>
+<li>当一个键值对被多条写命令反复修改时，AOF文件会记录相应的多条命令</li>
+<li>但在重写时，根据这个键值对当前的最新状态，为它生成对应的写入命令。这样，一个键值对在重写日志中只用一条命令即可</li>
+<li>在日志恢复时，只用执行这条命令，就可以直接完成这个键值对的写入了</li>
+<li><img src="https://img.shiqi-lu.tech/20210130225834.png"></li>
+</ul>
+</li>
+<li>Q:重写的过程是怎样的？<ul>
+<li>由后台线程bgrewriteaof完成，是为了避免阻塞主线程，导致数据库性能下降</li>
+<li>一个拷贝<ul>
+<li>每次执行重写时，主线程fork出后台的bgrewriteaof子进程。fork会把主线程的内存拷贝一份给bgrewriteaof子进程，这里包含了数据库的最新数据</li>
+<li>bgrewriteaof子进程在不影响主线程的情况下，逐一把拷贝的数据写成操作，记入重写日志</li>
+</ul>
+</li>
+<li>两处日志<ul>
+<li>1.正在使用的AOF日志：因主进程未阻塞，仍然可以处理新来的操作。此时若有写操作，Redis会把这个操作写到它的缓冲区。这样一来，即使宕机了，这个AOF日志的操作仍然是齐全的，可以用于恢复</li>
+<li>2.新的AOF重写日志：这个操作也会被写到重写日志的缓冲区。这样，重写日志也不会丢失最新的操作。等到拷贝数据的所有操作记录重写完成后，重写日志记录的这些最新操作也会写入新的AOF文件，以保证数据库最新状态的记录。此时即可用新的AOF文件替代旧文件了</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20210131101541.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="05丨内存快照：宕机后，Redis如何实现快速恢复？"><a href="#05丨内存快照：宕机后，Redis如何实现快速恢复？" class="headerlink" title="05丨内存快照：宕机后，Redis如何实现快速恢复？"></a>05丨内存快照：宕机后，Redis如何实现快速恢复？</h1><ul>
+<li>Q:RDB的持久化是怎样的？<ul>
+<li>作用是将某个时间点上的数据库状态保存到 RDB 文件中，RDB 文件是一个压缩的二进制文件，通过它可以还原某个时刻数据库的状态。由于 RDB 文件是保存在硬盘上的，所以即使 Redis 崩溃或者退出，只要 RDB 文件存在，就可以用它来还原数据库的状态</li>
+</ul>
+</li>
+<li>Q:生成RDB文件的两个命令是什么？<ul>
+<li>save：在主线程执行，会导致阻塞，直到 RDB 文件生成完毕，在进程阻塞期间，Redis 不能处理任何命令请求</li>
+<li>bgsave：创建一个子进程，专门用于写入RDB文件，避免了主线程的阻塞(默认配置)</li>
+</ul>
+</li>
+<li>Q:bgsave做快照时如何保证数据可修改？<ul>
+<li>借助操作系统提供的写时复制技术(Copy-On-Write, COW)</li>
+<li>bgsave子进程是由主线程fork生成的，可以共享主线程的所有内存数据。bgsave子进程运行后，开始读取主线程的内存数据，并把它们写入RDB文件</li>
+<li>若主线程对这些数据也是读操作(图中键值对A)，主线程和bgsave子线程互不影响</li>
+<li>若主线程要修改一块数据(图中键值对C)，那这块数据会被复制一份，生成该数据的副本C’。然后，主线程在这个数据副本上修改，同时，bgsave子进程会把原来的数据写入RDB文件</li>
+<li><img src="https://img.shiqi-lu.tech/20210619182408.png"></li>
+</ul>
+</li>
+<li>Q:混合使用AOF日志和内存快照的方法是什么？<ul>
+<li>内存快照以一定的频率执行，在两次快照之间，使用AOF日志记录这期间的所有命令操作</li>
+<li><img src="https://img.shiqi-lu.tech/20210131104239.png"></li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《Redis核心技术与实战》基础篇6-9</title>
     <url>/redis-gt-2/</url>
     <content><![CDATA[<h1 id="06丨数据同步：主从库如何实现数据一致？"><a href="#06丨数据同步：主从库如何实现数据一致？" class="headerlink" title="06丨数据同步：主从库如何实现数据一致？"></a>06丨数据同步：主从库如何实现数据一致？</h1><ul>
@@ -4795,168 +5130,200 @@
       </tags>
   </entry>
   <entry>
-    <title>《Redis核心技术与实战》基础篇2-5</title>
-    <url>/redis-gt-1/</url>
-    <content><![CDATA[<h1 id="02丨数据结构：快速的Redis有哪些慢操作？"><a href="#02丨数据结构：快速的Redis有哪些慢操作？" class="headerlink" title="02丨数据结构：快速的Redis有哪些慢操作？"></a>02丨数据结构：快速的Redis有哪些慢操作？</h1><ul>
-<li>Q:Redis的数据类型分别对应底层哪些数据结构？<ul>
-<li>String：简单动态字符串</li>
-<li>List：压缩列表、双向链表</li>
-<li>Hash：压缩列表、哈希表</li>
-<li>Set：整数数组、哈希表</li>
-<li>Sorted Set：压缩列表、跳表</li>
-<li><img src="https://img.shiqi-lu.tech/20210507163031.png?imageView2/2/w/300"></li>
-<li><img src="https://img.shiqi-lu.tech/20210130161930.png"></li>
+    <title>《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理</title>
+    <url>/soft-arch-design-ch8/</url>
+    <content><![CDATA[<h1 id="高并发系统有哪些分类和例子"><a href="#高并发系统有哪些分类和例子" class="headerlink" title="高并发系统有哪些分类和例子"></a>高并发系统有哪些分类和例子</h1><h2 id="侧重于「高并发读」的系统"><a href="#侧重于「高并发读」的系统" class="headerlink" title="侧重于「高并发读」的系统"></a>侧重于「高并发读」的系统</h2><ul>
+<li>1.搜索引擎</li>
+<li>2.电商的商品搜索</li>
+<li>3.电商系统的商品描述、图片和价格</li>
+</ul>
+<h2 id="侧重于「高并发写」的系统"><a href="#侧重于「高并发写」的系统" class="headerlink" title="侧重于「高并发写」的系统"></a>侧重于「高并发写」的系统</h2><ul>
+<li>广告计费系统：C 端用户的每一次浏览或点击都会对广告主的账号余额进行一次扣减</li>
+</ul>
+<h2 id="同时侧重于「高并发读」和「高并发写」的系统"><a href="#同时侧重于「高并发读」和「高并发写」的系统" class="headerlink" title="同时侧重于「高并发读」和「高并发写」的系统"></a>同时侧重于「高并发读」和「高并发写」的系统</h2><ul>
+<li>1.电商的库存系统和秒杀系统</li>
+<li>2.支付系统和微信红包</li>
+<li>3.IM、微博和朋友圈</li>
+</ul>
+<h1 id="高并发读的应对策略"><a href="#高并发读的应对策略" class="headerlink" title="高并发读的应对策略"></a>高并发读的应对策略</h1><h2 id="策略-1：加缓存"><a href="#策略-1：加缓存" class="headerlink" title="策略 1：加缓存"></a>策略 1：加缓存</h2><ul>
+<li>案例 1：本地缓存或 Memcached/Redis 集中式缓存</li>
+<li>案例 2：MySQL 的 Master/Slave</li>
+<li>案例 3：CDN 静态文件加速(动静分离)</li>
+</ul>
+<h2 id="策略-2：并发读"><a href="#策略-2：并发读" class="headerlink" title="策略 2：并发读"></a>策略 2：并发读</h2><ul>
+<li>案例 1：异步 RPC<ul>
+<li>没有耦合关系的 3 个调用可以并行去调</li>
 </ul>
 </li>
-<li>Q:Redis的键和值使用什么结构组织？<ul>
-<li>使用一个全局哈希表，其实是一个数组，数组的每个元素称为一个哈希桶，每个哈希桶中保存了键值对数据</li>
-<li>哈希桶中的 entry 元素中保存了 *key 和 *value 指针，分别指向了实际的键和值</li>
-<li><img src="https://img.shiqi-lu.tech/20210507113941.png"></li>
-</ul>
-</li>
-<li>Q:Redis如何解决哈希冲突？<ul>
-<li>哈希冲突是，由于哈希桶的个数通常少于 key 的数量，计算两个 key 的哈希值正好落在同一个哈希桶中</li>
-<li>解决：使用链式哈希，即同一个哈希桶中的多个元素用一个链表来保存，它们之间依次用指针连接，该链表也叫哈希冲突链</li>
-<li><img src="https://img.shiqi-lu.tech/20210507114739.png"></li>
-</ul>
-</li>
-<li>Q:rehash是什么？<ul>
-<li>增加现有的哈希桶数量，让逐渐增多的 entry 元素能在更多的桶之间分散保存，减少单个桶中的元素数量，从而减少单个桶中的冲突</li>
-</ul>
-</li>
-<li>Q:Redis 使 rehash 更高效的方法是什么？<ul>
-<li>默认使用了两个全局哈希表：哈希表 1 和哈希表 2</li>
-<li>一开始默认使用哈希表 1，此时的哈希表 2 并没有被分配空间。随着数据逐步增多，Redis 开始执行 rehash</li>
-<li>rehash 完毕后从哈希表 1 切换到哈希表 2，用增大的哈希表 2 保存更多数据，而原来的哈希表 1 留作下一次 rehash 扩容备用</li>
-</ul>
-</li>
-<li>Q:rehash 的步骤是什么？<ul>
-<li>1.给哈希表2分配更大的空间，例如是当前哈希表1大小的两倍</li>
-<li>2.把哈希表1中的数据重新映射并拷贝到哈希表2中</li>
-<li>3.释放哈希表1的空间</li>
-</ul>
-</li>
-<li>Q:渐进式 rehash 是什么？<ul>
-<li>在第二步拷贝数据时，redis仍然正常处理客户端请求，每处理一个请求时，从哈希表1中的第一个索引位置开始，顺带着将这个索引位置上的所有entries拷贝到哈希表2中。等处理下一个请求时，再顺带拷贝哈希表1中的下一个索引位置的entries</li>
-<li><img src="https://img.shiqi-lu.tech/20210130162617.png"></li>
+<li>案例 2：Google 的「冗余请求」<ul>
+<li>客户端首先给服务端发送一个请求，并等待服务端返回的响应</li>
+<li>如果客户端在一定的时间内(定义为 95%请求的响应时间)没有收到响应，则马上给一台(或多台)服务器发送同样的请求</li>
+<li>客户端等待第一个响应到达之后，终止其他请求的处理</li>
 </ul>
 </li>
 </ul>
-<h1 id="03丨高性能IO模型：为什么单线程Redis能那么快？"><a href="#03丨高性能IO模型：为什么单线程Redis能那么快？" class="headerlink" title="03丨高性能IO模型：为什么单线程Redis能那么快？"></a>03丨高性能IO模型：为什么单线程Redis能那么快？</h1><ul>
-<li>Q:Redis单线程指的是什么？<ul>
-<li>Redis的网络IO和键值对读写是由一个线程来完成的，这也是Redis对外提供键值存储服务的主要流程</li>
+<h2 id="策略-3：重写轻读"><a href="#策略-3：重写轻读" class="headerlink" title="策略 3：重写轻读"></a>策略 3：重写轻读</h2><ul>
+<li>案例 1：微博 Feeds 流<ul>
+<li>场景<ul>
+<li>微博首页或微信朋友圈都存在类似的查询场景:用户关注了n个人(或者有n个好友)，每个人都在不断地发微博，然后系统需要把这n个人的微博按时间排序成一个列表，也就是Feeds流并展示给用户</li>
+<li>用户也需要查看自已发布的微博列表</li>
 </ul>
 </li>
-<li>Q:单线程Redis速度快的原因是什么？<ul>
-<li>1.大部分操作在内存上完成，加上采用的高效的数据结构(哈希表和跳表)</li>
-<li>2.采用了多路复用机制，使其在网络IO操作中能并发处理大量的客户端请求</li>
+<li>原始方案(假设数据存在数据库中)<ul>
+<li>表结构<ul>
+<li>关注关系表(Following 表)<ul>
+<li>ID(自增主键)</li>
+<li>user_id(关注者)</li>
+<li>followings(被关注的人)</li>
 </ul>
 </li>
-</ul>
-<h1 id="04丨AOF日志：宕机了，Redis如何避免数据丢失？"><a href="#04丨AOF日志：宕机了，Redis如何避免数据丢失？" class="headerlink" title="04丨AOF日志：宕机了，Redis如何避免数据丢失？"></a>04丨AOF日志：宕机了，Redis如何避免数据丢失？</h1><ul>
-<li>Q:Redis持久化的两大机制是什么？<ul>
-<li>AOF日志和RDB快照</li>
-</ul>
-</li>
-<li>Q:AOF(Append Only File)的持久化是怎样的<ul>
-<li>Redis 执行完一个写命令后，将写命令以协议文本的形式追加到 AOF 缓冲区末尾，再通过同步策略来决定是否将 AOF 缓冲区中的内容写入 &amp; 同步到 AOF 日志</li>
-<li>只有命令能执行成功，才会被记录到日志中。不会阻塞当前的写操作</li>
-</ul>
-</li>
-<li>Q:AOF日记的记录内容是怎样的？<ul>
-<li>以<code>set testkey testvalue</code>为例</li>
-<li><code>*3</code>表示当前命令有三个部分，每部分都是有<code>$+数字</code>开头，后面紧跟着具体的命令、键、值，此处的数字表示这部分中的命令、键和值一共有多少字节</li>
-<li><img src="https://img.shiqi-lu.tech/20210130204646.png"></li>
-</ul>
-</li>
-<li>Q:AOF的两个潜在风险是什么？<ul>
-<li>1.如果刚执行完一个命令，还没有来得及记日志就宕机了，那么这个命令和相应的数据就有丢失的风险</li>
-<li>2.AOF虽然避免了对当前命令的阻塞，但可能会给下一个操作带来阻塞风险，这是因为，AOF日志也是在主线程中执行的，如果在把日志文件写入磁盘时，磁盘写压力大，就会导致写盘很慢，进而导致后续的操作也无法执行</li>
-</ul>
-</li>
-<li>Q:AOF日志有哪三种写回策略？(即配置项 appendfsync 的三个可选值)<ul>
-<li>Always,同步写回：每个写命令执行完，立马将所有内容写入并同到 AOF 日志</li>
-<li>Everysec,每秒写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，如果上次同步 AOF 日志的时间距离现在超过 1 秒，那么对 AOF 日志进行同步</li>
-<li>No,操作系统控制的写回：每个写命令执行完，将 AOF 缓冲区中的所有内容写入到 AOF 日志，但并不对 AOF 日志进行同步，何时同步由操作系统来决定</li>
-</ul>
-</li>
-<li>Q:Redis 中的写入并同步到 AOF 日志的写入和同步的区别是什么<ul>
-<li>当写回策略为 always 的时候，Redis 源码逻辑为先调用 write 函数写入 AOF 日志文件，紧接着调用 fdatasync 函数对 AOF 日志文件进行同步，确保写入的内容同步到硬盘成功</li>
-<li>当调用 write 函数的时候，数据只是写到了内存缓冲区中，用 fdatasync 函数可以强制让操作系统立即将内存缓冲区中的数据同步到硬盘中</li>
-</ul>
-</li>
-<li>Q:AOF日志三种写回策略的优劣是什么？<ul>
-<li>同步写回：基本不丢数据，但在每一个写命令后都有一个慢速的落盘操作，不可避免地会影响主线程性能</li>
-<li>每秒写回：采用一秒写回一次的频率，避免了「同步写回」的性能开销，虽然减少了对系统性能的影响，但若发生宕机，上一秒内未落盘的命令操作仍然会丢失</li>
-<li>操作系统控制的写回：在写完缓冲区后，可以继续执行后续的命令，但是落盘的时机已经不在Redis手中了，只有AOF记录没有写回磁盘，一旦宕机对应的数据就丢失了</li>
-<li><img src="https://img.shiqi-lu.tech/20210130205858.png"></li>
-</ul>
-</li>
-<li>Q:AOF文件过大带来的3个性能问题是什么？<ul>
-<li>1.文件系统本身对文件大小有限制， 无法保存过大的文件</li>
-<li>2.如果文件太大，之后再往里面追加命令记录的话，效率也会变低</li>
-<li>3.如果发生宕机，AOF 中记录的命令要一个个被重新执行，用于故障恢复，如果日志文件太大，整个恢复过程就会非常缓慢</li>
-</ul>
-</li>
-<li>Q:AOF重写机制是什么？<ul>
-<li>在重写时，Redis根据数据库的现状创建一个新的AOF文件。</li>
-<li>即读取数据库中的所有键值对，然后对每一个键值对用一条命令记录它的写入</li>
-</ul>
-</li>
-<li>Q:为什么重写机制可以把日志文件变小？<ul>
-<li>当一个键值对被多条写命令反复修改时，AOF文件会记录相应的多条命令</li>
-<li>但在重写时，根据这个键值对当前的最新状态，为它生成对应的写入命令。这样，一个键值对在重写日志中只用一条命令即可</li>
-<li>在日志恢复时，只用执行这条命令，就可以直接完成这个键值对的写入了</li>
-<li><img src="https://img.shiqi-lu.tech/20210130225834.png"></li>
-</ul>
-</li>
-<li>Q:重写的过程是怎样的？<ul>
-<li>由后台线程bgrewriteaof完成，是为了避免阻塞主线程，导致数据库性能下降</li>
-<li>一个拷贝<ul>
-<li>每次执行重写时，主线程fork出后台的bgrewriteaof子进程。fork会把主线程的内存拷贝一份给bgrewriteaof子进程，这里包含了数据库的最新数据</li>
-<li>bgrewriteaof子进程在不影响主线程的情况下，逐一把拷贝的数据写成操作，记入重写日志</li>
-</ul>
-</li>
-<li>两处日志<ul>
-<li>1.正在使用的AOF日志：因主进程未阻塞，仍然可以处理新来的操作。此时若有写操作，Redis会把这个操作写到它的缓冲区。这样一来，即使宕机了，这个AOF日志的操作仍然是齐全的，可以用于恢复</li>
-<li>2.新的AOF重写日志：这个操作也会被写到重写日志的缓冲区。这样，重写日志也不会丢失最新的操作。等到拷贝数据的所有操作记录重写完成后，重写日志记录的这些最新操作也会写入新的AOF文件，以保证数据库最新状态的记录。此时即可用新的AOF文件替代旧文件了</li>
-</ul>
-</li>
-<li><img src="https://img.shiqi-lu.tech/20210131101541.png"></li>
+<li>微博发布表(Msg表)<ul>
+<li>ID(自增主键)</li>
+<li>user_id(发布者)</li>
+<li>msg_id(发布的微博 ID)</li>
 </ul>
 </li>
 </ul>
-<h1 id="05丨内存快照：宕机后，Redis如何实现快速恢复？"><a href="#05丨内存快照：宕机后，Redis如何实现快速恢复？" class="headerlink" title="05丨内存快照：宕机后，Redis如何实现快速恢复？"></a>05丨内存快照：宕机后，Redis如何实现快速恢复？</h1><ul>
-<li>Q:RDB的持久化是怎样的？<ul>
-<li>作用是将某个时间点上的数据库状态保存到 RDB 文件中，RDB 文件是一个压缩的二进制文件，通过它可以还原某个时刻数据库的状态。由于 RDB 文件是保存在硬盘上的，所以即使 Redis 崩溃或者退出，只要 RDB 文件存在，就可以用它来还原数据库的状态</li>
+</li>
+<li>查询 user_id = 1 发布的微博列表并分页<ul>
+<li><code>SELECT msg_ids from Msg where user_id = 1 limit offset, count</code></li>
 </ul>
 </li>
-<li>Q:生成RDB文件的两个命令是什么？<ul>
-<li>save：在主线程执行，会导致阻塞，直到 RDB 文件生成完毕，在进程阻塞期间，Redis 不能处理任何命令请求</li>
-<li>bgsave：创建一个子进程，专门用于写入RDB文件，避免了主线程的阻塞(默认配置)</li>
+<li>查询 user_id = 1 用户的 Feeds 流，并按时间排序并分页，需要两条 SQL 语句<ul>
+<li>先查询 user_id = 1 的用户的关注的用户列表：</li>
+<li><code>SELECT followings from Following where user_id=1</code></li>
+<li>查询关注的所有用户的微博列表，按时间排序并分页I</li>
+<li><code>SELECT msg_ids from Msg where user_id in (followings) limit offset, count</code></li>
 </ul>
 </li>
-<li>Q:bgsave做快照时如何保证数据可修改？<ul>
-<li>借助操作系统提供的写时复制技术(Copy-On-Write, COW)</li>
-<li>bgsave子进程是由主线程fork生成的，可以共享主线程的所有内存数据。bgsave子进程运行后，开始读取主线程的内存数据，并把它们写入RDB文件</li>
-<li>若主线程对这些数据也是读操作(图中键值对A)，主线程和bgsave子线程互不影响</li>
-<li>若主线程要修改一块数据(图中键值对C)，那这块数据会被复制一份，生成该数据的副本C’。然后，主线程在这个数据副本上修改，同时，bgsave子进程会把原来的数据写入RDB文件</li>
-<li><img src="https://img.shiqi-lu.tech/20210619182408.png"></li>
 </ul>
 </li>
-<li>Q:混合使用AOF日志和内存快照的方法是什么？<ul>
-<li>内存快照以一定的频率执行，在两次快照之间，使用AOF日志记录这期间的所有命令操作</li>
-<li><img src="https://img.shiqi-lu.tech/20210131104239.png"></li>
+<li>重写轻读<ul>
+<li>方案<ul>
+<li>提前为每个 user_id 准备一个 Feeds 流，或叫收件箱</li>
+<li>每个用户都有一个发件箱和收件箱。用户发布 1 条微博后，只写入自己的发件箱就返回成功。然后后台异步地把这条微博推送到粉丝的收件箱，即「写扩散」</li>
+<li>这样，每个用户读取 Feeds 流的时候不需实时聚合，直接读取各自的收件箱即可</li>
+<li>若是收件箱数量超过一定的阈值，丢弃即可</li>
+</ul>
+</li>
+<li>用户发布的微博如何全量保存数据<ul>
+<li>仍然按 Msg 表存储，按 user_id 和时间范围进行数据库的分片</li>
+</ul>
+</li>
+<li>分页后，如何快速查看某个 user_id 从某个 offet 开始的微博，如显示要第 50 页，每页有 100 个，即 offset = 5000 的位置开始之后的微博。如何快速定位到 5000 所属的库？<ul>
+<li>借助二级索引：另外有一张表，记录&lt;user_id，月份，count&gt;。也就是每个 user_id 在每个月份发表的微博总数。基于这个索引表即可快速定位到 offset = 5000 的微博发生在那个月份</li>
+</ul>
+</li>
+<li>用户粉丝多的优化：在读的时候实时聚合<ul>
+<li>在写的一端，对于粉丝数量少的用户(假设定个阈值为5000，小于5000的用户)，发布一条微博之后推送给5000个粉丝</li>
+<li>对于粉丝数多的用户，只推送给在线的粉丝们(系统要维护一个全局的、在线的用户列表)</li>
+<li>对于读的一端，一个用户的关注的人当中，有的人是推给他的(粉丝数少于5000)， 有的人是需要他去拉的(粉丝数大于5000)，需要把两者聚合起来，再按时间排序，然后分页显示，这就是“推拉结合”</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>案例 2：多表的关联查询：宽表和搜索引擎<ul>
+<li>提前把关联数据计算好，存在一个地方，读的时候直接去读聚合好的数据，而不是读取的时候再去做 join</li>
+<li>宽表实现：把要关联的表的数据算好后保存在宽表里。依据实际情况，可以定时算，也可能任何一张原始表发生变化之后就触发-次宽表数据的计算</li>
+<li>ES 类的搜索引擎实现：把多张表的Join 结果做成一个个的文档，放在搜索引擎里面，也可以灵活地实现排序和分页查询功能</li>
+</ul>
+</li>
+</ul>
+<h1 id="高并发写的应对策略"><a href="#高并发写的应对策略" class="headerlink" title="高并发写的应对策略"></a>高并发写的应对策略</h1><h2 id="策略-1：数据分片"><a href="#策略-1：数据分片" class="headerlink" title="策略 1：数据分片"></a>策略 1：数据分片</h2><ul>
+<li>案例 1：数据库的分库分表</li>
+<li>案例 2：JDK 的 ConcurrentHashMap 实现<ul>
+<li>ConcurrentHashMap在内部分成了若干槽( 个数是2的整数次方，默认是16 个槽)，也就是若干子HashMap。这些槽可以并发地读写，槽与槽之间是独立的，不会发生数据互斥</li>
+</ul>
+</li>
+<li>案例 3：Kafka 的 partition<ul>
+<li>在Kafka中，一个topic表示-一个逻辑上的消息队列，具体到物理上，一个topic 被分成了多个partition,每个parition对应磁盘中的一个日志文件。partition 之间也是相互独立的，可以并发地读写，也就提高了一个topic 的并发量</li>
+</ul>
+</li>
+<li>案例 4：ES 的分布式索引<ul>
+<li>在搜索引擎里有一个基本策略是分布式索引。比如有10亿个网页或商品，如果建在一个倒排索引里面，则索引很大，也不能并发地查询</li>
+<li>可以把这 10 亿个网页或商品分成n份，建成n个小的索引。一个查询请求来了以后，并行地在n个索引上查询，再把查询结果进行合并</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-2：任务分片"><a href="#策略-2：任务分片" class="headerlink" title="策略 2：任务分片"></a>策略 2：任务分片</h2><ul>
+<li>案例 1：CPU 的指令流水线</li>
+<li>案例 2：Map/Reduce</li>
+<li>案例 3：Tomcat 的 1+N+M 网络模型<ul>
+<li><img src="https://img.shiqi-lu.tech/20211205195245.png"></li>
+<li>把一个请求的处理分成了三个工序：监听、I/O、业务逻辑处理。1 个监听线程负责监听客户端的 Socket 连接；N 个 I/O 线程负责对 Socket 进行读写，N 通常约等于 CPU 核数；M 个 Work 线程负责对请求进行逻辑处理</li>
+<li>进一步来讲，Work 线程还可能被拆分成解码、业务逻辑计算、编码等环节，进一步提高并发度</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-3：异步化"><a href="#策略-3：异步化" class="headerlink" title="策略 3：异步化"></a>策略 3：异步化</h2><ul>
+<li>解释<ul>
+<li>站在客户端的角度来讲，是请求服务器做一个事情,客户端不等结果返回，就去做其他的事情，回头再去轮询，或者让服务器回调通知</li>
+<li>站在服务器角度来看，是接收到一个客户的请求之后不立即处理，也不立马返回结果，而是在“后台慢慢地处理”，稍后返回结果。因为客户端不等上一个请求返回结果就可以发送一个请求，可以源源不断地发送请求，从而就形成了异步化</li>
+</ul>
+</li>
+<li>案例 1：短信验证码注册或登录<ul>
+<li>通常在注册或登录App或小程序时，采用的方式为短信验证码。短信的发送通常需要依赖第三方的短信发送平台。客户端请求发送验证码，应用服务器收到请求后调用第三方的短信平台</li>
+<li>公网的HTTP调用可能需要1~2s，如果是同步调用，则应用服务器会被阻塞。假设应用服务器是Tomcat，一台机器最多可以同时处理几百个请求，如果同时来几百个请求，Tomcat就会被卡死了。</li>
+<li>改成异步调用就可以避免这个问题。应用服务器收到客户端的请求后，放入消息队列，并立即返回。然后有一个后台任务，从消息队列读取消息，去调用第三方短信平台发送验证码</li>
+</ul>
+</li>
+<li>案例 2：电商的订单系统<ul>
+<li>买多个商品，但只下了一个订单付一次款，因为后台会进行「拆单」等环节</li>
+</ul>
+</li>
+<li>案例 3：广告计费系统<ul>
+<li>用户的点击请求或浏览请求首先会以日志的形式进行落盘。落盘之后，立即给客户端返回数据。后续的所有处理，当然也包括扣费，全部是异步化的</li>
+</ul>
+</li>
+<li>案例 4：LSM 树(写内存+Write-Ahead 日志)<ul>
+<li>LSM(Log Structured Merged Tree)的核心思想是「异步写」。LSM 树支撑的是 KV 存储，磁盘上实现了 Sorted HashMap，但插入时是无序的</li>
+<li>原理：LSM 在内存中维护一个 Sorted HashMap，并写一条日志(即 Write-Ahead 日志)，该日志的关键点是顺序写入，只会在日志尾部追加，而不会随机地写入，再有一个后台任务定期地把内存中的 SortedHashMap 合并到磁盘文件中，后台任务会执行磁盘数据的合并排序</li>
+<li>拓展：上层业务高并发扣减 MySQL 中的账户余额，可以在 Redis 中扣，同时落一条日志(日志可以在一个高可靠的消息中间件或数据库中插入一条条日志，数据库可以分库分表)。当 Redis 宕机，把所有的日志重放完毕，再用数据库中的数据初始化 Redis 中的数据。当然，数据库中的数据不能比Redis落后太多，否则积压大量日志未处理，宕机恢复的时间会很长</li>
+</ul>
+</li>
+<li>案例 5：Kafka 的 Pipeline<ul>
+<li>kafka 为了高可用性，会为每个 Topic 的每个 Partition 准备多个副本，其中一个被选举为 Leader，另外都是 Follower</li>
+<li>对于同步发送，客户端每发送一条消息，Leader 要把这条消息同步到所有 Follower 后，才会对客户端返回成功</li>
+<li>在实现上，Leader 并不会主动给两个 Follower 同步数据，而是等 Follower 主动拉取，并且是批量拉取。当 Leader 收到客户端的消息 msg1 并把它存到本地文件后，就去做别的事情了，如接收下一个消息 msg2，此时客户端仍处于阻塞状态，等待 msg1 返回。只有等所有 Follower 把消息 msg1 拖过去后，Leader 才会返回客户端说 msg1 接收成功了</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-4：批量"><a href="#策略-4：批量" class="headerlink" title="策略 4：批量"></a>策略 4：批量</h2><ul>
+<li>案例 1：Kafka 的百万 QPS 写入<ul>
+<li>kafka 快的三个策略：1.Partition 分片，2.磁盘的顺序写入，3批量，把多条合并成一条，一次性写入</li>
+<li>kafka 的客户端在内存中为每个 Partition 准备了一个队列，称为 RecordAccumulator。Producer 线程一条条地发送消息，这些消息都进入内存队列。然后通过 Sender 线程从这些队列中批量地提取消息发送给 kafka 集群</li>
+<li><img src="https://img.shiqi-lu.tech/20211205205742.png"></li>
+<li>如果是同步发送，Producer 向队列中放入一条消息后会阻塞，等待 Sender 线程取走该条消息并发出去后，Producer 才会返回，这是没有批量操作</li>
+<li>如果是异步发送，Producer把消息放入队列中后就返回了，Sender线程会把队列中的消息打包，一次发送出去多个，这时就会用到批量操作</li>
+<li>对于具体的批量策略，Kafka提供了几种参数进行配置，可以按Batch的大小或等待时间来批量操作</li>
+</ul>
+</li>
+<li>案例 2：广告计费系统的合并扣费<ul>
+<li>例如可把同一账号扣 10 次，每次扣 1 块。改为 1 次扣 10 块</li>
+<li>扣费模块一次性地从持久化消息队列中取多条消息，对这多条消息按广告主的账号 ID 进行分组，同一个组内的消息的扣费金额累加合并，然后从数据库里扣除</li>
+</ul>
+</li>
+<li>案例 3：MySQL 的小事务合并机制<ul>
+<li>比如扣库存，对同一个SKU,本来是扣10次、每次扣1个，也就是10个事务；在MySQL内核里面合并成1次扣10个，也就是10个事务变成了1个事务</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略-5：串行化-多进程单线程-异步-I-O"><a href="#策略-5：串行化-多进程单线程-异步-I-O" class="headerlink" title="策略 5：串行化+多进程单线程+异步 I/O"></a>策略 5：串行化+多进程单线程+异步 I/O</h2><ul>
+<li>案例：Nginx、Redis 的单线程模型<ul>
+<li>有了异步 I/O 后，可把请求串行化处理。这样，没有了锁的竞争和 I/O 的阻塞，单线程也非常高效。要利用多核优势可开多个实例</li>
 </ul>
 </li>
 </ul>
 ]]></content>
       <categories>
-        <category>Redis</category>
+        <category>架构</category>
       </categories>
       <tags>
-        <tag>数据库</tag>
-        <tag>Redis</tag>
+        <tag>架构</tag>
+        <tag>分布式</tag>
+        <tag>高并发</tag>
       </tags>
   </entry>
   <entry>
@@ -5743,6 +6110,354 @@
       </categories>
       <tags>
         <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>8种分布式事务实现原理的全面整理</title>
+    <url>/distributed-transaction/</url>
+    <content><![CDATA[<h1 id="事务和分布式事务是什么？"><a href="#事务和分布式事务是什么？" class="headerlink" title="事务和分布式事务是什么？"></a>事务和分布式事务是什么？</h1><ul>
+<li>事务：包含一系列操作的、一个有边界的工作序列，有明确的开始和结束标志，且要么被完全执行，要么完全失败，通常指本地（或单机）事务</li>
+<li>分布式事务：在分布式系统中运行的事务，由多个本地事务组合而成</li>
+</ul>
+<h1 id="事务基本特征ACID是什么？"><a href="#事务基本特征ACID是什么？" class="headerlink" title="事务基本特征ACID是什么？"></a>事务基本特征ACID是什么？</h1><ul>
+<li>原子性（Atomicity）：事务的最终状态只有两种，全部执行成功和全部不执行。若处理事务的任何一项操作不成功，就会导致整个事务失败。一旦操作失败，所有操作都会被取消（回滚）</li>
+<li>一致性（Consistency）：事务操作前和操作后，数据的完整性保持一致或满足完整性约束</li>
+<li>隔离性（Isolation）：当系统内多个事务并发执行时，多个事务不会相互干扰，即一个事务内部的操作及使用的数据，对其它并发事务是隔离的</li>
+<li>持久性（Durability）：一个事务完成了，那么它对数据库所做的更新就被永久保存下来了。即使发生系统崩溃或宕机等故障，只要数据库能够被重新访问，那么一定能够将其恢复到事务完成时的状态</li>
+</ul>
+<h1 id="BASE理论是什么？"><a href="#BASE理论是什么？" class="headerlink" title="BASE理论是什么？"></a>BASE理论是什么？</h1><ul>
+<li>基本可用（Basically Available）：分布式系统出现故障的时候，允许损失一部分功能的可用性</li>
+<li>柔性状态（Soft State）：在柔性事务中，允许系统存在中间状态，且这个中间状态不会影响系统整体可用性。如数据库读写分离，写库（主库）同步到读库（从库）会有一个延时，就是柔性状态</li>
+<li>最终一致性（Eventual Consistency）：事务在操作过程中可能由于同步延迟导致不一致，但最终状态下，数据都是一致的</li>
+<li>BASE理论为了支持大型分布式系统，通过牺牲强一致性，保证最终一致性，来获得高可用性</li>
+</ul>
+<h1 id="刚性事务和柔性事务是什么？"><a href="#刚性事务和柔性事务是什么？" class="headerlink" title="刚性事务和柔性事务是什么？"></a>刚性事务和柔性事务是什么？</h1><ul>
+<li>刚性事务：遵循ACID原则，具有强一致性。如数据库事务</li>
+<li>柔性事务：根据不同的业务场景使用不同的方法实现最终一致性。即可根据业务的特性做部分取舍，容忍一定时间内的数据不一致，遵循BASE理论</li>
+</ul>
+<h1 id="分布式事务主要解决的问题，以及实现方法有哪八种？"><a href="#分布式事务主要解决的问题，以及实现方法有哪八种？" class="headerlink" title="分布式事务主要解决的问题，以及实现方法有哪八种？"></a>分布式事务主要解决的问题，以及实现方法有哪八种？</h1><ul>
+<li>主要解决：在分布式环境下，组合事务的一致性问题</li>
+<li>方法：</li>
+<li>1.基于XA协议的二阶段提交协议方法（强一致性，遵从ACID）</li>
+<li>2.三阶段提交协议方法（强一致性，遵从ACID）</li>
+<li>3.基于消息的最终一致性方法（最终一致性，遵从BASE理论）</li>
+<li>4.TCC</li>
+<li>5.事务状态表+调用方重试+接收方幂等</li>
+<li>6.对账</li>
+<li>7.妥协方案：弱一致性+基于状态的补偿</li>
+<li>8.妥协方案：重试+回滚+报警+人工修复</li>
+</ul>
+<h1 id="基于XA协议的二阶段提交协议方法的原理"><a href="#基于XA协议的二阶段提交协议方法的原理" class="headerlink" title="基于XA协议的二阶段提交协议方法的原理"></a>基于XA协议的二阶段提交协议方法的原理</h1><ul>
+<li>两阶段提交协议保证分布在不同节点上的分布式事务的一致性的方法<ul>
+<li>引入一个协调者来管理所有的节点，并确保这些节点正确提交操作结果，若提交失败则放弃事务</li>
+</ul>
+</li>
+<li>XA的组成<ul>
+<li>事务管理器（协调者）：负责各个本地资源的提交和回滚</li>
+<li>资源管理器（参与者）：通常由数据库实现</li>
+</ul>
+</li>
+<li>算法思路概要<ul>
+<li>协调者下发请求事务操作，参与者将操作结果通知协调者，协调者根据所有参与者的反馈结果决定各参与者是要提交操作还是撤销操作</li>
+</ul>
+</li>
+<li>执行过程<ul>
+<li>第一阶段：投票(voting)<ul>
+<li>协调者(Coordinator，即事务管理器)会向事务的参与者(Cohort，即本地资源管理器)发起执行操作的CanCommit请求，并等待参与者的响应。参与者接收到请求后，会执行请求中的事务操作，记录日志信息但不提交，待参与者执行成功，则向协调者发送「Yes」消息，表示同意操作；若不成功，则发送「No」消息，表示终止操作</li>
+</ul>
+</li>
+<li>第二阶段：提交(commit)<ul>
+<li>当所有的参与者都返回了操作结果（Yes 或 No 消息）后，系统进入了提交阶段。在提交阶段，协调者会根据所有参与者返回的信息向参与者发送 DoCommit 或 DoAbort 指令：<ul>
+<li>若协调者收到的都是「Yes」消息，则向参与者发送「DoCommit」消息，参与者会完成剩余的操作并释放资源，然后向协调者返回「HaveCommitted」消息</li>
+<li>如果协调者收到的消息中包含「No」消息，则向所有参与者发送「DoAbort」消息，此时发送「Yes」的参与者则会根据之前执行操作时的回滚日志对操作进行回滚，然后所有参与者会向协调者发送「HaveCommitted」消息</li>
+<li>协调者接收到「HaveCommitted」消息，就意味着整个事务结束了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>不足<ul>
+<li>同步阻塞问题：二阶段提交算法在执行过程中，所有参与节点都是事务阻塞型的。也就是说，当本地资源管理器占有临界资源时，其他资源管理器如果要访问同一临界资源，会处于阻塞状态</li>
+<li>单点故障问题：基于 XA 的二阶段提交算法类似于集中式算法，一旦事务管理器发生故障，整个系统都处于停滞状态。尤其是在提交阶段，一旦事务管理器发生故障，资源管理器会由于等待管理器的消息，而一直锁定事务资源，导致整个系统被阻塞</li>
+<li>数据不一致问题：在提交阶段，当协调者向参与者发送 DoCommit 请求之后，如果发生了局部网络异常，或者在发送提交请求的过程中协调者发生了故障，就会导致只有一部分参与者接收到了提交请求并执行提交操作，但其他未接到提交请求的那部分参与者则无法执行事务提交。于是整个分布式系统便出现了数据不一致的问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="三阶段提交协议方法"><a href="#三阶段提交协议方法" class="headerlink" title="三阶段提交协议方法"></a>三阶段提交协议方法</h1><ul>
+<li>详细过程<ul>
+<li>1.CanCommit阶段<ul>
+<li>协调者向参与者发送请求操作（CanCommit请求），询问参与者是否可以执行事务提交操作，然后等待参与者的响应；参与者收到 CanCommit 请求之后，回复 Yes，表示可以顺利执行事务；否则回复 No</li>
+<li>CanCommit 阶段不同节点之间的事务请求成功和失败的流程，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20210225155731.png"></li>
+</ul>
+</li>
+<li>2.PreCommit阶段<ul>
+<li>协调者根据参与者的回复情况，来决定是否可以进行 PreCommit 操作<ul>
+<li>如果所有参与者回复的都是“Yes”，那么协调者就会执行事务的预执行：<ul>
+<li>发送预提交请求：协调者向参与者发送 PreCommit 请求，进入预提交阶段</li>
+<li>事务预提交：参与者接收到 PreCommit 请求后执行事务操作，并将 Undo 和 Redo 信息记录到事务日志中</li>
+<li>响应反馈：如果参与者成功执行了事务操作，则返回 ACK 响应，同时开始等待最终指令</li>
+</ul>
+</li>
+<li>假如任何一个参与者向协调者发送了“No”消息，或者等待超时之后，协调者都没有收到参与者的响应，就执行中断事务的操作： <ul>
+<li>发送中断请求：协调者向所有参与者发送“Abort”消息</li>
+<li>终断事务：参与者收到“Abort”消息之后，或超时后仍未收到协调者的消息，执行事务的中断操作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>预执行阶段，不同节点上事务执行成功和失败的流程，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20210225155951.png"></li>
+</ul>
+</li>
+<li>3.DoCommit阶段<ul>
+<li>DoCmmit 阶段进行真正的事务提交，根据 PreCommit 阶段协调者发送的消息，进入执行提交阶段或事务中断阶段</li>
+<li>执行提交阶段：<ul>
+<li>发送提交请求：协调者接收到所有参与者发送的 Ack 响应，从预提交状态进入到提交状态，并向所有参与者发送 DoCommit 消息</li>
+<li>事务提交：参与者接收到 DoCommit 消息之后，正式提交事务。完成事务提交之后，释放所有锁住的资源。</li>
+<li>响应反馈：参与者提交完事务之后，向协调者发送 Ack 响应</li>
+<li>完成事务：协调者接收到所有参与者的 Ack 响应之后，完成事务</li>
+</ul>
+</li>
+<li>事务中断阶段：<ul>
+<li>发送中断请求：协调者向所有参与者发送 Abort 请求</li>
+<li>事务回滚：参与者接收到 Abort 消息之后，利用其在 PreCommit 阶段记录的 Undo 信息执行事务的回滚操作，并释放所有锁住的资源</li>
+<li>反馈结果：参与者完成事务回滚之后，向协调者发送 Ack 消息</li>
+<li>终断事务：协调者接收到参与者反馈的 Ack 消息之后，执行事务的终断，并结束事务</li>
+</ul>
+</li>
+<li>执行阶段不同节点上事务执行成功和失败 (事务终断) 的流程，如图</li>
+<li><img src="https://img.shiqi-lu.tech/20210225160141.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>三阶段提交协议（Three-phase commit protocol，3PC）相对二阶段提交(2PC)的改进<ul>
+<li>为了解决两阶段提交的同步阻塞和数据不一致问题，三阶段提交引入了超时机制和准备阶段</li>
+<li>同时在协调者和参与者中引入超时机制。如果协调者或参与者在规定的时间内没有接收到来自其他节点的响应，就会根据当前的状态选择提交或者终止整个事务</li>
+<li>在第一阶段和第二阶段中间引入了一个准备阶段，也就是在提交阶段之前，加入了一个预提交阶段。在预提交阶段排除一些不一致的情况，保证在最后提交之前各参与节点的状态是一致的</li>
+</ul>
+</li>
+<li>2PC 和 3PC 这两种方法的两个共同的缺点是什么<ul>
+<li>1.都需要锁定资源，降低系统性能</li>
+<li>2.没有解决数据不一致的问题</li>
+</ul>
+</li>
+</ul>
+<h1 id="基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法"><a href="#基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法" class="headerlink" title="基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法"></a>基于分布式消息的最终一致性方案的核心思想、举例、3种实现方法</h1><ul>
+<li>核心思想<ul>
+<li>将需要分布式处理的事务通过消息或者日志的方式异步执行，消息或日志可以存到本地文件、数据库或消息队列中，再通过业务规则进行失败重试</li>
+<li>基于分布式消息的最终一致性方案的事务处理，引入了一个消息中间件（Message Queue，MQ），用于在多个应用之间进行消息传递</li>
+<li><img src="https://img.shiqi-lu.tech/20210225160602.png"></li>
+</ul>
+</li>
+<li>以网上购物为例，阐述分布式消息的最终一致性方案的事务处理<ul>
+<li>假设用户 A 在某电商平台下了一个订单，需要支付 50 元，发现自己的账户余额共 150 元，就使用余额支付，支付成功之后，订单状态修改为支付成功，然后通知仓库发货</li>
+<li>在该事件中，涉及到了订单系统、支付系统、仓库系统，这三个系统是相互独立的应用，通过远程服务进行调用</li>
+<li><img src="https://img.shiqi-lu.tech/20210225161139.png"></li>
+<li>整个购物流程如下</li>
+<li><img src="https://img.shiqi-lu.tech/20210225161206.png"></li>
+<li>1.订单系统把订单消息发给消息中间件，消息状态标记为“待确认”</li>
+<li>2.消息中间件收到消息后，进行消息持久化操作，即在消息存储系统中新增一条状态为“待发送”的消息</li>
+<li>3.消息中间件返回消息持久化结果（成功 / 失败），订单系统根据返回结果判断如何进行业务操作。失败，放弃订单，结束（必要时向上层返回失败结果）；成功，则创建订单</li>
+<li>4.订单操作完成后，把操作结果（成功 / 失败）发送给消息中间件</li>
+<li>5.消息中间件收到业务操作结果后，根据结果进行处理：失败，删除消息存储中的消息，结束；成功，则更新消息存储中的消息状态为“待发送（可发送）”，并执行消息投递</li>
+<li>6.如果消息状态为“可发送”，则 MQ 会将消息发送给支付系统，表示已经创建好订单，需要对订单进行支付。支付系统也按照上述方式进行订单支付操作</li>
+<li>7.订单系统支付完成后，会将支付消息返回给消息中间件，中间件将消息传送给订单系统。订单系统再调用库存系统，进行出货操作</li>
+</ul>
+</li>
+<li>转账的场景说明<ul>
+<li>系统A收到用户的转账请求，系统A先自己扣钱，也就是更新DB1；然后通过消息中间件给系统B发送一条加钱的消息，系统B收到此消息,对自己的账号进行加钱，也就是更新DB2</li>
+<li><img src="https://img.shiqi-lu.tech/20211205174706.png"></li>
+</ul>
+</li>
+<li>场景的技术难点<ul>
+<li>中间有两次网络调用，系统 A 给消息中间件发消息和更新 DB1，两个操作不是原子的。</li>
+<li>系统 A 是先更新DB1，后发送消息，还是先发送消息，后更新DB1?</li>
+<li>假设先更新DB1成功，发送消息网络失败，重发又失败,怎么办?又假设先发送消息成功，更新DB1失败。消息已经发出去了，又不能撤回，怎么办?或者消息中间件提供了消息撤回的接口，但是又调用失败怎么办?</li>
+</ul>
+</li>
+<li>实现方案0：错误的方案<ul>
+<li>方案<ul>
+<li>把「发送加钱消息」这个网络调用和更新DB1放在同一个事务里面，如果发送消息失败，更新DB自动回滚</li>
+</ul>
+</li>
+<li>错误原因<ul>
+<li>1.网络的2将军问题：发送消息失败，发送方并不知道是消息中间件没有收到消息，还是消息已经收到了，只是返回response的时候失败了?如果已经收到消息了，而发送端认为没有收到，执行update DB的回滚操作，则会导致账户A的钱没有扣，账户B的钱却被加了</li>
+<li>2.把网络调用放在数据库事务里面，可能会因为网络的延时导致数据库长事务。严重的会阻塞整个数据库，风险很大</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>实现方案 1：业务方实现，例如使用 kafka，消息中间件没有提供「事务消息」功能<ul>
+<li>步骤<ul>
+<li><img src="https://img.shiqi-lu.tech/20211205175446.png"></li>
+<li>1.系统 A 增加一张消息表，系统 A 不再直接给消息中间件发送消息，而是把消息写入到这张消息表中。把 DB1 的扣钱操作(表1)和写入消息表(表 2)这两个操作放在一个数据库事务里，保证两者的原子性</li>
+<li>2.系统 A 准备一个后台程序，源源不断地把消息传送给消息中间件。如果失败了，也不断尝试重试。因为网络的 2 将军问题，系统 A 发送给消息中间件的消息网络超时了，消息中间件可能已经收到了消息，也可能没有收到。系统A会再次发送该消息，直到消息中间件返回成功。所以，系统A允许消息重复，但消息不会丢失，顺序也不会打乱</li>
+<li>3.通过上面两个步骤，系统 A 保证了消息不丢失，但消息可能重复</li>
+</ul>
+</li>
+<li>问题 1：丢失消费。系统B从消息中间件取出消息(此时还在内存里面)，如果处理了一半，系统B宕机并再次重启，此时这条消息未处理成功，怎么办?<ul>
+<li>通过消息中间件的 ACK 机制，凡是发送 ACK 的消息，系统 B 重启之后，消息中间件不会再次发送；凡是没有发送ACK的消息，系统B重启之后消息中间件会再次推送。但这可能会引发重复消费的问题，如 B 处理成功正要返回 ACK 时宕机了</li>
+</ul>
+</li>
+<li>问题 2：重复消费。除了ACK机制，可能会引起重复消费;系统A的后台任务也可能给消息中间件重复发送消息<ul>
+<li>系统 B 增加一个判重表记录处理成功的消息 ID 和消息中间件对应的 offset(以 kafka 为例)，系统 B 宕机重启，可定位到 offset 位置，从这之后开始继续消费</li>
+<li>每次接收到新消息，先通过判重表进行判重，实现业务的幂等。同样，对DB2的加钱操作和消息写入判重表两个操作，要在一个DB的事务里面完成</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>系统A需要增加消息表，同时还需要一个 后台任务，不断扫描此消息表，会导致消息的处理和业务逻辑耦合，额外增加业务方的开发负担</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>实现方案 2：基于 RocketMQ 事务消息<ul>
+<li>原理<ul>
+<li>RocketMQ 不是提供一个单一的「发送」接口，而是把消息的发送拆成了两个阶段，Prepare 阶段(消息预发送)和 Confirm 阶段(确认发送)</li>
+</ul>
+</li>
+<li>步骤<ul>
+<li><img src="https://img.shiqi-lu.tech/20211205181411.png"></li>
+<li>1.系统 A 调用 Prepare 接口，预发送消息。此时消息保存在消息中间件里，但消息中间件不会把消息给消费方消费，消息只是暂存在那</li>
+<li>2.系统 A 更新数据库，进行扣钱操作</li>
+<li>3.系统 A 调用 Comfirm 接口，确认发送消息。此时消息中间件才会吧消息给消费方进行消费</li>
+</ul>
+</li>
+<li>两个异常场景<ul>
+<li>场景1:步骤1成功，步骤2成功，步骤3失败或超时，怎么处理?</li>
+<li>场景2:步骤1成功，步骤2失败或超时，步骤3不会执行。怎么处理?</li>
+</ul>
+</li>
+<li>解决<ul>
+<li>RocketMQ 会定期(默认1 min)扫描所有的预发送但还没有确认的消息，回调给发送方，询问这条消息是要发送出去，还是取消。业务方根据自己的业务数据回应</li>
+</ul>
+</li>
+<li>和方案 2 的区别<ul>
+<li>RocketMQ 最大的改变其实是把「扫描消息表」这件事不让业务方做，而是让消息中间件完成</li>
+<li>消息表其实还是没有省掉，因为消息中间件要询问发送方事务是否执行成功，还需要一个「变相的本地消息表」，记录事务执行状态和消息发送状态。</li>
+<li>同时对于消费方，还是没有解决系统重启可能导致的重复消费问题，这只能由消费方解决。需要设计判重机制，实现消息消费的幂等。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>实现方案 3：人工介入<ul>
+<li>无论方案1，还是方案2，发送端把消息成功放入了队列中，但如果消费端消费失败怎么办?</li>
+<li>如果消费失败了，则可以重试，但还一直失败怎么办?是否要自动回滚整个流程?</li>
+<li>答案是人工介入。从工程实践角度来讲，这种整个流程自动回滚的代价是非常巨大的，不但实现起来很复杂，还会引入新的问题。比如自动回滚失败，又如何处理?</li>
+<li>对应这种发生概率极低的事件，采取人工处理会比实现一个高复杂的自动化回滚系统更加可靠，也更加简单</li>
+</ul>
+</li>
+</ul>
+<h1 id="TCC的使用场景和步骤"><a href="#TCC的使用场景和步骤" class="headerlink" title="TCC的使用场景和步骤"></a>TCC的使用场景和步骤</h1><ul>
+<li>使用场景<ul>
+<li>2PC通常用来解决两个数据库之间的分布式事务问题，TCC 用于解决两个服务之间的分布式事务问题</li>
+</ul>
+</li>
+<li>步骤<ul>
+<li><img src="https://img.shiqi-lu.tech/20211205164453.png"></li>
+<li>1.准备阶段：调用方调用所有服务方提供的 Try 接口，该阶段个调用方做资源检查和资源锁定，为接下来阶段 2 做准备</li>
+<li>2.提交阶段：如果所有服务方都返回 Yes，则进入提交阶段，调用方调用个服务方的 Confirm 接口，个服务方进行事务提交。如果有一个服务方在阶段 1 返回 NO 或者超时，则调用方调用各服务方的 Cancel 接口</li>
+</ul>
+</li>
+<li>在阶段 2，调用方发生宕机，或者某个服务超时了，如何处理呢?<ul>
+<li>不断重试！不管是 Confirm 还是 Cancel 失败了，都不断重试。这就要求 Confirm 和 Cancel 都必须是幂等操作</li>
+<li>注意，这里的重试是由TCC的框架来执行的，而不是让业务方自己去做</li>
+</ul>
+</li>
+</ul>
+<h1 id="事务状态表-调用方重试-接收方幂等的原理和补充说明"><a href="#事务状态表-调用方重试-接收方幂等的原理和补充说明" class="headerlink" title="事务状态表+调用方重试+接收方幂等的原理和补充说明"></a>事务状态表+调用方重试+接收方幂等的原理和补充说明</h1><ul>
+<li>原理<ul>
+<li>(由业务方自己实现)调用方维护一张事务状态表(或者说事务日志、日志流水)，在每次调用之前，落盘一条事务流水，生成一个全局的事务 ID。事务状态表的表结构如图</li>
+<li><img src="https://img.shiqi-lu.tech/20211205165847.png"></li>
+<li>初始是状态1，每调用成功1个服务则更新1次状态，最后所有系统调用成功，状态更新到状态4，状态2、3是中间状态。当然，也可以不保存中间状态，只设置两个状态: Begin 和End。事务开始之前的状态是Begin,全部结束之后的状态是End。如果某个事务一直停留在Begin状态，则说明该事务没有执行完毕</li>
+<li>然后有一个后台任务，扫描状态表，在过了某段时间后，状态没有变为最终的状态 4，说明这条事务没有执行成功。于是重新调用系统A、B、C。保证这条流水的最终状态是状态4 (或End状态)。当然，系统A、B、C根据全局的事务ID做幂等操作，所以即使重复调用也没有关系</li>
+</ul>
+</li>
+<li>补充<ul>
+<li>1.如果后台任务重试多次仍然不能成功，要为状态表加一个Error状态，通过人工介入干预</li>
+<li>2.对于调用方的同步调用，如果部分成功，此时给客户端返回不确定，或者说暂时未知。只能告诉用户该笔钱转账超时，请稍后再来确认</li>
+<li>3.对于同步调用，调用方调用A或B失败的时候，可以重试三次。如果重试三次还不成功，则放弃操作，再交由后台任务后续处理</li>
+</ul>
+</li>
+</ul>
+<h1 id="对账的原理、思路、分类"><a href="#对账的原理、思路、分类" class="headerlink" title="对账的原理、思路、分类"></a>对账的原理、思路、分类</h1><ul>
+<li>原理<ul>
+<li>事务、系统中的各种数据对象都有状态，或者说都有各自完整的生命周期，同时数据与数据之间存在着关联关系。可以很好地利用这种完整的生命周期和数据之间的关联关系，来实现系统的一致性，这就是「对账」</li>
+</ul>
+</li>
+<li>思路<ul>
+<li>最终一致性、TCC、事务状态表等方案，都是为了保证「过程的原子性」，也就是多个系统操作(或 系统调用)，要么全部成功，要么全部失败</li>
+<li>但所有的「过程」都必然产生「结果」，过程是我们所说的「事务」，结果就是业务数据。一个过程如果部分执行成功、部分执行失败，则意味着结果是不完整的。从结果也可以反推出过程出了问题，从而对数据进行修补</li>
+</ul>
+</li>
+<li>分类<ul>
+<li>1.全量对账。比如每天晚上运作一个定时任务，比对两个数据库</li>
+<li>2.增量对账。可以是一个定时任务，基于数据库的更新时间；也可以基于消息中间件，每一次业务操作都抛出一个消息到消息中间件，然后由一个消费者消费这条消息，对两个数据库中的数据进行比对(当然，消息可能丢失，无法百分之百地保证，还是需要全量对账来兜底)</li>
+</ul>
+</li>
+</ul>
+<h1 id="妥协方案：弱一致性-基于状态的补偿的使用场景、思路、方案、补偿方法"><a href="#妥协方案：弱一致性-基于状态的补偿的使用场景、思路、方案、补偿方法" class="headerlink" title="妥协方案：弱一致性+基于状态的补偿的使用场景、思路、方案、补偿方法"></a>妥协方案：弱一致性+基于状态的补偿的使用场景、思路、方案、补偿方法</h1><ul>
+<li>使用场景<ul>
+<li>需要一个同步的方案，既要让系统之间保持一致性，又要有很高的性能，支持高并发</li>
+</ul>
+</li>
+<li>电商下单场景的示例<ul>
+<li>如图，电商网站的下单至少需要两个操作:创建订单和扣库存。订单系统有订单的数据库和服务，库存系统有库存的数据库和服务。先创建订单，后扣库存，可能会创建订单成功，扣库存失败；反过来，先扣库存，后创建订单，可能会扣库存成功，创建订单失败。如何保证创建订单+扣库存两个操作的原子性，同时还要能抵抗线上的高并发流量?</li>
+<li><img src="https://img.shiqi-lu.tech/20211205172003.png"></li>
+</ul>
+</li>
+<li>方案思路<ul>
+<li>利用电商购物中的一个特性：允许少卖，但不能超卖，以下两个均保证最终库存可以多扣，不能少扣</li>
+</ul>
+</li>
+<li>方案 1：先扣库存，后创建订单<ul>
+<li>有三种情况：</li>
+<li>1.扣库存成功，提交订单成功，返回成功</li>
+<li>2.扣库存成功，提交订单失败，返回失败，调用方重试(此处可能会多扣库存)</li>
+<li>3.扣库存失败，不再提交订单，返回失败，调用方重试(此处可能会多扣库存)</li>
+<li><img src="https://img.shiqi-lu.tech/20211205172631.png"></li>
+</ul>
+</li>
+<li>方案 2：先创建订单，后扣库存<ul>
+<li>有三种情况：</li>
+<li>1.提交订单成功，扣库存成功，返回成功</li>
+<li>2.提交订单成功，扣库存失败，返回失败，调用方重试(此处可能会多扣库存)</li>
+<li>3.提交订单失败，不再扣库存，调用方重试</li>
+<li><img src="https://img.shiqi-lu.tech/20211205172744.png"></li>
+</ul>
+</li>
+<li>库存多扣导致数据不一致的补偿<ul>
+<li>库存每扣一次，都会生成一条流水记录并记初始状态是「占用」，等订单支付成功后，会把状态改成「释放」</li>
+<li>对于那些过了很长时间一直是占用，而不释放的库存，要么是因为前面多扣造成的，要么是因为用户下了单但没有支付</li>
+<li>通过比对，得到库存系统的「占用又没有释放的库存流水」与订单系统的未支付的订单，就可以回收这些库存，同时把对应的订单取消，将库存释放</li>
+</ul>
+</li>
+</ul>
+<h1 id="妥协方案：重试-回滚-报警-人工修复"><a href="#妥协方案：重试-回滚-报警-人工修复" class="headerlink" title="妥协方案：重试+回滚+报警+人工修复"></a>妥协方案：重试+回滚+报警+人工修复</h1><ul>
+<li>使用场景<ul>
+<li>基于订单的状态+库存流水的状态做补偿中，如果业务很复杂可使用该方法</li>
+</ul>
+</li>
+<li>原理<ul>
+<li>先扣库存，后创建订单。不做状态补偿，为库存系统提供一个回滚接口。创建订单如果失败了，先重试。如果重试还不成功，则回滚库存的扣减。如果回滚也失败，则发报警，进行人工干预修复</li>
+<li>根据业务逻辑，通过三次重试或回滚的方法，最大限度地保证一致。实在不一致，就发报警，让人工干预。只要日志流水记录得完整，人工肯定可以修复!通常 只要业务逻辑本身没问题，重试、回滚之后还失败的概率会比较低，所以这种办法虽然丑陋，但很实用</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>软件架构设计 大型网站技术架构与业务架构融合之道-第 10 章-事务一致性</li>
+<li>分布式技术原理与算法解析-第 6 讲-分布式事务：All or nothing</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+        <tag>分布式</tag>
+        <tag>高并发</tag>
       </tags>
   </entry>
   <entry>
