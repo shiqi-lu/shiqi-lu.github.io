@@ -2475,6 +2475,198 @@
       </tags>
   </entry>
   <entry>
+    <title>4种分布式共识算法（拜占庭容错算法）的整理</title>
+    <url>/distributed-consistency-byzantine/</url>
+    <content><![CDATA[<h1 id="什么是分布式共识？"><a href="#什么是分布式共识？" class="headerlink" title="什么是分布式共识？"></a>什么是分布式共识？</h1><ul>
+<li>在多个节点均可独自操作或记录的情况下，使得所有节点针对某个状态达成一致的过程</li>
+<li>本质是“求同存异”</li>
+</ul>
+<h1 id="一致性和共识的区别是什么？"><a href="#一致性和共识的区别是什么？" class="headerlink" title="一致性和共识的区别是什么？"></a>一致性和共识的区别是什么？</h1><ul>
+<li>一致性：分布式系统中的多个节点之间，给定一系列的操作，在约定协议的保障下，对外界呈现的数据或状态时一致的</li>
+<li>共识：分布式系统中多个节点之间，彼此对某个状态达成一致结果的过程</li>
+<li>一致性强调结果，共识强调达成一致的过程，共识算法是保障系统满足不同程度一致性的核心技术</li>
+</ul>
+<h1 id="分布式共识的两个关键点是什么？"><a href="#分布式共识的两个关键点是什么？" class="headerlink" title="分布式共识的两个关键点是什么？"></a>分布式共识的两个关键点是什么？</h1><ul>
+<li>1.获得记账权</li>
+<li>2.所有节点或服务器达成一致</li>
+</ul>
+<h1 id="拜占庭容错算法和非拜占庭容错算法"><a href="#拜占庭容错算法和非拜占庭容错算法" class="headerlink" title="拜占庭容错算法和非拜占庭容错算法"></a>拜占庭容错算法和非拜占庭容错算法</h1><ul>
+<li>拜占庭将军问题描述的是最困难的，也是最复杂的一种分布式故障场景，除了存在故障行为，还存在恶意行为的一个场景。必须使用拜占庭容错算法（Byzantine Fault Tolerance，BFT）。还有：PBFT 算法，PoW 算法</li>
+<li>在计算机分布式系统中，最常用的是非拜占庭容错算法，即故障容错算法（Crash Fault Tolerance，CFT）。CFT 解决的是分布式的系统中存在故障，但不存在恶意节点的场景下的共识问题。这个场景可能会丢失消息，或者有消息重复，但不存在错误消息，或者伪造消息的情况。常见的算法有 Paxos 算法、Raft 算法、ZAB 协议</li>
+</ul>
+<h1 id="区块链是什么？"><a href="#区块链是什么？" class="headerlink" title="区块链是什么？"></a>区块链是什么？</h1><ul>
+<li>由包含交易信息的区块从后向前有序链接起来的数据结构</li>
+<li>其中区块是指很多交易数据的集合，每个区块包括区块头和区块体<ul>
+<li>区块体包括前一区块的哈希值、本区块的哈希值和时间戳</li>
+<li>区块体用来存储交易数据</li>
+</ul>
+</li>
+</ul>
+<h1 id="PBFT"><a href="#PBFT" class="headerlink" title="PBFT"></a>PBFT</h1><h2 id="口信消息型拜占庭问题之解的局限"><a href="#口信消息型拜占庭问题之解的局限" class="headerlink" title="口信消息型拜占庭问题之解的局限"></a>口信消息型拜占庭问题之解的局限</h2><ul>
+<li>如果将军数为 n、叛将数为 f，那么算法需要递归协商 f+1 轮，消息复杂度为 O(n ^ (f + 1))，消息数量指数级暴增。 如果叛将数为 64，消息数已经远远超过 int64 所能表示的了</li>
+<li>尽管对于签名消息，不管叛将数（比如 f）是多少，经过 f + 1 轮的协商，忠将们都 能达成一致的作战指令，但是这个算法同样存在“理论化”和“消息数指数级暴增”的痛点</li>
+</ul>
+<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><ul>
+<li>客户端向主节点发送请求，主节点收到请求后，执行三阶段协议</li>
+<li>主节点进入预准备（Pre-prepare）阶段，构造包含客户端提议的值的预准备消息，并广播给其他从节点</li>
+<li>从节点收到预准备消息后，进入准备（Prepare）阶段，并分别广播包含客户端提议的值的准备消息给其他节点</li>
+<li>当某个节点收到 2f 个一致的包含客户端提议的值的准备消息后，会进入提交（Commit） 阶段，各节点分别提交消息给其它节点，告诉其它节点自己已经准备就绪</li>
+<li>当某个节点收到 2f + 1 个验证通过的提交消息后，说明达成共识，可接受客户端提议的值，并发送执行成功的消息给客户端</li>
+<li>客户端收到 f+1 个相同的响应消息时，说明节点已达成共识</li>
+</ul>
+<h2 id="达成共识的举例"><a href="#达成共识的举例" class="headerlink" title="达成共识的举例"></a>达成共识的举例</h2><ul>
+<li>场景<ul>
+<li>先假设苏秦制定的作战指令是进攻，而楚是叛徒（为了演示方便）：</li>
+<li><img src="https://img.shiqi-lu.tech/20211209213757.png"></li>
+<li>注意，所有的消息都是签名消息，也就是说，消息发送者的身份和消息内容都是 无法伪造和篡改的（比如，楚无法伪造一个假装来自赵的消息）</li>
+</ul>
+</li>
+<li>首先，苏秦联系赵，向赵发送包含作战指令“进攻”的请求<ul>
+<li><img src="https://img.shiqi-lu.tech/20211209213906.png"></li>
+</ul>
+</li>
+<li>当赵接收到苏秦的请求之后，会执行三阶段协议（Three-phase protocol）</li>
+<li>赵将进入预准备（Pre-prepare）阶段，构造包含作战指令的预准备消息，并广播给其他将军（魏、韩、楚）<ul>
+<li><img src="https://img.shiqi-lu.tech/20211209213957.png"></li>
+<li>注意：魏、韩、楚，收到消息后，不能直接执行指令，因为他们不能确认自己接收到的指令和其它人接收到的指令是相同的</li>
+</ul>
+</li>
+<li>接收到预准备消息之后，魏、韩、楚将进入准备（Prepare）阶段，并分别广播包含作战指令的准备消息给其他将军。比如，魏广播准备消息给赵、韩、楚（如图所示）。为了方便演示，我们假设叛徒楚想通过不发送消息，来干扰共识协商（你能看到，图中的楚是没有发送消息的）。<ul>
+<li><img src="https://img.shiqi-lu.tech/20211211132947.png"></li>
+</ul>
+</li>
+<li>当某个将军收到 2f 个一致的包含作战指令的准备消息后，会进入提交（Commit） 阶段（这里的 2f 包括自己，其中 f 为叛徒数，在演示中是 1）</li>
+<li>注：这时该将军（比如魏）还是不能执行指令，因为魏不能确认赵、韩、楚是否收到了 2f 个一致的包含作战指令的准备消息</li>
+<li>进入提交阶段后，各将军分别广播提交消息给其他将军，也就是告诉其他将军，我已经准备好了，可以执行指令了<ul>
+<li><img src="https://img.shiqi-lu.tech/20211211133752.png"></li>
+</ul>
+</li>
+<li>最后，当某个将军收到 2f + 1 个验证通过的提交消息后（包括自己，其中 f 为叛徒数，在演示中为 1），也就是说，大部分的将军们已经达成共识，这时可以执行作战指令了，那么该将军将执行苏秦的作战指令，执行完毕后发送执行成功的消息给苏秦<ul>
+<li><img src="https://img.shiqi-lu.tech/20211211134722.png"></li>
+</ul>
+</li>
+<li>最后，当苏秦收到 f+1 个相同的响应（Reply）消息时，说明各位将军们已经就作战指令达成了共识，并执行了作战指令（其中 f 为叛徒数，在我的演示中为 1）</li>
+<li>在这里，苏秦采用的就是简化版的 PBFT 算法。在这个算法中：<ul>
+<li>可以将赵、魏、韩、楚理解为分布式系统的四个节点，其中赵是主节点（Primary node），魏、韩、楚是从节点（Secondary node）</li>
+<li>将苏秦理解为业务，也就是客户端</li>
+<li>将消息理解为网络消息</li>
+<li>将作战指令“进攻”，理解成客户端提议的值，也就是希望被各节点达成共识，并提交给状态机的值</li>
+</ul>
+</li>
+</ul>
+<h2 id="几个注意点"><a href="#几个注意点" class="headerlink" title="几个注意点"></a>几个注意点</h2><ul>
+<li>PBFT 算法是通过签名(或消息认证码 MAC)约束恶意节点的行为，即每个节点都可以通过验证消息签名确认消息的发送来源，一个节点无法伪造另一个节点的消息。最终，基于大多数原则(2f+1)实现共识的</li>
+<li>最终的共识是否达成，客户端是会做判断的，如果客户端在指定时间内未收到请求对应的 f + 1 相同响应，就认为集群出故障了，共识未达成，客户端会重新发送请求</li>
+<li>PBFT 算法通过视图变更（View Change）的方式，来处理主节点作恶，当发现主节点在作恶时，会以“轮流上岗”方式，推举新的主节点</li>
+<li>尽管 PBFT 算法相比口信消息型拜占庭之解已经有了很大的优化，将消息复杂度从 O(n ^ (f + 1)) 降低为 O(n ^ 2)，能在实际场景中落地，并解决实际的共识问题。但 PBFT 还是需要比较多的消息。比如在 13 节点集群中（f 为 4）一次共识协商需要 237 个消息，推荐在中小型分布式系统中使用 PBFT 算法<ul>
+<li>请求消息：1</li>
+<li>预准备消息：3f = 12</li>
+<li>准备消息：3f * (3f - f) = 96</li>
+<li>提交消息：(3f - f + 1) * (3f + 1)= 117</li>
+<li>回复消息：3f - 1 = 11</li>
+</ul>
+</li>
+</ul>
+<h1 id="PoW"><a href="#PoW" class="headerlink" title="PoW"></a>PoW</h1><h2 id="PoW算法是什么"><a href="#PoW算法是什么" class="headerlink" title="PoW算法是什么"></a>PoW算法是什么</h2><ul>
+<li>以每个节点或服务器的计算能力来竞争记账权的机制，即使用工作量证明机制的共识算法</li>
+</ul>
+<h2 id="工作量证明-Proof-Of-Work-是什么"><a href="#工作量证明-Proof-Of-Work-是什么" class="headerlink" title="工作量证明(Proof Of Work)是什么"></a>工作量证明(Proof Of Work)是什么</h2><ul>
+<li>请求方做了一些运算，解决了某个问题，然后把运算结果发送给验证方，进行核验，验证方根据运算结果，就能判断请求方是否做了相关的工作</li>
+<li>这个算法具有不对称性，也就是说，工作对于请求方是有难度的，对于验证方则是比较简单的，易于验证的</li>
+<li><img src="https://img.shiqi-lu.tech/20211211141659.png"></li>
+</ul>
+<h2 id="区块链如何实现-PoW-算法的"><a href="#区块链如何实现-PoW-算法的" class="headerlink" title="区块链如何实现 PoW 算法的"></a>区块链如何实现 PoW 算法的</h2><ul>
+<li>由区块头、区块体 2 部分组成的<ul>
+<li>区块头（Block Head）：区块头主要由上一个区块的哈希值、区块体的哈希值、4 字节的随机数（nonce）等组成的</li>
+<li>区块体（Block Body）：区块包含的交易数据，其中的第一笔交易是 Coinbase 交易，这是一笔激励矿工的特殊交易</li>
+</ul>
+</li>
+<li>拥有 80 字节固定长度的区块头，就是用于区块链工作量证明的哈希运算中输入字符串，只有通过双重 SHA256 哈希运算计算出的哈希值，只有小于目标值(target)，才是有效的，否则哈希值是无效的，必须重算，以此来证明自己的工作量</li>
+<li>计算出符合条件的哈希值后，矿工就会把这个信息广播给集群中所有其他节点，其他节点验证通过后，会将这个区块加入到自己的区块链中，最终形成一串区块链</li>
+</ul>
+<h2 id="假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？"><a href="#假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？" class="headerlink" title="假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？"></a>假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？</h2><ul>
+<li>利用区块的index、前一区块的哈希值、交易的时间戳、区块数据和nonce值，通过SHA256计算出一个哈希值</li>
+<li>判断前k个值是否都为0<ul>
+<li>如果不是，递增nonce值，重新按照上述方法计算</li>
+<li>如果是，本次计算的哈希值为要解决的题目的正确答案</li>
+</ul>
+</li>
+<li>谁最先计算出正确答案，谁就获得这个区块的记账权</li>
+<li>注：nonce值是用来找到一个满足哈希值的数字；k 为哈希值前导零的个数，标记了计算的难度，0 越多计算难度越大</li>
+</ul>
+<h2 id="PoW达成共识的过程，其本质是？"><a href="#PoW达成共识的过程，其本质是？" class="headerlink" title="PoW达成共识的过程，其本质是？"></a>PoW达成共识的过程，其本质是？</h2><ul>
+<li>即获得记账权的节点将该区块信息广播给其它节点，其它节点判断该结点找到的区块中的所有交易都是有效且之前未存在过的，则认为该区块有效，并接受该区块</li>
+</ul>
+<h2 id="基于PoW的共识记账过程是怎样的？-以分散在世界各地的-5-台服务器为例，假设客户端A产生一个新的交易"><a href="#基于PoW的共识记账过程是怎样的？-以分散在世界各地的-5-台服务器为例，假设客户端A产生一个新的交易" class="headerlink" title="基于PoW的共识记账过程是怎样的？(以分散在世界各地的 5 台服务器为例，假设客户端A产生一个新的交易)"></a>基于PoW的共识记账过程是怎样的？(以分散在世界各地的 5 台服务器为例，假设客户端A产生一个新的交易)</h2><ul>
+<li><img src="https://img.shiqi-lu.tech/20210209112307.png"></li>
+<li>1.客户端A产生新的交易，向全网进行广播，要求对交易进行记账</li>
+<li>2.每个记账节点接收到这个请求后，将受到的交易信息放入一个区块中</li>
+<li>3.每个节点通过PoW算法，计算本节点的区块的哈希值，尝试找到一个具有足够工作量难度的工作量证明</li>
+<li>4.若节点D找到了一个工作量证明向全网广播。当且仅当包含在该区块中的交易都是有效且之前未存在过的，其它节点才会认同该区块的有效性</li>
+<li>5.其它节点接收到广播信息后，若该区块有效，接受该区块，并跟随在该区块的末尾，制造新区块延长该链条，将被接受的区块的随机哈希值视为新区块的随机哈希值</li>
+<li>核心：谁的计算能力强，获得记账权的可能性就越大。但必须保证其记 账的区块是有效的，并在之前未存在过，才能获得其他节点的认可</li>
+</ul>
+<h2 id="51-攻击是什么"><a href="#51-攻击是什么" class="headerlink" title="51%攻击是什么"></a>51%攻击是什么</h2><ul>
+<li>算力越强，系统大概率会越先计算出这个哈希值。这也就意味着，如果坏人们掌握了 51% 的算力，就可以发起 51% 攻击，比如，实现双花（Double Spending），即同一份钱花 2 次</li>
+<li>具体说是，攻击者掌握了较多的算力，能挖掘一条比原链更长的攻击链，并将攻击链向全网广播，这时，按照约定，节点将接受更长的链，也就是攻击链，丢弃原链</li>
+<li>注意：即使攻击者只有 30% 的算力，他也有可能连续计算出多个区块的哈希值，挖掘出更长的攻击链，发动攻击； 另外，即使攻击者拥有 51% 的算力，他也有可能半天无法计算出一个区块的哈希值，也就是攻击失败。也就是说，能否计算出符合条件的哈希值，有一定的概率性，但长久来看，攻击者攻击成功的概率等同于攻击者算力的权重</li>
+</ul>
+<h2 id="比特币中如果采用-Raft-算法实现共识而不是-Pow-算法的区块链会发生什么"><a href="#比特币中如果采用-Raft-算法实现共识而不是-Pow-算法的区块链会发生什么" class="headerlink" title="比特币中如果采用 Raft 算法实现共识而不是 Pow 算法的区块链会发生什么"></a>比特币中如果采用 Raft 算法实现共识而不是 Pow 算法的区块链会发生什么</h2><ul>
+<li>当恶意节点当选为领导者后，可以不断地告诉其他节点，这些比特币都是我的，按照 Raft 的约定，其他节点也就只能接受这种情况，最终就会出现，所有的比特币都被恶意节点盗走的情况</li>
+</ul>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>实现了相对的公平。PoW 的容错机制允许全网 50% 的节点出错，如果要破坏系统，则需要投入极大成本（若你有全球 51% 的算力，则可尝试攻击比特币）</li>
+</ul>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>共识达成的周期长、效率低，资源消耗大。每次达成共识需要全网共同参与运算，增加了每个节点的计算量。如果题目过难，会导致计算时间长、资源消耗多；而如果题目过于简单，会导致大量节点同时获得记账权，冲突多。这些问题，都会增加达成共识的时间</li>
+</ul>
+<h1 id="PoS"><a href="#PoS" class="headerlink" title="PoS"></a>PoS</h1><h2 id="核心原理"><a href="#核心原理" class="headerlink" title="核心原理"></a>核心原理</h2><ul>
+<li>由系统权益代替算力来决定区块记账权，拥有的权益越大获得记账权的概率就越大</li>
+<li>权益，即每个节点占有货币的数量和时间，而货币就是节点所获得的奖励</li>
+</ul>
+<h2 id="基于-PoS-算法获得区块记账权的方法相比基于-PoW-的方法的不同之处是？"><a href="#基于-PoS-算法获得区块记账权的方法相比基于-PoW-的方法的不同之处是？" class="headerlink" title="基于 PoS 算法获得区块记账权的方法相比基于 PoW 的方法的不同之处是？"></a>基于 PoS 算法获得区块记账权的方法相比基于 PoW 的方法的不同之处是？</h2><ul>
+<li>PoS是根据结点拥有的股权或权益进行计算的</li>
+</ul>
+<h2 id="通过-PoS-算法决定区块记账权的流程和-PoW-算法的唯一不同的是？"><a href="#通过-PoS-算法决定区块记账权的流程和-PoW-算法的唯一不同的是？" class="headerlink" title="通过 PoS 算法决定区块记账权的流程和 PoW 算法的唯一不同的是？"></a>通过 PoS 算法决定区块记账权的流程和 PoW 算法的唯一不同的是？</h2><ul>
+<li>每个节点在计算自己记账权的时候，通过计算自己的股权或权益来评估，如果发现自己权益最大，则将自己的区块广播给其它节点，当然必须保证该区块的有效性</li>
+<li><img src="https://img.shiqi-lu.tech/20210209114030.png"></li>
+</ul>
+<h2 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>1.将算力竞争转变成权益竞争。与 PoW 相比，PoS 不需要消耗大量的电力就能够保证区块链网络的安全性</li>
+<li>2.不需要在每个区块中创建新的货币来激励记账者参与当前网络的运行，这也就在一定程度上缩短了达成共识所需要的时间</li>
+</ul>
+<h2 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>PoS 算法中持币越多或持币越久，币龄就会越高，持币人就越容易挖到区块并得到激 励，而持币少的人基本没有机会</li>
+<li>整个系统的安全性实际上会被持币数量较大的一部分 人掌握，容易出现垄断现象</li>
+</ul>
+<h1 id="DPoS"><a href="#DPoS" class="headerlink" title="DPoS"></a>DPoS</h1><h2 id="DPoS-委托权益证明法-是什么"><a href="#DPoS-委托权益证明法-是什么" class="headerlink" title="DPoS(委托权益证明法)是什么"></a>DPoS(委托权益证明法)是什么</h2><ul>
+<li>由被社区选举的可信账户（受托人，比如得票数排行前 101 位）来拥有记账权</li>
+<li>为了成为正式受托人，用户要去社区拉票，获得足够多的信任。用户根据自己持有的货币数量占总量的百分比来投票</li>
+<li>根据自己拥有的权益，投票选出可代表自己的受托节点，受托节点之间竞争记账权</li>
+<li><img src="https://img.shiqi-lu.tech/20210209114943.png"></li>
+<li>通常会选出k(如101)个受托结点，它们的权利是完全相等的。受托节点之间争取记账权也是根据算力进行竞争的。只要受托节点提供的算力不稳定，计算机宕机或者利用手中的权力作恶，随时可以被握着货币的普通节点投票踢出整个系统，而后备的受托节点可以随时顶上去</li>
+</ul>
+<h2 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>1.由投票选举出的若干信誉度更高的受托人记账，解决了所有节点均参与竞争导致消息量大、达成一致的周期长的问题。DPoS 能耗更低，具有更快的交易速度</li>
+<li>2.每隔一定周期会调整受托人，避免受托人造假和独权</li>
+</ul>
+<h2 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>1.由于大多数持币人通过受托人参与投票，投票的积极性并不高</li>
+<li>2.一旦出现故障节点，DPoS 无法及时做出应对，导致安全隐患</li>
+</ul>
+<h1 id="PoW、PoS和DPoS三种共识算法的对比图"><a href="#PoW、PoS和DPoS三种共识算法的对比图" class="headerlink" title="PoW、PoS和DPoS三种共识算法的对比图"></a>PoW、PoS和DPoS三种共识算法的对比图</h1><ul>
+<li><img src="https://img.shiqi-lu.tech/20210209114542.png"></li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>3种分布式锁实现原理的全面整理</title>
     <url>/distributed-lock/</url>
     <content><![CDATA[<h1 id="分布式锁是什么？"><a href="#分布式锁是什么？" class="headerlink" title="分布式锁是什么？"></a>分布式锁是什么？</h1><ul>
@@ -3143,196 +3335,6 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s培训第5课 资源管理器</title>
-    <url>/k8s-5/</url>
-    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
-<ul>
-<li>Q:Pod有哪些分类？<ul>
-<li>自主式Pod：Pod退出了，此类型的Pod不会被创建</li>
-<li>控制器管理的Pod：在控制器的生命周期里，始终要维持Pod的副本数目</li>
-</ul>
-</li>
-<li>Q:什么是控制器？<ul>
-<li>k8s中内建了很多controller(控制器)，这些相当于一个状态机，用来控制Pod的具体状态和行为</li>
-</ul>
-</li>
-<li>Q:控制器有哪些类型？<ul>
-<li>ReplicationController和ReplicaSet</li>
-<li>Deployment</li>
-<li>DaemonSet</li>
-<li>StateFulSet</li>
-<li>Job/CronJob</li>
-<li>Horizontal Pod Autoscaling</li>
-</ul>
-</li>
-<li>Q:命令式编程和声明式编程的区别是什么？<ul>
-<li>命令式编程：侧重于如何实现，需要把程序的实现过程按照逻辑结果一步步写下来，k8s使用create命令</li>
-<li>声明式编程：侧重于定义想要什么，然后告诉计算机/引擎，让它帮忙实现，k8s使用apply命令</li>
-</ul>
-</li>
-<li>Q:ReplicationController和ReplicaSet是什么？<ul>
-<li>ReplicationController(RC)用来确保容器应用的副本数始终保持在用户定义的副本数，即如果有容器异常退出，会自动创建新的Pod来替代，而如果异常多出来的容器也会自动回收</li>
-<li>在新版本的k8s中建议使用ReplicaSet来取代ReplicationController。ReplicaSet跟ReplicationController没有本质的不同，只是名字不一样，并且ReplicaSet支持集合式的selector</li>
-<li>创建命令<code>kubectl create -f rs.yaml</code><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ReplicaSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">frontend</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">selector:</span></span><br><span class="line">  <span class="attr">matchLabels:</span></span><br><span class="line">    <span class="attr">tier:</span> <span class="string">frontend</span></span><br><span class="line"><span class="attr">template:</span></span><br><span class="line">  <span class="attr">metadata:</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">      <span class="attr">tier:</span> <span class="string">frontend</span></span><br><span class="line">  <span class="attr">spec:</span></span><br><span class="line">    <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">php-redis</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">gcr.io/google_samples/gb-frontend:v3</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">GET_HOSTS_FROM</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">dns</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-
-
-</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>Q:Deployment是什么？<ul>
-<li>为Pod和ReplicaSet提供了一个声明式定义(declarative)方法，用来替代以前的ReplicationController来方便的管理应用</li>
-<li>典型场景有：<ul>
-<li>定义Deployment来创建Pod和ReplicaSet</li>
-<li>滚动升级和回滚应用</li>
-<li>扩容和缩容</li>
-<li>暂停和继续Deployment</li>
-</ul>
-</li>
-<li><img src="https://img.shiqi-lu.tech/20200921170358.png"></li>
-</ul>
-</li>
-<li><h2 id="Q-如何使用Deployment部署一个简单的Nginx应用"><a href="#Q-如何使用Deployment部署一个简单的Nginx应用" class="headerlink" title="Q:如何使用Deployment部署一个简单的Nginx应用"></a>Q:如何使用Deployment部署一个简单的Nginx应用</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.7.9</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建命令：<code>kubectl create -f https://kubernetes.io/docs/user-guide/nginx-deployment.yaml --record</code></li>
-<li>其中–record参数可以记录命令，可以很方便的查看每次revision的变化</li>
-</ul>
-</li>
-<li>Q:如何查看deployment状态？<ul>
-<li><code>kubectl get deployment</code></li>
-</ul>
-</li>
-<li>Q:如何对Deployment进行扩容？<ul>
-<li><code>kubectl scale deployment nginx-deployment --replicas 10</code></li>
-</ul>
-</li>
-<li>Q:如何更新deployment镜像？<ul>
-<li><code>kubectl set image deployment/nginx-deployment nginx=nginx:1.9.1</code></li>
-<li>=前是容器名，后是镜像</li>
-</ul>
-</li>
-<li>Q:如何回滚deployment<ul>
-<li><code>kubectl rollout undo deployment/nginx-deployment</code></li>
-</ul>
-</li>
-<li>Q:如何查看可回滚的deployment历史版本？<ul>
-<li><code>kubectl rollout history deployment/nginx-deployment</code></li>
-</ul>
-</li>
-<li>Q:如何回滚deployment到指定的历史版本？<ul>
-<li><code>kubectl rollout undo deployment/nginx-deployment --to-version=2</code></li>
-</ul>
-</li>
-<li>Q:如何查看rollout状态？<ul>
-<li><code>kubectl rollout status deployment/nginx-deployment</code></li>
-</ul>
-</li>
-<li>Q:如何编辑Deployment？<ul>
-<li><code>kubectl edit deployment/nginx-deployment</code></li>
-</ul>
-</li>
-<li>Q:Deployment的清理策略是什么？<ul>
-<li>可以通过设置<code>.spec.revisonHistoryLimit</code>项来指定deployment最多保留多少revision历史记录。默认的会保留所有的revision；如果将该项设置为0，Deployment就不允许回退了</li>
-</ul>
-</li>
-<li>Q:Deployment的更新策略是什么？<ul>
-<li>保证在升级时只有一定数量的Pod是down的。默认的，它会确保至少有比期望的Pod数量少一个是up状态（最多一个不可用）</li>
-<li>Deployment 同时也可以确保只创建出超过期望数量的一定数量的Pod。默认的，它会确保最多比期望的Pod数 量多一个的Pod是up的（最多1个surge）</li>
-<li>未来的 Kuberentes 版本中，将从1-1变成25%-25%</li>
-</ul>
-</li>
-<li>Q:DaemonSet是什么？<ul>
-<li>确保全部(或者一些)Node上运行一个Pod的副本。当有Node加入集群时，也会为它们新增一个Pod。当有Node从集群移除时，这些Pod也会被回收。删除DaemonSet将会删除它创建的所有Pod</li>
-<li>使用DaemonSet的一些典型用法：<ul>
-<li>运行集群存储daemon，例如在每个Node上运行glusterd、ceph</li>
-<li>在每个Node上运行日志手机daemon，例如fluentd、logstash</li>
-<li>在每个Node上运行监控daemon，例如Prometheus Node Exporter、collectd、Datadog代理、New Relic代理，或Ganglia gmond<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DaemonSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">deamonset-example</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">daemonset</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="comment"># 注意这个name和上面的metadata中的name必须要一致</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">deamonset-example</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">deamonset-example</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">daemonset-example</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:Job的作用是什么？<ul>
-<li>负责批处理任务，即仅执行一次的任务，它保证批处理任务的一个或多个Pod成功结束</li>
-<li>特殊说明<ul>
-<li>spec.template格式同Pod</li>
-<li>RestartPolicy仅支持Never或OnFailure</li>
-<li>单个Pod时，默认Pod成功运行后Job即结束</li>
-<li><code>.spec.completions</code>标志Job结束需要成功运行的Pod个数，默认为1</li>
-<li><code>.spec.parallelism</code>标志并行运行的Pod的个数，默认为1</li>
-<li><code>spec.activeDeadlineSeconds</code>标志失败Pod的重试最大时间，超过这个时间不会继续重试<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Job</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pi</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">pi</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pi</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">perl</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;perl&quot;</span>, <span class="string">&quot;-Mbignum=bpi&quot;</span>, <span class="string">&quot;-wle&quot;</span>, <span class="string">&quot;print bpi(2000)&quot;</span>] </span><br><span class="line">      <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>创建：<code>kubectl create -f job.yaml</code></li>
-</ul>
-</li>
-<li>Q:CronJob的作用是什么？<ul>
-<li>管理基于时间的Job，即：<ul>
-<li>在给定时间点只运行一次</li>
-<li>周期性地在给定时间点运行</li>
-</ul>
-</li>
-<li>典型用法是：<ul>
-<li>在给定的时间点调度Job运行</li>
-<li>创建周期性运行的Job，如数据库备份、发送邮件</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:如何查看cronjob状态？<ul>
-<li><code>kubectl get cronjob</code></li>
-</ul>
-</li>
-<li>Q:StatefulSet是什么？<ul>
-<li>作为Controller为Pod提供唯一的标识。可以保证部署和scale的顺序</li>
-<li>是为了解决有状态服务的问题(对应Delpoyments和ReplicaSets是为无状态服务而设计)，其应用场景包括：<ul>
-<li>稳定的持久化存储，即Pod重新调度后还是能访问到相同的持久化数据，基于PVC来实现</li>
-<li>稳定的网络标志，即Pod重新调度后其PodName和HostName不变，基于Headless Service(即没有Cluster IP的Service)来实现</li>
-<li>有序部署，有序扩展，即Pod是有顺序的，在部署或者扩展的时候要依据定义的顺序依次进行，基于init containers来实现</li>
-<li>有序收缩，有序删除</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Q:Horizontal Pod Autoscaling是什么？<ul>
-<li>应用的资源使用率通常都有高峰和低谷的时候，如何削峰填谷，提高集群的整体资源利用率，让service中的pod个数自动调整呢？就是Horizontal Pod Autoscaling，即使Pod水平自动缩放</li>
-</ul>
-</li>
-<li>Q:如何查看命令详细信息如rs？<ul>
-<li><code>kubectl explain rs</code></li>
-</ul>
-</li>
-<li>Q:如何删除所有pod？<ul>
-<li><code>kubectl delete pod --all</code></li>
-</ul>
-</li>
-<li>Q:查看pod状态的时候如何查看标签？<ul>
-<li><code>kubectl get pod --show-labels</code></li>
-</ul>
-</li>
-<li>Q:如何给pod添加标签？<ul>
-<li><code>kubectl label pod frontend-m8szd tier=frontend1</code></li>
-<li>即给frontend-m8szd这个容器加了一个标签，若已存在，需要使用–overwrite=True来覆盖</li>
-</ul>
-</li>
-<li>Q:如何删除所有rs？<ul>
-<li><code>kubectl delete rs --all</code></li>
-</ul>
-</li>
-<li>Q:如何查看pod的详细信息？<ul>
-<li><code>kubectl get pod -o wide</code></li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>k8s</category>
-      </categories>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>k8s培训第6课 Service</title>
     <url>/k8s-6/</url>
     <content><![CDATA[<ul>
@@ -3565,6 +3567,196 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s培训第5课 资源管理器</title>
+    <url>/k8s-5/</url>
+    <content><![CDATA[<p>来源：<a href="https://www.bilibili.com/video/BV1w4411y7Go?p=1">b站</a></p>
+<ul>
+<li>Q:Pod有哪些分类？<ul>
+<li>自主式Pod：Pod退出了，此类型的Pod不会被创建</li>
+<li>控制器管理的Pod：在控制器的生命周期里，始终要维持Pod的副本数目</li>
+</ul>
+</li>
+<li>Q:什么是控制器？<ul>
+<li>k8s中内建了很多controller(控制器)，这些相当于一个状态机，用来控制Pod的具体状态和行为</li>
+</ul>
+</li>
+<li>Q:控制器有哪些类型？<ul>
+<li>ReplicationController和ReplicaSet</li>
+<li>Deployment</li>
+<li>DaemonSet</li>
+<li>StateFulSet</li>
+<li>Job/CronJob</li>
+<li>Horizontal Pod Autoscaling</li>
+</ul>
+</li>
+<li>Q:命令式编程和声明式编程的区别是什么？<ul>
+<li>命令式编程：侧重于如何实现，需要把程序的实现过程按照逻辑结果一步步写下来，k8s使用create命令</li>
+<li>声明式编程：侧重于定义想要什么，然后告诉计算机/引擎，让它帮忙实现，k8s使用apply命令</li>
+</ul>
+</li>
+<li>Q:ReplicationController和ReplicaSet是什么？<ul>
+<li>ReplicationController(RC)用来确保容器应用的副本数始终保持在用户定义的副本数，即如果有容器异常退出，会自动创建新的Pod来替代，而如果异常多出来的容器也会自动回收</li>
+<li>在新版本的k8s中建议使用ReplicaSet来取代ReplicationController。ReplicaSet跟ReplicationController没有本质的不同，只是名字不一样，并且ReplicaSet支持集合式的selector</li>
+<li>创建命令<code>kubectl create -f rs.yaml</code><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ReplicaSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">frontend</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">selector:</span></span><br><span class="line">  <span class="attr">matchLabels:</span></span><br><span class="line">    <span class="attr">tier:</span> <span class="string">frontend</span></span><br><span class="line"><span class="attr">template:</span></span><br><span class="line">  <span class="attr">metadata:</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">      <span class="attr">tier:</span> <span class="string">frontend</span></span><br><span class="line">  <span class="attr">spec:</span></span><br><span class="line">    <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">php-redis</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">gcr.io/google_samples/gb-frontend:v3</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">GET_HOSTS_FROM</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">dns</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Q:Deployment是什么？<ul>
+<li>为Pod和ReplicaSet提供了一个声明式定义(declarative)方法，用来替代以前的ReplicationController来方便的管理应用</li>
+<li>典型场景有：<ul>
+<li>定义Deployment来创建Pod和ReplicaSet</li>
+<li>滚动升级和回滚应用</li>
+<li>扩容和缩容</li>
+<li>暂停和继续Deployment</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20200921170358.png"></li>
+</ul>
+</li>
+<li><h2 id="Q-如何使用Deployment部署一个简单的Nginx应用"><a href="#Q-如何使用Deployment部署一个简单的Nginx应用" class="headerlink" title="Q:如何使用Deployment部署一个简单的Nginx应用"></a>Q:如何使用Deployment部署一个简单的Nginx应用</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.7.9</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建命令：<code>kubectl create -f https://kubernetes.io/docs/user-guide/nginx-deployment.yaml --record</code></li>
+<li>其中–record参数可以记录命令，可以很方便的查看每次revision的变化</li>
+</ul>
+</li>
+<li>Q:如何查看deployment状态？<ul>
+<li><code>kubectl get deployment</code></li>
+</ul>
+</li>
+<li>Q:如何对Deployment进行扩容？<ul>
+<li><code>kubectl scale deployment nginx-deployment --replicas 10</code></li>
+</ul>
+</li>
+<li>Q:如何更新deployment镜像？<ul>
+<li><code>kubectl set image deployment/nginx-deployment nginx=nginx:1.9.1</code></li>
+<li>=前是容器名，后是镜像</li>
+</ul>
+</li>
+<li>Q:如何回滚deployment<ul>
+<li><code>kubectl rollout undo deployment/nginx-deployment</code></li>
+</ul>
+</li>
+<li>Q:如何查看可回滚的deployment历史版本？<ul>
+<li><code>kubectl rollout history deployment/nginx-deployment</code></li>
+</ul>
+</li>
+<li>Q:如何回滚deployment到指定的历史版本？<ul>
+<li><code>kubectl rollout undo deployment/nginx-deployment --to-version=2</code></li>
+</ul>
+</li>
+<li>Q:如何查看rollout状态？<ul>
+<li><code>kubectl rollout status deployment/nginx-deployment</code></li>
+</ul>
+</li>
+<li>Q:如何编辑Deployment？<ul>
+<li><code>kubectl edit deployment/nginx-deployment</code></li>
+</ul>
+</li>
+<li>Q:Deployment的清理策略是什么？<ul>
+<li>可以通过设置<code>.spec.revisonHistoryLimit</code>项来指定deployment最多保留多少revision历史记录。默认的会保留所有的revision；如果将该项设置为0，Deployment就不允许回退了</li>
+</ul>
+</li>
+<li>Q:Deployment的更新策略是什么？<ul>
+<li>保证在升级时只有一定数量的Pod是down的。默认的，它会确保至少有比期望的Pod数量少一个是up状态（最多一个不可用）</li>
+<li>Deployment 同时也可以确保只创建出超过期望数量的一定数量的Pod。默认的，它会确保最多比期望的Pod数 量多一个的Pod是up的（最多1个surge）</li>
+<li>未来的 Kuberentes 版本中，将从1-1变成25%-25%</li>
+</ul>
+</li>
+<li>Q:DaemonSet是什么？<ul>
+<li>确保全部(或者一些)Node上运行一个Pod的副本。当有Node加入集群时，也会为它们新增一个Pod。当有Node从集群移除时，这些Pod也会被回收。删除DaemonSet将会删除它创建的所有Pod</li>
+<li>使用DaemonSet的一些典型用法：<ul>
+<li>运行集群存储daemon，例如在每个Node上运行glusterd、ceph</li>
+<li>在每个Node上运行日志手机daemon，例如fluentd、logstash</li>
+<li>在每个Node上运行监控daemon，例如Prometheus Node Exporter、collectd、Datadog代理、New Relic代理，或Ganglia gmond<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DaemonSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">deamonset-example</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">daemonset</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="comment"># 注意这个name和上面的metadata中的name必须要一致</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">deamonset-example</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">deamonset-example</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">daemonset-example</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Job的作用是什么？<ul>
+<li>负责批处理任务，即仅执行一次的任务，它保证批处理任务的一个或多个Pod成功结束</li>
+<li>特殊说明<ul>
+<li>spec.template格式同Pod</li>
+<li>RestartPolicy仅支持Never或OnFailure</li>
+<li>单个Pod时，默认Pod成功运行后Job即结束</li>
+<li><code>.spec.completions</code>标志Job结束需要成功运行的Pod个数，默认为1</li>
+<li><code>.spec.parallelism</code>标志并行运行的Pod的个数，默认为1</li>
+<li><code>spec.activeDeadlineSeconds</code>标志失败Pod的重试最大时间，超过这个时间不会继续重试<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Job</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pi</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">pi</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pi</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">perl</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;perl&quot;</span>, <span class="string">&quot;-Mbignum=bpi&quot;</span>, <span class="string">&quot;-wle&quot;</span>, <span class="string">&quot;print bpi(2000)&quot;</span>] </span><br><span class="line">      <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>创建：<code>kubectl create -f job.yaml</code></li>
+</ul>
+</li>
+<li>Q:CronJob的作用是什么？<ul>
+<li>管理基于时间的Job，即：<ul>
+<li>在给定时间点只运行一次</li>
+<li>周期性地在给定时间点运行</li>
+</ul>
+</li>
+<li>典型用法是：<ul>
+<li>在给定的时间点调度Job运行</li>
+<li>创建周期性运行的Job，如数据库备份、发送邮件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:如何查看cronjob状态？<ul>
+<li><code>kubectl get cronjob</code></li>
+</ul>
+</li>
+<li>Q:StatefulSet是什么？<ul>
+<li>作为Controller为Pod提供唯一的标识。可以保证部署和scale的顺序</li>
+<li>是为了解决有状态服务的问题(对应Delpoyments和ReplicaSets是为无状态服务而设计)，其应用场景包括：<ul>
+<li>稳定的持久化存储，即Pod重新调度后还是能访问到相同的持久化数据，基于PVC来实现</li>
+<li>稳定的网络标志，即Pod重新调度后其PodName和HostName不变，基于Headless Service(即没有Cluster IP的Service)来实现</li>
+<li>有序部署，有序扩展，即Pod是有顺序的，在部署或者扩展的时候要依据定义的顺序依次进行，基于init containers来实现</li>
+<li>有序收缩，有序删除</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Q:Horizontal Pod Autoscaling是什么？<ul>
+<li>应用的资源使用率通常都有高峰和低谷的时候，如何削峰填谷，提高集群的整体资源利用率，让service中的pod个数自动调整呢？就是Horizontal Pod Autoscaling，即使Pod水平自动缩放</li>
+</ul>
+</li>
+<li>Q:如何查看命令详细信息如rs？<ul>
+<li><code>kubectl explain rs</code></li>
+</ul>
+</li>
+<li>Q:如何删除所有pod？<ul>
+<li><code>kubectl delete pod --all</code></li>
+</ul>
+</li>
+<li>Q:查看pod状态的时候如何查看标签？<ul>
+<li><code>kubectl get pod --show-labels</code></li>
+</ul>
+</li>
+<li>Q:如何给pod添加标签？<ul>
+<li><code>kubectl label pod frontend-m8szd tier=frontend1</code></li>
+<li>即给frontend-m8szd这个容器加了一个标签，若已存在，需要使用–overwrite=True来覆盖</li>
+</ul>
+</li>
+<li>Q:如何删除所有rs？<ul>
+<li><code>kubectl delete rs --all</code></li>
+</ul>
+</li>
+<li>Q:如何查看pod的详细信息？<ul>
+<li><code>kubectl get pod -o wide</code></li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>k8s</category>
+      </categories>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s培训第8课 集群调度</title>
     <url>/k8s-8/</url>
     <content><![CDATA[<ul>
@@ -3646,138 +3838,6 @@
       </categories>
       <tags>
         <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>海量数据处理</title>
-    <url>/mass-data-processing/</url>
-    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
-<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
-<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
-<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
-<li>3.堆/快排：排序得到频率最高的IP</li>
-</ul>
-</li>
-<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
-<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
-<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
-<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
-<li>也可用trie树</li>
-</ul>
-</li>
-<li>堆排找topK过程<ul>
-<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
-</ul>
-</li>
-<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
-<li>如果同一个数据元素只出现在某一台机器中<ul>
-<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
-<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
-</ul>
-</li>
-<li>如果同一个数据元素出现在不同机器中<ul>
-<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
-<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
-<li>解法一<ul>
-<li>1.散列映射</li>
-<li>2.hash_map统计</li>
-<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
-</ul>
-</li>
-<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
-</ul>
-</li>
-<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
-<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
-<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
-<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
-<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
-<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
-<li>2.不同的区域再利用位图进行统计</li>
-</ul>
-</li>
-<li>寻找中位数：找出5亿个int型数的中位数<ul>
-<li>1.将这5亿个int型数划分为2^{16}个区域</li>
-<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
-<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
-</ul>
-</li>
-</ul>
-<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
-<li>外排序介绍<ul>
-<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
-</ul>
-</li>
-<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
-<li>1.位图<ul>
-<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
-<li>能采用位图方案的原因<ul>
-<li>输入数据限制在相对较小的范围内</li>
-<li>数据没有重复</li>
-<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>2.多路归并<ul>
-<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
-<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
-<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
-</ul>
-</li>
-<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
-<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
-<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
-<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
-</ul>
-</li>
-<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
-<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
-<li>读入40亿个数，设置相应的位</li>
-<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
-<li>原理<ul>
-<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
-<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
-<li>但会有误判的可能</li>
-</ul>
-</li>
-</ul>
-<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
-<li>设计一个比较两篇文档相似度的算法<ul>
-<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
-<li>simhash算法</li>
-</ul>
-</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
-- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>海量数据</tag>
       </tags>
   </entry>
   <entry>
@@ -4071,6 +4131,138 @@
         <tag>数据库</tag>
         <tag>MongoDB</tag>
         <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>海量数据处理</title>
+    <url>/mass-data-processing/</url>
+    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
+<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
+<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
+<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
+<li>3.堆/快排：排序得到频率最高的IP</li>
+</ul>
+</li>
+<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
+<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
+<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
+<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
+<li>也可用trie树</li>
+</ul>
+</li>
+<li>堆排找topK过程<ul>
+<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
+</ul>
+</li>
+<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
+<li>如果同一个数据元素只出现在某一台机器中<ul>
+<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
+<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
+</ul>
+</li>
+<li>如果同一个数据元素出现在不同机器中<ul>
+<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
+<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
+<li>解法一<ul>
+<li>1.散列映射</li>
+<li>2.hash_map统计</li>
+<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
+</ul>
+</li>
+<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
+</ul>
+</li>
+<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
+<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
+<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
+<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
+<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
+<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
+<li>2.不同的区域再利用位图进行统计</li>
+</ul>
+</li>
+<li>寻找中位数：找出5亿个int型数的中位数<ul>
+<li>1.将这5亿个int型数划分为2^{16}个区域</li>
+<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
+<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
+</ul>
+</li>
+</ul>
+<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
+<li>外排序介绍<ul>
+<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
+</ul>
+</li>
+<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
+<li>1.位图<ul>
+<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
+<li>能采用位图方案的原因<ul>
+<li>输入数据限制在相对较小的范围内</li>
+<li>数据没有重复</li>
+<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.多路归并<ul>
+<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
+<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
+<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
+</ul>
+</li>
+<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
+<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
+<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
+<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
+</ul>
+</li>
+<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
+<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
+<li>读入40亿个数，设置相应的位</li>
+<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
+<li>原理<ul>
+<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
+<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
+<li>但会有误判的可能</li>
+</ul>
+</li>
+</ul>
+<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
+<li>设计一个比较两篇文档相似度的算法<ul>
+<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
+<li>simhash算法</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
+- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>海量数据</tag>
       </tags>
   </entry>
   <entry>
@@ -4449,6 +4641,88 @@
       </tags>
   </entry>
   <entry>
+    <title>pytorch学习笔记</title>
+    <url>/pytorch-learning/</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
+<ul>
+<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
+<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
+<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
+<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
+<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+</ul>
+<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
+<ul>
+<li>Pytorch简介及环境配置</li>
+<li>Pytorch基础数据结构——张量</li>
+<li>张量操作与线性回归</li>
+<li>计算图与动态图机制</li>
+<li>autograd与逻辑回归</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
+<ul>
+<li>数据读取机制DataLoader与Dataset</li>
+<li>数据预处理transforms模块机制</li>
+<li>二十二种transforms数据预处理方法</li>
+<li>学会自定义transforms方法</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
+<ul>
+<li>nn.Module与网络模型构建步骤</li>
+<li>模型容器与AlexNet构建</li>
+<li>网络层中的卷积层</li>
+<li>网络层中的池化层、全连接层和激活函数层</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
+<ul>
+<li>权值初始化</li>
+<li>损失函数（一）</li>
+<li>Pytorch的14种损失函数</li>
+<li>优化器optimizer的概念</li>
+<li>torch.optim.SGD</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
+<ul>
+<li>学习率调整</li>
+<li>TensorBoard简介与安装</li>
+<li>TensorBoard使用（一）</li>
+<li>TensorBoard使用（二）</li>
+<li>hook函数与CAM</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
+<ul>
+<li>weight_decay</li>
+<li>dropout</li>
+<li>Batch Normalization</li>
+<li>Layer Normalization、Instance</li>
+<li>Normalization和Group Normalization</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
+<ul>
+<li>模型保存与加载</li>
+<li>Finetune</li>
+<li>GPU的使用</li>
+<li>Pytorch中常见报错</li>
+</ul>
+<p>Week8、9 PyTorch深度体验</p>
+<ul>
+<li>图像分类一瞥</li>
+<li>图像分割一瞥</li>
+<li>目标检测一瞥（上）</li>
+<li>目标检测一瞥（下）</li>
+<li>对抗生成网络一瞥</li>
+<li>循环神经网络一瞥</li>
+</ul>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《OFF学》读书笔记</title>
     <url>/off-time/</url>
     <content><![CDATA[<ul>
@@ -4697,88 +4971,6 @@
       </categories>
       <tags>
         <tag>休闲</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pytorch学习笔记</title>
-    <url>/pytorch-learning/</url>
-    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
-</ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
-</ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
-</ul>
-]]></content>
-      <categories>
-        <category>pytorch学习笔记</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -5130,6 +5322,56 @@
       </tags>
   </entry>
   <entry>
+    <title>自研小工具roam2anki介绍</title>
+    <url>/roam2anki-intro/</url>
+    <content><![CDATA[<h1 id="roam2anki"><a href="#roam2anki" class="headerlink" title="roam2anki"></a>roam2anki</h1><p>roam2anki用来把Roam Research的笔记转成anki进行记忆</p>
+<h1 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h1><p><a href="https://github.com/shiqi-lu/roam2anki">Github</a></p>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>已经完成所有规划的功能，已支持roam中的所有样式，包括行内、行间公式、代码块、高亮、加粗、图片、超链接等等，其中第一级会解析为问题，第二级和往后级别均解析为第一级的答案</p>
+<h1 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h1><ol>
+<li>下载roam2anki.py和roam2anki模板.apkg</li>
+<li>第一次操作先在anki中导入roam2anki模板.apkg</li>
+<li>新建一个txt文件如example.txt，把要导入的roam字段粘贴到文本中，注意第一级为问题，第二级以下都是答案</li>
+<li>运行python脚本<code>python roam2anki.py example.txt</code>，程序把转换成对应的只有两列的csv文件，问题是第一列，回答是第二列</li>
+<li>把csv导入到anki中，保持默认设置即可。即fields separated by: Tab；勾选上Allow HTML in fields；Field 1为正面；field 2为背面</li>
+</ol>
+<p><img src="https://img.shiqi-lu.tech/20210127160319.jpeg"></p>
+<h1 id="功能列表"><a href="#功能列表" class="headerlink" title="功能列表"></a>功能列表</h1><ul>
+<li><input checked="" disabled="" type="checkbox"> 支持所有样式：加粗、斜体、高亮、删字符、行内代码、超链接</li>
+<li><input checked="" disabled="" type="checkbox"> 支持图片并居中，支持引用图片</li>
+<li><input checked="" disabled="" type="checkbox"> 支持答案里最高10级的缩进</li>
+<li><input checked="" disabled="" type="checkbox"> 问题和答案支持块内多行</li>
+<li><input checked="" disabled="" type="checkbox"> 删除alias和双中括号</li>
+<li><input checked="" disabled="" type="checkbox"> 把同级问题合并成anki同一个问题</li>
+<li><input checked="" disabled="" type="checkbox"> 支持问题和答案的行内公式、引用的行内公式</li>
+<li><input checked="" disabled="" type="checkbox"> 支持多行行间公式，引用的多行行间公式，同时支持块内的新起的多行行间公式，但要注意新起一行，不能续着写</li>
+<li><input checked="" disabled="" type="checkbox"> 支持代码块导入和语法高亮，支持引用代码块，若有必要并可强制选择代码块高亮语言</li>
+<li><input checked="" disabled="" type="checkbox"> 支持标题字号h1到h3</li>
+<li><input checked="" disabled="" type="checkbox"> 涉及到html的&lt;、&gt;、&amp;、”等字符放到anki前进行转义，保证所有字符都能显示</li>
+</ul>
+<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><ul>
+<li>答案和问题的代码块必须要新起一个块或块内新起一行，且这一行必须以3个反引号开始，即不支持代码块放在一行中间，原因是难以解析，且代码块展示就是会新起一行，就人工新起一行吧，结尾也要新起一行</li>
+<li>只支持无序列表(Bulleted List)，不支持有序列表(Numbered List)和文档(Document)，原因是有序列表难以判断和解析，支持文档模式会和现有的块内多行的判断有歧义</li>
+</ul>
+<h1 id="其它说明"><a href="#其它说明" class="headerlink" title="其它说明"></a>其它说明</h1><ul>
+<li>roam2anki.py提供了批量转换的方法，第二个选项<code>python roam2anki.py example ...</code>，若example为一个文件夹，会寻找example下的所有以.txt结尾的文件进行转换，后续可接多个文件或文件夹</li>
+<li>roam2anki只支持语法正确时的解析，即保证在roam中能正确解析的，导出anki后也正确解析，不正确的语法，或故意为难解析器的，，我也没办法哇</li>
+<li>roam2anki目前是作者写给自用，若使用过程中发现有解析出来的bug，请提一个issue</li>
+</ul>
+<h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><ul>
+<li>python &gt;= 3.7</li>
+<li>pandas &gt;= 1.0.1</li>
+</ul>
+]]></content>
+      <categories>
+        <category>学习工具</category>
+      </categories>
+      <tags>
+        <tag>学习</tag>
+        <tag>Roam Research</tag>
+        <tag>anki</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《软件架构设计 大型网站技术架构与业务融合之道》第 8 章学习笔记整理</title>
     <url>/soft-arch-design-ch8/</url>
     <content><![CDATA[<h1 id="高并发系统有哪些分类和例子"><a href="#高并发系统有哪些分类和例子" class="headerlink" title="高并发系统有哪些分类和例子"></a>高并发系统有哪些分类和例子</h1><h2 id="侧重于「高并发读」的系统"><a href="#侧重于「高并发读」的系统" class="headerlink" title="侧重于「高并发读」的系统"></a>侧重于「高并发读」的系统</h2><ul>
@@ -5324,56 +5566,6 @@
         <tag>架构</tag>
         <tag>分布式</tag>
         <tag>高并发</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>自研小工具roam2anki介绍</title>
-    <url>/roam2anki-intro/</url>
-    <content><![CDATA[<h1 id="roam2anki"><a href="#roam2anki" class="headerlink" title="roam2anki"></a>roam2anki</h1><p>roam2anki用来把Roam Research的笔记转成anki进行记忆</p>
-<h1 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h1><p><a href="https://github.com/shiqi-lu/roam2anki">Github</a></p>
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>已经完成所有规划的功能，已支持roam中的所有样式，包括行内、行间公式、代码块、高亮、加粗、图片、超链接等等，其中第一级会解析为问题，第二级和往后级别均解析为第一级的答案</p>
-<h1 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h1><ol>
-<li>下载roam2anki.py和roam2anki模板.apkg</li>
-<li>第一次操作先在anki中导入roam2anki模板.apkg</li>
-<li>新建一个txt文件如example.txt，把要导入的roam字段粘贴到文本中，注意第一级为问题，第二级以下都是答案</li>
-<li>运行python脚本<code>python roam2anki.py example.txt</code>，程序把转换成对应的只有两列的csv文件，问题是第一列，回答是第二列</li>
-<li>把csv导入到anki中，保持默认设置即可。即fields separated by: Tab；勾选上Allow HTML in fields；Field 1为正面；field 2为背面</li>
-</ol>
-<p><img src="https://img.shiqi-lu.tech/20210127160319.jpeg"></p>
-<h1 id="功能列表"><a href="#功能列表" class="headerlink" title="功能列表"></a>功能列表</h1><ul>
-<li><input checked="" disabled="" type="checkbox"> 支持所有样式：加粗、斜体、高亮、删字符、行内代码、超链接</li>
-<li><input checked="" disabled="" type="checkbox"> 支持图片并居中，支持引用图片</li>
-<li><input checked="" disabled="" type="checkbox"> 支持答案里最高10级的缩进</li>
-<li><input checked="" disabled="" type="checkbox"> 问题和答案支持块内多行</li>
-<li><input checked="" disabled="" type="checkbox"> 删除alias和双中括号</li>
-<li><input checked="" disabled="" type="checkbox"> 把同级问题合并成anki同一个问题</li>
-<li><input checked="" disabled="" type="checkbox"> 支持问题和答案的行内公式、引用的行内公式</li>
-<li><input checked="" disabled="" type="checkbox"> 支持多行行间公式，引用的多行行间公式，同时支持块内的新起的多行行间公式，但要注意新起一行，不能续着写</li>
-<li><input checked="" disabled="" type="checkbox"> 支持代码块导入和语法高亮，支持引用代码块，若有必要并可强制选择代码块高亮语言</li>
-<li><input checked="" disabled="" type="checkbox"> 支持标题字号h1到h3</li>
-<li><input checked="" disabled="" type="checkbox"> 涉及到html的&lt;、&gt;、&amp;、”等字符放到anki前进行转义，保证所有字符都能显示</li>
-</ul>
-<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><ul>
-<li>答案和问题的代码块必须要新起一个块或块内新起一行，且这一行必须以3个反引号开始，即不支持代码块放在一行中间，原因是难以解析，且代码块展示就是会新起一行，就人工新起一行吧，结尾也要新起一行</li>
-<li>只支持无序列表(Bulleted List)，不支持有序列表(Numbered List)和文档(Document)，原因是有序列表难以判断和解析，支持文档模式会和现有的块内多行的判断有歧义</li>
-</ul>
-<h1 id="其它说明"><a href="#其它说明" class="headerlink" title="其它说明"></a>其它说明</h1><ul>
-<li>roam2anki.py提供了批量转换的方法，第二个选项<code>python roam2anki.py example ...</code>，若example为一个文件夹，会寻找example下的所有以.txt结尾的文件进行转换，后续可接多个文件或文件夹</li>
-<li>roam2anki只支持语法正确时的解析，即保证在roam中能正确解析的，导出anki后也正确解析，不正确的语法，或故意为难解析器的，，我也没办法哇</li>
-<li>roam2anki目前是作者写给自用，若使用过程中发现有解析出来的bug，请提一个issue</li>
-</ul>
-<h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><ul>
-<li>python &gt;= 3.7</li>
-<li>pandas &gt;= 1.0.1</li>
-</ul>
-]]></content>
-      <categories>
-        <category>学习工具</category>
-      </categories>
-      <tags>
-        <tag>学习</tag>
-        <tag>Roam Research</tag>
-        <tag>anki</tag>
       </tags>
   </entry>
   <entry>

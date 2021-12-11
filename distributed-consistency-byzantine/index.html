@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="完整整理了4种分布式共识算法（拜占庭容错算法）的原理，包括PBFT、PoW、PoS、DPos">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4种分布式共识算法（拜占庭容错算法）的整理">
+<meta property="og:url" content="http://shiqi-lu.tech/distributed-consistency-byzantine/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="完整整理了4种分布式共识算法（拜占庭容错算法）的原理，包括PBFT、PoW、PoS、DPos">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211209213757.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211209213906.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211209213957.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211211132947.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211211133752.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211211134722.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211211141659.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209112307.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209114030.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209114943.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210209114542.png">
+<meta property="article:published_time" content="2021-12-11T08:44:03.000Z">
+<meta property="article:modified_time" content="2021-12-11T08:44:03.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20211209213757.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/distributed-consistency-byzantine/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>4种分布式共识算法（拜占庭容错算法）的整理 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：CS/AI/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">62</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是分布式共识？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E5%92%8C%E5%85%B1%E8%AF%86%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">一致性和共识的区别是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86%E7%9A%84%E4%B8%A4%E4%B8%AA%E5%85%B3%E9%94%AE%E7%82%B9%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">分布式共识的两个关键点是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8B%9C%E5%8D%A0%E5%BA%AD%E5%AE%B9%E9%94%99%E7%AE%97%E6%B3%95%E5%92%8C%E9%9D%9E%E6%8B%9C%E5%8D%A0%E5%BA%AD%E5%AE%B9%E9%94%99%E7%AE%97%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">拜占庭容错算法和非拜占庭容错算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">区块链是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PBFT"><span class="nav-number">6.</span> <span class="nav-text">PBFT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%A3%E4%BF%A1%E6%B6%88%E6%81%AF%E5%9E%8B%E6%8B%9C%E5%8D%A0%E5%BA%AD%E9%97%AE%E9%A2%98%E4%B9%8B%E8%A7%A3%E7%9A%84%E5%B1%80%E9%99%90"><span class="nav-number">6.1.</span> <span class="nav-text">口信消息型拜占庭问题之解的局限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B"><span class="nav-number">6.2.</span> <span class="nav-text">过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%BE%E6%88%90%E5%85%B1%E8%AF%86%E7%9A%84%E4%B8%BE%E4%BE%8B"><span class="nav-number">6.3.</span> <span class="nav-text">达成共识的举例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%A0%E4%B8%AA%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="nav-number">6.4.</span> <span class="nav-text">几个注意点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PoW"><span class="nav-number">7.</span> <span class="nav-text">PoW</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PoW%E7%AE%97%E6%B3%95%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">7.1.</span> <span class="nav-text">PoW算法是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E9%87%8F%E8%AF%81%E6%98%8E-Proof-Of-Work-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">7.2.</span> <span class="nav-text">工作量证明(Proof Of Work)是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0-PoW-%E7%AE%97%E6%B3%95%E7%9A%84"><span class="nav-number">7.3.</span> <span class="nav-text">区块链如何实现 PoW 算法的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%87%E8%AE%BE%E6%AF%8F%E4%B8%AA%E8%8A%82%E7%82%B9%E4%BC%9A%E5%88%92%E5%88%86%E5%A4%9A%E4%B8%AA%E5%8C%BA%E5%9D%97%E7%94%A8%E4%BA%8E%E8%AE%B0%E5%BD%95%E7%94%A8%E6%88%B7%E4%BA%A4%E6%98%93%EF%BC%8CPoW%E7%AE%97%E6%B3%95%E8%8E%B7%E5%8F%96%E8%AE%B0%E8%B4%A6%E6%9D%83%E7%9A%84%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">7.4.</span> <span class="nav-text">假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PoW%E8%BE%BE%E6%88%90%E5%85%B1%E8%AF%86%E7%9A%84%E8%BF%87%E7%A8%8B%EF%BC%8C%E5%85%B6%E6%9C%AC%E8%B4%A8%E6%98%AF%EF%BC%9F"><span class="nav-number">7.5.</span> <span class="nav-text">PoW达成共识的过程，其本质是？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EPoW%E7%9A%84%E5%85%B1%E8%AF%86%E8%AE%B0%E8%B4%A6%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F-%E4%BB%A5%E5%88%86%E6%95%A3%E5%9C%A8%E4%B8%96%E7%95%8C%E5%90%84%E5%9C%B0%E7%9A%84-5-%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%BA%E4%BE%8B%EF%BC%8C%E5%81%87%E8%AE%BE%E5%AE%A2%E6%88%B7%E7%AB%AFA%E4%BA%A7%E7%94%9F%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84%E4%BA%A4%E6%98%93"><span class="nav-number">7.6.</span> <span class="nav-text">基于PoW的共识记账过程是怎样的？(以分散在世界各地的 5 台服务器为例，假设客户端A产生一个新的交易)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#51-%E6%94%BB%E5%87%BB%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">7.7.</span> <span class="nav-text">51%攻击是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E7%89%B9%E5%B8%81%E4%B8%AD%E5%A6%82%E6%9E%9C%E9%87%87%E7%94%A8-Raft-%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B1%E8%AF%86%E8%80%8C%E4%B8%8D%E6%98%AF-Pow-%E7%AE%97%E6%B3%95%E7%9A%84%E5%8C%BA%E5%9D%97%E9%93%BE%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88"><span class="nav-number">7.8.</span> <span class="nav-text">比特币中如果采用 Raft 算法实现共识而不是 Pow 算法的区块链会发生什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">7.9.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">7.10.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PoS"><span class="nav-number">8.</span> <span class="nav-text">PoS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86"><span class="nav-number">8.1.</span> <span class="nav-text">核心原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-PoS-%E7%AE%97%E6%B3%95%E8%8E%B7%E5%BE%97%E5%8C%BA%E5%9D%97%E8%AE%B0%E8%B4%A6%E6%9D%83%E7%9A%84%E6%96%B9%E6%B3%95%E7%9B%B8%E6%AF%94%E5%9F%BA%E4%BA%8E-PoW-%E7%9A%84%E6%96%B9%E6%B3%95%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84%E6%98%AF%EF%BC%9F"><span class="nav-number">8.2.</span> <span class="nav-text">基于 PoS 算法获得区块记账权的方法相比基于 PoW 的方法的不同之处是？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-PoS-%E7%AE%97%E6%B3%95%E5%86%B3%E5%AE%9A%E5%8C%BA%E5%9D%97%E8%AE%B0%E8%B4%A6%E6%9D%83%E7%9A%84%E6%B5%81%E7%A8%8B%E5%92%8C-PoW-%E7%AE%97%E6%B3%95%E7%9A%84%E5%94%AF%E4%B8%80%E4%B8%8D%E5%90%8C%E7%9A%84%E6%98%AF%EF%BC%9F"><span class="nav-number">8.3.</span> <span class="nav-text">通过 PoS 算法决定区块记账权的流程和 PoW 算法的唯一不同的是？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-1"><span class="nav-number">8.4.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-number">8.5.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DPoS"><span class="nav-number">9.</span> <span class="nav-text">DPoS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DPoS-%E5%A7%94%E6%89%98%E6%9D%83%E7%9B%8A%E8%AF%81%E6%98%8E%E6%B3%95-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">9.1.</span> <span class="nav-text">DPoS(委托权益证明法)是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-2"><span class="nav-number">9.2.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-2"><span class="nav-number">9.3.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PoW%E3%80%81PoS%E5%92%8CDPoS%E4%B8%89%E7%A7%8D%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E5%AF%B9%E6%AF%94%E5%9B%BE"><span class="nav-number">10.</span> <span class="nav-text">PoW、PoS和DPoS三种共识算法的对比图</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/distributed-consistency-byzantine/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          4种分布式共识算法（拜占庭容错算法）的整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-11 16:44:03" itemprop="dateCreated datePublished" datetime="2021-12-11T16:44:03+08:00">2021-12-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/distributed-consistency-byzantine/" class="post-meta-item leancloud_visitors" data-flag-title="4种分布式共识算法（拜占庭容错算法）的整理" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/distributed-consistency-byzantine/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/distributed-consistency-byzantine/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">完整整理了4种分布式共识算法（拜占庭容错算法）的原理，包括PBFT、PoW、PoS、DPos</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="什么是分布式共识？"><a href="#什么是分布式共识？" class="headerlink" title="什么是分布式共识？"></a>什么是分布式共识？</h1><ul>
+<li>在多个节点均可独自操作或记录的情况下，使得所有节点针对某个状态达成一致的过程</li>
+<li>本质是“求同存异”</li>
+</ul>
+<h1 id="一致性和共识的区别是什么？"><a href="#一致性和共识的区别是什么？" class="headerlink" title="一致性和共识的区别是什么？"></a>一致性和共识的区别是什么？</h1><ul>
+<li>一致性：分布式系统中的多个节点之间，给定一系列的操作，在约定协议的保障下，对外界呈现的数据或状态时一致的</li>
+<li>共识：分布式系统中多个节点之间，彼此对某个状态达成一致结果的过程</li>
+<li>一致性强调结果，共识强调达成一致的过程，共识算法是保障系统满足不同程度一致性的核心技术</li>
+</ul>
+<h1 id="分布式共识的两个关键点是什么？"><a href="#分布式共识的两个关键点是什么？" class="headerlink" title="分布式共识的两个关键点是什么？"></a>分布式共识的两个关键点是什么？</h1><ul>
+<li>1.获得记账权</li>
+<li>2.所有节点或服务器达成一致</li>
+</ul>
+<h1 id="拜占庭容错算法和非拜占庭容错算法"><a href="#拜占庭容错算法和非拜占庭容错算法" class="headerlink" title="拜占庭容错算法和非拜占庭容错算法"></a>拜占庭容错算法和非拜占庭容错算法</h1><ul>
+<li>拜占庭将军问题描述的是最困难的，也是最复杂的一种分布式故障场景，除了存在故障行为，还存在恶意行为的一个场景。必须使用拜占庭容错算法（Byzantine Fault Tolerance，BFT）。还有：PBFT 算法，PoW 算法</li>
+<li>在计算机分布式系统中，最常用的是非拜占庭容错算法，即故障容错算法（Crash Fault Tolerance，CFT）。CFT 解决的是分布式的系统中存在故障，但不存在恶意节点的场景下的共识问题。这个场景可能会丢失消息，或者有消息重复，但不存在错误消息，或者伪造消息的情况。常见的算法有 Paxos 算法、Raft 算法、ZAB 协议</li>
+</ul>
+<h1 id="区块链是什么？"><a href="#区块链是什么？" class="headerlink" title="区块链是什么？"></a>区块链是什么？</h1><ul>
+<li>由包含交易信息的区块从后向前有序链接起来的数据结构</li>
+<li>其中区块是指很多交易数据的集合，每个区块包括区块头和区块体<ul>
+<li>区块体包括前一区块的哈希值、本区块的哈希值和时间戳</li>
+<li>区块体用来存储交易数据</li>
+</ul>
+</li>
+</ul>
+<h1 id="PBFT"><a href="#PBFT" class="headerlink" title="PBFT"></a>PBFT</h1><h2 id="口信消息型拜占庭问题之解的局限"><a href="#口信消息型拜占庭问题之解的局限" class="headerlink" title="口信消息型拜占庭问题之解的局限"></a>口信消息型拜占庭问题之解的局限</h2><ul>
+<li>如果将军数为 n、叛将数为 f，那么算法需要递归协商 f+1 轮，消息复杂度为 O(n ^ (f + 1))，消息数量指数级暴增。 如果叛将数为 64，消息数已经远远超过 int64 所能表示的了</li>
+<li>尽管对于签名消息，不管叛将数（比如 f）是多少，经过 f + 1 轮的协商，忠将们都 能达成一致的作战指令，但是这个算法同样存在“理论化”和“消息数指数级暴增”的痛点</li>
+</ul>
+<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><ul>
+<li>客户端向主节点发送请求，主节点收到请求后，执行三阶段协议</li>
+<li>主节点进入预准备（Pre-prepare）阶段，构造包含客户端提议的值的预准备消息，并广播给其他从节点</li>
+<li>从节点收到预准备消息后，进入准备（Prepare）阶段，并分别广播包含客户端提议的值的准备消息给其他节点</li>
+<li>当某个节点收到 2f 个一致的包含客户端提议的值的准备消息后，会进入提交（Commit） 阶段，各节点分别提交消息给其它节点，告诉其它节点自己已经准备就绪</li>
+<li>当某个节点收到 2f + 1 个验证通过的提交消息后，说明达成共识，可接受客户端提议的值，并发送执行成功的消息给客户端</li>
+<li>客户端收到 f+1 个相同的响应消息时，说明节点已达成共识</li>
+</ul>
+<h2 id="达成共识的举例"><a href="#达成共识的举例" class="headerlink" title="达成共识的举例"></a>达成共识的举例</h2><ul>
+<li>场景<ul>
+<li>先假设苏秦制定的作战指令是进攻，而楚是叛徒（为了演示方便）：</li>
+<li><img src="https://img.shiqi-lu.tech/20211209213757.png"></li>
+<li>注意，所有的消息都是签名消息，也就是说，消息发送者的身份和消息内容都是 无法伪造和篡改的（比如，楚无法伪造一个假装来自赵的消息）</li>
+</ul>
+</li>
+<li>首先，苏秦联系赵，向赵发送包含作战指令“进攻”的请求<ul>
+<li><img src="https://img.shiqi-lu.tech/20211209213906.png"></li>
+</ul>
+</li>
+<li>当赵接收到苏秦的请求之后，会执行三阶段协议（Three-phase protocol）</li>
+<li>赵将进入预准备（Pre-prepare）阶段，构造包含作战指令的预准备消息，并广播给其他将军（魏、韩、楚）<ul>
+<li><img src="https://img.shiqi-lu.tech/20211209213957.png"></li>
+<li>注意：魏、韩、楚，收到消息后，不能直接执行指令，因为他们不能确认自己接收到的指令和其它人接收到的指令是相同的</li>
+</ul>
+</li>
+<li>接收到预准备消息之后，魏、韩、楚将进入准备（Prepare）阶段，并分别广播包含作战指令的准备消息给其他将军。比如，魏广播准备消息给赵、韩、楚（如图所示）。为了方便演示，我们假设叛徒楚想通过不发送消息，来干扰共识协商（你能看到，图中的楚是没有发送消息的）。<ul>
+<li><img src="https://img.shiqi-lu.tech/20211211132947.png"></li>
+</ul>
+</li>
+<li>当某个将军收到 2f 个一致的包含作战指令的准备消息后，会进入提交（Commit） 阶段（这里的 2f 包括自己，其中 f 为叛徒数，在演示中是 1）</li>
+<li>注：这时该将军（比如魏）还是不能执行指令，因为魏不能确认赵、韩、楚是否收到了 2f 个一致的包含作战指令的准备消息</li>
+<li>进入提交阶段后，各将军分别广播提交消息给其他将军，也就是告诉其他将军，我已经准备好了，可以执行指令了<ul>
+<li><img src="https://img.shiqi-lu.tech/20211211133752.png"></li>
+</ul>
+</li>
+<li>最后，当某个将军收到 2f + 1 个验证通过的提交消息后（包括自己，其中 f 为叛徒数，在演示中为 1），也就是说，大部分的将军们已经达成共识，这时可以执行作战指令了，那么该将军将执行苏秦的作战指令，执行完毕后发送执行成功的消息给苏秦<ul>
+<li><img src="https://img.shiqi-lu.tech/20211211134722.png"></li>
+</ul>
+</li>
+<li>最后，当苏秦收到 f+1 个相同的响应（Reply）消息时，说明各位将军们已经就作战指令达成了共识，并执行了作战指令（其中 f 为叛徒数，在我的演示中为 1）</li>
+<li>在这里，苏秦采用的就是简化版的 PBFT 算法。在这个算法中：<ul>
+<li>可以将赵、魏、韩、楚理解为分布式系统的四个节点，其中赵是主节点（Primary node），魏、韩、楚是从节点（Secondary node）</li>
+<li>将苏秦理解为业务，也就是客户端</li>
+<li>将消息理解为网络消息</li>
+<li>将作战指令“进攻”，理解成客户端提议的值，也就是希望被各节点达成共识，并提交给状态机的值</li>
+</ul>
+</li>
+</ul>
+<h2 id="几个注意点"><a href="#几个注意点" class="headerlink" title="几个注意点"></a>几个注意点</h2><ul>
+<li>PBFT 算法是通过签名(或消息认证码 MAC)约束恶意节点的行为，即每个节点都可以通过验证消息签名确认消息的发送来源，一个节点无法伪造另一个节点的消息。最终，基于大多数原则(2f+1)实现共识的</li>
+<li>最终的共识是否达成，客户端是会做判断的，如果客户端在指定时间内未收到请求对应的 f + 1 相同响应，就认为集群出故障了，共识未达成，客户端会重新发送请求</li>
+<li>PBFT 算法通过视图变更（View Change）的方式，来处理主节点作恶，当发现主节点在作恶时，会以“轮流上岗”方式，推举新的主节点</li>
+<li>尽管 PBFT 算法相比口信消息型拜占庭之解已经有了很大的优化，将消息复杂度从 O(n ^ (f + 1)) 降低为 O(n ^ 2)，能在实际场景中落地，并解决实际的共识问题。但 PBFT 还是需要比较多的消息。比如在 13 节点集群中（f 为 4）一次共识协商需要 237 个消息，推荐在中小型分布式系统中使用 PBFT 算法<ul>
+<li>请求消息：1</li>
+<li>预准备消息：3f = 12</li>
+<li>准备消息：3f * (3f - f) = 96</li>
+<li>提交消息：(3f - f + 1) * (3f + 1)= 117</li>
+<li>回复消息：3f - 1 = 11</li>
+</ul>
+</li>
+</ul>
+<h1 id="PoW"><a href="#PoW" class="headerlink" title="PoW"></a>PoW</h1><h2 id="PoW算法是什么"><a href="#PoW算法是什么" class="headerlink" title="PoW算法是什么"></a>PoW算法是什么</h2><ul>
+<li>以每个节点或服务器的计算能力来竞争记账权的机制，即使用工作量证明机制的共识算法</li>
+</ul>
+<h2 id="工作量证明-Proof-Of-Work-是什么"><a href="#工作量证明-Proof-Of-Work-是什么" class="headerlink" title="工作量证明(Proof Of Work)是什么"></a>工作量证明(Proof Of Work)是什么</h2><ul>
+<li>请求方做了一些运算，解决了某个问题，然后把运算结果发送给验证方，进行核验，验证方根据运算结果，就能判断请求方是否做了相关的工作</li>
+<li>这个算法具有不对称性，也就是说，工作对于请求方是有难度的，对于验证方则是比较简单的，易于验证的</li>
+<li><img src="https://img.shiqi-lu.tech/20211211141659.png"></li>
+</ul>
+<h2 id="区块链如何实现-PoW-算法的"><a href="#区块链如何实现-PoW-算法的" class="headerlink" title="区块链如何实现 PoW 算法的"></a>区块链如何实现 PoW 算法的</h2><ul>
+<li>由区块头、区块体 2 部分组成的<ul>
+<li>区块头（Block Head）：区块头主要由上一个区块的哈希值、区块体的哈希值、4 字节的随机数（nonce）等组成的</li>
+<li>区块体（Block Body）：区块包含的交易数据，其中的第一笔交易是 Coinbase 交易，这是一笔激励矿工的特殊交易</li>
+</ul>
+</li>
+<li>拥有 80 字节固定长度的区块头，就是用于区块链工作量证明的哈希运算中输入字符串，只有通过双重 SHA256 哈希运算计算出的哈希值，只有小于目标值(target)，才是有效的，否则哈希值是无效的，必须重算，以此来证明自己的工作量</li>
+<li>计算出符合条件的哈希值后，矿工就会把这个信息广播给集群中所有其他节点，其他节点验证通过后，会将这个区块加入到自己的区块链中，最终形成一串区块链</li>
+</ul>
+<h2 id="假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？"><a href="#假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？" class="headerlink" title="假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？"></a>假设每个节点会划分多个区块用于记录用户交易，PoW算法获取记账权的原理是什么？</h2><ul>
+<li>利用区块的index、前一区块的哈希值、交易的时间戳、区块数据和nonce值，通过SHA256计算出一个哈希值</li>
+<li>判断前k个值是否都为0<ul>
+<li>如果不是，递增nonce值，重新按照上述方法计算</li>
+<li>如果是，本次计算的哈希值为要解决的题目的正确答案</li>
+</ul>
+</li>
+<li>谁最先计算出正确答案，谁就获得这个区块的记账权</li>
+<li>注：nonce值是用来找到一个满足哈希值的数字；k 为哈希值前导零的个数，标记了计算的难度，0 越多计算难度越大</li>
+</ul>
+<h2 id="PoW达成共识的过程，其本质是？"><a href="#PoW达成共识的过程，其本质是？" class="headerlink" title="PoW达成共识的过程，其本质是？"></a>PoW达成共识的过程，其本质是？</h2><ul>
+<li>即获得记账权的节点将该区块信息广播给其它节点，其它节点判断该结点找到的区块中的所有交易都是有效且之前未存在过的，则认为该区块有效，并接受该区块</li>
+</ul>
+<h2 id="基于PoW的共识记账过程是怎样的？-以分散在世界各地的-5-台服务器为例，假设客户端A产生一个新的交易"><a href="#基于PoW的共识记账过程是怎样的？-以分散在世界各地的-5-台服务器为例，假设客户端A产生一个新的交易" class="headerlink" title="基于PoW的共识记账过程是怎样的？(以分散在世界各地的 5 台服务器为例，假设客户端A产生一个新的交易)"></a>基于PoW的共识记账过程是怎样的？(以分散在世界各地的 5 台服务器为例，假设客户端A产生一个新的交易)</h2><ul>
+<li><img src="https://img.shiqi-lu.tech/20210209112307.png"></li>
+<li>1.客户端A产生新的交易，向全网进行广播，要求对交易进行记账</li>
+<li>2.每个记账节点接收到这个请求后，将受到的交易信息放入一个区块中</li>
+<li>3.每个节点通过PoW算法，计算本节点的区块的哈希值，尝试找到一个具有足够工作量难度的工作量证明</li>
+<li>4.若节点D找到了一个工作量证明向全网广播。当且仅当包含在该区块中的交易都是有效且之前未存在过的，其它节点才会认同该区块的有效性</li>
+<li>5.其它节点接收到广播信息后，若该区块有效，接受该区块，并跟随在该区块的末尾，制造新区块延长该链条，将被接受的区块的随机哈希值视为新区块的随机哈希值</li>
+<li>核心：谁的计算能力强，获得记账权的可能性就越大。但必须保证其记 账的区块是有效的，并在之前未存在过，才能获得其他节点的认可</li>
+</ul>
+<h2 id="51-攻击是什么"><a href="#51-攻击是什么" class="headerlink" title="51%攻击是什么"></a>51%攻击是什么</h2><ul>
+<li>算力越强，系统大概率会越先计算出这个哈希值。这也就意味着，如果坏人们掌握了 51% 的算力，就可以发起 51% 攻击，比如，实现双花（Double Spending），即同一份钱花 2 次</li>
+<li>具体说是，攻击者掌握了较多的算力，能挖掘一条比原链更长的攻击链，并将攻击链向全网广播，这时，按照约定，节点将接受更长的链，也就是攻击链，丢弃原链</li>
+<li>注意：即使攻击者只有 30% 的算力，他也有可能连续计算出多个区块的哈希值，挖掘出更长的攻击链，发动攻击； 另外，即使攻击者拥有 51% 的算力，他也有可能半天无法计算出一个区块的哈希值，也就是攻击失败。也就是说，能否计算出符合条件的哈希值，有一定的概率性，但长久来看，攻击者攻击成功的概率等同于攻击者算力的权重</li>
+</ul>
+<h2 id="比特币中如果采用-Raft-算法实现共识而不是-Pow-算法的区块链会发生什么"><a href="#比特币中如果采用-Raft-算法实现共识而不是-Pow-算法的区块链会发生什么" class="headerlink" title="比特币中如果采用 Raft 算法实现共识而不是 Pow 算法的区块链会发生什么"></a>比特币中如果采用 Raft 算法实现共识而不是 Pow 算法的区块链会发生什么</h2><ul>
+<li>当恶意节点当选为领导者后，可以不断地告诉其他节点，这些比特币都是我的，按照 Raft 的约定，其他节点也就只能接受这种情况，最终就会出现，所有的比特币都被恶意节点盗走的情况</li>
+</ul>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>实现了相对的公平。PoW 的容错机制允许全网 50% 的节点出错，如果要破坏系统，则需要投入极大成本（若你有全球 51% 的算力，则可尝试攻击比特币）</li>
+</ul>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>共识达成的周期长、效率低，资源消耗大。每次达成共识需要全网共同参与运算，增加了每个节点的计算量。如果题目过难，会导致计算时间长、资源消耗多；而如果题目过于简单，会导致大量节点同时获得记账权，冲突多。这些问题，都会增加达成共识的时间</li>
+</ul>
+<h1 id="PoS"><a href="#PoS" class="headerlink" title="PoS"></a>PoS</h1><h2 id="核心原理"><a href="#核心原理" class="headerlink" title="核心原理"></a>核心原理</h2><ul>
+<li>由系统权益代替算力来决定区块记账权，拥有的权益越大获得记账权的概率就越大</li>
+<li>权益，即每个节点占有货币的数量和时间，而货币就是节点所获得的奖励</li>
+</ul>
+<h2 id="基于-PoS-算法获得区块记账权的方法相比基于-PoW-的方法的不同之处是？"><a href="#基于-PoS-算法获得区块记账权的方法相比基于-PoW-的方法的不同之处是？" class="headerlink" title="基于 PoS 算法获得区块记账权的方法相比基于 PoW 的方法的不同之处是？"></a>基于 PoS 算法获得区块记账权的方法相比基于 PoW 的方法的不同之处是？</h2><ul>
+<li>PoS是根据结点拥有的股权或权益进行计算的</li>
+</ul>
+<h2 id="通过-PoS-算法决定区块记账权的流程和-PoW-算法的唯一不同的是？"><a href="#通过-PoS-算法决定区块记账权的流程和-PoW-算法的唯一不同的是？" class="headerlink" title="通过 PoS 算法决定区块记账权的流程和 PoW 算法的唯一不同的是？"></a>通过 PoS 算法决定区块记账权的流程和 PoW 算法的唯一不同的是？</h2><ul>
+<li>每个节点在计算自己记账权的时候，通过计算自己的股权或权益来评估，如果发现自己权益最大，则将自己的区块广播给其它节点，当然必须保证该区块的有效性</li>
+<li><img src="https://img.shiqi-lu.tech/20210209114030.png"></li>
+</ul>
+<h2 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>1.将算力竞争转变成权益竞争。与 PoW 相比，PoS 不需要消耗大量的电力就能够保证区块链网络的安全性</li>
+<li>2.不需要在每个区块中创建新的货币来激励记账者参与当前网络的运行，这也就在一定程度上缩短了达成共识所需要的时间</li>
+</ul>
+<h2 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>PoS 算法中持币越多或持币越久，币龄就会越高，持币人就越容易挖到区块并得到激 励，而持币少的人基本没有机会</li>
+<li>整个系统的安全性实际上会被持币数量较大的一部分 人掌握，容易出现垄断现象</li>
+</ul>
+<h1 id="DPoS"><a href="#DPoS" class="headerlink" title="DPoS"></a>DPoS</h1><h2 id="DPoS-委托权益证明法-是什么"><a href="#DPoS-委托权益证明法-是什么" class="headerlink" title="DPoS(委托权益证明法)是什么"></a>DPoS(委托权益证明法)是什么</h2><ul>
+<li>由被社区选举的可信账户（受托人，比如得票数排行前 101 位）来拥有记账权</li>
+<li>为了成为正式受托人，用户要去社区拉票，获得足够多的信任。用户根据自己持有的货币数量占总量的百分比来投票</li>
+<li>根据自己拥有的权益，投票选出可代表自己的受托节点，受托节点之间竞争记账权</li>
+<li><img src="https://img.shiqi-lu.tech/20210209114943.png"></li>
+<li>通常会选出k(如101)个受托结点，它们的权利是完全相等的。受托节点之间争取记账权也是根据算力进行竞争的。只要受托节点提供的算力不稳定，计算机宕机或者利用手中的权力作恶，随时可以被握着货币的普通节点投票踢出整个系统，而后备的受托节点可以随时顶上去</li>
+</ul>
+<h2 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>1.由投票选举出的若干信誉度更高的受托人记账，解决了所有节点均参与竞争导致消息量大、达成一致的周期长的问题。DPoS 能耗更低，具有更快的交易速度</li>
+<li>2.每隔一定周期会调整受托人，避免受托人造假和独权</li>
+</ul>
+<h2 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>1.由于大多数持币人通过受托人参与投票，投票的积极性并不高</li>
+<li>2.一旦出现故障节点，DPoS 无法及时做出应对，导致安全隐患</li>
+</ul>
+<h1 id="PoW、PoS和DPoS三种共识算法的对比图"><a href="#PoW、PoS和DPoS三种共识算法的对比图" class="headerlink" title="PoW、PoS和DPoS三种共识算法的对比图"></a>PoW、PoS和DPoS三种共识算法的对比图</h1><ul>
+<li><img src="https://img.shiqi-lu.tech/20210209114542.png"></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/distributed-consistency-byzantine/" title="4种分布式共识算法（拜占庭容错算法）的整理">http://shiqi-lu.tech/distributed-consistency-byzantine/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/distributed-transaction/" rel="prev" title="8种分布式事务实现原理的全面整理">
+                  <i class="fa fa-chevron-left"></i> 8种分布式事务实现原理的全面整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/distributed-consistency-byzantine/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
