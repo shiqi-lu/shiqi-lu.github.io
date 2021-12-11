@@ -1,113 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>《秒杀系统架构设计》学习</title>
-    <url>/arch-miao-sha/</url>
-    <content><![CDATA[<ul>
-<li>QQ 业务特点：细粒度数据查询<ul>
-<li>即使并发量很大，锁冲突其实不大，数据水平切分后，因为带上了 uid，gid 等字段，用户层面几乎没有锁冲突</li>
-</ul>
-</li>
-<li>weibo业务特点:读多写少，有少量读写锁冲突<ul>
-<li>微博的核心业务是feed流:<ul>
-<li>发消息，写操作</li>
-<li>刷消息，读操作</li>
-</ul>
-</li>
-<li>微博业务显然是读多写少的，在用户刷消息时，自己feed流里的消息，是由别人发出的。</li>
-</ul>
-</li>
-<li>秒杀业务特点:数据量少，写多读多,极大锁冲突<ul>
-<li>12306的核心业务是:<ul>
-<li>查票，读操作</li>
-<li>买票，写操作</li>
-</ul>
-</li>
-<li>stock(id, num) //核心数据结构：某一列车有多少张余票</li>
-<li>在用户量很大，并发量很大时，有极大的锁冲突。</li>
-</ul>
-</li>
-<li>方向上“降低数据层锁冲突”，具体两大要点:<ul>
-<li>(1)降读：用缓存</li>
-<li>(2)降写：把请求拦截在系统上游</li>
-</ul>
-</li>
-<li>用缓存降低数据层读请求，不展开<ul>
-<li>秒杀买票，这是一个典型的读多写少的业务场景:<ul>
-<li>车次查询，读，量大</li>
-<li>余票查询，读，量大</li>
-<li>下单和支付，写，量小</li>
-</ul>
-</li>
-<li>一趟火车2000张票，200w个 人同时来买，最多2000个人下单成功，其他人都是查询库存，写.</li>
-<li>比例只有0.1%，读比例占99.9%，非常适合使用缓存来优化。</li>
-</ul>
-</li>
-<li>如何将请求，拦截在系统上游?<ul>
-<li>先看看上下游分层架构，秒杀业务，常见的系统分层架构如何?<ul>
-<li>浏览器-&gt;站点-&gt;服务-&gt;数据</li>
-</ul>
-</li>
-<li>第一层，端上的请求拦截(浏览器/APP)，可以做一些限速策略，限制用户在 X 秒内只能做一次请求</li>
-<li>第二层，站点层的请求拦截，使用 session，用户 uid 或 token 等识别同一用户，进行限速拦截，高级一点可以返回页面缓存，即返回上一次的内容</li>
-<li>第三层，服务层的请求拦截，知道了业务层的抗压能力和库存，可以根据此进行限速，使用消息队列或内存中的队列</li>
-<li>第四层，数据库闲庭信步，基本不需要做什么，因为到这里访问量应该很低了</li>
-</ul>
-</li>
-<li>(1)按照上面的优化方案,其实压力最大的反而是站点层，假设真实有效的请求数是每秒100w，这部分的压力怎么处理?<ul>
-<li>站点层的扩容非常容易，测算出机器的处理能力，直接加机器即可，此外其实不需要所有的请求都处理返回，可以服务降级，把大部分的请求失败掉即可，保护系统是最优先原则</li>
-</ul>
-</li>
-<li>(2)站点层限速，是个每个uid的请求计数放到redis里么?吞吐量很大情况下，高并发访问redis，网络带宽会不会成为瓶颈?<ul>
-<li>redis 可以做水平切分，如果担心网络带宽，可以使用内存队列</li>
-</ul>
-</li>
-<li>任何脱离业务的架构设计都是耍流氓，产品+技术，不可分割，产品上，能够如何“优化”，以简化系统架构设计呢?<ul>
-<li>case 1 下单与支付分离<ul>
-<li>一般来说，下单和支付放在同一个流程里，能够提高转化率。</li>
-<li>对于秒杀场景，产品上，下单流程和支付流程异步，放在两个环节里，能够降低数据库写压力。</li>
-<li>12306， 下单成功后，系统占住库存，45分钟之内支付即可。</li>
-</ul>
-</li>
-<li>case 2 分城市用户规则差异化<ul>
-<li>一般来说，所有用户规则相同，体验会更好。</li>
-<li>对于秒杀场景，产品上，不同地域分时售票，虽然不是所有用户规则相同，但能够极大降低系统压力。</li>
-<li>北京9:00开始售票，上海9:30开始售票，广州XX开始售票，能够分担系统压力。</li>
-</ul>
-</li>
-<li>case 3 按钮只能点一次<ul>
-<li>秒杀场景，由于短时间内并发较大，系统返回较慢，用户心情十分焦急，可能会频繁点击按钮，对系统造成压力。</li>
-<li>产品上可以优化为，一旦点击，不管系统是否返回，按钮立刻置灰，不给用户机会频繁点击。</li>
-</ul>
-</li>
-<li>case 4 库存显示粒度加粗<ul>
-<li>一般来说，显示具体的库存数量，能够加强用户体验。</li>
-<li>对于秒杀场景，产品上，只显示有/无车票，而不是显示具体票数目，能够降低缓存淘汰率。</li>
-<li>显示库存会淘汰N次，显示有无只会淘汰1次。更多的，用户关注是否有票，而不是票有几张。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>总结<ul>
-<li>一、秒杀业务为什么难?数据量并不大，但锁冲突巨大</li>
-<li>二、系统架构优化，方向上，降低数据层锁冲突<ul>
-<li>(1) 降读:用缓存</li>
-<li>(2) 降写:把请求拦截在系统上游</li>
-</ul>
-</li>
-<li>三、架构难度大，产品要折衷</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《沈剑架构师训练营》第1章 - 技术选型</title>
     <url>/arch-sj-1/</url>
     <content><![CDATA[<h1 id="2、技术选型：创业初期，技术如何选型"><a href="#2、技术选型：创业初期，技术如何选型" class="headerlink" title="2、技术选型：创业初期，技术如何选型"></a>2、技术选型：创业初期，技术如何选型</h1><ul>
@@ -273,6 +166,113 @@
 <li>2.子系统不是高可用的，只能保证一个挂了，另一个不受影响</li>
 </ul>
 </li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《秒杀系统架构设计》学习</title>
+    <url>/arch-miao-sha/</url>
+    <content><![CDATA[<ul>
+<li>QQ 业务特点：细粒度数据查询<ul>
+<li>即使并发量很大，锁冲突其实不大，数据水平切分后，因为带上了 uid，gid 等字段，用户层面几乎没有锁冲突</li>
+</ul>
+</li>
+<li>weibo业务特点:读多写少，有少量读写锁冲突<ul>
+<li>微博的核心业务是feed流:<ul>
+<li>发消息，写操作</li>
+<li>刷消息，读操作</li>
+</ul>
+</li>
+<li>微博业务显然是读多写少的，在用户刷消息时，自己feed流里的消息，是由别人发出的。</li>
+</ul>
+</li>
+<li>秒杀业务特点:数据量少，写多读多,极大锁冲突<ul>
+<li>12306的核心业务是:<ul>
+<li>查票，读操作</li>
+<li>买票，写操作</li>
+</ul>
+</li>
+<li>stock(id, num) //核心数据结构：某一列车有多少张余票</li>
+<li>在用户量很大，并发量很大时，有极大的锁冲突。</li>
+</ul>
+</li>
+<li>方向上“降低数据层锁冲突”，具体两大要点:<ul>
+<li>(1)降读：用缓存</li>
+<li>(2)降写：把请求拦截在系统上游</li>
+</ul>
+</li>
+<li>用缓存降低数据层读请求，不展开<ul>
+<li>秒杀买票，这是一个典型的读多写少的业务场景:<ul>
+<li>车次查询，读，量大</li>
+<li>余票查询，读，量大</li>
+<li>下单和支付，写，量小</li>
+</ul>
+</li>
+<li>一趟火车2000张票，200w个 人同时来买，最多2000个人下单成功，其他人都是查询库存，写.</li>
+<li>比例只有0.1%，读比例占99.9%，非常适合使用缓存来优化。</li>
+</ul>
+</li>
+<li>如何将请求，拦截在系统上游?<ul>
+<li>先看看上下游分层架构，秒杀业务，常见的系统分层架构如何?<ul>
+<li>浏览器-&gt;站点-&gt;服务-&gt;数据</li>
+</ul>
+</li>
+<li>第一层，端上的请求拦截(浏览器/APP)，可以做一些限速策略，限制用户在 X 秒内只能做一次请求</li>
+<li>第二层，站点层的请求拦截，使用 session，用户 uid 或 token 等识别同一用户，进行限速拦截，高级一点可以返回页面缓存，即返回上一次的内容</li>
+<li>第三层，服务层的请求拦截，知道了业务层的抗压能力和库存，可以根据此进行限速，使用消息队列或内存中的队列</li>
+<li>第四层，数据库闲庭信步，基本不需要做什么，因为到这里访问量应该很低了</li>
+</ul>
+</li>
+<li>(1)按照上面的优化方案,其实压力最大的反而是站点层，假设真实有效的请求数是每秒100w，这部分的压力怎么处理?<ul>
+<li>站点层的扩容非常容易，测算出机器的处理能力，直接加机器即可，此外其实不需要所有的请求都处理返回，可以服务降级，把大部分的请求失败掉即可，保护系统是最优先原则</li>
+</ul>
+</li>
+<li>(2)站点层限速，是个每个uid的请求计数放到redis里么?吞吐量很大情况下，高并发访问redis，网络带宽会不会成为瓶颈?<ul>
+<li>redis 可以做水平切分，如果担心网络带宽，可以使用内存队列</li>
+</ul>
+</li>
+<li>任何脱离业务的架构设计都是耍流氓，产品+技术，不可分割，产品上，能够如何“优化”，以简化系统架构设计呢?<ul>
+<li>case 1 下单与支付分离<ul>
+<li>一般来说，下单和支付放在同一个流程里，能够提高转化率。</li>
+<li>对于秒杀场景，产品上，下单流程和支付流程异步，放在两个环节里，能够降低数据库写压力。</li>
+<li>12306， 下单成功后，系统占住库存，45分钟之内支付即可。</li>
+</ul>
+</li>
+<li>case 2 分城市用户规则差异化<ul>
+<li>一般来说，所有用户规则相同，体验会更好。</li>
+<li>对于秒杀场景，产品上，不同地域分时售票，虽然不是所有用户规则相同，但能够极大降低系统压力。</li>
+<li>北京9:00开始售票，上海9:30开始售票，广州XX开始售票，能够分担系统压力。</li>
+</ul>
+</li>
+<li>case 3 按钮只能点一次<ul>
+<li>秒杀场景，由于短时间内并发较大，系统返回较慢，用户心情十分焦急，可能会频繁点击按钮，对系统造成压力。</li>
+<li>产品上可以优化为，一旦点击，不管系统是否返回，按钮立刻置灰，不给用户机会频繁点击。</li>
+</ul>
+</li>
+<li>case 4 库存显示粒度加粗<ul>
+<li>一般来说，显示具体的库存数量，能够加强用户体验。</li>
+<li>对于秒杀场景，产品上，只显示有/无车票，而不是显示具体票数目，能够降低缓存淘汰率。</li>
+<li>显示库存会淘汰N次，显示有无只会淘汰1次。更多的，用户关注是否有票，而不是票有几张。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>总结<ul>
+<li>一、秒杀业务为什么难?数据量并不大，但锁冲突巨大</li>
+<li>二、系统架构优化，方向上，降低数据层锁冲突<ul>
+<li>(1) 降读:用缓存</li>
+<li>(2) 降写:把请求拦截在系统上游</li>
+</ul>
+</li>
+<li>三、架构难度大，产品要折衷</li>
 </ul>
 </li>
 </ul>
@@ -1030,6 +1030,177 @@
       </tags>
   </entry>
   <entry>
+    <title>《沈剑架构师训练营》第6章 - 缓存架构</title>
+    <url>/arch-sj-6/</url>
+    <content><![CDATA[<h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
+<li>no27：什么是进程内缓存？好处？不足？<ul>
+<li>定义<ul>
+<li>将数据缓存在站点或者服务的进程内，如 map 或 leveldb，可存 json、html、object 等</li>
+</ul>
+</li>
+<li>好处<ul>
+<li>1.节省内网带宽</li>
+<li>2.时延更低</li>
+</ul>
+</li>
+<li>不足：一致性难以保证</li>
+</ul>
+</li>
+<li>no27：如何保证进程内缓存的一致性？<ul>
+<li>方案一，单节点通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183312.png"></li>
+<li>缺点<ul>
+<li>同一功能在集群内的多个节点相互耦合在一起，当节点比较多的时候，连接关系会相对比较复杂</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案二，MQ 解耦，通知其它节点<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183448.png"></li>
+<li>缺点<ul>
+<li>接触了结点耦合，但引入了 mq，增加系统复杂度</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>方案三，放弃实时一致性，定期从后端更新数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210915183706.png"></li>
+<li>缺点<ul>
+<li>必须一定程度上接受读旧数据</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no27：使用进程内缓存的场景是哪些？为什么不能频繁使用进程内缓存？<ul>
+<li>场景<ul>
+<li>1.只读数据</li>
+<li>2.并发极高，透传后端压力极大</li>
+<li>3.允许一定程度上数据不一致</li>
+</ul>
+</li>
+<li>原因<ul>
+<li>违背了「站点无状态、服务无状态」的设计准则</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="28、缓存：很多时候我们都用错了！"><a href="#28、缓存：很多时候我们都用错了！" class="headerlink" title="28、缓存：很多时候我们都用错了！"></a>28、缓存：很多时候我们都用错了！</h1><ul>
+<li>no28：缓存有哪 4 种误用的情况？<ul>
+<li>1.服务与服务之间不要通过缓存传递数据，数据传递使用 MQ 更合适<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114648.png"></li>
+</ul>
+</li>
+<li>2.如果缓存挂掉，可能导致雪崩，此时要做高可用缓存，或者水平切分</li>
+<li>3.调用方不宜再单独使用缓存存储服务底层的数据，容易出现数据不一致，以及反向依赖.</li>
+<li>4.不同服务，缓存实例要做垂直拆分，不宜共用缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916114908.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="29、缓存：互联网最佳实践！"><a href="#29、缓存：互联网最佳实践！" class="headerlink" title="29、缓存：互联网最佳实践！"></a>29、缓存：互联网最佳实践！</h1><ul>
+<li>no29：互联网缓存最佳实践 Cache Aside Pattern 是什么？<ul>
+<li>读实践<ul>
+<li>先缓存，命中返回，未命中读数据库，再设置缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916205244.png"></li>
+</ul>
+</li>
+<li>写实践<ul>
+<li>淘汰缓存而不是修改缓存，先操作数据库，而不是先淘汰缓存</li>
+<li><img src="https://img.shiqi-lu.tech/20210916210847.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="30、缓存：一致性优化！"><a href="#30、缓存：一致性优化！" class="headerlink" title="30、缓存：一致性优化！"></a>30、缓存：一致性优化！</h1><ul>
+<li>no30：数据库主从、数据库缓存什么时候会发生数据不一致问题？<ul>
+<li>数据库主从：写后立即读，短时间内，读旧数据<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916212948.png"></li>
+</ul>
+</li>
+<li>数据库缓存：写后立即读，短时间内，旧数据入缓存<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213008.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>no30：缓存不一致的优化思路和两个方案是什么？<ul>
+<li>思路：在从库同步完成之后，如果有旧数据入缓存，应该及时把这个旧数据淘汰掉</li>
+<li>方案一：二次淘汰法(在从库异步淘汰，或服务中异步淘汰)<ul>
+<li><img src="https://img.shiqi-lu.tech/20210916213215.png"></li>
+<li>通过工具订阅从库的 binlog，如 DTS 或 canal，或自己订阅和分析 binlog，然后从库执行异步淘汰缓存的操作</li>
+</ul>
+</li>
+<li>方案二：为允许 cache miss 的场景，设定超时时间</li>
+</ul>
+</li>
+</ul>
+<h1 id="31、缓存：并发更新的大坑！"><a href="#31、缓存：并发更新的大坑！" class="headerlink" title="31、缓存：并发更新的大坑！"></a>31、缓存：并发更新的大坑！</h1><ul>
+<li>no31：缓存并发更新获取 token 会出现什么问题？如何解决？<ul>
+<li>问题<ul>
+<li>两个并发请求的token申请，可能导致 token 迭代过期了</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100503.png"></li>
+</ul>
+</li>
+<li>解决<ul>
+<li>线上服务 s1 和 s2 只从缓存中读取 token，token 的更新由一个异步的服务 asy-Master 定期更新，避免并发的更新</li>
+<li>缺点<ul>
+<li>读取服务和更新的服务会直接调用缓存实例，如果缓存实例变更，读的服务和写的服务配置同步变更，导致耦合，违背了两个服务不应访问同一服务的通用性原则，同时违反了 cache aside pattern 的淘汰而不是更新缓存的设计准则</li>
+</ul>
+</li>
+<li>数据存储在 DB，缓存应该淘汰，有时候，数据不在数据库，缓存需要更新，如调用第三方服务需要申请 token</li>
+<li><img src="https://img.shiqi-lu.tech/20210917100642.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="32、缓存：究竟选redis，还是memcache？"><a href="#32、缓存：究竟选redis，还是memcache？" class="headerlink" title="32、缓存：究竟选redis，还是memcache？"></a>32、缓存：究竟选redis，还是memcache？</h1><ul>
+<li>no32，什么时候选 Redis，什么时候选 memcache？<ul>
+<li>选 Redis<ul>
+<li>1.复杂数据结构</li>
+<li>2.持久化<ul>
+<li>优点是，缓存挂了再重启，可以快速恢复，不需要 cache 的预热功能</li>
+<li>但不建议使用，因为可能会导致缓存和数据库不一致</li>
+</ul>
+</li>
+<li>3.天然高可用，支持主从复制，读写分离，提供了 sentinel 的集群管理工具，能够实现主从服务的监控，故障自动转移，mc 需要二次开发，但绝大多数缓存不需要做高可用</li>
+<li>4.存储内容比较大，mc 的 kv 存储的 value 最大只支持 1M</li>
+</ul>
+</li>
+<li>选 memcache<ul>
+<li>纯 kv</li>
+<li>原因：<ul>
+<li>1.预分配内存池</li>
+<li>2.redis 的 VM 机制更慢</li>
+<li>3.redis 的 CPU 计算复杂</li>
+<li>4.多线程可利用多核</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>其它<ul>
+<li>1.redis 源码可读性好</li>
+<li>2.redis 和 mc 都需要手动水平切分</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《沈剑架构师训练营》第5章 - 数据库架构</title>
     <url>/arch-sj-5/</url>
     <content><![CDATA[<h1 id="21、数据库：读性能要如何提升？"><a href="#21、数据库：读性能要如何提升？" class="headerlink" title="21、数据库：读性能要如何提升？"></a>21、数据库：读性能要如何提升？</h1><ul>
@@ -1298,163 +1469,68 @@
       </tags>
   </entry>
   <entry>
-    <title>《沈剑架构师训练营》第6章 - 缓存架构</title>
-    <url>/arch-sj-6/</url>
-    <content><![CDATA[<h1 id="27、缓存：进程内缓存要怎么玩？"><a href="#27、缓存：进程内缓存要怎么玩？" class="headerlink" title="27、缓存：进程内缓存要怎么玩？"></a>27、缓存：进程内缓存要怎么玩？</h1><ul>
-<li>no27：什么是进程内缓存？好处？不足？<ul>
-<li>定义<ul>
-<li>将数据缓存在站点或者服务的进程内，如 map 或 leveldb，可存 json、html、object 等</li>
+    <title>《沈剑架构师训练营》第8章 - 架构分层</title>
+    <url>/arch-sj-8/</url>
+    <content><![CDATA[<h1 id="40、分层：互联网分层架构方法论"><a href="#40、分层：互联网分层架构方法论" class="headerlink" title="40、分层：互联网分层架构方法论"></a>40、分层：互联网分层架构方法论</h1><ul>
+<li>no40：互联网分层架构的的本质是什么？<ul>
+<li>这是一个「数据移动」，然后「被处理」，被「呈现」的过程</li>
 </ul>
 </li>
-<li>好处<ul>
-<li>1.节省内网带宽</li>
-<li>2.时延更低</li>
+<li>no40：数据移动过程中最重要的两点是什么？<ul>
+<li>1.数据传输的格式</li>
+<li>2.数据在各个层次的形态</li>
 </ul>
 </li>
-<li>不足：一致性难以保证</li>
-</ul>
-</li>
-<li>no27：如何保证进程内缓存的一致性？<ul>
-<li>方案一，单节点通知其它节点<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183312.png"></li>
-<li>缺点<ul>
-<li>同一功能在集群内的多个节点相互耦合在一起，当节点比较多的时候，连接关系会相对比较复杂</li>
+<li>no40：架构分层的方法论是什么？<ul>
+<li>1.让上游更高效地获取与处理数据，复用</li>
+<li>2.让下游能屏蔽数据的获取细节，封装</li>
 </ul>
 </li>
 </ul>
-</li>
-<li>方案二，MQ 解耦，通知其它节点<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183448.png"></li>
-<li>缺点<ul>
-<li>接触了结点耦合，但引入了 mq，增加系统复杂度</li>
+<h1 id="41、分层：DAO与服务化。"><a href="#41、分层：DAO与服务化。" class="headerlink" title="41、分层：DAO与服务化。"></a>41、分层：DAO与服务化。</h1><ul>
+<li>no41：何时应该引入 DAO<ul>
+<li>为了屏蔽数据库数据细节时</li>
 </ul>
 </li>
-</ul>
-</li>
-<li>方案三，放弃实时一致性，定期从后端更新数据<ul>
-<li><img src="https://img.shiqi-lu.tech/20210915183706.png"></li>
-<li>缺点<ul>
-<li>必须一定程度上接受读旧数据</li>
+<li>no41：何时需要基础数据服务化分层<ul>
+<li>为了屏蔽垂直拆分，分库分表，缓存细节时</li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-</li>
-<li>no27：使用进程内缓存的场景是哪些？为什么不能频繁使用进程内缓存？<ul>
-<li>场景<ul>
-<li>1.只读数据</li>
-<li>2.并发极高，透传后端压力极大</li>
-<li>3.允许一定程度上数据不一致</li>
-</ul>
-</li>
-<li>原因<ul>
-<li>违背了「站点无状态、服务无状态」的设计准则</li>
+<h1 id="42、分层：业务服务层，是否有必要？"><a href="#42、分层：业务服务层，是否有必要？" class="headerlink" title="42、分层：业务服务层，是否有必要？"></a>42、分层：业务服务层，是否有必要？</h1><ul>
+<li>no42：何时需引入业务服务层<ul>
+<li>为了屏蔽多个基础服务的调用时</li>
+<li><img src="https://img.shiqi-lu.tech/20210919175852.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919175921.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919180000.png"></li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-<h1 id="28、缓存：很多时候我们都用错了！"><a href="#28、缓存：很多时候我们都用错了！" class="headerlink" title="28、缓存：很多时候我们都用错了！"></a>28、缓存：很多时候我们都用错了！</h1><ul>
-<li>no28：缓存有哪 4 种误用的情况？<ul>
-<li>1.服务与服务之间不要通过缓存传递数据，数据传递使用 MQ 更合适<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916114648.png"></li>
-</ul>
-</li>
-<li>2.如果缓存挂掉，可能导致雪崩，此时要做高可用缓存，或者水平切分</li>
-<li>3.调用方不宜再单独使用缓存存储服务底层的数据，容易出现数据不一致，以及反向依赖.</li>
-<li>4.不同服务，缓存实例要做垂直拆分，不宜共用缓存<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916114908.png"></li>
+<h1 id="43、分层：前后端分离"><a href="#43、分层：前后端分离" class="headerlink" title="43、分层：前后端分离"></a>43、分层：前后端分离</h1><ul>
+<li>no43：什么时候需要前后端分离？<ul>
+<li>为了屏蔽端上多变，PC/H5/APP 等产品复杂性时，因为设备兼容性，折磨着 MVC 的工程师，PC/H5/APP 等前端展现变化的频率，远大于后端业务逻辑变化的频率</li>
+<li><img src="https://img.shiqi-lu.tech/20210919181925.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919181845.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919181858.png"></li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-<h1 id="29、缓存：互联网最佳实践！"><a href="#29、缓存：互联网最佳实践！" class="headerlink" title="29、缓存：互联网最佳实践！"></a>29、缓存：互联网最佳实践！</h1><ul>
-<li>no29：互联网缓存最佳实践 Cache Aside Pattern 是什么？<ul>
-<li>读实践<ul>
-<li>先缓存，命中返回，未命中读数据库，再设置缓存</li>
-<li><img src="https://img.shiqi-lu.tech/20210916205244.png"></li>
-</ul>
-</li>
-<li>写实践<ul>
-<li>淘汰缓存而不是修改缓存，先操作数据库，而不是先淘汰缓存</li>
-<li><img src="https://img.shiqi-lu.tech/20210916210847.png"></li>
+<h1 id="44、分层：数据库中间件"><a href="#44、分层：数据库中间件" class="headerlink" title="44、分层：数据库中间件"></a>44、分层：数据库中间件</h1><ul>
+<li>no44：何时需要数据库中间件？<ul>
+<li>为了屏蔽数据库层面的复杂性时，如<ul>
+<li>有些数据需要路由到特定的水平切分库</li>
+<li>有些数据不确定落在哪一个水平切分库，就需要访问所有库</li>
+<li>有些数据需要访问全局的库，拿到数据的全局视野，到service层进行额外处理</li>
 </ul>
 </li>
+<li><img src="https://img.shiqi-lu.tech/20210919184348.png"></li>
+<li><img src="https://img.shiqi-lu.tech/20210919184210.png"></li>
+<li>引入数据库中间件，基于客户端<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919184234.png"></li>
 </ul>
 </li>
-</ul>
-<h1 id="30、缓存：一致性优化！"><a href="#30、缓存：一致性优化！" class="headerlink" title="30、缓存：一致性优化！"></a>30、缓存：一致性优化！</h1><ul>
-<li>no30：数据库主从、数据库缓存什么时候会发生数据不一致问题？<ul>
-<li>数据库主从：写后立即读，短时间内，读旧数据<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916212948.png"></li>
-</ul>
-</li>
-<li>数据库缓存：写后立即读，短时间内，旧数据入缓存<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916213008.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>no30：缓存不一致的优化思路和两个方案是什么？<ul>
-<li>思路：在从库同步完成之后，如果有旧数据入缓存，应该及时把这个旧数据淘汰掉</li>
-<li>方案一：二次淘汰法(在从库异步淘汰，或服务中异步淘汰)<ul>
-<li><img src="https://img.shiqi-lu.tech/20210916213215.png"></li>
-<li>通过工具订阅从库的 binlog，如 DTS 或 canal，或自己订阅和分析 binlog，然后从库执行异步淘汰缓存的操作</li>
-</ul>
-</li>
-<li>方案二：为允许 cache miss 的场景，设定超时时间</li>
-</ul>
-</li>
-</ul>
-<h1 id="31、缓存：并发更新的大坑！"><a href="#31、缓存：并发更新的大坑！" class="headerlink" title="31、缓存：并发更新的大坑！"></a>31、缓存：并发更新的大坑！</h1><ul>
-<li>no31：缓存并发更新获取 token 会出现什么问题？如何解决？<ul>
-<li>问题<ul>
-<li>两个并发请求的token申请，可能导致 token 迭代过期了</li>
-<li><img src="https://img.shiqi-lu.tech/20210917100503.png"></li>
-</ul>
-</li>
-<li>解决<ul>
-<li>线上服务 s1 和 s2 只从缓存中读取 token，token 的更新由一个异步的服务 asy-Master 定期更新，避免并发的更新</li>
-<li>缺点<ul>
-<li>读取服务和更新的服务会直接调用缓存实例，如果缓存实例变更，读的服务和写的服务配置同步变更，导致耦合，违背了两个服务不应访问同一服务的通用性原则，同时违反了 cache aside pattern 的淘汰而不是更新缓存的设计准则</li>
-</ul>
-</li>
-<li>数据存储在 DB，缓存应该淘汰，有时候，数据不在数据库，缓存需要更新，如调用第三方服务需要申请 token</li>
-<li><img src="https://img.shiqi-lu.tech/20210917100642.png"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="32、缓存：究竟选redis，还是memcache？"><a href="#32、缓存：究竟选redis，还是memcache？" class="headerlink" title="32、缓存：究竟选redis，还是memcache？"></a>32、缓存：究竟选redis，还是memcache？</h1><ul>
-<li>no32，什么时候选 Redis，什么时候选 memcache？<ul>
-<li>选 Redis<ul>
-<li>1.复杂数据结构</li>
-<li>2.持久化<ul>
-<li>优点是，缓存挂了再重启，可以快速恢复，不需要 cache 的预热功能</li>
-<li>但不建议使用，因为可能会导致缓存和数据库不一致</li>
-</ul>
-</li>
-<li>3.天然高可用，支持主从复制，读写分离，提供了 sentinel 的集群管理工具，能够实现主从服务的监控，故障自动转移，mc 需要二次开发，但绝大多数缓存不需要做高可用</li>
-<li>4.存储内容比较大，mc 的 kv 存储的 value 最大只支持 1M</li>
-</ul>
-</li>
-<li>选 memcache<ul>
-<li>纯 kv</li>
-<li>原因：<ul>
-<li>1.预分配内存池</li>
-<li>2.redis 的 VM 机制更慢</li>
-<li>3.redis 的 CPU 计算复杂</li>
-<li>4.多线程可利用多核</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>其它<ul>
-<li>1.redis 源码可读性好</li>
-<li>2.redis 和 mc 都需要手动水平切分</li>
+<li>基于服务端，对上游而言，它就是数据库<ul>
+<li><img src="https://img.shiqi-lu.tech/20210919184316.png"></li>
 </ul>
 </li>
 </ul>
@@ -1576,82 +1652,6 @@
 </ul>
 </li>
 <li>2.个性数据访问，自己家的数据自己管理，要么通过 DAO 访问数据库，要么子业也建立个性化数据访问的服务，本质是垂直拆分</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>架构</category>
-      </categories>
-      <tags>
-        <tag>架构</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《沈剑架构师训练营》第8章 - 架构分层</title>
-    <url>/arch-sj-8/</url>
-    <content><![CDATA[<h1 id="40、分层：互联网分层架构方法论"><a href="#40、分层：互联网分层架构方法论" class="headerlink" title="40、分层：互联网分层架构方法论"></a>40、分层：互联网分层架构方法论</h1><ul>
-<li>no40：互联网分层架构的的本质是什么？<ul>
-<li>这是一个「数据移动」，然后「被处理」，被「呈现」的过程</li>
-</ul>
-</li>
-<li>no40：数据移动过程中最重要的两点是什么？<ul>
-<li>1.数据传输的格式</li>
-<li>2.数据在各个层次的形态</li>
-</ul>
-</li>
-<li>no40：架构分层的方法论是什么？<ul>
-<li>1.让上游更高效地获取与处理数据，复用</li>
-<li>2.让下游能屏蔽数据的获取细节，封装</li>
-</ul>
-</li>
-</ul>
-<h1 id="41、分层：DAO与服务化。"><a href="#41、分层：DAO与服务化。" class="headerlink" title="41、分层：DAO与服务化。"></a>41、分层：DAO与服务化。</h1><ul>
-<li>no41：何时应该引入 DAO<ul>
-<li>为了屏蔽数据库数据细节时</li>
-</ul>
-</li>
-<li>no41：何时需要基础数据服务化分层<ul>
-<li>为了屏蔽垂直拆分，分库分表，缓存细节时</li>
-</ul>
-</li>
-</ul>
-<h1 id="42、分层：业务服务层，是否有必要？"><a href="#42、分层：业务服务层，是否有必要？" class="headerlink" title="42、分层：业务服务层，是否有必要？"></a>42、分层：业务服务层，是否有必要？</h1><ul>
-<li>no42：何时需引入业务服务层<ul>
-<li>为了屏蔽多个基础服务的调用时</li>
-<li><img src="https://img.shiqi-lu.tech/20210919175852.png"></li>
-<li><img src="https://img.shiqi-lu.tech/20210919175921.png"></li>
-<li><img src="https://img.shiqi-lu.tech/20210919180000.png"></li>
-</ul>
-</li>
-</ul>
-<h1 id="43、分层：前后端分离"><a href="#43、分层：前后端分离" class="headerlink" title="43、分层：前后端分离"></a>43、分层：前后端分离</h1><ul>
-<li>no43：什么时候需要前后端分离？<ul>
-<li>为了屏蔽端上多变，PC/H5/APP 等产品复杂性时，因为设备兼容性，折磨着 MVC 的工程师，PC/H5/APP 等前端展现变化的频率，远大于后端业务逻辑变化的频率</li>
-<li><img src="https://img.shiqi-lu.tech/20210919181925.png"></li>
-<li><img src="https://img.shiqi-lu.tech/20210919181845.png"></li>
-<li><img src="https://img.shiqi-lu.tech/20210919181858.png"></li>
-</ul>
-</li>
-</ul>
-<h1 id="44、分层：数据库中间件"><a href="#44、分层：数据库中间件" class="headerlink" title="44、分层：数据库中间件"></a>44、分层：数据库中间件</h1><ul>
-<li>no44：何时需要数据库中间件？<ul>
-<li>为了屏蔽数据库层面的复杂性时，如<ul>
-<li>有些数据需要路由到特定的水平切分库</li>
-<li>有些数据不确定落在哪一个水平切分库，就需要访问所有库</li>
-<li>有些数据需要访问全局的库，拿到数据的全局视野，到service层进行额外处理</li>
-</ul>
-</li>
-<li><img src="https://img.shiqi-lu.tech/20210919184348.png"></li>
-<li><img src="https://img.shiqi-lu.tech/20210919184210.png"></li>
-<li>引入数据库中间件，基于客户端<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919184234.png"></li>
-</ul>
-</li>
-<li>基于服务端，对上游而言，它就是数据库<ul>
-<li><img src="https://img.shiqi-lu.tech/20210919184316.png"></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -3845,138 +3845,6 @@
       </tags>
   </entry>
   <entry>
-    <title>海量数据处理</title>
-    <url>/mass-data-processing/</url>
-    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
-<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
-<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
-<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
-<li>3.堆/快排：排序得到频率最高的IP</li>
-</ul>
-</li>
-<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
-<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
-<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
-<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
-<li>也可用trie树</li>
-</ul>
-</li>
-<li>堆排找topK过程<ul>
-<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
-</ul>
-</li>
-<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
-<li>如果同一个数据元素只出现在某一台机器中<ul>
-<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
-<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
-</ul>
-</li>
-<li>如果同一个数据元素出现在不同机器中<ul>
-<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
-<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
-<li>解法一<ul>
-<li>1.散列映射</li>
-<li>2.hash_map统计</li>
-<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
-</ul>
-</li>
-<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
-</ul>
-</li>
-<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
-<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
-<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
-<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
-<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
-<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
-<li>2.不同的区域再利用位图进行统计</li>
-</ul>
-</li>
-<li>寻找中位数：找出5亿个int型数的中位数<ul>
-<li>1.将这5亿个int型数划分为2^{16}个区域</li>
-<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
-<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
-</ul>
-</li>
-</ul>
-<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
-<li>外排序介绍<ul>
-<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
-</ul>
-</li>
-<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
-<li>1.位图<ul>
-<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
-<li>能采用位图方案的原因<ul>
-<li>输入数据限制在相对较小的范围内</li>
-<li>数据没有重复</li>
-<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>2.多路归并<ul>
-<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
-<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
-<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
-</ul>
-</li>
-<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
-<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
-<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
-<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
-</ul>
-</li>
-<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
-<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
-<li>读入40亿个数，设置相应的位</li>
-<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
-</ul>
-</li>
-</ul>
-<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
-<li>原理<ul>
-<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
-<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
-<li>但会有误判的可能</li>
-</ul>
-</li>
-</ul>
-<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
-<li>设计一个比较两篇文档相似度的算法<ul>
-<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
-<li>simhash算法</li>
-</ul>
-</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
-- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>海量数据</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>机器学习项目清单</title>
     <url>/ml-checklist/</url>
     <content><![CDATA[<h1 id="1-框出问题并看整体"><a href="#1-框出问题并看整体" class="headerlink" title="1.框出问题并看整体"></a>1.框出问题并看整体</h1><ul>
@@ -4125,6 +3993,138 @@
       </categories>
       <tags>
         <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>海量数据处理</title>
+    <url>/mass-data-processing/</url>
+    <content><![CDATA[<h1 id="散列分治"><a href="#散列分治" class="headerlink" title="散列分治"></a>散列分治</h1><ul>
+<li>寻找Top IP：海量日志数据，提取出某日访问百度次数最多的那个IP<ul>
+<li>1.分而治之：把该日访问百度的所有IP从日志中提取出来，逐个写入一个大文件中(这一步可以省略)。然后采取散列映射的方法(如hash(IP)%1024)，把海量IP日志分别存储到1024个小文件中，每个小文件最多包含4MB个IP地址</li>
+<li>2.hash_map统计：对每个小文件，采用hash_map&lt;ip, 出现次数&gt;进行统计。找出每个小文件频率最高的IP，总共1024个IP</li>
+<li>3.堆/快排：排序得到频率最高的IP</li>
+</ul>
+</li>
+<li>寻找热门查询：搜索引擎会通过日志文件把用户每次检索所使用的所有查询串都记录下来，每个查询串的长度为1~255字节。假设目前有1000万条查询记录(但是，因为这些查询串的重复度比较高，所以虽然总数是1000万，但如果除去重复后，查询串query不超过300万个)，请统计其中最热门的10个查询串，要求使用的内存不能超过1 GB<ul>
+<li>虽然有1000万个查询，但是因为重复度比较高，去除重复后，事实上只有300万个查询，每个查询为255字节，所以可以考虑把它们全部放进内存中去(假设300万个字符串没有重复，都是最大长度，那么最多占用内存300000 x 255 = 765MB = 0.765GB, 所以可以将所有字符串都存放在内存中进行处理)。</li>
+<li>1.hash_ map统计。对这批海量数据进行预处理，用hash_map完成频率统计。在O(n)的时间复杂度内完成了所有query的频率统计</li>
+<li>2.堆排序。借助堆找出Top k, 时间复杂度为0(nlogk)。维护k个元素的最小堆</li>
+<li>也可用trie树</li>
+</ul>
+</li>
+<li>堆排找topK过程<ul>
+<li>维护k个元素的最小堆， 即用容量为k的最小堆存储最先遍历到的k个数，并假设它们就是最大的k个数， 建堆费时O(k)，有k1&gt;k2&gt;..&gt; kmin (设kmin为最小堆中最小元素)。继续遍历整个数列剩下的n-k个元素，每次遍历一个元素x将其与堆项元素进行比较，若x &gt; kmin 则更新堆，每次调整堆费时0(log k)，否则不更新堆。这样下来，总费时 O(k + (n- k) logk )= O(nlogk)。此方法得益于在堆中查找等各项操作的时间复杂度均为O(logk)</li>
+</ul>
+</li>
+<li>寻找Top 10：有海量数据分布在100台电脑中，请想个办法高效统计出这批数据出现次数最多的Top 10<ul>
+<li>如果同一个数据元素只出现在某一台机器中<ul>
+<li>1.堆排：每台电脑求Top10，然后扫描后面的元素，得到最终topK</li>
+<li>2.组合归并：每台电脑求Top10，然后组合100台电脑上数据的1000个数据，再求topk</li>
+</ul>
+</li>
+<li>如果同一个数据元素出现在不同机器中<ul>
+<li>1.遍历所有数据，重新散列取模，回到上一个问题</li>
+<li>2.暴力求解，直接统计所有元素，把同一元素再不同机器中出现次数相加，得到最终top10</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查询串的重新排列：有10个文件，每个文件的大小是1 GB，每个文件的每一行存放的都是用户的查询串query，每个文件的query都可能重复。请按照query的频度排序<ul>
+<li>解法一<ul>
+<li>1.散列映射</li>
+<li>2.hash_map统计</li>
+<li>3.堆排、快排或归并，得到10个排好序的文件后，对这10个文件进行归并排序(内排和外排相结合)</li>
+</ul>
+</li>
+<li>解法二：query总量有限时，可一次性加入内存，采用Trie树和hash_map直接统计，按照出现次数做快排、堆排、归并排序即可</li>
+</ul>
+</li>
+<li>寻找共同的URL：给定a和b两个文件，各存放50亿个URL，每个URL占64字节，内存限制是4GB。请找出a和b文件中共同的URL<ul>
+<li>可以估计出每个文件的大小为5000000000x 64=320 GB</li>
+<li>1.散列映射：对a，b文件，分别散列映射成1000对小文件。处理完后相同URL都在对应的小文件中。求出1000对小文件中相同的URL即可</li>
+<li>2.hash_set统计：把一个小文件的URL存储到hash_set中，然后遍历另一个小文件的URL判断是否存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="多层划分"><a href="#多层划分" class="headerlink" title="多层划分"></a>多层划分</h1><ul>
+<li>寻找不重复的数：在2.5亿个整数中找出不重复的整数的个数。注意，内存空间不足以容纳这2.5亿个整数<ul>
+<li>1.整数个数为2^{32}，将这2^{32}个数划分为 2^8个区域(用一个文件代表一个区域)</li>
+<li>2.不同的区域再利用位图进行统计</li>
+</ul>
+</li>
+<li>寻找中位数：找出5亿个int型数的中位数<ul>
+<li>1.将这5亿个int型数划分为2^{16}个区域</li>
+<li>2.读取数据统计落到各个区域里的数的个数，根据统计结果就可以判断中位数落到哪个区域，并知道这个区域中的第几大数刚好是中位数</li>
+<li>3.第二次扫描只统计落在这个区域中的那些数即可</li>
+</ul>
+</li>
+</ul>
+<h1 id="外排序"><a href="#外排序" class="headerlink" title="外排序"></a>外排序</h1><ul>
+<li>外排序介绍<ul>
+<li>采用「排序-归并」策略在排序。在排序阶段，先读入能放在内存中的数据，将其排序后输出到一个临时文件，依次进行，将待排序数据组织为多个有序的临时文件，而后在归并阶段将这些临时文件组合成一个大的有序文件</li>
+</ul>
+</li>
+<li>给10^7个数据的磁盘文件排序：给定一个文件，里面最多含有n个不重复的正整数( 也就是说可能含有少于n个不重复的正整数)，且其中每个数都小于等于n(n=10^7)。请输出一个按从小到大升序排列的包含所有输入整数的列表。假设最多有大约1 MB的内存空间可用，但磁盘空间足够。要求运行时间在5分钟以内，10 秒为最佳结果<ul>
+<li>1.位图<ul>
+<li>由于每个7位十进制整数表示一个小于1000万的整数，所以可以使用一个具有1000万个位的字符串来表示这个文件，当且仅当整数i在文件中存在时，字符串中的第i位置为1</li>
+<li>能采用位图方案的原因<ul>
+<li>输入数据限制在相对较小的范围内</li>
+<li>数据没有重复</li>
+<li>其中的每条记录都是单一的整数，没有任何其他与之关联的数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>2.多路归并<ul>
+<li>先把整个大文件分为若干大小的几块，然后分别对每一块进行排序，最后完成整个过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h1><ul>
+<li>电话号码统计：已知某个文件内包含一些电话号码，每个号码为8位数字，统计不同号码的个数<ul>
+<li>8位数字最多组成99 999 999个号码，大概需要99兆位，大概十几兆字节的内存即可</li>
+</ul>
+</li>
+<li>2.5亿个整数的去重：在2.5亿个整数中找出不重复的整数。注意，内存不足以容纳这2.5亿个整数<ul>
+<li>采用2位图(每个数分配2位，00表示不存在，01表示出现一次，10表示出现多次，11无意义)，共需内存2^32x2=1 GB内存，可以接受</li>
+<li>扫描这2.5亿个整数，查看位图中相对应的位，如果是00就变为01,如果是01就变为10, 如果是10就保持不变。扫描完之后，查看位图，把对应位是01的整数输出即可</li>
+<li>也可以先划分成小文件，然后在小文件中找出不重复的整数，并排序，最后归并， 归并的同时去除重复的数</li>
+</ul>
+</li>
+<li>整数的快速查询：给定40亿个不重复的没排过序的unsigned int 型整数，然后再给定一个数，如何快速判断这个数是否在这40亿个整数当中?<ul>
+<li>可以用位图的方法，申请512 MB的内存，一个位代表一个unsigned int 型的值</li>
+<li>读入40亿个数，设置相应的位</li>
+<li>读入要查询的数，查看相应位是否为1, 如果为1表示存在，如果为0表示不存在</li>
+</ul>
+</li>
+</ul>
+<h1 id="布隆过滤器-Bloom-filter"><a href="#布隆过滤器-Bloom-filter" class="headerlink" title="布隆过滤器(Bloom filter)"></a>布隆过滤器(Bloom filter)</h1><ul>
+<li>原理<ul>
+<li>相当于位图的扩展，其结构是长度为n的位数组，初始化为全0。当一个元素被加入集合中时，通过k个散列函数将这个元素映射成一个位数组中的k个点，并将这k个点全部置为1</li>
+<li>在检索一个元素是否在一个集合中时，只需看这个元素被映射成位阵列的k个点是不是都是1。如果这k个点中有任何一个点为0，则被检索元素在集合中一定不存在；如果这k个点都是1，则被检索元素很可能在集合中</li>
+<li>但会有误判的可能</li>
+</ul>
+</li>
+</ul>
+<h1 id="simhash算法"><a href="#simhash算法" class="headerlink" title="simhash算法"></a>simhash算法</h1><ul>
+<li>设计一个比较两篇文档相似度的算法<ul>
+<li>一种方案是先将两篇文章分别进行分词，得到一系列特征向量，然后计算特征向量之间的距离(比如计算它们之间的欧氏距离、汉明距离或者夹角余弦等)，从而通过距离的大小来判断两篇文章的相似度。该方案的缺点是海量数据计算量极大</li>
+<li>simhash算法</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><pre><code>- 结构之法
+- https://blog.csdn.net/v_JULY_v/article/details/6543438</code></pre>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>海量数据</tag>
       </tags>
   </entry>
   <entry>
@@ -4645,88 +4645,6 @@
       </tags>
   </entry>
   <entry>
-    <title>pytorch学习笔记</title>
-    <url>/pytorch-learning/</url>
-    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
-<ul>
-<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
-<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
-<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
-<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
-<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
-</ul>
-<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
-<ul>
-<li>Pytorch简介及环境配置</li>
-<li>Pytorch基础数据结构——张量</li>
-<li>张量操作与线性回归</li>
-<li>计算图与动态图机制</li>
-<li>autograd与逻辑回归</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
-<ul>
-<li>数据读取机制DataLoader与Dataset</li>
-<li>数据预处理transforms模块机制</li>
-<li>二十二种transforms数据预处理方法</li>
-<li>学会自定义transforms方法</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
-<ul>
-<li>nn.Module与网络模型构建步骤</li>
-<li>模型容器与AlexNet构建</li>
-<li>网络层中的卷积层</li>
-<li>网络层中的池化层、全连接层和激活函数层</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
-<ul>
-<li>权值初始化</li>
-<li>损失函数（一）</li>
-<li>Pytorch的14种损失函数</li>
-<li>优化器optimizer的概念</li>
-<li>torch.optim.SGD</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
-<ul>
-<li>学习率调整</li>
-<li>TensorBoard简介与安装</li>
-<li>TensorBoard使用（一）</li>
-<li>TensorBoard使用（二）</li>
-<li>hook函数与CAM</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
-<ul>
-<li>weight_decay</li>
-<li>dropout</li>
-<li>Batch Normalization</li>
-<li>Layer Normalization、Instance</li>
-<li>Normalization和Group Normalization</li>
-</ul>
-<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
-<ul>
-<li>模型保存与加载</li>
-<li>Finetune</li>
-<li>GPU的使用</li>
-<li>Pytorch中常见报错</li>
-</ul>
-<p>Week8、9 PyTorch深度体验</p>
-<ul>
-<li>图像分类一瞥</li>
-<li>图像分割一瞥</li>
-<li>目标检测一瞥（上）</li>
-<li>目标检测一瞥（下）</li>
-<li>对抗生成网络一瞥</li>
-<li>循环神经网络一瞥</li>
-</ul>
-]]></content>
-      <categories>
-        <category>pytorch学习笔记</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-        <tag>深度学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《OFF学》读书笔记</title>
     <url>/off-time/</url>
     <content><![CDATA[<ul>
@@ -4975,6 +4893,88 @@
       </categories>
       <tags>
         <tag>休闲</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pytorch学习笔记</title>
+    <url>/pytorch-learning/</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个目录是从深度之眼的pytorch课程中学习并整理的学习笔记</p>
+<ul>
+<li><a href="https://ai.deepshare.net/detail/p_5df0ad9a09d37_qYqVmt85/6">课程页面入口</a></li>
+<li><a href="https://github.com/JansonYuan/Pytorch-Camp">课程代码github</a></li>
+<li><a href="https://github.com/greebear/pytorch-learning">作业讲解代码</a></li>
+<li>课程所有代码汇总中配套数据百度网盘地址：<a href="https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw">https://pan.baidu.com/s/1mA8wSCLnKphByzvHBzc9Pw</a><br>提取码：g5ym</li>
+<li>课程所有课件汇总百度网盘地址：<a href="https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig">https://pan.baidu.com/s/1svt3lbDgNGixk5lKM1zfig</a><br>提取码：9j2f</li>
+</ul>
+<h1 id="目录笔记"><a href="#目录笔记" class="headerlink" title="目录笔记"></a>目录笔记</h1><p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week1.ipynb">Week1 Pytorch基础概念</a></p>
+<ul>
+<li>Pytorch简介及环境配置</li>
+<li>Pytorch基础数据结构——张量</li>
+<li>张量操作与线性回归</li>
+<li>计算图与动态图机制</li>
+<li>autograd与逻辑回归</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week2.ipynb">Week2 PyTorch数据处理</a></p>
+<ul>
+<li>数据读取机制DataLoader与Dataset</li>
+<li>数据预处理transforms模块机制</li>
+<li>二十二种transforms数据预处理方法</li>
+<li>学会自定义transforms方法</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week3.ipynb">Week3 PyTorch模型搭建</a></p>
+<ul>
+<li>nn.Module与网络模型构建步骤</li>
+<li>模型容器与AlexNet构建</li>
+<li>网络层中的卷积层</li>
+<li>网络层中的池化层、全连接层和激活函数层</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week4.ipynb">Week4 PyTorch损失优化</a></p>
+<ul>
+<li>权值初始化</li>
+<li>损失函数（一）</li>
+<li>Pytorch的14种损失函数</li>
+<li>优化器optimizer的概念</li>
+<li>torch.optim.SGD</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week5.ipynb">Week5 PyTorch训练过程</a></p>
+<ul>
+<li>学习率调整</li>
+<li>TensorBoard简介与安装</li>
+<li>TensorBoard使用（一）</li>
+<li>TensorBoard使用（二）</li>
+<li>hook函数与CAM</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week6.ipynb">Week6 PyTorch的正则化</a></p>
+<ul>
+<li>weight_decay</li>
+<li>dropout</li>
+<li>Batch Normalization</li>
+<li>Layer Normalization、Instance</li>
+<li>Normalization和Group Normalization</li>
+</ul>
+<p><a href="https://nbviewer.jupyter.org/github/shiqi-lu/Learn-AI/blob/master/pytorch_deepshare/week7.ipynb">Week7 PyTorch训练技巧</a></p>
+<ul>
+<li>模型保存与加载</li>
+<li>Finetune</li>
+<li>GPU的使用</li>
+<li>Pytorch中常见报错</li>
+</ul>
+<p>Week8、9 PyTorch深度体验</p>
+<ul>
+<li>图像分类一瞥</li>
+<li>图像分割一瞥</li>
+<li>目标检测一瞥（上）</li>
+<li>目标检测一瞥（下）</li>
+<li>对抗生成网络一瞥</li>
+<li>循环神经网络一瞥</li>
+</ul>
+]]></content>
+      <categories>
+        <category>pytorch学习笔记</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
