@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="整理了3种分布式共识算法（非拜占庭容错算法&#x2F;故障容错算法）的原理，包括Bully、Gossip、NWR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式共识算法整理：Bully、Gossip、NWR">
+<meta property="og:url" content="http://shiqi-lu.tech/bully-gossip-nwr/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="整理了3种分布式共识算法（非拜占庭容错算法&#x2F;故障容错算法）的原理，包括Bully、Gossip、NWR">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201614.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210224182702.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210224183252.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210224183330.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210224183401.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210224183422.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20210224182841.png">
+<meta property="article:published_time" content="2021-12-19T12:11:39.000Z">
+<meta property="article:modified_time" content="2021-12-19T12:22:21.841Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20200905201614.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/bully-gossip-nwr/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>分布式共识算法整理：Bully、Gossip、NWR | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：CS/AI/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">63</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Bully"><span class="nav-number">1.</span> <span class="nav-text">Bully</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.</span> <span class="nav-text">选举原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%87%E8%AE%BE%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">假设条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%9C%89%E5%93%AA%E4%B8%A4%E7%A7%8D%E8%A7%92%E8%89%B2%EF%BC%9F%E5%88%9D%E5%A7%8B%E8%A7%92%E8%89%B2%E5%92%8C%E5%8F%98%E5%8C%96%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">节点有哪两种角色？初始角色和变化过程是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%843%E7%A7%8D%E6%B6%88%E6%81%AF%E6%98%AF%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">选举过程中用到的3种消息是哪些？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">选举过程是怎样？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.6.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">1.7.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E4%BE%8B%E5%AD%90"><span class="nav-number">1.8.</span> <span class="nav-text">应用例子</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gossip"><span class="nav-number">2.</span> <span class="nav-text">Gossip</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%A6%81%E7%B4%A0"><span class="nav-number">2.2.</span> <span class="nav-text">三要素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E9%82%AE%E5%AF%84"><span class="nav-number">2.3.</span> <span class="nav-text">直接邮寄</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E7%86%B5"><span class="nav-number">2.4.</span> <span class="nav-text">反熵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E7%86%B5%E4%BF%AE%E5%A4%8D%E8%8A%82%E7%82%B9%E7%BC%BA%E5%A4%B1%E6%95%B0%E6%8D%AE%E7%9A%843%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">2.5.</span> <span class="nav-text">反熵修复节点缺失数据的3种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%A3%E8%A8%80%E4%BC%A0%E6%92%AD"><span class="nav-number">2.6.</span> <span class="nav-text">谣言传播</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Quorum-NWR"><span class="nav-number">3.</span> <span class="nav-text">Quorum NWR</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%E5%92%8C%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">3.1.</span> <span class="nav-text">最终一致性和强一致性有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%A6%81%E7%B4%A0-1"><span class="nav-number">3.2.</span> <span class="nav-text">三要素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N%E3%80%81W%E3%80%81R-%E5%80%BC%E7%9A%84%E4%B8%8D%E5%90%8C%E7%BB%84%E5%90%88%EF%BC%8C%E4%BC%9A%E4%BA%A7%E7%94%9F%E5%93%AA%E4%B8%A4%E7%A7%8D%E4%B8%8D%E5%90%8C%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E6%95%88%E6%9E%9C%EF%BC%9F"><span class="nav-number">3.3.</span> <span class="nav-text">N、W、R 值的不同组合，会产生哪两种不同的一致性效果？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#any%E3%80%81one%E3%80%81quorum%E3%80%81all-%E8%BF%994%E7%A7%8D%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%E7%BA%A7%E5%88%AB%EF%BC%8C%E5%85%B7%E4%BD%93%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">3.4.</span> <span class="nav-text">any、one、quorum、all 这4种写一致性级别，具体的含义</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/bully-gossip-nwr/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式共识算法整理：Bully、Gossip、NWR
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-12-19 20:11:39 / 修改时间：20:22:21" itemprop="dateCreated datePublished" datetime="2021-12-19T20:11:39+08:00">2021-12-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/bully-gossip-nwr/" class="post-meta-item leancloud_visitors" data-flag-title="分布式共识算法整理：Bully、Gossip、NWR" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/bully-gossip-nwr/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/bully-gossip-nwr/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">整理了3种分布式共识算法（非拜占庭容错算法/故障容错算法）的原理，包括Bully、Gossip、NWR</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Bully"><a href="#Bully" class="headerlink" title="Bully"></a>Bully</h1><h2 id="选举原则"><a href="#选举原则" class="headerlink" title="选举原则"></a>选举原则</h2><ul>
+<li>“长者为大”，在所有活着的节点中，选取ID最大的节点作为主节点</li>
+</ul>
+<h2 id="假设条件"><a href="#假设条件" class="headerlink" title="假设条件"></a>假设条件</h2><ul>
+<li>集群中每个节点均知道其它节点的ID</li>
+</ul>
+<h2 id="节点有哪两种角色？初始角色和变化过程是怎样的？"><a href="#节点有哪两种角色？初始角色和变化过程是怎样的？" class="headerlink" title="节点有哪两种角色？初始角色和变化过程是怎样的？"></a>节点有哪两种角色？初始角色和变化过程是怎样的？</h2><ul>
+<li>普通节点和主节点</li>
+<li>初始化时，所有节点都是平等的，都是普通节点，并且都有成为主节点的权利</li>
+<li>当选主成功后，有且仅有一个节点成为主节点，其它节点都是普通节点。当且仅当主节点故障或与其它节点失去联系后，才会重新选主</li>
+</ul>
+<h2 id="选举过程中用到的3种消息是哪些？"><a href="#选举过程中用到的3种消息是哪些？" class="headerlink" title="选举过程中用到的3种消息是哪些？"></a>选举过程中用到的3种消息是哪些？</h2><ul>
+<li>Election消息：用于发起选举</li>
+<li>Alive消息：对Election消息的应答</li>
+<li>Victory消息：竞选成功的主节点向其它节点发送的宣誓主权的消息</li>
+</ul>
+<h2 id="选举过程是怎样？"><a href="#选举过程是怎样？" class="headerlink" title="选举过程是怎样？"></a>选举过程是怎样？</h2><ul>
+<li>1.集群中每个节点判断自己的ID是否为当前活着的节点中ID最大的，如果是，则直接向其它节点发送Victory消息，宣誓自己的主权</li>
+<li>2.如果自己不是当前活着的节点中ID最大的，则向比自己大的所有节点发送Election消息，并等待其它节点的回复</li>
+<li>3.若在给定的时间范围内，本节点没有收到其它节点回复的Alive消息，则认为自己成为主节点，并向其它节点发送Victory消息，宣誓自己成为主节点；若接收到来自比自己ID大的节点的Alive消息，则等待其它节点发送Victory消息</li>
+<li>4.若本节点收到比自己ID小的节点发送的Election消息，则回复一个Alive消息，告知其它节点，我比你大，重新选举</li>
+<li><img src="https://img.shiqi-lu.tech/20200905201614.png"></li>
+</ul>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>选举速度快、算法复杂度低、简单易实现</li>
+</ul>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ul>
+<li>1.需要每个节点有全局的节点信息，因此额外信息存储较多</li>
+<li>2.任意一个比当前主节点ID大的新节点或节点故障后恢复加入集群的时候，都可能会触发重新选举，成为新的主节点，如果该节点频繁退出、加入集群，就会导致频繁切主</li>
+</ul>
+<h2 id="应用例子"><a href="#应用例子" class="headerlink" title="应用例子"></a>应用例子</h2><ul>
+<li>MongoDB的副本集故障转移功能：采用最后操作时间戳来表示ID，时间戳最新的节点其ID，时间戳最新的节点ID最大，即时间戳最新的、活着的节点是主节点</li>
+</ul>
+<h1 id="Gossip"><a href="#Gossip" class="headerlink" title="Gossip"></a>Gossip</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>Gossip 协议，利用一种随机、带有传染性的方式，将信息传播到整个网络中，并在一定时间内，使得系统内的所有节点数据一致(实现最终一致性)，在极端情况下（比如集群中只有一个节点在运行）也能运行</li>
+</ul>
+<h2 id="三要素"><a href="#三要素" class="headerlink" title="三要素"></a>三要素</h2><ul>
+<li>直接邮寄(Direct Mail)</li>
+<li>反熵(Anti-entropy)</li>
+<li>谣言传播(Rumor mongering)</li>
+</ul>
+<h2 id="直接邮寄"><a href="#直接邮寄" class="headerlink" title="直接邮寄"></a>直接邮寄</h2><ul>
+<li>直接发送更新数据，当数据发送失败时，将数据缓存下来，然后重传。直接邮寄虽然实现起来比较容易，数据同步也很及时，但可能会因为缓存队列满了而丢数据。即只采用直接邮寄是无法实现最终一致性的</li>
+</ul>
+<h2 id="反熵"><a href="#反熵" class="headerlink" title="反熵"></a>反熵</h2><ul>
+<li>集群中的节点，每隔一段时间就随机选择某个其它节点，然后通过互相交换自己的所有数据来消除两者之间的差异，实现数据的最终一致性</li>
+<li><img src="https://img.shiqi-lu.tech/20210224182702.png"></li>
+<li>如上图，节点A通过反熵的方式，修复了节点 D 中缺失的数据</li>
+<li>注意，因为反熵熵需要节点两两交换和比对自己所有的数据，执行反熵时通讯成本会很高，不建议频繁执行，可通过引入校验和(Checksum)等机制，降低需要对比的数据量和通讯消息</li>
+<li>执行反熵时相关的节点都是已知的，而且节点数量不能太多，如果是一个动态变化或节点数比较多的分布式环境，这时反熵就不适用了，该用谣言传播</li>
+</ul>
+<h2 id="反熵修复节点缺失数据的3种方式"><a href="#反熵修复节点缺失数据的3种方式" class="headerlink" title="反熵修复节点缺失数据的3种方式"></a>反熵修复节点缺失数据的3种方式</h2><ul>
+<li>以下图中，2 个数据副本的不一致为例</li>
+<li><img src="https://img.shiqi-lu.tech/20210224183252.png"></li>
+<li>推：将自己的所有副本数据，推给对方，修复对方副本中的熵</li>
+<li><img src="https://img.shiqi-lu.tech/20210224183330.png"></li>
+<li>拉：拉取对方的所有副本数据，修复自己副本中的熵</li>
+<li><img src="https://img.shiqi-lu.tech/20210224183401.png"></li>
+<li>推拉：同时修复自己副本和对方副本中的熵</li>
+<li><img src="https://img.shiqi-lu.tech/20210224183422.png"></li>
+</ul>
+<h2 id="谣言传播"><a href="#谣言传播" class="headerlink" title="谣言传播"></a>谣言传播</h2><ul>
+<li>当一个节点有了新数据后，这个节点编程活跃状态，并周期性地联系其他节点向其发送新数据，直到所有的节点都存储了该新数据</li>
+<li><img src="https://img.shiqi-lu.tech/20210224182841.png"></li>
+<li>如图，节点 A 向节点 B、D 发送新数据，节点 B 收到新数据后，变成活跃节点，然后节点 B 向节点 C、D 发送新数据。谣言传播非常具有传染性，它适合动态变化的分布式系统</li>
+</ul>
+<h1 id="Quorum-NWR"><a href="#Quorum-NWR" class="headerlink" title="Quorum NWR"></a>Quorum NWR</h1><h2 id="最终一致性和强一致性有什么区别"><a href="#最终一致性和强一致性有什么区别" class="headerlink" title="最终一致性和强一致性有什么区别"></a>最终一致性和强一致性有什么区别</h2><ul>
+<li>强一致性能保证写操作完成后，任何后续访问都能读到更新后的值</li>
+<li>最终一致性只能保证如果对某个对象没有新的写操作了，最终所有后续访问都能读到相同的最近更新的值，即写操作完成后，后续访问可能会读到旧数据</li>
+</ul>
+<h2 id="三要素-1"><a href="#三要素-1" class="headerlink" title="三要素"></a>三要素</h2><ul>
+<li>N：副本数，又叫复制因子(Replication Factor)</li>
+<li>W：写一致性级别(Write Consistency Level)，表示成功完成W个副本更新，才完成写操作</li>
+<li>R：读一致性级别(Read Consistency Level)，表示读取一个数据对象时需要读R个副本，即，读取指定数据时，要读 R 副本，然后返回 R 个副本中最新的那份数据</li>
+<li>注意：无论客户端如何执行读操作，哪怕它访问的是写操作未强制更新副本数据的节点（比如节点 B），但因为 W(2) + R(2) &gt; N(3)，也就是说，访问节点 B，执行读操作时，因为要读 2 份数据副本，所以除了节点 B 上的 DATA-2，还会读取节点 A 或节点 C 上的 DATA-2，就像上图的样子（比如节点 C 上的 DATA-2），而节点 A 和节点 C 的 DATA-2 数据副本是强制更新成功的。这个时候，返回给客户端肯定是最新的那份数据</li>
+</ul>
+<h2 id="N、W、R-值的不同组合，会产生哪两种不同的一致性效果？"><a href="#N、W、R-值的不同组合，会产生哪两种不同的一致性效果？" class="headerlink" title="N、W、R 值的不同组合，会产生哪两种不同的一致性效果？"></a>N、W、R 值的不同组合，会产生哪两种不同的一致性效果？</h2><ul>
+<li>当 W + R &gt; N 时，对于客户端来说，整个系统能保证强一致性，一定能返回更新后的那份数据</li>
+<li>当 W + R &lt; N 时，对于客户端来说，整个系统只能保证最终一致性，可能会返回旧数据</li>
+</ul>
+<h2 id="any、one、quorum、all-这4种写一致性级别，具体的含义"><a href="#any、one、quorum、all-这4种写一致性级别，具体的含义" class="headerlink" title="any、one、quorum、all 这4种写一致性级别，具体的含义"></a>any、one、quorum、all 这4种写一致性级别，具体的含义</h2><ul>
+<li>any：任何一个节点写入成功后，或者接收节点已将数据写入Hinted-handoff缓存(即写其他节点失败后，本地节点上缓存写失败数据的队列) 后，就会返回成功给客户端</li>
+<li>one：任何一个节点写入成功后，立即返回成功给客户端，，不包括成功写入到 Hinted-handoff 缓存</li>
+<li>quorum：当大多数节点写入成功后，就会返回成功给客户端。此选项仅在副本数大于 2 时才有意义，否则等效于 all</li>
+<li>all：仅在所有节点都写入成功后，返回成功</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/bully-gossip-nwr/" title="分布式共识算法整理：Bully、Gossip、NWR">http://shiqi-lu.tech/bully-gossip-nwr/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/distributed-consistency-byzantine/" rel="prev" title="4种分布式共识算法（拜占庭容错算法）的整理">
+                  <i class="fa fa-chevron-left"></i> 4种分布式共识算法（拜占庭容错算法）的整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/bully-gossip-nwr/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
