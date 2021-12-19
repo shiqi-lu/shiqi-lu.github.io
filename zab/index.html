@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="整理了ZAB分布式共识算法（非拜占庭容错算法&#x2F;故障容错算法）的原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZAB分布式共识整理">
+<meta property="og:url" content="http://shiqi-lu.tech/zab/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="整理了ZAB分布式共识算法（非拜占庭容错算法&#x2F;故障容错算法）的原理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211213165711.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211213170442.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211213172711.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211213173419.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211213174021.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201623.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201632.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20200905201638.png">
+<meta property="article:published_time" content="2021-12-19T12:50:05.000Z">
+<meta property="article:modified_time" content="2021-12-19T12:50:05.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20211213165711.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/zab/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ZAB分布式共识整理 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：CS/AI/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">66</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Replicated-State-Machine-%E5%A4%8D%E5%88%B6%E7%8A%B6%E6%80%81%E6%9C%BA-%E5%92%8C-Primary-Backup-System-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="nav-number">1.</span> <span class="nav-text">Replicated State Machine(复制状态机) 和 Primary-Backup System 的对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Primary-Backup-%E5%A4%8D%E5%88%B6%E6%A8%A1%E5%9E%8B%E5%9C%A8-ZAB-%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">Primary-Backup 复制模型在 ZAB 中的应用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zxid-%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">zxid 的原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ZAB-%E6%98%AF%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%97%A5%E5%BF%97%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%8F%90%E4%BA%A4%E7%9A%84"><span class="nav-number">4.</span> <span class="nav-text">ZAB 是如何保证日志的顺序提交的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ZAB%E7%AE%97%E6%B3%95%E9%80%89%E4%B8%BE%E6%97%B6%EF%BC%8C%E9%9B%86%E7%BE%A4%E6%9C%89%E5%93%AA4%E7%A7%8D%E8%A7%92%E8%89%B2%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">ZAB算法选举时，集群有哪4种角色？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ZAB%E7%AE%97%E6%B3%95%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8C%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9%E6%8B%A5%E6%9C%89%E5%93%AA4%E4%B8%AA%E7%8A%B6%E6%80%81%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">ZAB算法选举过程中，集群中的节点拥有哪4个状态？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ZAB%E7%AE%97%E6%B3%95%E7%9A%84%E8%8A%82%E7%82%B9%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%89%E5%85%83%E7%BB%84-server-id-server-zxID-epoch-%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">ZAB算法的节点的数据结构三元组(server_id, server_zxID, epoch)分别是什么意思？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ZAB%E7%AE%97%E6%B3%95%E7%9A%84%E6%A0%B8%E5%BF%83%E5%92%8C%E9%80%89%E4%B8%BB%E5%8E%9F%E5%88%99%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">ZAB算法的核心和选主原则是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Zookeeper-%E5%AE%9E%E7%8E%B0-ZAB-%E7%9A%84-3-%E4%B8%AA%E9%98%B6%E6%AE%B5"><span class="nav-number">9.</span> <span class="nav-text">Zookeeper 实现 ZAB 的 3 个阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Leader-%E9%80%89%E4%B8%BE%EF%BC%9AFLE-Fast-Leader-Election-%E7%AE%97%E6%B3%95"><span class="nav-number">9.1.</span> <span class="nav-text">Leader 选举：FLE(Fast Leader Election)算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%B8%B8%E9%98%B6%E6%AE%B5%EF%BC%9A2-%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4"><span class="nav-number">9.2.</span> <span class="nav-text">正常阶段：2 阶段提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E9%98%B6%E6%AE%B5%EF%BC%9A%E5%BD%93-Leader-%E5%AE%95%E6%9C%BA%E5%90%8E%EF%BC%8C%E6%96%B0%E9%80%89%E5%87%BA%E4%BA%86-Leader%EF%BC%8C%E5%85%B6%E5%AE%83-Follower-%E8%A6%81%E5%88%87%E6%8D%A2%E5%88%B0%E6%96%B0%E7%9A%84-Leader%EF%BC%8C%E4%BB%8E%E6%96%B0%E7%9A%84-Leader-%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">9.3.</span> <span class="nav-text">恢复阶段：当 Leader 宕机后，新选出了 Leader，其它 Follower 要切换到新的 Leader，从新的 Leader 同步数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ZAB%E7%AE%97%E6%B3%95%E7%9A%84%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">ZAB算法的选举过程是怎样？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">11.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">12.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">13.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/zab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZAB分布式共识整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-19 20:50:05" itemprop="dateCreated datePublished" datetime="2021-12-19T20:50:05+08:00">2021-12-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/zab/" class="post-meta-item leancloud_visitors" data-flag-title="ZAB分布式共识整理" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/zab/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/zab/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">整理了ZAB分布式共识算法（非拜占庭容错算法/故障容错算法）的原理</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Replicated-State-Machine-复制状态机-和-Primary-Backup-System-的对比"><a href="#Replicated-State-Machine-复制状态机-和-Primary-Backup-System-的对比" class="headerlink" title="Replicated State Machine(复制状态机) 和 Primary-Backup System 的对比"></a>Replicated State Machine(复制状态机) 和 Primary-Backup System 的对比</h1><ul>
+<li>假设初始时 X=0，客户端发送了 X=1, X=X+5，X=X+1 三个指令</li>
+<li>Replicated State Machine(复制状态机)<ul>
+<li>节点持久化的是日志序列，在节点之间复制的是日志序列，然后把日志序列应用到状态机(X)，最终 X=7</li>
+</ul>
+</li>
+<li>Primary-Backup System<ul>
+<li>节点存储和复制的都是 X=1、X=6、X=7 这种状态的变化序列</li>
+</ul>
+</li>
+<li><img src="https://img.shiqi-lu.tech/20211213165711.png"></li>
+<li>两种模型的对比<ul>
+<li>1.数据同步次数不一样<ul>
+<li>存储的是日志序列：客户端的所有写请求都要在节点之间同步，不管状态有无变化</li>
+<li>存储的是状态变化：只需同步最后一条数据</li>
+</ul>
+</li>
+<li>2.存储状态变化<ul>
+<li>以客户端发送一个指令 X = X+1 为例</li>
+<li>日志序列：Apply 多次就会出现问题</li>
+<li>状态变化：具有幂等性，如 X=6，Apply 多次也没关系</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="Primary-Backup-复制模型在-ZAB-中的应用"><a href="#Primary-Backup-复制模型在-ZAB-中的应用" class="headerlink" title="Primary-Backup 复制模型在 ZAB 中的应用"></a>Primary-Backup 复制模型在 ZAB 中的应用</h1><ul>
+<li>Zookeeper 是一个树状结构，ZAB 是单点写入，客户端的写请求都会写入Primary Node，Primary Node更新自己本地的树，这棵树也就是上面所说的状态机，完全在内存当中，对应的树的变化存储在磁盘上面，称为Transaction日志。Primary节点把Transaction日志复制到多数派的Backup Node上面，BackupNode根据Transaction日志更新各自内存中的这棵树</li>
+<li><img src="https://img.shiqi-lu.tech/20211213170442.png"></li>
+</ul>
+<h1 id="zxid-的原理"><a href="#zxid-的原理" class="headerlink" title="zxid 的原理"></a>zxid 的原理</h1><ul>
+<li>Zookeeper中的Transaction指的并不是客户端的请求日志,而是Zookeeper的这棵内存树的变化。每一次客户端的写请求导致的内存树的变化，生成一个对应的Transaction， 每个Transaction有一个唯一的 ID，称为zxid</li>
+<li>在Raft里面，每条日志都有一个term和index，把这两个拼在一起，就类似于zxid。 zxid 是一个64位的整数，高32位表示Leader的任期，在Raft里面叫term,这里叫epoch;低32位是任期内日志的顺序编号</li>
+<li>对于每一个新的epoch, zxid 的低32位的编号都从0开始。这是不同于Raft的一个地方，在Raft里面，日志的编号呈全局的顺序递增。</li>
+<li>两条日志的新旧比较办法和Raft中两条日志的比较办法类似:<ul>
+<li>1.日志a的epoch大于b的epoch, 则日志a的zxid大于b的zxid， 日志a比日志b新</li>
+<li>2.日志a的epoch等于b的epoch,并且日志a的编号大于日志b的编号，则日志a的zxid大于b的zxid，日志a比日志b新</li>
+</ul>
+</li>
+</ul>
+<h1 id="ZAB-是如何保证日志的顺序提交的"><a href="#ZAB-是如何保证日志的顺序提交的" class="headerlink" title="ZAB 是如何保证日志的顺序提交的"></a>ZAB 是如何保证日志的顺序提交的</h1><ul>
+<li>因为 Raft 和 ZAB 使用了单点写入，Paxos 则不能保证，因为是多点写入，乱序提交</li>
+<li>这样日志有了「时序」的保证，就相当于在全局为每条日志做了个顺序的编号！基于这个编号，就可以做日志的顺序提交、不同节点间的日志比对，回放日志的时候，也可以按照编号从小到大回放</li>
+<li>基于「序」的本质概念，可以保证以下几点<ul>
+<li>1.如果日志a小于日志b，则所有节点一定先广播a，后广播b</li>
+<li>2.如果日志a小于日志b，则所有节点一定先Commit a, 后Commit b。这里的Commit，指的是Apply到状态机。</li>
+</ul>
+</li>
+</ul>
+<h1 id="ZAB算法选举时，集群有哪4种角色？"><a href="#ZAB算法选举时，集群有哪4种角色？" class="headerlink" title="ZAB算法选举时，集群有哪4种角色？"></a>ZAB算法选举时，集群有哪4种角色？</h1><ul>
+<li>Leader: 主节点</li>
+<li>Follower: 跟随者节点</li>
+<li>Observer: 观察者，无投票权</li>
+<li>Election:类似 Raft 的 Candidate 状态，即自己进入选举状态</li>
+</ul>
+<h1 id="ZAB算法选举过程中，集群中的节点拥有哪4个状态？"><a href="#ZAB算法选举过程中，集群中的节点拥有哪4个状态？" class="headerlink" title="ZAB算法选举过程中，集群中的节点拥有哪4个状态？"></a>ZAB算法选举过程中，集群中的节点拥有哪4个状态？</h1><ul>
+<li>Looking/Election（选举）状态：当节点处于该状态时，它会认为当前集群中没有Leader，因此自己进入选举状态</li>
+<li>Leading（领导者）状态：表示已经选出主，且当前节点为Leader</li>
+<li>Following（跟随者）状态：集群中已经选出主后，其它非主节点状态更新为Following，表示对Leader的追随</li>
+<li>Observing（观察者）状态：表示当前节点为Observer，持观望态度，没有投票权和选举权</li>
+<li><img src="https://img.shiqi-lu.tech/20211213172711.png"></li>
+</ul>
+<h1 id="ZAB算法的节点的数据结构三元组-server-id-server-zxID-epoch-分别是什么意思？"><a href="#ZAB算法的节点的数据结构三元组-server-id-server-zxID-epoch-分别是什么意思？" class="headerlink" title="ZAB算法的节点的数据结构三元组(server_id, server_zxID, epoch)分别是什么意思？"></a>ZAB算法的节点的数据结构三元组(server_id, server_zxID, epoch)分别是什么意思？</h1><ul>
+<li>server_id: 本节点的唯一ID</li>
+<li>server_zxID: 本节点存放的数据ID，数据ID越大表示数据越新，选举权重越大</li>
+<li>epoch: 当前选取轮数，一般用逻辑时钟表示</li>
+</ul>
+<h1 id="ZAB算法的核心和选主原则是什么？"><a href="#ZAB算法的核心和选主原则是什么？" class="headerlink" title="ZAB算法的核心和选主原则是什么？"></a>ZAB算法的核心和选主原则是什么？</h1><ul>
+<li>核心：少数服从多数，ID大的节点优先成为主</li>
+<li>选主原则：server_zxID最大者成为Leader, 若server_zxID相同，则server_id最大者成为Leader</li>
+</ul>
+<h1 id="Zookeeper-实现-ZAB-的-3-个阶段"><a href="#Zookeeper-实现-ZAB-的-3-个阶段" class="headerlink" title="Zookeeper 实现 ZAB 的 3 个阶段"></a>Zookeeper 实现 ZAB 的 3 个阶段</h1><h2 id="Leader-选举：FLE-Fast-Leader-Election-算法"><a href="#Leader-选举：FLE-Fast-Leader-Election-算法" class="headerlink" title="Leader 选举：FLE(Fast Leader Election)算法"></a>Leader 选举：FLE(Fast Leader Election)算法</h2><ul>
+<li>在初始的时候，节点处于Election 状态，然后开始发起选举，选举结束，处于Leader或者Follower状态</li>
+<li>在Raft里面，Leader 和Follower之间是单向心跳，只会是Leader给Follower 发送心跳。但在Zab里面是双向心跳，Follower 收不到Leader的心跳，就切换到Election状态发起选举；反过来，Leader 收不到超过半数的Follower心跳，也切换到Election 状态，重新发起选举</li>
+<li>Raft 选取日志最新的节点作为新的 Leader</li>
+<li>ZAB 选取zxid 最大的节点作为 Leader，如果所有的节点的 zxid 相等，如系统刚初始化的时候，所有节点的 zxid 都为 0，此时将选取节点编号最大的节点作为Leader(Zookeeper为每个节点配置了一个编号)</li>
+</ul>
+<h2 id="正常阶段：2-阶段提交"><a href="#正常阶段：2-阶段提交" class="headerlink" title="正常阶段：2 阶段提交"></a>正常阶段：2 阶段提交</h2><ul>
+<li>接收客户端的请求，然后复制到多数派，在 Zookeeper 里面也成为 2 阶段提交</li>
+<li><img src="https://img.shiqi-lu.tech/20211213173419.png"></li>
+<li>阶段1：Leader收到客户端的请求，先发送Propose消息给所有的Follower，收到超过半数的Follower返回的ACK消息</li>
+<li>阶段2：给所有节点发送Commit消息</li>
+<li>注：</li>
+<li>1.Commit是纯内存操作。这里所说的Commit指的是Raft里面的Apply，Apply到Zookeeper的状态机</li>
+<li>2.在阶段1，收到多数派的ACK后，就表示返回给客户端成功了。而不是等多数派的节点收到Commit，再返回给客户端</li>
+<li>3.Propose 阶段有一次落盘操作，也就是生成一条Transaction日志，落盘。这与MySQL中Write-ahead Log原理类似</li>
+</ul>
+<h2 id="恢复阶段：当-Leader-宕机后，新选出了-Leader，其它-Follower-要切换到新的-Leader，从新的-Leader-同步数据"><a href="#恢复阶段：当-Leader-宕机后，新选出了-Leader，其它-Follower-要切换到新的-Leader，从新的-Leader-同步数据" class="headerlink" title="恢复阶段：当 Leader 宕机后，新选出了 Leader，其它 Follower 要切换到新的 Leader，从新的 Leader 同步数据"></a>恢复阶段：当 Leader 宕机后，新选出了 Leader，其它 Follower 要切换到新的 Leader，从新的 Leader 同步数据</h2><ul>
+<li>Raft 里面的恢复阶段是，新选出的 Leader 发出一个空的 AppendEntries RPC 请求，即复用了正常复制阶段的通信协议</li>
+<li>在 ZAB 里面是，Leader 日志不动，Follower 要与 Leader 做日志比对，然后可能做日志的截断、补齐等操作</li>
+<li><img src="https://img.shiqi-lu.tech/20211213174021.png"></li>
+<li>恢复的算法和Raft的AppendEntries 很类似，只是在Raft里面这些工作都由Follower自己做了。而在这里，是Leader把主要的工作做了，Leader 比对日志，然后告诉Follower做截断、补齐或全量同步</li>
+</ul>
+<h1 id="ZAB算法的选举过程是怎样？"><a href="#ZAB算法的选举过程是怎样？" class="headerlink" title="ZAB算法的选举过程是怎样？"></a>ZAB算法的选举过程是怎样？</h1><ul>
+<li>1.当系统刚启动时，3个服务器当前投票均为第一轮投票，即epoch=1, 且zxID均为0。此时每个服务器都推选自己，并将选票信息&lt;epoch, vote_id, vote_zxID&gt;广播出去</li>
+<li><img src="https://img.shiqi-lu.tech/20200905201623.png"></li>
+<li>2.根据判断规则，由于3个Server的epoch、zxID都相同，因此比较server_id，较大者即为推选对象，因此Server1和Server2将vote_id改为3，更新自己的投票箱并重新广播自己的投票</li>
+<li><img src="https://img.shiqi-lu.tech/20200905201632.png"></li>
+<li>3.此时系统内所有服务器都推选了Server3，因此Server3当选Leader，处于Leading状态，向其它服务器发送心跳包并维护连接；Server1和2处于Following状态</li>
+<li><img src="https://img.shiqi-lu.tech/20200905201638.png"></li>
+</ul>
+<h1 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h1><ul>
+<li>1.性能高，对系统无特殊要求</li>
+<li>2.选举稳定性比较好，当有新节点加入或节点故障恢复后，会触发选主，但不一定会真正切主，除非新节点或故障后恢复的节点数据 ID 和节点 ID 最大，且获得投票数过半，才会导致切主</li>
+</ul>
+<h1 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h1><ul>
+<li>1.采用广播方式发送信息，若节点中有n个节点，每个节点同时广播，则集群中信息量为n*(n-1)个消息，容易出现广播风暴</li>
+<li>2.除了投票，还增加了对比节点ID和数据ID，这就意味着还需要知道所有节点ID和数据ID，所以选举时间相对较长</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>分布式协议与算法实战-极客时间</li>
+<li>分布式技术原理与算法解析-极客时间</li>
+<li>软件架构设计 大型网站技术架构与业务架构融合之道</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/zab/" title="ZAB分布式共识整理">http://shiqi-lu.tech/zab/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/raft/" rel="prev" title="Raft分布式共识整理">
+                  <i class="fa fa-chevron-left"></i> Raft分布式共识整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/zab/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
