@@ -24,7 +24,7 @@
 
   <meta name="description" content="整理了3种分布式共识算法（非拜占庭容错算法&#x2F;故障容错算法）的原理，包括Bully、Gossip、NWR">
 <meta property="og:type" content="article">
-<meta property="og:title" content="分布式共识算法整理：Bully、Gossip、NWR">
+<meta property="og:title" content="分布式共识算法（故障容错算法）系列整理(二)：Bully、Gossip、NWR">
 <meta property="og:url" content="http://shiqi-lu.tech/bully-gossip-nwr/index.html">
 <meta property="og:site_name" content="每天净瞎搞">
 <meta property="og:description" content="整理了3种分布式共识算法（非拜占庭容错算法&#x2F;故障容错算法）的原理，包括Bully、Gossip、NWR">
@@ -58,7 +58,7 @@
   };
 </script>
 
-  <title>分布式共识算法整理：Bully、Gossip、NWR | 每天净瞎搞</title>
+  <title>分布式共识算法（故障容错算法）系列整理(二)：Bully、Gossip、NWR | 每天净瞎搞</title>
   
 
 
@@ -214,7 +214,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Bully"><span class="nav-number">1.</span> <span class="nav-text">Bully</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.</span> <span class="nav-text">选举原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%87%E8%AE%BE%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">假设条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%9C%89%E5%93%AA%E4%B8%A4%E7%A7%8D%E8%A7%92%E8%89%B2%EF%BC%9F%E5%88%9D%E5%A7%8B%E8%A7%92%E8%89%B2%E5%92%8C%E5%8F%98%E5%8C%96%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">节点有哪两种角色？初始角色和变化过程是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%843%E7%A7%8D%E6%B6%88%E6%81%AF%E6%98%AF%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">选举过程中用到的3种消息是哪些？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">选举过程是怎样？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.6.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">1.7.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E4%BE%8B%E5%AD%90"><span class="nav-number">1.8.</span> <span class="nav-text">应用例子</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gossip"><span class="nav-number">2.</span> <span class="nav-text">Gossip</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%A6%81%E7%B4%A0"><span class="nav-number">2.2.</span> <span class="nav-text">三要素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E9%82%AE%E5%AF%84"><span class="nav-number">2.3.</span> <span class="nav-text">直接邮寄</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E7%86%B5"><span class="nav-number">2.4.</span> <span class="nav-text">反熵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E7%86%B5%E4%BF%AE%E5%A4%8D%E8%8A%82%E7%82%B9%E7%BC%BA%E5%A4%B1%E6%95%B0%E6%8D%AE%E7%9A%843%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">2.5.</span> <span class="nav-text">反熵修复节点缺失数据的3种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%A3%E8%A8%80%E4%BC%A0%E6%92%AD"><span class="nav-number">2.6.</span> <span class="nav-text">谣言传播</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Quorum-NWR"><span class="nav-number">3.</span> <span class="nav-text">Quorum NWR</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%E5%92%8C%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">3.1.</span> <span class="nav-text">最终一致性和强一致性有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%A6%81%E7%B4%A0-1"><span class="nav-number">3.2.</span> <span class="nav-text">三要素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N%E3%80%81W%E3%80%81R-%E5%80%BC%E7%9A%84%E4%B8%8D%E5%90%8C%E7%BB%84%E5%90%88%EF%BC%8C%E4%BC%9A%E4%BA%A7%E7%94%9F%E5%93%AA%E4%B8%A4%E7%A7%8D%E4%B8%8D%E5%90%8C%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E6%95%88%E6%9E%9C%EF%BC%9F"><span class="nav-number">3.3.</span> <span class="nav-text">N、W、R 值的不同组合，会产生哪两种不同的一致性效果？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#any%E3%80%81one%E3%80%81quorum%E3%80%81all-%E8%BF%994%E7%A7%8D%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%E7%BA%A7%E5%88%AB%EF%BC%8C%E5%85%B7%E4%BD%93%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">3.4.</span> <span class="nav-text">any、one、quorum、all 这4种写一致性级别，具体的含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BC%E8%AF%AD"><span class="nav-number">1.</span> <span class="nav-text">导语</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%89%E4%B8%BE%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要有分布式选举？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%89%E4%B8%BE%E9%97%AE%E9%A2%98%E7%9A%84%E6%9C%AC%E8%B4%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">分布式选举问题的本质是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">什么是分布式共识？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E5%92%8C%E5%85%B1%E8%AF%86%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">一致性和共识的区别是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%9C%E5%8D%A0%E5%BA%AD%E5%AE%B9%E9%94%99%E7%AE%97%E6%B3%95%E5%92%8C%E9%9D%9E%E6%8B%9C%E5%8D%A0%E5%BA%AD%E5%AE%B9%E9%94%99%E7%AE%97%E6%B3%95"><span class="nav-number">1.5.</span> <span class="nav-text">拜占庭容错算法和非拜占庭容错算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Bully"><span class="nav-number">2.</span> <span class="nav-text">Bully</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E5%8E%9F%E5%88%99"><span class="nav-number">2.1.</span> <span class="nav-text">选举原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%87%E8%AE%BE%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">假设条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%9C%89%E5%93%AA%E4%B8%A4%E7%A7%8D%E8%A7%92%E8%89%B2%EF%BC%9F%E5%88%9D%E5%A7%8B%E8%A7%92%E8%89%B2%E5%92%8C%E5%8F%98%E5%8C%96%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">节点有哪两种角色？初始角色和变化过程是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%843%E7%A7%8D%E6%B6%88%E6%81%AF%E6%98%AF%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">2.4.</span> <span class="nav-text">选举过程中用到的3种消息是哪些？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%EF%BC%9F"><span class="nav-number">2.5.</span> <span class="nav-text">选举过程是怎样？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">2.6.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">2.7.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E4%BE%8B%E5%AD%90"><span class="nav-number">2.8.</span> <span class="nav-text">应用例子</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gossip"><span class="nav-number">3.</span> <span class="nav-text">Gossip</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">3.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%A6%81%E7%B4%A0"><span class="nav-number">3.2.</span> <span class="nav-text">三要素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E9%82%AE%E5%AF%84"><span class="nav-number">3.3.</span> <span class="nav-text">直接邮寄</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E7%86%B5"><span class="nav-number">3.4.</span> <span class="nav-text">反熵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E7%86%B5%E4%BF%AE%E5%A4%8D%E8%8A%82%E7%82%B9%E7%BC%BA%E5%A4%B1%E6%95%B0%E6%8D%AE%E7%9A%843%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">3.5.</span> <span class="nav-text">反熵修复节点缺失数据的3种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%A3%E8%A8%80%E4%BC%A0%E6%92%AD"><span class="nav-number">3.6.</span> <span class="nav-text">谣言传播</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Quorum-NWR"><span class="nav-number">4.</span> <span class="nav-text">Quorum NWR</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%E5%92%8C%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">4.1.</span> <span class="nav-text">最终一致性和强一致性有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%A6%81%E7%B4%A0-1"><span class="nav-number">4.2.</span> <span class="nav-text">三要素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N%E3%80%81W%E3%80%81R-%E5%80%BC%E7%9A%84%E4%B8%8D%E5%90%8C%E7%BB%84%E5%90%88%EF%BC%8C%E4%BC%9A%E4%BA%A7%E7%94%9F%E5%93%AA%E4%B8%A4%E7%A7%8D%E4%B8%8D%E5%90%8C%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E6%95%88%E6%9E%9C%EF%BC%9F"><span class="nav-number">4.3.</span> <span class="nav-text">N、W、R 值的不同组合，会产生哪两种不同的一致性效果？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#any%E3%80%81one%E3%80%81quorum%E3%80%81all-%E8%BF%994%E7%A7%8D%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%E7%BA%A7%E5%88%AB%EF%BC%8C%E5%85%B7%E4%BD%93%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">4.4.</span> <span class="nav-text">any、one、quorum、all 这4种写一致性级别，具体的含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -313,7 +313,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          分布式共识算法整理：Bully、Gossip、NWR
+          分布式共识算法（故障容错算法）系列整理(二)：Bully、Gossip、NWR
         </h1>
 
         <div class="post-meta-container">
@@ -337,7 +337,7 @@
     </span>
 
   
-    <span id="/bully-gossip-nwr/" class="post-meta-item leancloud_visitors" data-flag-title="分布式共识算法整理：Bully、Gossip、NWR" title="阅读次数">
+    <span id="/bully-gossip-nwr/" class="post-meta-item leancloud_visitors" data-flag-title="分布式共识算法（故障容错算法）系列整理(二)：Bully、Gossip、NWR" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -365,14 +365,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.4k</span>
+      <span>3.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -384,7 +384,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="Bully"><a href="#Bully" class="headerlink" title="Bully"></a>Bully</h1><h2 id="选举原则"><a href="#选举原则" class="headerlink" title="选举原则"></a>选举原则</h2><ul>
+        <h1 id="导语"><a href="#导语" class="headerlink" title="导语"></a>导语</h1><h2 id="为什么要有分布式选举？"><a href="#为什么要有分布式选举？" class="headerlink" title="为什么要有分布式选举？"></a>为什么要有分布式选举？</h2><ul>
+<li>主节点在一个分布式集群中负责对其它节点的协调和管理，它的存在可以保证其它节点的有序运行，以及数据库集群中的写入数据在每个节点上的一致性。（一致性是指，数据在每个集群节点中都是一样的，不存在不同的情况）<h2 id="分布式选举问题的本质是什么？"><a href="#分布式选举问题的本质是什么？" class="headerlink" title="分布式选举问题的本质是什么？"></a>分布式选举问题的本质是什么？</h2></li>
+<li>传统的分布式共识方法，主要是基于多数投票策略实现的<h2 id="什么是分布式共识？"><a href="#什么是分布式共识？" class="headerlink" title="什么是分布式共识？"></a>什么是分布式共识？</h2></li>
+<li>在多个节点均可独自操作或记录的情况下，使得所有节点针对某个状态达成一致的过程</li>
+<li>本质是“求同存异”<h2 id="一致性和共识的区别是什么？"><a href="#一致性和共识的区别是什么？" class="headerlink" title="一致性和共识的区别是什么？"></a>一致性和共识的区别是什么？</h2></li>
+<li>一致性：分布式系统中的多个节点之间，给定一系列的操作，在约定协议的保障下，对外界呈现的数据或状态时一致的</li>
+<li>共识：分布式系统中多个节点之间，彼此对某个状态达成一致结果的过程</li>
+<li>一致性强调结果，共识强调达成一致的过程，共识算法是保障系统满足不同程度一致性的核心技术<h2 id="拜占庭容错算法和非拜占庭容错算法"><a href="#拜占庭容错算法和非拜占庭容错算法" class="headerlink" title="拜占庭容错算法和非拜占庭容错算法"></a>拜占庭容错算法和非拜占庭容错算法</h2></li>
+<li>拜占庭将军问题描述的是最困难的，也是最复杂的一种分布式故障场景，除了存在故障行为，还存在恶意行为的一个场景。必须使用拜占庭容错算法（Byzantine Fault Tolerance，BFT）。还有：PBFT 算法，PoW 算法</li>
+<li>在计算机分布式系统中，最常用的是非拜占庭容错算法，即故障容错算法（Crash Fault Tolerance，CFT）。CFT 解决的是分布式的系统中存在故障，但不存在恶意节点的场景下的共识问题。这个场景可能会丢失消息，或者有消息重复，但不存在错误消息，或者伪造消息的情况。常见的算法有 Paxos 算法、Raft 算法、ZAB 协议</li>
+</ul>
+<h1 id="Bully"><a href="#Bully" class="headerlink" title="Bully"></a>Bully</h1><h2 id="选举原则"><a href="#选举原则" class="headerlink" title="选举原则"></a>选举原则</h2><ul>
 <li>“长者为大”，在所有活着的节点中，选取ID最大的节点作为主节点</li>
 </ul>
 <h2 id="假设条件"><a href="#假设条件" class="headerlink" title="假设条件"></a>假设条件</h2><ul>
@@ -510,7 +521,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://shiqi-lu.tech/bully-gossip-nwr/" title="分布式共识算法整理：Bully、Gossip、NWR">http://shiqi-lu.tech/bully-gossip-nwr/</a>
+      <a href="http://shiqi-lu.tech/bully-gossip-nwr/" title="分布式共识算法（故障容错算法）系列整理(二)：Bully、Gossip、NWR">http://shiqi-lu.tech/bully-gossip-nwr/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -527,13 +538,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/distributed-consistency-byzantine/" rel="prev" title="4种分布式共识算法（拜占庭容错算法）的整理">
-                  <i class="fa fa-chevron-left"></i> 4种分布式共识算法（拜占庭容错算法）的整理
+                <a href="/distributed-consistency-byzantine/" rel="prev" title="分布式共识算法（拜占庭容错算法）的系列整理一：PBFT、PoW、PoS、DPos">
+                  <i class="fa fa-chevron-left"></i> 分布式共识算法（拜占庭容错算法）的系列整理一：PBFT、PoW、PoS、DPos
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/paxos/" rel="next" title="Paxos分布式共识整理">
-                  Paxos分布式共识整理 <i class="fa fa-chevron-right"></i>
+                <a href="/paxos/" rel="next" title="分布式共识算法（故障容错算法）系列整理(三)：Paxos">
+                  分布式共识算法（故障容错算法）系列整理(三)：Paxos <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
