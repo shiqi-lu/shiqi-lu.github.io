@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/7-128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/7-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/7-16.png">
+  <link rel="mask-icon" href="/images/7-128.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shiqi-lu.tech","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="整理极客时间《从0开始学微服务》模块一：入门微服务的知识点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《从0开始学微服务》模块一：入门微服务的学习笔记">
+<meta property="og:url" content="http://shiqi-lu.tech/microservice-starter-1/index.html">
+<meta property="og:site_name" content="每天净瞎搞">
+<meta property="og:description" content="整理极客时间《从0开始学微服务》模块一：入门微服务的知识点">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211213223407.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211213224318.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211219171638.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211219174706.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211220223027.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211221100715.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211221101211.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211221134755.png">
+<meta property="og:image" content="https://img.shiqi-lu.tech/20211221134803.png">
+<meta property="article:published_time" content="2021-12-26T13:43:37.000Z">
+<meta property="article:modified_time" content="2021-12-26T13:43:37.000Z">
+<meta property="article:author" content="Shiqi Lu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="微服务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shiqi-lu.tech/20211213223407.png">
+
+
+<link rel="canonical" href="http://shiqi-lu.tech/microservice-starter-1/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《从0开始学微服务》模块一：入门微服务的学习笔记 | 每天净瞎搞</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">每天净瞎搞</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">关注：CS/AI/数学/自我提升等</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">30</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">67</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#03%E4%B8%A8%E5%88%9D%E6%8E%A2%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84"><span class="nav-text">03丨初探微服务架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#04-%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83%E5%92%8C%E5%BC%95%E7%94%A8%E6%9C%8D%E5%8A%A1%EF%BC%9F"><span class="nav-text">04 | 如何发布和引用服务？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#05-%E5%A6%82%E4%BD%95%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0%E6%9C%8D%E5%8A%A1%EF%BC%9F"><span class="nav-text">05 | 如何注册和发现服务？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#06%E4%B8%A8%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0RPC%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%EF%BC%9F"><span class="nav-text">06丨如何实现RPC远程服务调用？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#07%E4%B8%A8%E5%A6%82%E4%BD%95%E7%9B%91%E6%8E%A7%E5%BE%AE%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%EF%BC%9F"><span class="nav-text">07丨如何监控微服务调用？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#08%E4%B8%A8%E5%A6%82%E4%BD%95%E8%BF%BD%E8%B8%AA%E5%BE%AE%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%EF%BC%9F"><span class="nav-text">08丨如何追踪微服务调用？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#09%E4%B8%A8%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E7%9A%84%E6%89%8B%E6%AE%B5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">09丨微服务治理的手段有哪些？</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Shiqi Lu"
+      src="https://img.shiqi-lu.tech/47logo1.jpg">
+  <p class="site-author-name" itemprop="name">Shiqi Lu</p>
+  <div class="site-description" itemprop="description">既然选择了远方，便只顾风雨兼程</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shiqi-lu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shiqi-lu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/traumlou%5BAT%5D163%5Bdot%5Dcom" title="E-Mail → traumlou[AT]163[dot]com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://img.shiqi-lu.tech/20200916151528.JPG" title="WeChat → https:&#x2F;&#x2F;img.shiqi-lu.tech&#x2F;20200916151528.JPG" rel="noopener" target="_blank"><i class="fab fa-weixin fa-fw"></i>WeChat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/u011703187" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;u011703187" rel="noopener" target="_blank"><i class="fas fa-laptop-code fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://shiqi-lu.tech/microservice-starter-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.shiqi-lu.tech/47logo1.jpg">
+      <meta itemprop="name" content="Shiqi Lu">
+      <meta itemprop="description" content="既然选择了远方，便只顾风雨兼程">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="每天净瞎搞">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《从0开始学微服务》模块一：入门微服务的学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-26 21:43:37" itemprop="dateCreated datePublished" datetime="2021-12-26T21:43:37+08:00">2021-12-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" itemprop="url" rel="index"><span itemprop="name">微服务</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/microservice-starter-1/" class="post-meta-item leancloud_visitors" data-flag-title="《从0开始学微服务》模块一：入门微服务的学习笔记" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/microservice-starter-1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/microservice-starter-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">整理极客时间《从0开始学微服务》模块一：入门微服务的知识点</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="03丨初探微服务架构"><a href="#03丨初探微服务架构" class="headerlink" title="03丨初探微服务架构"></a>03丨初探微服务架构</h1><ul>
+<li>gt3:微服务架构的模块图和一次正常的服务调用的流程<ul>
+<li><img src="https://img.shiqi-lu.tech/20211213223407.png"></li>
+<li>1.服务提供者按照一定格式的服务描述，向注册中心注册服务，声明自己能够提供哪些服务以及服务的地址是什么，完成服务发布</li>
+<li>2.来服务消费者请求注册中心，查询所需要调用服务的地址，然后以约定的通信协议向服务提供者发起请求，得到请求结果后再按照约定的协议解析结果</li>
+<li>3.在服务的调用过程中，服务的请求耗时、调用量以及成功率等指标都会被记录下来用作监控，调用经过的链路信息会被记录下来，用于故障定位和问题追踪。在这期间，如果调用失败，可以通过重试等服务治理手段来保证成功率</li>
+</ul>
+</li>
+<li>gt3:微服务架构下，服务调用主要依赖的几个基本组件及其作用<ul>
+<li>服务描述<ul>
+<li>服务调用首先要解决的问题就是服务如何对外描述</li>
+<li>常用的服务描述方式包括<ul>
+<li>RESTful API：通常用于 HTTP 协议的服务描述，并且常用 Wiki 或者Swagger 来进行管理</li>
+<li>XML 配置：多用作 RPC 协议的服务描述，通过 *.xml 配置文件来定义接口名、参数以及返回值类型等</li>
+<li>IDL 文件：通常用作 Thrift 和 gRPC 这类跨语言服务调用框架中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>注册中心<ul>
+<li>作用<ul>
+<li>有了服务的接口描述，下一步要解决的问题就是服务的发布和订阅，这时需要注册中心，服务提供者将自己提供的服务以及地址登记到注册中心，服务消费者则从注册中心查询所需要调用的服务的地址，然后发起请求</li>
+</ul>
+</li>
+<li>工作流程<ul>
+<li>服务提供者在启动时，根据服务发布文件中的发布信息向注册中心注册自己的服务</li>
+<li>服务消费者在启动时，根据消费者配置文件中配置的服务信息向注册中心订阅自己所需要的服务</li>
+<li>注册中心返回服务提供者地址列表给服务消费者</li>
+<li>当服务提供者发生变化，比如有节点新增或者销毁，注册中心将变更通知给服务消费者</li>
+<li><img src="https://img.shiqi-lu.tech/20211213224318.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>服务框架<ul>
+<li>通过注册中心，服务消费者就可以获取到服务提供者的地址，有了地址后就可以发起调用，但发起调用前还需解决：服务通信的协议、数据传输的格式、数据压缩的格式</li>
+</ul>
+</li>
+<li>服务监控<ul>
+<li>一旦服务消费者与服务提供者之间能够正常发起服务调用，你就需要对调用情况进行监控，以了解服务是否正常。通常服务监控主要包括三个流程<ul>
+<li>指标收集。就是要把每一次服务调用的请求耗时以及成功与否收集起来，并上传到集中的数据处理中心</li>
+<li>数据处理。有了每次调用的请求耗时以及成功与否等信息，就可以计算每秒服务请求量、平均耗时以及成功率等指标</li>
+<li>数据展示。数据收集起来，经过处理之后，还需要以友好的方式对外展示，才能发挥价值。通常都是将数据展示在 Dashboard 面板上，并且每隔 10s 等间隔自动刷新，用作业务监控和报警等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>服务追踪<ul>
+<li>作用：记录服务调用经过的每一层链路，以便进行问题追踪和故障定位</li>
+<li>工作原理<ul>
+<li>服务消费者发起调用前，会在本地按照一定的规则生成一个 requestid，发起调用时，将 requestid 当作请求参数的一部分，传递给服务提供者</li>
+<li>服务提供者接收到请求后，记录下这次请求的 requestid，然后处理请求。如果服务提供者继续请求其他服务，会在本地再生成一个自己的 requestid，然后把这两个 requestid 都当作请求参数继续往下传递</li>
+<li>以此类推，通过这种层层往下传递的方式，一次请求，无论最后依赖多少次服务调用、经过多少服务节点，都可以通过最开始生成的 requestid 串联所有节点，从而达到服务追踪的目的</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>服务治理<ul>
+<li>作用：通过一系列的手段来保证在各种意外情况下，服务调用仍然能够正常进行</li>
+<li>作用场景：<ul>
+<li>单机故障：通过一定策略，自动摘除故障节点，不需要人为 干预，就能保证单机故障不会影响业务</li>
+<li>单 IDC 故障：通过自动切换故障 IDC 的流量到其他正常 IDC，可以避免因 为单 IDC 故障引起的大批量业务受影响</li>
+<li>依赖服务不可用：通过熔断，在依赖服务异常的情况下，一段时期内停止发起调用而直接返回。这样一方面保证了服务消费者能够不被拖垮，另一方面也给服务提供者减少压力，使其能够尽快恢复</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="04-如何发布和引用服务？"><a href="#04-如何发布和引用服务？" class="headerlink" title="04 | 如何发布和引用服务？"></a>04 | 如何发布和引用服务？</h1><ul>
+<li>gt4:服务的发布和引用是指什么？<ul>
+<li>服务提供者如何发布一个服务，服务消费者如何引用这个服务</li>
+<li>具体来说，就是这个服务的接口名是什么？调用这个服务需要传递哪些参数？接口的返回值是什么类型？以及一些其他接口描述信息</li>
+</ul>
+</li>
+<li>gt4:常见的服务发布和引用的三种方式<ul>
+<li>RESTful API<ul>
+<li>主要被用作 HTTP 或者 HTTPS 协议的接口定义</li>
+<li>优点：因为 HTTP 协议本身是一个公开的协议，对于服务消费者来说几乎没有学习成本，所以比较适合用作跨业务平台之间的服务协议</li>
+</ul>
+</li>
+<li>XML 配置<ul>
+<li>服务发布和引用的三个步骤<ul>
+<li>服务提供者定义接口，并实现接口</li>
+<li>服务提供者进程启动时，通过加载 server.xml 配置文件将接口暴露出去</li>
+<li>服务消费者进程启动时，通过加载 client.xml 配置文件来引入要调用的接口</li>
+</ul>
+</li>
+<li>优点<ul>
+<li>一般是私有 RPC 框架会选择 XML 配置这种方式来描述接口，因为私有 RPC 协议的性能要比 HTTP 协议高，所以在对性能要求比较高的场景下，采用 XML 配置的方式比较合适</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>对业务代码侵入性比较高，XML 配置有变更的时候，服务消费者和服务提供者都要更新，所以适合公司内部联系比较紧密的业务之间采用。如果要应用到跨部门之间的业务调用，一旦有 XML 配置变更，需要花费大量精力去协调不同部门做升级工作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>IDL 文件(Interface Description Language，接口描述语言)<ul>
+<li>通过一种中立的方式来描述接口，使得在不同的平台上运行的对象和不同语言编写的程序可以相互通信交流，主要用作跨语言跨平台的服务之间的调用</li>
+<li>最常用的两种 IDL：Facebook 开源的Thrift 协议和 Google 开源的 gRPC 协议</li>
+<li>注意的是，在描述接口定义时，IDL 文件需要对接口返回值进行详细定义。如果接口返回值的字段比较多，并且经常变化时，采用 IDL 文件方式的接口定义就不太合适了。一方面可能会造成 IDL 文件过大难以维护，另一方面只要 IDL 文件中定义的接口返回值有变更，都需要同步所有的服务消费者都更新，管理成本就太高了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="05-如何注册和发现服务？"><a href="#05-如何注册和发现服务？" class="headerlink" title="05 | 如何注册和发现服务？"></a>05 | 如何注册和发现服务？</h1><ul>
+<li>gt5:注册中心的原理(微服务框架下的三种角色和交互关系)<ul>
+<li>微服务架构下的三种角色<ul>
+<li>服务提供者(RPC Server)</li>
+<li>服务消费者(RPC Client)</li>
+<li>服务注册中心(Registry)</li>
+</ul>
+</li>
+<li>三种角色的交互关系<ul>
+<li>RPC Server 提供服务，在启动时，根据服务发布文件 server.xml 中的配置的信息，向 Registry 注册自身服务，并向 Registry 定期发送心跳汇报存活状态</li>
+<li>RPC Client 调用服务，在启动时，根据服务引用 client.xml 中的配置信息，向 Registry 订阅服务，把 Registry 返回的服务节点列表缓存在本地内存中，并与 RPC Server 建立连接</li>
+<li>当 RPC Server 节点发生变更时，Registry 会同步变更，RPC Client 感知后会刷新本地内存中缓存的服务节点列表</li>
+<li>RPC Client 从本地缓存的服务节点列表中，基于负载均衡算法选择一台 RPC Server 发起调用</li>
+<li><img src="https://img.shiqi-lu.tech/20211219171638.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>gt5:注册中心的实现：提供的 API、部署方式、存储方式、服务健康状态检测、服务状态变更通知、白名单机制<ul>
+<li>注册中心提供的 API<ul>
+<li>服务注册接口：服务提供者通过调用服务注册接口来完成服务注册</li>
+<li>服务反注册接口：服务提供者通过调用服务反注册接口来完成服务注销</li>
+<li>心跳汇报接口：服务提供者通过调用心跳汇报接口完成节点存活状态上报</li>
+<li>服务订阅接口：服务消费者通过调用服务订阅接口完成服务订阅，获取可用的服务提供者节点列表</li>
+<li>服务变更查询接口：服务消费者通过调用服务变更查询接口，获取最新的可用服务节点列表</li>
+<li>后台管理的 API 如：</li>
+<li>服务查询接口：查询注册中心当前注册了哪些服务信息</li>
+<li>服务修改接口：修改注册中心中某一服务的信息</li>
+</ul>
+</li>
+<li>部署方式<ul>
+<li>采用集群部署来保证高可用性，并通过分布式一致性协议来确保集群中不同节点之间的数据保持一致</li>
+<li>以开源注册中心 ZooKeeper 为例，ZooKeeper 集群中包含多个节点，服务提供者和服务消费者可以同任意一个节点通信，因为它们的数据一定是相同的</li>
+</ul>
+</li>
+<li>存储方式<ul>
+<li>以 ZooKeeper 为例，注册中心存储服务信息一般采用层次化的目录结构</li>
+<li>每个目录在 ZooKeeper 中叫作 znode，并且有一个唯一的路径标识</li>
+<li>znode 可以包含数据和子 znode</li>
+<li>znode 中的数据可以有多个版本，如某一个 znode 下存有多个数据版本，那么查询这个路径下的数据需带上版本信息</li>
+<li><img src="https://img.shiqi-lu.tech/20211219174706.png"></li>
+</ul>
+</li>
+<li>服务健康状态检测<ul>
+<li>以 ZooKeeper 为例，它是基于 ZooKeeper 客户端和服务端的长连接和会话超时控制机制，来实现服务健康状态检测的</li>
+<li>在 ZooKeeper 中，客户端和服务端建立连接后，会话也随之建立，并生成一个全局唯一的 Session ID。服务端和客户端维持的是一个长连接，在 SESSION_TIMEOUT 周期内，服务端会检测与客户端的链路是否正常，具体方式是通过客户端定时向服务端发送心跳消息（ping 消息），服务器重置下次 SESSION_TIMEOUT 时间。如果超过 SESSION_TIMEOUT 后服务端都没有收到客户端的心跳消息，则服务端认为这个 Session 就已经结束了，ZooKeeper 就会认为这个服务节点已经不可用，将会从注册中心中删除其信息</li>
+<li>注：如果摘除的节点占到了服务集群节点数一定阈值，就停止摘除服务节点，并且给服务的开发同学和运维同学报警处理</li>
+</ul>
+</li>
+<li>服务状态变更通知<ul>
+<li>一旦注册中心探测到有服务提供者节点新加入或者被剔除，就必须立刻通知所有订阅该服务的服务消费者，刷新本地缓存的服务节点信息，确保服务调用不会请求不可用的服务提供者节点</li>
+<li>以 ZooKeeper 为例，基于 ZooKeeper 的 Watcher 机制，来实现服务状态变更通知给服务消费者的。服务消费者在调用 ZooKeeper 的 getData 方法订阅服务时，还可以通过监听器 Watcher 的 process 方法获取服务的变更，然后调用 getData 方法获取变更后的数据，刷新本地缓存的服务节点信息</li>
+</ul>
+</li>
+<li>白名单机制<ul>
+<li>在实际的微服务测试和部署时，通常包含多套环境，比如生产环境一套、测试环境一套。开发在进行业务自测、测试在进行回归测试时，一般都是用测试环境，部署的 RPC Server 节点注册到测试的注册中心集群。但经常会出现开发或者测试在部署时，错误的把测试环境下的服务节点注册到了线上注册中心集群，这样的话线上流量就会调用到测试环境下的 RPC Server 节点，可能会造成意想不到的后果</li>
+<li>注册中心可以提供一个白名单机制，只有添加到注册中心白名单内的 RPC Server，才能够调用注册中心的注册接口，这样的话可以避免测试环境中的节点意外跑到线上环境中去</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="06丨如何实现RPC远程服务调用？"><a href="#06丨如何实现RPC远程服务调用？" class="headerlink" title="06丨如何实现RPC远程服务调用？"></a>06丨如何实现RPC远程服务调用？</h1><ul>
+<li>gt6:RPC的定义和原理<ul>
+<li>在进行服务化拆分之后，服务提供者和服务消费者运行在两台不同物理机上的不同进程内，它们之间的调用称之为远程方法调用，简称 RPC（Remote Procedure Call）</li>
+<li>习惯上把服务消费者叫作客户端，服务提供者叫作服务端，两者要完成一次 RPC 调用，必须先建立网络连接，双方按照约定的通信协议进行网络通信。双方正常通信后，服务端接收到请求后进行处理，处理成功后把请求结果返回给客户端。为了减少传输的数据大小，还要对数据进行序列化</li>
+</ul>
+</li>
+<li>gt6:RPC调用中客户端和服务端建立网络连接的两种方式？<ul>
+<li>HTTP 通信</li>
+<li>Socket 通信</li>
+</ul>
+</li>
+<li>gt6:客户端和服务端建立连接后，遇到网络闪断、连接超时、服务器宕机等异常时的两种处理手段是什么？<ul>
+<li>链路存活检测<ul>
+<li>客户端需要定时地发送心跳检测消息(一般是通过 ping 请求)给服务端，如果服务端连续 n 次心跳检测或者超过规定的时间都没有回复消息，则认为此时链路已经失效，这时客户端就需要重新与服务端建立连接</li>
+</ul>
+</li>
+<li>断连重试<ul>
+<li>通常有多种情况会导致连接断开，如客户端主动关闭、服务端宕机或者网络故障等。这个时候客户端就需要与服务端重新建立连接，但一般不能立刻完成重连，而是要等待固定的间隔后发起重连，避免服务端的连接回收不及时，而客户端瞬间重连的请求太多而把服务端的连接数占满</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>gt6:服务端处理客户端请求的三种处理方式<ul>
+<li>同步阻塞方式（BIO）<ul>
+<li>适用于连接数比较小的业务场景，这样的话不至于系统中没有可用线程去处理请求。这种方式写的程序也比较简单直观，易于理解</li>
+</ul>
+</li>
+<li>同步非阻塞方式 (NIO)<ul>
+<li>适用于连接数比较多并且请求消耗比较轻的业务场景，比如聊天服务器。这种方式相比 BIO，相对来说编程比较复杂</li>
+</ul>
+</li>
+<li>异步非阻塞方式（AIO）<ul>
+<li>适用于连接数比较多而且请求消耗比较重的业务场景，比如涉及 I/O 操作的相册服务器。这种方式相比另外两种，编程难度最大，程序也不易于理解</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="07丨如何监控微服务调用？"><a href="#07丨如何监控微服务调用？" class="headerlink" title="07丨如何监控微服务调用？"></a>07丨如何监控微服务调用？</h1><ul>
+<li>gt7:微服务系统要监控哪些对象？<ul>
+<li>用户端监控。指业务直接对用户提供的功能的监控</li>
+<li>接口监控。指业务提供的功能所依赖的具体 RPC 接口的监控</li>
+<li>资源监控。指某个接口依赖的资源的监控，如监控 redis 服务</li>
+<li>基础监控。值服务器本身的监控状况的监控。如 CPU 利用率、内存使用量、I/O 读写量、网卡带宽等</li>
+</ul>
+</li>
+<li>gt7:微服务系统要监控哪些指标？<ul>
+<li>可用RED+饱和度记忆，，R 代表请求量（Request rate），E 代表错误（Error），D 代表响应时间（Duration）</li>
+<li>请求量(吞吐量、通信量)<ul>
+<li>实时请求量用 QPS（Queries Per Second）即每秒查询次数来衡量</li>
+<li>统计请求量一般用 PV（Page View）即一段时间内用户的访问量来衡量</li>
+</ul>
+</li>
+<li>错误率<ul>
+<li>用一段时间内调用失败的次数占调用总次数的比率来衡量</li>
+</ul>
+</li>
+<li>请求的响应时间(延迟)<ul>
+<li>还可以从 P90、 P95、P99、P999 角度来监控请求的响应时间，如 P99 = 500ms，意思是 99% 的请求响应时间在 500ms 以内</li>
+</ul>
+</li>
+<li>饱和度<ul>
+<li>服务或资源到达上限的程度(也可说服务或资源的利用率)，如CPU 的使用率，内存使用率，磁盘使用率，缓存数据库的连接数等等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>gt7:微服务系统有哪些监控维度<ul>
+<li>全局维度<ul>
+<li>从整体角度监控对象的的请求量、平均耗时以及错误率，全局维度的监控一般是为了让你对监控对象的调用情况有个整体了解</li>
+</ul>
+</li>
+<li>分机房维度<ul>
+<li>一般为了业务的高可用性，服务通常部署在不止一个机房，因为不同机房地域的不同，同一个监控对象的各种指标可能会相差很大，所以需要深入到机房内部去了解</li>
+</ul>
+</li>
+<li>单机维度<ul>
+<li>即便是在同一个机房内部，可能由于采购年份和批次的不同，位于不同机器上的同一个监控对象的各种指标也会有很大差异</li>
+</ul>
+</li>
+<li>时间维度</li>
+<li>核心维度<ul>
+<li>业务上一般会依据重要性程度对监控对象进行分级，最简单的是分成核心业务和非核心业务。核心业务和非核心业务在部署上必须隔离，分开监控</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>gt7:监控系统的 4 个环节是？<ul>
+<li>数据采集：收集到每一次调用的详细信息，包括调用的响应时间、调用是否成功、调用的发起者和接收者分别是谁<ul>
+<li>两种数据采集方式<ul>
+<li>服务主动上报(代码埋点)，这种处理方式通过在业务代码或者服务框架里加入数据收集代码逻辑，在每一次服务调用完成后，主动上报服务的调用信息</li>
+<li>代理收集，这种处理方式通过服务调用后把调用的详细信息记录到本地日志文件中，然后再通过代理去解析本地日志文件，然后再上报服务的调用信息</li>
+</ul>
+</li>
+<li>采样率<ul>
+<li>采样频率决定了监控的实时性与精确度，但同时也对系统本身的性能也会有一定的影响</li>
+<li>最好可以动态控制采样率</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据传输：把数据通过一定的方式传输给数据处理中心进行处理<ul>
+<li>两种数据传输方式<ul>
+<li>UDP 传输，数据处理单元提供服务器的请求地址，数据采集后通过 UDP 协议与服务器建立连接，然后把数据发送过去</li>
+<li>Kafka 传输，数据采集后发送到指定的 Topic，然后数据处理单元再订阅对应的 Topic，就可以从 Kafka 消息队列中读取到对应的数据</li>
+</ul>
+</li>
+<li>两种传输时采用的数据格式<ul>
+<li>二进制协议，最常用的就是 PB 对象，它的优点是高压缩比和高性能，可以减少传输带宽并且序列化和反序列化效率特别高</li>
+<li>文本协议，最常用的就是 JSON 字符串，它的优点是可读性好，但相比于 PB 对象，传输占用带宽高，并且解析性能也要差一些</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据处理：数据传输过来后，数据处理中心再按照服务的维度进行聚合，计算出不同服务的请求量、响应时间以及错误率等信息并存储起来<ul>
+<li>两个数据聚合维度<ul>
+<li>接口维度聚合，这个维度是把实时收到的数据按照接口名维度实时聚合在一起，这样就可以得到每个接口的实时请求量、平均耗时等信息</li>
+<li>机器维度聚合，这个维度是把实时收到的数据按照调用的节点维度聚合在一起，这样就可以从单机维度去查看每个接口的实时请求量、平均耗时等信息</li>
+</ul>
+</li>
+<li>两种持久化的数据库存储<ul>
+<li>索引数据库，比如 Elasticsearch，以倒排索引的数据结构存储，需要查询的时候，根据索引来查询</li>
+<li>时序数据库，比如 OpenTSDB，以时序序列数据的方式存储，查询的时候按照时序如 1min、5min 等维度来查询</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据展示：通过接口或者 Dashboard 的形式对外展示服务的调用情况<ul>
+<li>曲线图、饼状图、格子图</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="08丨如何追踪微服务调用？"><a href="#08丨如何追踪微服务调用？" class="headerlink" title="08丨如何追踪微服务调用？"></a>08丨如何追踪微服务调用？</h1><ul>
+<li>gt8:微服务追踪系统的 traceId、spanId 和 annotation 的意思<ul>
+<li><img src="https://img.shiqi-lu.tech/20211220223027.png"></li>
+<li>traceId，用于标识某一次具体的请求 ID。当用户的请求进入系统后，会在 RPC 调用网络的第一层生成一个全局唯一的 traceId，并且会随着每一层的 RPC 调用，不断往后传递，这样的话通过 traceId 就可以把一次用户请求在系统中调用的路径串联起来</li>
+<li>spanId，用于标识一次 RPC 调用在分布式请求再系统调用中所处的位置，以及上下游的依赖分别是谁</li>
+<li>annotation，用于业务自定义埋点数据，可以是业务感兴趣的想上传到后端的数据，如一次请求的用户 UID</li>
+</ul>
+</li>
+<li>gt8:微服务追踪系统的架构的三层<ul>
+<li><img src="https://img.shiqi-lu.tech/20211221100715.png"></li>
+<li>数据采集层，负责数据埋点并上报<ul>
+<li><img src="https://img.shiqi-lu.tech/20211221101211.png"></li>
+</ul>
+</li>
+<li>数据处理层，负责数据的存储与计算<ul>
+<li>实时计算需求：对计算效率要求比较高，一般要求对收集的链路数据能够在秒级别完成聚合计算，以供实时查询<ul>
+<li>针对实时数据处理，一般采用 Storm 或者 Spark Streaming 来对链路数据进行实时聚合加工，存储一般使用 OLTP 数据仓库，比如 HBase，使用 traceId 作为 RowKey，能天然地把一整条调用链聚合在一起，提高查询效率</li>
+</ul>
+</li>
+<li>离线计算需求：对计算效率要求就没那么高了，一般能在小时级别完成链路数据的聚合计算即可，一般用作数据汇总统计<ul>
+<li>针对离线数据处理，一般通过运行 MapReduce 或者 Spark 批处理程序来对链路数据进行离线计算，存储一般使用 Hive</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据展示层，负责数据的图形化展示<ul>
+<li>调用链路图<ul>
+<li><img src="https://img.shiqi-lu.tech/20211221134755.png"></li>
+</ul>
+</li>
+<li>调用拓扑图<ul>
+<li><img src="https://img.shiqi-lu.tech/20211221134803.png"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="09丨微服务治理的手段有哪些？"><a href="#09丨微服务治理的手段有哪些？" class="headerlink" title="09丨微服务治理的手段有哪些？"></a>09丨微服务治理的手段有哪些？</h1><ul>
+<li>gt9:有哪些服务治理手段？<ul>
+<li>节点管理<ul>
+<li>服务调用失败的两类原因<ul>
+<li>服务提供者自身出现问题，如服务器宕机、进程意外退出等</li>
+<li>网络问题，如服务提供者、注册中心、服务消费者这三者任意两者之间的网络出现问题</li>
+</ul>
+</li>
+<li>两种管理手段<ul>
+<li>注册中心主动摘除机制</li>
+<li>服务消费者摘除机制</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>负载均衡<ul>
+<li>随机算法</li>
+<li>轮询算法</li>
+<li>最少活跃调用算法</li>
+<li>一致性 Hash 算法</li>
+</ul>
+</li>
+<li>服务路由<ul>
+<li>路由规则，就是通过一定的规则如条件表达式或者正则表达式来限定服务节点的选择范围</li>
+<li>制定路由规则的两个原因<ul>
+<li>业务存在灰度发布的需求</li>
+<li>多机房就近访问的需求</li>
+</ul>
+</li>
+<li>路由规则的两种配置方式<ul>
+<li>静态配置</li>
+<li>动态配置</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>服务容错：对服务调用失败的情况，常用的几种自动恢复的手段<ul>
+<li>FailOver：失败自动切换。服务消费者发现调用失败或者超时后，自动从可用的服务节点列表总选择下一个节点重新发起调用，也可以设置重试的次数。这种策略要求服务调用的操作必须是幂等的，也就是说无论调用多少次，只要是同一个调用，返回的结果都是相同的，一般适合服务调用是读请求的场景</li>
+<li>FailCache：失败缓存。就是服务消费者调用失败或者超时后，不立即发起重试，而是隔一段时间后再次尝试发起调用。比如后端服务可能一段时间内都有问题，如果立即发起重试，可能会加剧问题，反而不利于后端服务的恢复。如果隔一段时间待后端节点恢复后，再次发起调用效果会更好</li>
+<li>FailBack：失败通知。就是服务消费者调用失败或者超时后，不再重试，而是根据失败的详细信息，来决定后续的执行策略。比如对于非幂等的调用场景，如果调用失败后，不能简单地重试，而是应该查询服务端的状态，看调用到底是否实际生效，如果已经生效了就不能再重试了；如果没有生效可以再发起一次调用</li>
+<li>FailFast：快速失败。就是服务消费者调用一次失败后，不再重试。实际在业务执行时，一般非核心业务的调用，会采用快速失败策略，调用失败后一般就记录下失败日志就返回了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>觉得文章写得不错就请博主喝杯奶茶吧(*￣∇￣*)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130605.JPG" alt="Shiqi Lu 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="https://img.shiqi-lu.tech/20200915130621.JPG" alt="Shiqi Lu 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Shiqi Lu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://shiqi-lu.tech/microservice-starter-1/" title="《从0开始学微服务》模块一：入门微服务的学习笔记">http://shiqi-lu.tech/microservice-starter-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag"># 微服务</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zab/" rel="prev" title="分布式共识算法（故障容错算法）系列整理(五)：ZAB">
+                  <i class="fa fa-chevron-left"></i> 分布式共识算法（故障容错算法）系列整理(五)：ZAB
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备2021009993号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44170202000299" rel="noopener" target="_blank">粤公网安备 44170202000299号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shiqi Lu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: "/microservice-starter-1/",
+    }, {"enable":true,"appId":"OS7Hr4nPF6xvygRexYzB89oh-gzGzoHsz","appKey":"xibGdYoe12DjvPdVzyGEQvcz","placeholder":"请留下你的真知灼见","avatar":"identicon","meta":["nick","mail"],"pageSize":10,"lang":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null,"enableQQ":false,"requiredFields":["nick"]}
+    ));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
